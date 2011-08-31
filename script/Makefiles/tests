@@ -1,0 +1,53 @@
+# --
+# Tests
+# --
+sanitycheck:
+	./script/sanitycheck
+quicksanity:
+	./script/sanitycheck quick
+testsuite:
+	PERL_DL_NONLAZY=1 perl "-MExtUtils::Command::MM" "-e" "test_harness(0, 'inc', 'lib', undef)" ./t/*.t
+sanity: sanitycheck swec_sanity
+# We currently don't bother with the testsuite here, as it's not working anyway
+test: sanitycheck swec_sanity
+
+depscheck:
+	for DEP in `./script/lixuz_codestats modulesOnly |grep -v '(' | perl -pi -e 'chomp; print " ";' ` ;do perl -Ilib -e "eval('use $$DEP;1') or die('$$DEP is missing'.\"\n\")" || exit 1;done
+simpledepslist:
+	./script/lixuz_codestats modulesOnly | perl -pi -e 's/\s+:.*//;chomp; print " ";'; echo
+depslist:
+	./script/lixuz_codestats modulesOnly
+modreport:
+	./script/lixuz_codestats modreport
+stats: statistics
+statistics:
+	./script/lixuz_codestats
+
+# SWEC tests
+SWEC_URL ?= /admin/login/?user_name=swecUser&password=$(shell [ -e "./.swecpwd" ] && cat ./.swecpwd|perl -pi -e chomp )&_submitted_lixuz_login=1
+SWEC_PORT ?= 3000
+SWEC_HOST ?= http://localhost:$(SWEC_PORT)
+SWEC_EXTRARULES ?=
+SWEC_BASERULES ?= -b "$(SWEC_HOST)" -s "$(SWEC_URL)" -m /\.\./=0 -s /
+# We need SWEC 0.3 or later - available from http://random.zerodogg.org/swec
+SWEC_BASECMD ?= swec --keepgoing --nohead -m /files/get=0
+SWEC_CMD ?= $(SWEC_BASECMD) $(SWEC_BASERULES) $(SWEC_EXTRARULES)
+swec: swec_full
+swec_init:
+	@if ! type swec >/dev/null; then echo "***";echo "SWEC is not installed. Get it from: http://random.zerodogg.org/swec";echo "***";exit 1;fi
+	@if [ ! -e ~/.swecrc ]; then echo "***";echo "WARNING: no ~/.swecrc found, there is one for Lixuz in the devdocs branch. Going on without it.";echo "***";fi
+	@if [ ! -e ./.swecpwd ]; then echo "./.swecpwd is missing, this should contain the password for the swecUser.";exit 1;fi
+swec_livesanity: swec_init
+	$(SWEC_BASECMD) --baseurl $(SWEC_HOST) -m '.=100' -m Innenriks=20 -m Utenriks=20 -m Nyheter=70 -s / -s /rss  -m /admin=0
+swec_livetest: swec_init
+	$(SWEC_BASECMD) --baseurl $(SWEC_HOST) -m '.=500' -m Innenriks=100 -m Utenriks=100 -m Nyheter=150 -s / -s /rss  -m /admin=0
+swec_live_nolimits:
+	$(SWEC_BASECMD) --baseurl $(SWEC_HOST) -s / -s /rss  -m /admin=0
+swec_sanity: swec_init
+	$(SWEC_CMD) -m '!admin=20' -m .=1000 -m 'articles/edit=20' -m 'edit=200' -m 'articles/preview=20' -m 'preview=200' -m files/edit=20 -m '/admin/articles=100' -m '/admin/files=100' -m 'admin/users=40' -m 'roles=10' -m '\?page=40' -m 'categories=10' -m 'dictionary=10' -m 'search=10' -m 'orderby=30'
+swec_basic: swec_init
+	$(SWEC_CMD) -m '!admin=1000' -m .=4000 -m articles/edit=500 -m articles/preview=500 -m edit=1500 -m preview=600 -m files/edit=400
+swec_full: swec_init
+	$(SWEC_CMD) -m "!admin=4000" -m .=10000 -m articles/edit=3000 -m articles/preview=3000 -m edit=6000 -m preview=4000 -m files/edit=2000
+
+# vim: set ft=make :

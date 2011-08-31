@@ -1,0 +1,239 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<table width="100%"><tr><td>
+%if(not $multiMode) {
+%if($c->req->param('hasBeenSaved')) {
+<b><font color="#e33000"><% $i18n->get('Saved') %></font></b>
+%}
+%if($message) {
+<% $message |n %>
+%}
+%}
+
+<% $FormBuilder->script |n %>
+
+<% $FormBuilder->start |n %>
+<% $FormBuilder->statetags |n %>
+
+%foreach my $field ($FormBuilder->fields){
+%if($field->type eq 'hidden'){
+      <input type="hidden" name="<% $field->name |n %>" value="<% $field->value %>" />
+%}else{
+%     $formfield->{$field}=$field;
+%}
+%}
+
+%if(not $multiMode) {
+<form action="/admin/files/edit" id="lixuz_userEdit" method="post" name="lixuz_userEdit" onsubmit="return validate_lixuz_userEdit(this);">
+%}
+%if($c->req->param('asyncUpload')) {
+<input type="hidden" value="true" name="asyncUpload" />
+%}
+<div>
+%if($folder_list) {
+<div class="label folder"><span><% $i18n->get('Folder')%></span></div>
+<div>
+<select name="file_folder" id="file_folder"><% $folder_list |n %></select><br />
+</div>
+%}
+
+<& /adm/core/fields/tags.html, %ARGS &>
+
+%if(not $multiMode) {
+    <div class="label user_name">
+      <span><% $i18n->get('Name')%></span> 
+      <% $formfield->{user_name}{message} %>
+    </div>
+	<div>
+    <input id="file_name" name="file_name" size="40" type="text" value="<% $formfield->{file_name}{value} %>" />
+    </div>
+%}
+
+    <div class="label title">
+      <span ><% $i18n->get('Title')%></span> 
+      <% $formfield->{title}{message} %>
+    </div>
+	<div>
+    <input id="title" name="title" size="40" type="text" value="<% $formfield->{title}{value} %>" />
+    </div>
+
+    <div class="label caption">
+      <span ><% $i18n->get('Caption')%></span> 
+      <% $formfield->{caption}{message} %>
+    </div>
+	<div>
+    <textarea id="caption" name="caption" cols="40" rows="5"><% $formfield->{caption}{value} |n %></textarea>
+    </div>
+
+
+
+    <div class="label status">
+      <span ><% $i18n->get('Status')%></span> 
+      <% $formfield->{status}{message} %>
+    </div>
+
+  <div>
+
+% my $active = $formfield->{status}{value} eq 'Active' ? 'selected="selected"' : '';
+% my $inactive = $active gt '' ? '' : 'selected="selected"';
+
+  <select id="status" name="status">
+  <option <% $active | n %>   value="Active"> <% $i18n->get("Active") %> </option>
+  <option <% $inactive | n %> value="Inactive"> <% $i18n->get("Inactive") %> </option>
+  </select>
+
+%if($fileObj && defined $classes && $classes->count > 1) {
+    <div class="label class_id">
+        <span><% $i18n->get('File class')%></span>
+    </div>
+    <div>
+        <select id="class_id" name="class_id">
+%while(my $class = $classes->next) {
+        <option <% $class->id == $fileObj->class_id ? 'selected="SELECTED"': '' %> value="<% $class->id %>"><% $class->name($i18n) |n %></option>
+%}
+        </select>
+%}
+
+%if($fileObj && $fileObj->is_flash()) {
+<div class="label height">
+    <span><%$i18n->get('Height (pixels)') %></span>
+</div>
+<div>
+    <input id="height" name="height" size="40" type="text" value="<%$formfield->{height}{value}%>" />
+</div>
+
+<div class="label width">
+    <span><%$i18n->get('Width (pixels)') %></span>
+</div>
+<div>
+    <input id="width" name="width" size="40" type="text" value="<%$formfield->{width}{value}%>" />
+</div>
+%}
+
+<input id="formTags" type="hidden" name="formTags" value="" />
+
+<& /adm/core/renderFields.html, %ARGS, component => 'files' &>
+  </div>
+<br />
+%if(not $multiMode) {
+%if($c->req->param('asyncUpload')) {
+<input id="lixuz_userEdit_submit" name="_submit" type="submit" value="<%$i18n->get('Save')%>" onclick="showPI(i18n.get('Saving...'));" />  
+%} else {
+<input id="lixuz_userEdit_submit" name="_submit" type="submit" value="<%$i18n->get('Save and close')%>" />  
+%}
+<input id="lixuz_userEdit_reset" name="_reset" type="reset" value="<% $i18n->get('Reset')%>" />
+%}
+</div>
+
+
+<script type="text/javascript">
+%# Tags are handled by javascript, this snippet glues it all together before submitting
+$LAB.onLoaded(function()
+        {
+            var myOnSubmit = function(e)
+            {
+                var uids = [];
+                $('#tags .list .tagEntry').each(function ()
+                    {
+                        uids.push($(this).attr('uid'));
+                    }
+                );
+                $('#formTags').attr('value',uids.join(','));
+            };
+            $('#lixuz_userEdit_submit').click(myOnSubmit);
+            $('#multi_upload_submit').click(myOnSubmit);
+        });
+</script>
+
+<div style="clear:both"> </div>
+%if(not $multiMode) {
+<% $FormBuilder->end |n %>
+
+</td><td style="max-width: 30%;">
+<b><% $i18n->get('File metadata') %>:</b>
+<table>
+<tr>
+<td><% $i18n->get('File ID')%> :</td>
+<td><% $fileObj->file_id %></td>
+</tr><tr>
+<td><% $i18n->get('Path')%> :</td>
+%if($fileObj->folder) {
+<td><% $fileObj->folder->get_path.'/'.$fileObj->file_name %></td>
+%} else {
+<td>/<% $fileObj->file_name %></td>
+%}
+</tr><tr>
+<td><% $i18n->get('Original file size') %> :</td>
+<td><% $fileObj->sizeString($c) %></td>
+</tr><tr>
+<td><% $i18n->get('Owner')%> :</td>
+<td><% defined $fileObj->ownerUser ? $fileObj->ownerUser->verboseName : $i18n->get('nobody') %></td>
+</tr><tr>
+<td><% $i18n->get('Uploaded on')%> :</td>
+<td><% datetime_from_SQL($fileObj->upload_time) %></td>
+</tr><tr>
+<td><% $i18n->get('Last edited on')%> :</td>
+<td><% datetime_from_SQL($fileObj->last_edited) %></td>
+</tr><tr>
+<td><% $i18n->get('Format')%> :</td>
+<td><% $fileObj->format ? $fileObj->format : '(unknown)'%>
+%if($fileObj->is_image) {
+ (<% $i18n->get('image')%>)
+% } elsif($fileObj->is_flash) {
+ (<% $i18n->get('flash')%>)
+%} elsif($fileObj->is_video) {
+ (<% $i18n->get('video - FLV will be used')%>)
+%}
+</td>
+%if($fileObj->is_image) {
+</tr><tr>
+<td><% $i18n->get('Width')%> :</td>
+<td><% $fileObj->width ? $fileObj->width : '(unknown)'%>
+</tr><tr>
+<td><% $i18n->get('Height')%> :</td>
+<td><% $fileObj->height ? $fileObj->height : '(unknown)'%>
+%} elsif($fileObj->is_video) {
+</tr><tr>
+<td><% $i18n->get('FLV file size')%> :</td>
+<td><% $fileObj->flv_size($c) %></td>
+%}
+%# Closes our content table
+</tr></table>
+%}
+%# Closes the main table
+</td></tr></table>
+
+<%args>
+$FormBuilder
+$message => undef
+$fileObj => undef
+$i18n
+$ADF_CanEdit
+$multiMode => 0
+$folder_list => undef
+$classes => undef
+</%args>
+<%init>
+use LIXUZ::HelperModules::Forms('select_options');
+use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL);
+my $formfield=();
+if(not $multiMode and not $fileObj)
+{
+    die("fileObj missing and multiMod not in use");
+}
+</%init>

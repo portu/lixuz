@@ -1,0 +1,88 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($message) {
+% # FIXME: drop the <b></b> tags and do that in CSS
+<div id="lzCategoryListMessage"><b><% $message %></b></div>
+%}
+
+<& ../core/listnavigation.html, %ARGS &>
+
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'subscription_id', ordertype => $ordertype}) %>"><% $i18n->get('Subscription ID') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'email', ordertype => $ordertype}) %>"><% $i18n->get('E-mail') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'name', ordertype => $ordertype}) %>"><% $i18n->get('Name') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'send_every', ordertype => $ordertype}) %>"><% $i18n->get('Interval') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'format', ordertype => $ordertype}) %>"><% $i18n->get('Preferred format') %></a></td>
+		<td class="rowHead rowHeadIcon">&nbsp;</td>
+    </tr>
+
+%if(defined $subscriptions && $subscriptions->count > 0){
+%my $i=0;
+%while(my $subscription = $subscriptions->next){
+%$i++;
+
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+        <td><% $subscription->subscription_id %></td>
+        <td><% $subscription->email %></td>
+        <td><% $subscription->name %></td>
+<%perl>
+my $send_every = $subscription->send_every;
+given($send_every)
+{
+    when('month')
+    {
+        $send_every = $i18n->get('month');
+    }
+
+    when('week')
+    {
+        $send_every = $i18n->get('week');
+    }
+
+    when('day')
+    {
+        $send_every = $i18n->get('day');
+    }
+}
+</%perl>
+        <td><% $send_every  |n %></td>
+        <td><% $subscription->format%></td>
+        <td>
+        <select id="subscription_action_<%$subscription->subscription_id%>" onchange="newsletterAction(<% $subscription->subscription_id %>);">
+        <option value="label" selected="selected">- <% $i18n->get('Action') %> -</option>
+        <option value="groupedit"><% $i18n->get('Edit groups') %></option>
+        <option value="delete"><% $i18n->get('Delete') %></option>
+        </select>
+        </td>
+    </tr>
+%}
+%}
+
+</table>
+
+
+<%args>
+$subscriptions =>undef
+$message => undef
+$i18n
+$ordertype => ''
+</%args>
+<%init>
+use 5.010;
+</%init>

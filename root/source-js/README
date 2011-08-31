@@ -1,0 +1,2 @@
+This directory includes source files that gets built into single files.
+Each directory gets built into a JS file with its name.

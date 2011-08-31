@@ -1,0 +1,231 @@
+#!/usr/bin/perl
+#
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# This is a script used for creating FLV files from uploaded video
+# files.
+#
+# The usage is simple:
+# script [source] [target] [info]
+#
+# [info] is a special information file that flvConverter writes to.
+# Its first line contains one of:
+# FAILURE
+# INPROGRESS
+# Which lets you know the current status of the conversion. If the
+# file has been removed, then all went well.
+#
+# From line 2 and onwards in that file is diagnostic information
+# if the first line is FAILURE.
+#
+# The script forks as soon as it can, but until it does, it will
+# not open the info file, but rather die() if something goes wrong,
+# so its return value should be checked.
+#
+# ---
+#
+# On ubuntu/debian you may want to install these (or similar unstripped)
+# packages:
+# libavcodec-unstripped-51 libavdevice-unstripped-52 libavformat-unstripped-52 libavutil-unstripped-49 libpostproc-unstripped-51 libswscale-unstripped-0 libamrnb3 libamrwb3
+#
+# It also needs medibuntu to be present.
+use strict;
+use warnings;
+use File::Basename;
+use Fatal qw(open);
+use IPC::Open3;
+use POSIX qw(nice setsid);
+use File::Path qw(mkpath);
+
+die("USAGE: $0 [source file] [target file] [info file]. See the header for more information,\nor try running flvConverter.manual if you need to run this script manually\n") if(not @ARGV > 2);
+
+my $source = shift;
+my $target = shift;
+my $infoFile = shift;
+my $bitrate = @ARGV ? shift : 600000;
+my $ffmpegCommand;
+my %RET;
+
+$SIG{CHLD} = sub {
+    my $PID = wait;
+    $RET{$PID} = $? >> 8;
+    return(1);
+};
+
+die("source $source: does not exist") if not -e $source;
+die("target $target: exists") if -e $target;
+die("infoFile $infoFile: exists") if -e $infoFile;
+
+cmkpath(dirname($target));
+cmkpath(dirname($infoFile));
+
+die("Unable to write to $target: $!") if not -w dirname($target);
+die("Unable to write to $infoFile: $!") if not -w dirname($infoFile);
+
+if(fork)
+{
+    exit(0);
+}
+setsid();
+
+# Video conversion can be somewhat heavy, therefore we are very nice
+# to ensure that we don't steal CPU that would otherwise have been used to
+# process HTTP requests
+nice(19);
+
+open(STDOUT,'>',$infoFile.'.out');
+open(STDERR,'>>',$infoFile.'.out');
+open(STDIN,'<','/dev/null');
+
+writeInfoFile('INPROGRESS');
+
+run_ffmpeg();
+
+runCommand('ffmpeg','-i',$target,'-f','image2','-vframes','1','-s','400x300',$target.'preview.jpg');
+
+unlink($infoFile);
+unlink($infoFile.'.out');
+exit(0);
+
+sub cmkpath
+{
+    my $path = shift;
+    if(not -e $path)
+    {
+        mkpath($path) or die("Failed to mkpath($path): $!");
+    }
+}
+
+sub failure
+{
+    my($out,$err,$ret,$extra) = @_;
+    $extra = $extra ? 'EXTRA INFO: '."\n".$extra."\n" : '';
+    writeInfoFile('FAILURE',"STDOUT:\n",$out,"STDERR:\n",$err,'ret: '.$ret."\n",$extra);
+    exit(1);
+}
+
+sub run_ffmpeg
+{
+    my @command = ('-i',$source,'-f','flv','-b',$bitrate);
+    my $rez = '400x300';
+    my $hadSample = 0;
+    my $hadChange;
+    my($ret,$outdata,$errdata);
+    for(my $l = 0; $l < 10; $l++)
+    {
+        ($ret,$outdata,$errdata) = ('','','');
+        $hadChange = 0;
+        ($ret,$outdata,$errdata) = runCommand('ffmpeg',@command,'-s',$rez,$target);
+        if ($outdata =~ /Incorrect\s*frame\s*size\s*\n?$/)
+        {
+            if ($rez eq '320x180')
+            {
+                failure($outdata,$errdata,$ret);
+            }
+            $hadChange = 1;
+            $rez = '320x180';
+        }
+        elsif($outdata =~ /(Sample\s*rate\s*must\s*be\s*|(does\s*not|doesnt)\s*support\s*that\s*sample\s*rate)/i)
+        {
+            if ($hadSample)
+            {
+                failure($outdata,$errdata,$ret);
+            }
+            $hadSample = 1;
+            $hadChange = 1;
+            push(@command,'-ar',22050);
+        }
+        elsif($outdata =~ /Unsupported\s*codec/)
+        {
+            failure($outdata,$errdata,$ret,'Unsupported codec? Read the header of '.$0.' for information about required packages');
+        }
+        elsif(defined $ret and $ret == 0)
+        {
+            my $s = -s $target;
+            if ($s < 100)
+            {
+                unlink($target);
+                failure($outdata,$errdata,$ret,'File finished but was way too small, can\'t have succeeded (size: '.$s.' - file removed)');
+            }
+            return 1;
+        }
+        else
+        {
+            failure($outdata,$errdata,$ret);
+        }
+        unlink($target);
+        if(not $hadChange)
+        {
+            failure($outdata,$errdata,$ret);
+        }
+    }
+    failure($outdata,$errdata,$ret,'maxloops reached');
+}
+
+# Purpose: Run a command, logging all output
+# Usage: my($return_value, $stdout, $stderr) runCommand(...);
+sub runCommand
+{
+    my $OUT = '';
+    my $ERR = '';
+    my $pid = open3(my $in,my $out,my $err,@_);
+    $ffmpegCommand = join(' ',@_);
+    while((defined $out or $err))
+    {
+        if (defined $out and not eof($out))
+        {
+            $OUT .= <$out>,
+        }
+        if (defined $err and not eof($err))
+        {
+            $ERR .= <$err>;
+        }
+        if ((not $out or eof($out)) and (not $err or eof($err)))
+        {
+            last;
+        }
+    }
+    close($in) if defined $in;
+    close($out) if defined $out;
+    close($err) if defined $err;
+    my $ret = $RET{$pid};
+    while(not defined($ret))
+    {
+        sleep(1);
+        $ret = $RET{$pid};
+    }
+    return($ret,$OUT,$ERR);
+}
+
+# Purpose: Write data to the info file
+# Usage: writeInfoFile('first line',@other content);
+sub writeInfoFile
+{
+    my $initialContent = shift;
+    open(my $f,'>',$infoFile);
+    print {$f} $initialContent."\n";
+    if ($initialContent eq 'FAILURE')
+    {
+        print {$f} 'Lixuz command: '.$0.' '.$source.' '.$target.' '.$infoFile.' '.$bitrate."\n";
+        print {$f} $ffmpegCommand."\n";
+    }
+    foreach (@_)
+    {
+        print {$f} $_;
+    }
+    close($f);
+}

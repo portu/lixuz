@@ -1,0 +1,104 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if ($message) {
+% # FIXME: drop the <b></b> tags and do that in CSS
+<div id="lzCategoryListMessage"><b><% $message %></b></div>
+%}
+%if($childOf) {
+<b><% $i18n->get_advanced('Showing child images of image %(IMAGE)', { IMAGE => $childOf })%>
+%}
+
+<& ../core/listnavigation.html, %ARGS &>
+
+<div id="filesViewList">
+<%perl>
+my $suppressed = 0;
+if(defined $files && $files->count > 0)
+{
+my $n = 0;
+while(my $file = $files->next)
+{
+   if(not $file->can_read($c))
+   {
+       $suppressed++;
+       next;
+   }
+</%perl>
+<div class="fileEntry" uid="<% $file->file_id %>">
+<center>
+%# FIXME: Drop manual styling
+%# TODO: If we simply click on something, it will follow the link, but it will also try to
+%# let you drag+drop it. drag+drop should not kick in on a simple click.
+<div class="fileHolder">
+%if ($file->is_image) {
+<a style="text-decoration: none" href="<% $file->get_url %>" target="_blank">
+% }
+<% $file->get_iconItemBasic($c) |n %>
+</a>
+</div>
+<div class="fileButtons">
+%if($file->status eq 'Active') {
+    <img src="/static/images/Active.png" class="useTipsy" title="<% $i18n->get('Status: Active') |n %>" alt="<% $i18n->get('Active') |n %>" border="0" />&nbsp;&nbsp;
+%} else {
+    <img src="/static/images/Inactive.png" class="useTipsy" title="<% $i18n->get('Status: Inactive') |n %>" alt="<% $i18n->get('Inactive') |n %>" border="0" />&nbsp;&nbsp;
+%}
+%if($file->can_edit($c)) {
+  <a href="/admin/files/edit/<% $file->file_id %>"><img src="/static/images/icons/image-edit.png" class="useTipsy" title="<% $i18n->get('Edit file') |n %>" alt="<% $i18n->get('Edit file') |n %>" border="0" /></a>&nbsp;&nbsp;
+%}
+%if ($c->user->can_access('/admin/files/imgedit') && $file->is_image) {
+  <a href="/admin/files/imgedit/<% $file->file_id %>"><img src="/static/images/icons/image-crop.png" class="useTipsy" title="<% $i18n->get('Crop image') |n %>" alt="<% $i18n->get('Crop image') |n %>" border="0" /></a>&nbsp;&nbsp;
+%}
+%#  <a href="#"><img src="/static/images/icons/more-info.png" class="useTipsy" title="More info" alt="More info" border="0" /></a>&nbsp;&nbsp;
+%if ($file->is_image) {
+<a style="text-decoration: none" href="<% $file->get_url %>" target="_blank"><img src="/static/images/icons/zoom.png" class="useTipsy" title="<% $i18n->get('View full-size') |n %>" alt="<% $i18n->get('View full-size') |n %>" border="0" /></a>
+%} else {
+<a style="text-decoration: none" href="<% $file->get_url %>" target="_blank"><img src="/static/images/icons/file-download.png" class="useTipsy" title="<% $i18n->get('Download file') |n %>" alt="<% $i18n->get('Download file') |n %>" border="0" /></a>
+%}
+%if($file->clones->count) {
+<a href="/admin/files?childOf=<%$file->file_id%>"><img src="/static/images/icons/image-otherVersions.png" class="useTipsy" title="<% $i18n->get('View other versions') |n %>" alt="" /></a>
+%}
+</div>
+<span class="fileInfo hoverFileInfo" id="dragDropEntry<%$n%>_extraInfo">
+<% $i18n->get('Size:') %> <% $file->sizeString($c) %> | <% $i18n->get('ID:') %> <% $file->file_id %><br />
+<span style="padding-top: 0.3em;">
+%if( $file->is_image || $file->is_flash) {
+<% $i18n->get('Dimen.:') |n %> <%$file->width ? $file->width : '(?)'%>x<%$file->height ? $file->height : '(?)' %>
+%}
+%if($file->is_video) {
+<br /><% $i18n->get('FLV size')%>: <% $file->flv_size($c) %>
+%}
+</span>
+</span>
+</center>
+</div>
+%}
+%}
+</div>
+<& ../core/suppressedInfo.html, %ARGS, suppressed => $suppressed, name => $i18n->get('files') &>
+
+<%args>
+$file=>undef
+$message => undef
+$filesPerRow => 5
+$childOf => undef
+$i18n
+</%args>
+<%init>
+use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL);
+my $files = $file;
+</%init>

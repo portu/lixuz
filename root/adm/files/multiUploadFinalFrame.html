@@ -1,0 +1,42 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<br /><br /><br /><br /><br /><br />
+<center>
+    <% $i18n->get('Finalizing upload...') |n %>
+</center>
+<script type="text/javascript">
+    try
+    {
+        (function (){
+            var files = [];
+<%perl>
+foreach my $h (@{$uploadedMeta})
+{
+</%perl>
+            files.push(<% $h |n %>);
+%}
+            parent.articleFiles.performFileAddition(null,files);
+        })();
+    } catch(e) { parent.lzlog(e); }
+    parent.destroyPI();
+    parent.LZ_AsyncUploadClose();
+</script>
+<%args>
+$i18n
+$uploadedMeta => []
+</%args>

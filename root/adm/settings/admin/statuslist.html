@@ -1,0 +1,62 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($message) {
+% # FIXME: drop the <b></b> tags and do that in CSS
+<div id="lzStatusListMessage"><b><% $message %></b></div>
+%}
+
+<& ../../core/listnavigation.html, %ARGS &>
+
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'status_id', ordertype => $ordertype}) %>"><% $i18n->get('Status ID') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'status_name', ordertype => $ordertype}) %>"><% $i18n->get('Status name') %></a></td>
+	<td class="rowHead">&nbsp;</td>
+	<td class="rowHead">&nbsp;</td>
+    </tr>
+
+%if(defined $status && $status->count > 0){
+%my $i=0;
+%while(my $status = $status->next){
+%$i++;
+
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+        <td><% $status->status_id %></td>
+        <td><% $status->status_name($c->stash->{i18n})%></td>
+%if ($status->status_id <= 4)
+%{
+<td colspan="2"><% $i18n->get('Mandatory system status') %></td>
+%}
+%else
+%{
+    <td><a href="/admin/settings/admin/statuses/edit/<% $status->status_id %>"><img src="/static/images/icons/statuses-edit.png" border="0" title="<% $i18n->get('Edit') %>" alt="<% $i18n->get('Edit') %>" /></a></td>
+    <td><a href="/admin/settings/admin/statuses/delete/<% $status->status_id %>" onclick="return userQuestion('<% $i18n->get_advanced('Are you sure you want to delete the status "%(STATUSNAME)"?', { STATUSNAME => $status->status_name($c->stash->{i18n}) } ) %>')"><img src="/static/images/icons/trash.png" border="0" title="<% $i18n->get('Delete') %>" alt="<% $i18n->get('Delete') %>" /></a></td>
+%}
+    </tr>
+%}
+%}
+
+</table>
+
+
+<%args>
+$status=>undef
+$message => undef
+$i18n
+$ordertype
+</%args>

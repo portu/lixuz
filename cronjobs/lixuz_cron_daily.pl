@@ -1,0 +1,340 @@
+#!/usr/bin/perl
+# Daily cronjob for Lixuz
+
+# -- INIT --
+use strict;
+use warnings;
+use 5.010;
+use POSIX qw(nice); nice(10); # Be nice
+use FindBin;
+use File::stat;
+use DBI;
+use Cwd;
+use Try::Tiny;
+use constant {
+    true => 1,
+    false => 0
+};
+use lib $FindBin::RealBin.'/../lib/';
+
+my $verbosity = 0;
+my $runAll = 0;
+foreach (@ARGV)
+{
+	given($_)
+	{
+		when('--verbose')
+		{
+			$verbosity++;
+		}
+
+		when('--runall')
+		{
+			$runAll++;
+		}
+
+		default
+		{
+			warn("Unknown parameter: $_\n");
+		}
+	}
+}
+
+# Lixuz doesn't like not being in its own dir when initializing
+chdir($FindBin::RealBin.'/..');
+my $title = 'LIXUZ_Daily_Cron ['.getcwd.']';
+title('init');
+require LIXUZ;
+use LIXUZ::HelperModules::Scripts qw(fakeC);
+use LIXUZ::HelperModules::Indexer;
+
+my $fakeC  = fakeC();
+
+if(ref($fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}) eq 'ARRAY')
+{
+    die("Old-style config. Unable to continue.\n");
+}
+my $DBSTR  = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{dsn};
+my $DBUser = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{user};
+my $DBPwd  = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{password};
+my $dbh = DBI->connect($DBSTR,$DBUser,$DBPwd);
+
+my (undef,undef,undef,$mday,undef,undef,$wday,undef,undef) = localtime;
+
+sub title
+{
+    $0 = $title .' - '.$_[0];
+    if ($verbosity)
+    {
+        print $0."\n";
+    }
+}
+
+# Clean up captchas
+{
+    title('captcha cleaning');
+    $dbh->do('DELETE FROM lz_live_captcha WHERE UNIX_TIMESTAMP() > (UNIX_TIMESTAMP(created_date)+7400);');
+}
+
+# Clean up old cached files
+{
+    title('imgcache cleaning');
+    my $path = $fakeC->config->{LIXUZ}->{file_path};
+    while(my $f = glob($path.'/*.imgcache'))
+    {
+        my $stat = stat $f;
+        if(defined $stat->atime && $stat->atime > $stat->mtime)
+        {
+            my $oneWeekAgo = time() - (86_500*7);
+            if ($stat->atime < $oneWeekAgo)
+            {
+                unlink($f);
+            }
+        }
+    }
+}
+
+# ---
+# Clean up errors in the DB
+# ---
+
+# Self-referencing relationships
+{
+    title('self-ref relationship cleaning');
+    $dbh->do('DELETE FROM lz_article_relations WHERE article_id=related_article_id;');
+}
+
+# Missing statuses
+{
+    title('missing statuses');
+    $dbh->do('UPDATE lz_article SET status_id=4 WHERE status_id IS NULL;');
+}
+
+# Folders without a single field
+{
+    title('missing fields');
+    my $rootFolders = $dbh->selectall_arrayref('SELECT folder_id FROM lz_folder WHERE parent IS NULL');
+    foreach my $folder (@{$rootFolders})
+    {
+        $folder = $folder->[0];
+        my $content = $dbh->selectall_arrayref('SELECT object_id from lz_field_module WHERE object_id='.$folder.' AND module="folders"');
+        if ($content && @{$content})
+        {
+            next;
+        }
+        my @fields = qw(title lead author body publish_time expiry_time status_id folder template_id);
+        my $fno = 0;
+        foreach my $field (@fields)
+        {
+            $fno++;
+
+            my $id = $dbh->selectall_arrayref('SELECT field_id FROM lz_field WHERE inline="'.$field.'"');
+            next if not $id || not $id->[0];
+            $id = $id->[0]->[0];
+            $dbh->do('INSERT INTO lz_field_module (field_id,module,object_id,position,enabled) VALUES ('.$id.',"folders",'.$folder.','.$fno.',1)');
+        }
+    }
+}
+# Missing STATUSCHANGE_*
+{
+    title('missing statuschange entries');
+    my $statuses = $dbh->selectall_arrayref('SELECT status_id FROM lz_status');
+    foreach my $status (@{$statuses})
+    {
+        $status = $status->[0];
+        my $existing = $dbh->selectall_arrayref('SELECT action_id FROM lz_action WHERE action_path="STATUSCHANGE_'.$status.'"');
+        if ($existing && @{$existing})
+        {
+            next;
+        }
+        $dbh->do('INSERT INTO lz_action (action_path) VALUES ("STATUSCHANGE_'.$status.'")');
+    }
+}
+# Missing WORKFLOW_REASSIGN_TO_ROLE_*
+{
+    title('missing workflow-reassign ACL entries');
+    my $roles = $dbh->selectall_arrayref('SELECT role_id FROM lz_role');
+    foreach my $role (@{$roles})
+    {
+        $role = $role->[0];
+        my $existing = $dbh->selectall_arrayref('SELECT action_id FROM lz_action WHERE action_path="WORKFLOW_REASSIGN_TO_ROLE_'.$role.'"');
+        if ($existing && @{$existing})
+        {
+            next;
+        }
+        $dbh->do('INSERT INTO lz_action (action_path) VALUES ("WORKFLOW_REASSIGN_TO_ROLE_'.$role.'")');
+    }
+}
+# Article issues
+{
+    title('article issues');
+    my %seen;
+    my $folders = $fakeC->model('LIXUZDB::LzArticleFolder')->search({ primary_folder => 1});
+    while(my $f = $folders->next)
+    {
+        my $id = $f->article_id.'-'.$f->revision;
+        if ($seen{$id})
+        {
+            $f->set_column('primary_folder',0);
+            $f->update();
+        }
+        else
+        {
+            $seen{$id} = 1;
+        }
+    }
+}
+
+# ---
+# Make sure the search index is up to date
+# ---
+{
+    title('indexing (init)');
+
+    my $internalIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'internal', c => $fakeC);
+    my $liveIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'external', c => $fakeC);
+
+    title('indexing (articles)');
+    my $allArts = $fakeC->model('LIXUZDB::LzArticle')->page(1);
+    my $pager = $allArts->pager;
+    foreach my $page ($pager->first_page..$pager->last_page)
+    {
+        my $arts = $allArts->page($page);
+        while(my $art = $arts->next)
+        {
+            if ($art->status_id == 2)
+            {
+                $liveIndexer->add_ifmissing($art);
+            }
+            $internalIndexer->add_ifmissing($art);
+        }
+        # Commit changes now to avoid using too much memory This might be
+        # somewhat slower than bulk committing everything at the end, but it
+        # ensures somewhat consistent memory usage, no matter the size of the
+        # DB
+        $liveIndexer->commit_ifneeded;
+        $internalIndexer->commit_ifneeded;
+    }
+
+    title('indexing (files)');
+    my $allFiles = $fakeC->model('LIXUZDB::LzFile')->page(1);
+    $pager = $allFiles->pager;
+    my $added = 0;
+    foreach my $page ($pager->first_page..$pager->last_page)
+    {
+        my $files = $allFiles->page($page);
+        while(my $file = $files->next)
+        {
+            if ($internalIndexer->add_ifmissing($file))
+            {
+                $added++;
+            }
+        }
+        if ($added > 20)
+        {
+            # Commit changes now to avoid using too much memory This might be
+            # somewhat slower than bulk committing everything at the end, but it
+            # ensures somewhat consistent memory usage, no matter the size of the
+            # DB
+            $internalIndexer->commit_ifneeded;
+            $added = 0;
+        }
+    }
+
+    title('indexing (committing)');
+    # Commit, and tell the indexer to optimize the index while we're at it
+    $liveIndexer->commit(1);
+    $internalIndexer->commit(1);
+}
+
+# ===
+# Weekly chunk
+# ===
+if ($wday == 1 || $runAll)
+{
+    $title =~ s/Daily/Weekly/g;
+    {
+        title('Article sanitychecks');
+        my $arts = $fakeC->model('LIXUZDB::LzArticle');
+        while(my $art = $arts->next)
+        {
+			# Articles without workflows will be sort of lost within the system
+            if(not $art->workflow)
+            {
+                my $wf = $fakeC->model('LIXUZDB::LzWorkflow')->create({
+                        article_id => $art->article_id,
+                        revision => $art->revision,
+                        assigned_by => 1,
+                        assigned_to_user => 1,
+                    });
+                $wf->update();
+            }
+			# Articles without revision control metadata will not be editable
+			if(not $art->revisionMeta)
+			{
+				my $isLatest = 0;
+				try
+				{
+					my $latest = $fakeC->model('LIXUZDB::LzArticle')->search({ article_id => $art->article_id }, { order_by => 'publish_time DESC' });
+					if ($latest->first->revision == $art->revision)
+					{
+						$isLatest = 1;
+					}
+				};
+				my $rm = $fakeC->model('LIXUZDB::LzRevision')->create({
+						type => 'article',
+						type_revision => $art->revision,
+						type_id => $art->article_id,
+						committer => 1,
+						is_latest => $isLatest,
+					});
+				$rm->update();
+			}
+			# Articles without a primary folder won't list the neccessary fields
+			if(not $art->primary_folder)
+			{
+				if ($art->folders && $art->folders->count)
+				{
+					my $newpr = $art->folders->first;
+					$newpr->set_column('primary_folder',1);
+					$newpr->update();
+				}
+				else
+				{
+					my $f;
+					try
+					{
+						$f = $fakeC->model('LIXUZDB::LzFolder')->search(undef, { order_by => 'folder_id ASC' })->first;
+						my $newpr = $fakeC->model('LIXUZDB::LzArticleFolder')->create({
+								article_id => $art->article_id,
+								revision => $art->revision,
+								folder_id => $f->folder_id,
+								primary_folder => 1
+							});
+						$newpr->update;
+					}
+					catch
+					{
+						my $first = $_;
+						try
+						{
+							warn("Failed to create LzArticleFolder for article ".$art->article_id.'/'.$art->revision." and folder_id ".$f->folder_id.': '.$_);
+						}
+						catch
+						{
+							warn("Crash during LzArticleFolder creation: $first\n$_");
+						};
+					};
+				}
+			}
+        }
+    }
+}
+
+# ===
+# Monthly chunk
+# ===
+if ($mday == 1 || $runAll)
+{
+    $title =~ s/(Daily|Weekly)/Monthly/g;
+}

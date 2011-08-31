@@ -1,0 +1,54 @@
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=head1 LIXUZ URL MANUAL
+
+Lixuz has customizable URLs, defined by the I<template_url> and I<category_url>
+settings in lixuz.yml. These settings can be used to define how Lixuz generates
+URLs.
+
+All URLs are made absolute by Lixuz (ie. prefixed with /).
+
+=head2 CATEGORY URLs
+
+Category URLs can not be customized yet. You can only use the B<%c> placeholder, and
+optionally prefix it with some pre-determined text.
+
+=head2 ARTICLE URLs
+
+Article URLs can be customized in any way you like. The default is: "%c/%a". Another
+useful setting could be "%c/%A-%a". The bare minumum would be simply "%a".
+
+=head2 URL PLACEHOLDERS
+
+These are the URL placeholders that can be used in the above settings:
+
+=over
+
+=item B<%c>
+
+Category name list. This generates a tree-like string, in the form: category1/subcat/subcat.
+This is currently the only setting available for use in category URLs.
+
+=item B<%a>
+
+The article ID. B<MUST> be the last entry in any article URL.
+
+=item B<%A>
+
+The article title, cleaned for use in URLs.
+
+=back

@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+print 'Initializing...';
+use Data::Dumper;
+use DBI;
+use FindBin;
+print '.';
+use lib $FindBin::RealBin.'/../lib/';
+use Encode qw(decode encode_utf8);
+my $dbh_deskmaster = DBI->connect('DBI:mysql:deskmaster:localhost','lixuz','li09uz31') or die;
+print '.';
+my $ary = $dbh_deskmaster->selectall_arrayref("select email,CONCAT(fname,' ',lname) as name from mb_member where sendemail='yes' and finnvenn='0' and status='ver'");
+print '.';
+my %map;
+# Lixuz doesn't like not being in its own dir when initializing
+chdir($FindBin::RealBin.'/..');
+print '.';
+require LIXUZ;
+print "done\n";
+$| = 1;
+print 'Symbols: . = imported || , = already existed || ` == duplicate || \' == invalid e-mail'."\n";
+print 'Importing...';
+foreach my $col (@{$ary})
+{
+    my $email = $col->[0];
+    my $name = $col->[1];
+    if(not defined $email or not length $email or not $email =~ /.+@.+\..+/)
+    {
+        print '\'';
+        next;
+    }
+    if(not defined $name or not length $name)
+    {
+        $name = $email;
+    }
+    if ($map{$email})
+    {
+        print '`';
+        next;
+    }
+    $name = encode_utf8(decode('ISO-8859-1',$name));
+    $name =~ s/\?+//g;
+    $map{$email} = $name;
+    if(LIXUZ->model('LIXUZDB::LzNewsletterSubscription')->search({ email => $email })->count())
+    {
+        print ',';
+        next;
+    }
+    my $o = LIXUZ->model('LIXUZDB::LzNewsletterSubscription')->create({
+            email => $email,
+            name => $name,
+            format => 'html',
+            send_every => 'month',
+            validated => 1
+        });
+    LIXUZ->model('LIXUZDB::LzNewsletterSubscriptionGroup')->create({
+            group_id => 1,
+            subscription_id => $o->subscription_id
+        });
+    LIXUZ->model('LIXUZDB::LzNewsletterSubscriptionCategory')->create({
+            category_id => 1,
+            subscription_id => $o->subscription_id
+        });
+    LIXUZ->model('LIXUZDB::LzNewsletterSubscriptionCategory')->create({
+            category_id => 4,
+            subscription_id => $o->subscription_id
+        });
+    print '.';
+}
+print "done\n";

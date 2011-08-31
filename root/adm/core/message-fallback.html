@@ -1,0 +1,54 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Error</title>
+    </head>
+    <body>
+%if($lz_message_type eq '404')
+%{
+<h1>404: File not found<h1>
+
+<h4>This file or article does not exist on this server</h4>
+%}
+% elsif($lz_message_type eq 'NODIR')
+%{
+<h1>No articles<h1>
+<h4>No articles found in this category</h4>
+%}
+% else
+%{
+<h1>Internal error</h1>
+<% $lz_message |n %>
+%}
+%if($lz_message_intMsg) {
+<!--
+<% $lz_message_intMsg %>
+-->
+%}
+    </body>
+</html>
+<%args>
+$lz_message => 'An unknown error has occurred'
+$lz_message_type => 'UNKNOWN'
+$lz_message_intMsg => 'Unknown internal error'
+</%args>
+<%flags>
+inherit => undef
+</%flags>

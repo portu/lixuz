@@ -1,0 +1,130 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<table cellspacing="0" class="listView">
+    <tr>
+%my $columns = 2;
+        <td class="rowHead"><%$i18n->get('ID') %></td>
+        <td class="rowHead"><% $i18n->get('Title') %></td>
+%if($showStatus) {
+% $columns++;
+        <td class="rowHead"><% $i18n->get('Status') %></td>
+%}
+%if(not $hideDeadline) {
+% $columns++;
+        <td class="rowHead"><% $i18n->get('Deadline') %></td>
+%}
+%if ($canAccept) {
+% $columns++;
+        <td class="rowHead"><% $i18n->get('Accept?') %></td>
+%}
+% elsif($displayAssignee) {
+% $columns++;
+        <td class="rowHead"><% $i18n->get('Assigned to') %></td>
+%}
+    </tr>
+
+<%perl>
+if(defined $articleList && $articleList->count > 0){
+my $i=0;
+while(my $article= $articleList->next){
+$i++;
+
+my $article_is_mine = 0;
+if ((defined $article->workflow->assigned_to_user && $article->workflow->assigned_to_user == $c->user->user_id) || (defined $article->workflow->assigned_to_role && $article->workflow->assigned_to_role == $c->user->role->role_id))
+{
+    $article_is_mine = 1;
+}
+my $article_title;
+my $fullTitle = '';
+if ($columns >= 3)
+{
+    $article_title = $article->shorttitle;
+    $fullTitle = $article->title;
+    if($article_title eq $fullTitle)
+    {
+        $fullTitle = undef;
+    }
+}
+else
+{
+    $article_title = $article->title;
+}
+if( $hilightDeadlinePassed && 
+    (defined $article->workflow) &&
+    (defined $article->workflow->deadline) && 
+    (datetime_from_SQL_to_unix($article->workflow->deadline) < time))
+{
+</%perl>
+    <tr style="background:#FF0000">
+%} else {
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+%}
+        <td><% $article->article_id %></td>
+%my $href = '';
+%if($article_is_mine or $c->user->can_access('EDIT_OTHER_ARTICLES')) {
+    <td><a class="useTipsyW" title="<% $fullTitle %>" href="/admin/articles/edit/<% $article->article_id %>"><% $article_title |n %></a></td>
+%}elsif($article_is_mine or $c->user->can_access('PREVIEW_OTHER_ARTICLES')) {
+    <td><a class="useTipsyW" title="<% $fullTitle %>" href="/admin/articles/preview/<% $article->article_id %>" target="_blank"><% $article_title |n %></a></td>
+%}
+%else
+%{
+% $c->log->warn('Article '.$article->article_id.' was in our list, even though it isn\'t mine and I can\'t edit nor preview it');
+&nbsp;
+%}
+%if($showStatus) {
+    <td><% (defined $article->status && defined $article->status->status_name($i18n)) ? $article->status->status_name($i18n) : $i18n->get('(unknown)') %></td>
+%}
+%if(not $hideDeadline) {
+        <td><% ($article->workflow && $article->workflow->deadline) ? $article->workflow->deadline : $i18n->get('(none)') %></td>
+%}
+%if ($canAccept) {
+<td>
+<span id="LZWorkflowAcceptButton_<%$article->article_id%>">
+<input type="button" value="<% $i18n->get('Accept') %>" onclick="LZDB_AcceptAssignment(<% $article->article_id %>); return false" />
+</span>
+</td>
+%}
+% elsif($displayAssignee) {
+<td><% $article->workflow ? $article->workflow->assigned_to_string($c) : $i18n->get('(nobody)') |n%></td>
+%}
+    </tr>
+%}
+%}
+% else
+% {
+<tr>
+<td colspan="<% $columns %>" class="odd"> 
+<% $i18n->get('(none)') %>
+</td>
+</tr>
+% }
+
+</table>
+<%args>
+$articleList => undef
+$articleListType => 'article'
+$canAccept => undef
+$displayAssignee => undef
+$hideDeadline => undef
+$showStatus => undef
+$hilightDeadlinePassed => undef
+$i18n
+</%args>
+<%once>
+use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL_to_unix);
+</%once>

@@ -1,0 +1,78 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if ($displaySite) {
+<div id="LZWorkflowCommentsContainer">
+%}
+%if (defined $w_comments) {
+%while(my $comment = $w_comments->next) 
+%{
+
+<div class="LZWorkflowComment">
+
+<%perl>
+my $author = '(unknown)';
+if ($comment->author)
+{
+    $author = $comment->author->firstname.' '.$comment->author->lastname;
+}
+my $subjectline;
+my $revision = '<a href="/admin/articles/preview/'.$comment->article_id.'?revision='.$comment->on_revision.'">'.$comment->on_revision.'</a>';
+if($comment->comment_subject)
+{
+    $subjectline = $i18n->get_advanced('<b>%(SUBJECT)</b> <span class="lite"><i>%(AUTHOR)</i> at %(DATETIME) on revision %(REVISION)</span>',{
+        SUBJECT => $comment->comment_subject,
+        AUTHOR => $author,
+        DATETIME => $comment->written_time,
+        REVISION => $revision,
+    });
+}
+else
+{
+    $subjectline = $i18n->get_advanced('<span class="lite"><i>%(AUTHOR)</i> at %(DATETIME) on revision %(REVISION)</span>',{
+        AUTHOR => $author,
+        DATETIME => $comment->written_time,
+        REVISION => $revision,
+    });
+}
+</%perl>
+
+<% $subjectline|n %><br/>
+
+% my $body = $comment->comment_body;
+% $body = encode_entities($body,'<>&"');
+% $body =~ s{(https?://[^\s\)]+)}{<a href="$1" target="blank">$1</a>}gi;
+% $body =~ s/\r?\n/<br \/>/g;
+<% $body |n %>
+
+</div>
+%}
+%}
+<input type="hidden" id="artid" value="<% $artid %>" />
+%if ($displaySite) {
+</div>
+%}
+<%args>
+$i18n
+$w_priority => ''
+$w_comments => undef
+$artid => ''
+$displaySite => 1
+</%args>
+<%init>
+use HTML::Entities qw(encode_entities);
+</%init>

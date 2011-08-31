@@ -1,0 +1,79 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div class="dashboardMsg" id="welcomeMsg"><% $i18n->get_advanced('Welcome to Lixuz, %(NAME) (%(USERNAME))', { NAME => $c->user->firstname.' '.$c->user->lastname, USERNAME => $c->user->user_name}) %></div>
+%if($message) {
+    <div class="dashboardMsg" id="lzTemplateListMessage"><b><% $message |n %></b></div>
+%}
+
+<div id="dashboardHolder">
+    <table border="0" cellspacing="0" cellpadding="12" width="60%">
+        <tr>
+% my $w = 0;
+% foreach my $mod (@Widgets) {
+% $w++;
+% if ($w > 2)
+% {
+        </tr>
+        <tr>
+% $w = 1;
+% }
+            <td>
+                <table class="dashboardTable">
+                    <tr>
+                        <td class="heading">
+                            <b><% $mod->{label} %></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="dashboard widget">
+%if($mod->{status_id}) {
+% $ARGS{status_id} = $mod->{status_id};
+%}
+                                <& $mod->{file}, %ARGS &>
+                            </div>
+                        </tr>
+                    </td>
+                </table>
+            </td>
+% }
+        </tr>
+    </table>
+</div>
+
+<%args>
+$i18n
+$message => undef
+</%args>
+
+<%init>
+my @Widgets = (
+{ file => 'widget_availableAssignments.html', label => $i18n->get('Available assignments'), },
+{ file => 'widget_myAssignments.html', label => $i18n->get('My assignments'), }, 
+);
+foreach my $arg(sort keys %ARGS)
+{
+    next if not $arg =~ s/^dashboard_articlesInStatus//;
+    # TODO: Fetch name
+    my $name = $c->stash->{statusMap}->{$arg};
+    push(@Widgets, {file => 'widget_articlesInStatus.html', status_id => $arg, label => $i18n->get_advanced('Recent "%(STATUS_NAME)" articles',{ STATUS_NAME => $name }) });
+}
+push(@Widgets,
+    { file => 'widget_recentComments.html', label => $i18n->get('Recent comments'),},
+    );
+</%init>

@@ -1,0 +1,76 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($message) {
+% # FIXME: drop the <b></b> tags and do that in CSS
+<div id="lzFieldListMessage"><b><% $message %></b></div>
+%}
+
+<& ../../../core/listnavigation.html, %ARGS &>
+
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'field_id', ordertype => $ordertype}) %>"><% $i18n->get('Field ID') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'field_name', ordertype => $ordertype}) %>"><% $i18n->get('Field name') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'field_type', ordertype => $ordertype}) %>"><% $i18n->get('Field type') %></a></td>
+        <td class="rowHead"><% $i18n->get('Module') %></td>
+        <td class="rowHead">&nbsp;</td>
+        <td class="rowHead">&nbsp;</td>
+    </tr>
+
+%if(defined $field && $field->count > 0){
+%my $i=0;
+%while(my $field = $field->next){
+%$i++;
+
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+        <td><% $field->field_id %></td>
+        <td><% $field->field_name%></td>
+        <td><% $field->type_name($c) %></td>
+<%perl>
+my $module = $field->exclusive_module;
+if ($module)
+{
+    $module = ucfirst($module);
+}
+else
+{
+    $module = $i18n->get('(all/any)');
+}
+</%perl>
+        <td><% $module |n %></td>
+%if($field->field_type =~ /meta/) {
+    <td align="left" colspan="2"><i><% $i18n->get('Metadata fields can not be edited or deleted') %></i></td>
+%} elsif($field->inline) {
+    <td align="left" colspan="2"><i><% $i18n->get('Inline fields can not be edited or deleted') %></i></td>
+%} else { 
+    <td><a href="/admin/settings/admin/additionalfields/edit/<% $field->field_id %>"><img src="/static/images/icons/adfield-edit.png" border="0" title="<% $i18n->get('Edit') %>" alt="<% $i18n->get('Edit') %>" /></a></td>
+    <td><a href="/admin/settings/admin/additionalfields/delete/<% $field->field_id %>" onclick="return userQuestion('<% $i18n->get_advanced('Are you sure you want to delete the additional field "%(FIELDNAME)" and all values entered into it? This action can not be undone.', { FIELDNAME => $field->field_name} ) %>')"><img src="/static/images/icons/trash.png" border="0" title="<% $i18n->get('Delete') %>" alt="<% $i18n->get('Delete') %>" /></a></td>
+%}
+    </tr>
+%}
+%}
+
+</table>
+
+
+<%args>
+$field=>undef
+$message => undef
+$i18n
+$ordertype
+</%args>

@@ -1,0 +1,10 @@
+name: lixuz_statusEdit
+method:post
+fields:
+    uid:
+        type: hidden
+        required: 0
+    status_name:
+        type: text
+        size: 40
+        required: 1

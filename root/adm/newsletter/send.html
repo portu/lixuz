@@ -1,0 +1,49 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="form_edit">
+
+<% $i18n->get('Add recipients')%> <a href="#" onclick="addManualRecipientsFromDB(); return false;"><% $i18n->get('from database') %></a>, 
+<a href="#" onclick="addManualRecipientsFromGroup(); return false;"><% $i18n->get('from group') %></a> <% $i18n->get('or') %> 
+<a href="#" onclick="addManualRecipientsFromEntry(); return false;"><% $i18n->get('manually') |n %></a>
+
+<div class="label"><% $i18n->get('Recipients') %>:</div>
+<div id="mail_recipients" style="overflow: auto"><i>(<% $i18n->get('no recipients added') %>)</i></div>
+
+<div class="label"><% $i18n->get('From') %>:</div>
+<div><input type="text" name="mail_from" id="mail_from" style="width: 600px" value="<% $c->config->{LIXUZ}->{from_email} |n %>" /></div>
+
+<div class="label"><% $i18n->get('Subject') %>:</div>
+<div><input type="text" name="mail_subject" id="mail_subject" style="width:600px"/></div>
+
+<div class="label"><% $i18n->get('Format') %>:</div>
+
+<select id="mail_type" onchange="manualNewsletterFormatChange(); return false;">
+<option value="text"><% $i18n->get('Text') %></option>
+<option value="html"><% $i18n->get('HTML') %></option>
+</select>
+
+<div class="label"><b><% $i18n->get('Message') %>:</b></div>
+<textarea rows="20" style="width: 600px" id="mail_editor"></textarea>
+
+<input type="button" name="saveRSSItemInfo" onclick="submitManualNewsletter(); return false;" value="<% $i18n->get('Send') %>" /> &nbsp;
+<input type="button" name="viewmailpreview" onclick="viewPreview(); return false;" value="<% $i18n->get('Preview') %>" />
+</div>
+
+<%args>
+$i18n
+</%args>

@@ -1,0 +1,59 @@
+# --
+# JS/CSS minification
+# --
+
+YUI_JAR_PATH=$(shell echo ~)/.local/yuiminify/yuicompressor.jar
+YUI_MINIFY=java -jar $(YUI_JAR_PATH)
+YUI_MINIFY_JS_OPTS=
+YUI_MINIFY_CSS_OPTS=
+YUI_MINIFY_VERSION=2.4.2
+WGET=wget -c --random-wait --retry-connrefused -t 20
+SHELL:=/bin/bash
+
+minify: minify_js minify_css minify_copyright
+minify_verbose: YUI_MINIFY_JS_OPTS += -v
+minify_verbose: minify
+undo_minify: buildjs buildcss
+	[ -e ".git" ]
+	[ `LC_ALL=C git status |grep -i 'modified'|egrep -i '(root/(js|css|live_utrop/css))'|wc -l` -gt 4 ]
+	for file in `git status|grep -i 'modified'|egrep -i '(root/(js|css|live_utrop/css))'|perl -pi -e 's/#.*modified:\s*//g'`; do if [ "`wc -l "$$file"|perl -pi -e "s/\D.*//g"`" -gt 1 ];then echo "Refusing to undo minify, some modified JS files appear to not be minified";echo "(bad file: $$file)"; exit 1;fi;done
+	for file in `git status|grep -i 'modified'|egrep -i '(root/(js|css|live_utrop/css))'|perl -pi -e 's/#.*modified:\s*//g'`; do git checkout -f "$$file";done
+forceMinifyPrep:
+	if [ ! -e "$(YUI_JAR_PATH)" ]; then make compressor_download || exit 1;fi
+	if ! type java >/dev/null; then echo "Needs java to run"; exit 1;fi
+minifyPrep: minifyCheckCommit forceMinifyPrep
+minifyCheckCommit:
+	if [ -e "./.git" ] && ! LC_ALL=C git status ./root/live-js |grep -v modified | grep -i 'nothing to commit' > /dev/null; then echo "You have uncommitted changes in your git repo, refusing to minify";exit 1;fi;true
+minify_js: minifyPrep buildjs
+	for file in root/js/*.js root/js/i18n/*.js; do if [ -e "$$file" ]; then echo "Minifying $$file" ; $(YUI_MINIFY) $(YUI_MINIFY_JS_OPTS) "$$file" -o "$$file.minified" || exit 1; mv -f "$$file.minified" "$$file";fi;done
+quickMinifySanity: forceMinifyPrep
+	for file in `ls -t $$(find -iname '*.js') 2>/dev/null |head`; do  echo "$$file"; $(YUI_MINIFY) $(YUI_MINIFY_JS_OPTS) "$$file" -o /dev/null || exit 1;done
+	@echo "All good"
+minify_css: minifyPrep buildcss
+	echo "Minifying root/css/lixuz.css" ; $(YUI_MINIFY) $(YUI_MINIFY_CSS_OPTS) "root/css/lixuz.css" -o "root/css/lixuz.css.minified" || exit 1; mv -f "root/css/lixuz.css.minified" "root/css/lixuz.css"
+minify_copyright: minifyPrep minify_js minify_css
+	# Portu copyright
+	for file in `ls root/js/*js|grep -v .lib|grep -v dragdrop`; do mv "$$file" "$$file.o"; echo -e "/*!! Copyright (C) Portu media & communications\n * Licensed under the GNU AGPLv3\n * See gnu.org/licenses/agpl.html */" > "$$file"; cat "$$file.o" >> "$$file"; rm -f "$$file.o";done
+	# YUI copyright
+	mv root/js/yui.lib.js root/js/yui.lib.js.o; echo "/* Copyright (c) 2009, Yahoo! Inc. All rights reserved. Code licensed under the BSD License: http://developer.yahoo.net/yui/license.txt */" > root/js/yui.lib.js; cat root/js/yui.lib.js.o >> root/js/yui.lib.js; rm -f root/js/yui.lib.js.o
+	# calendar+dragdrop copyright
+	mv root/js/jscalendar.lib.js root/js/jscalendar.lib.js.o; echo "/* Copyright Mihai Bazon, 2002-2005. Distributed under the GNU Lesser General Public License. Full license: http://www.gnu.org/licenses/lgpl.html */" > root/js/jscalendar.lib.js; cat root/js/jscalendar.lib.js.o >> root/js/jscalendar.lib.js; rm -f root/js/jscalendar.lib.js.o
+	mv root/js/dragdrop.js root/js/dragdrop.js.o;  echo "/* Copyright (C) 2006 DTHMLGoodies.com, Alf Magne Kalleland. GNU Lesser General Public License as published by the Free Software Foundation version 2.1 */" > root/js/dragdrop.js; cat root/js/dragdrop.js.o >> root/js/dragdrop.js; rm -f root/js/dragdrop.js.o
+compressor_download:
+	@echo ""
+	@echo " * * *"
+	@[ ! -e ~/.local/yuiminify ] && echo "You don't have yuicompressor. Downloading it for you." || true
+	@[ -e ~/.local/yuiminify ] && echo "Downloading/upgrading yuicompressor." || true
+	@echo " * * *"
+	@echo ""
+	@if ! type unzip; then echo "Needs unzip";exit1;fi
+	mkdir -p ~/.local/yuiminify/
+	cd ~/.local/yuiminify; $(WGET) "http://www.julienlecomte.net/yuicompressor/yuicompressor-$(YUI_MINIFY_VERSION).zip" 
+	cd ~/.local/yuiminify; unzip -q "yuicompressor-$(YUI_MINIFY_VERSION).zip"
+	cd ~/.local/yuiminify; mv -f "yuicompressor-$(YUI_MINIFY_VERSION)/build/yuicompressor-$(YUI_MINIFY_VERSION).jar" yuicompressor.jar
+	cd ~/.local/yuiminify; rm -rf ./yuicompressor-$(YUI_MINIFY_VERSION)*
+compressor_vercheck:
+	echo "Latest version available: `wget -O- http://www.julienlecomte.net/yuicompressor/ -q | egrep -i "yuicompressor-.*zip" |perl -pi -e 's/.*yuicompressor-(.*).zip.*/$$1/'`"
+	@echo "Currently defined in Makefile: $(YUI_MINIFY_VERSION)"
+
+# vim: set ft=make : 

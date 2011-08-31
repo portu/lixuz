@@ -1,0 +1,71 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<%perl>
+my $part = $currPart;
+foreach my $e (sort keys %{$part})
+{
+    next if $e eq 'paths';
+    for(my $i = 0; $i < $currLevel; $i++)
+    {
+</%perl>
+&nbsp;&nbsp;
+<%perl>
+    }
+    my $checked = ' checked="checked"';
+    my $disabled = '';
+    my @paths = @{$part->{$e}->{'paths'}};
+    if (not $parentChecked)
+    {
+        $checked = '';
+        $disabled = 'disabled="disabled"';
+    }
+    else
+    {
+        foreach my $p(@paths)
+        {
+            if(not $hasAccessTo->{$p})
+            {
+                $checked = '';
+                last;
+            }
+        }
+    }
+    my $nextLevel = $currLevel +1;
+    my $value = join(',',sort(@paths));
+    my $childId = $value.'_'.$nextLevel.'_'.$parentChecked;
+    my $checkedBool = ($checked ? 1 : 0);
+    my $super = $value eq 'SUPER_USER' ? 1 : 0;
+</%perl>
+<input type="checkbox" <% $super ? 'id="SUPER_USER"' : '' |n %>childLabel="<%$childId%>" isPermCheckbox="true" name="<% $value %>"<%$checked|n%><%$disabled|n%> parent="<%$parent%>" onchange="recalculateCheckedBoxes(this);" />
+<span id="<%$childId%>">
+<% $parentChecked ? '' : '<i>' |n %>
+<% $super ? '<b>' : '' |n %>
+<% $e %>
+<% $super ? '</b>' : '' |n %>
+<% $parentChecked ? '' : '</i>' |n %>
+</span>
+<br />
+<& renderPart.html, currPart => $part->{$e}, currLevel => $nextLevel, hasAccessTo => $hasAccessTo, parentChecked => $checkedBool, parent => $value &>
+%} # foreach my $e ...
+<%args>
+$currPart
+$currLevel => 0
+$parentChecked => 1
+$hasAccessTo
+$parent => ''
+</%args>

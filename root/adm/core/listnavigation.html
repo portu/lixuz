@@ -1,0 +1,63 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if(ref $pager){
+<%perl>
+my $prevURI;
+my $nextURI;
+if ($pager->previous_page)
+{
+$prevURI = $c->request->uri_with({page => $pager->previous_page});
+}
+if ($pager->next_page)
+{
+$nextURI = $c->request->uri_with({page => $pager->next_page});
+}
+</%perl>
+<div class="pagination" align="right">
+<span style="float:left; visibility:hidden;" id="paginationInfoMessage"></span>
+%if($prevURI) {
+<span class="pageBox"><a href="<% $c->request->uri_with({page => $pager->first_page}) %>">&#171;<% $i18n->get('First') %></a></span>
+&nbsp;
+<span class="pageBox"><a href="<%$prevURI%>">&#171;<% $i18n->get('Previous') %></a></span>
+%} else {
+<span class="pageBox">&#171;<% $i18n->get('First') %></span> &nbsp; <span class="pageBox">&#171;<% $i18n->get('Previous') %></span>
+%}
+&nbsp;
+%my $htmlPager = '<select name="pgmove" class="inputtext" onchange="LZ_pagerChange(this.value)">';
+%for(1..$pager->last_page) {
+% $htmlPager .=  '<option value="'.$_.'"'. ($pager->current_page == $_ ? ' selected="selected"' : '') . '>'.$_.'</option>';
+%}
+% $htmlPager .= '</select>';
+<span class="pageSelect"><% $i18n->get_advanced('Page %(PAGER) of %(PAGES)', { PAGER => $htmlPager, PAGES => $pager->last_page } ) |n %></span>
+
+&nbsp;
+%if($nextURI) {
+<span class="pageBox"><a href="<%$nextURI%>"><% $i18n->get('Next') %>&#187;</a></span>
+&nbsp;
+<span class="pageBox"><a href="<% $c->request->uri_with({page => $pager->last_page}) %>"><% $i18n->get('Last') %>&#187;</a></span>
+%} else {
+<span class="pageBox"><% $i18n->get('Next') %>&#187;</span> &nbsp; <span class="pageBox"><% $i18n->get('Last') %>&#187;</span>
+%}
+</div>
+%}
+
+<%args>
+$query=>undef
+$pager=>undef
+$i18n
+</%args>

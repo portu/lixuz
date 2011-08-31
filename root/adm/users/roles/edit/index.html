@@ -1,0 +1,69 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="form_edit">
+
+%if($message) {
+<% $message |n%>
+%}
+<form>
+%if(defined $role_id) {
+<input type="hidden" id="role_id" value="<%$role_id%>" />
+%}
+
+<div class="label role_name">
+<span><% $i18n->get('Role name')%></span> 
+</div>
+<div>
+<input id="role_name" <% $mode eq 'edit' ? 'disabled="disabled"' : '' |n %> type="text" name="role_name" value="<% $role_name %>" />
+</div>
+
+<div class="label role_status">
+<span><% $i18n->get('Status') %></span> 
+</div>
+<div>
+<select id="role_status" type="text" name="role_status" >
+<option <% $role_status eq 'Active' ? 'selected="selected"' : '' |n %> value="Active"><% $i18n->get('Active') %></option>
+<option <% $role_status eq 'Inactive' ? 'selected="selected"' : '' |n %> value="Inactive"><% $i18n->get('Inactive') %></option>
+</select>
+</div>
+
+<br />
+<b>Access rights:</b><br />
+
+<& renderPart.html, currPart => $groups, %ARGS &>
+
+<br/><br/>
+<div class="submit"><input id="lixuz_roleEdit_submit" name="_submit" onclick="submitRoleData(); return false;" type="button" value="Save changes" /></div>
+<div class="reset"><input id="lixuz_roleEdit_reset" name="_reset" onclick="try { this.form.reset(); } catch(e) { } ; recalculateCheckedBoxes();" type="reset" value="Reset" /></div>
+</form>
+
+</div>
+
+<%args>
+$message => undef
+$mode => 'add'
+$role_name => ''
+$role_status => 'Active'
+$role_id => undef
+$groups
+$i18n
+</%args>
+
+<%init>
+use LIXUZ::HelperModules::Forms('select_options');
+</%init>

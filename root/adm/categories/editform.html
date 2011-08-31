@@ -1,0 +1,104 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($message) {
+<% $message |n %>
+%}
+
+<% $FormBuilder->script |n %>
+
+<% $FormBuilder->start |n %>
+<% $FormBuilder->statetags |n %>
+
+%foreach my $field ($FormBuilder->fields){
+%if($field->type eq 'hidden'){
+<input type="hidden" id="<%$field->name|n %>" name="<% $field->name |n %>" value="<% $field->value %>" />
+%}else{
+%     $formfield->{$field}=$field;
+%}
+%}
+
+<div id="form_edit" class="category">
+<div class="label category_name">
+<span><% $i18n->get('Category name') %></span><% $formfield->{category_name}{message} %>
+</div>
+<div><input type="text" name="category_name" value="<% $formfield->{category_name}{value}%>" <% $formfield->{user_name}{value} ? 'DISABLED' : '' %> />
+</div>
+
+<div class="label category_parent">
+<span><% $i18n->get('Parent category') %></span>
+<% $formfield->{parent}{message}%>
+</div>
+<div>
+<select name="parent">
+<% $parents_dropdown |n %>
+</select>
+</div>
+
+<div class="label category_template">
+<span><% $i18n->get('Template') %></span>
+<% $formfield->{template}{message}%>
+</div>
+<div>
+<select name="template">
+<% select_options($formfield->{template}, $i18n )|n %>
+</select>
+</div>
+
+<div id="form categories edit">
+<div class="label external_link">
+<span><% $i18n->get('External link') %></span><% $formfield->{external_link}{message} %>
+</div>
+<div><input type="text" name="external_link" value="<% $formfield->{external_link}{value}%>" <% $formfield->{user_name}{value} ? 'DISABLED' : '' %> />
+</div>
+
+<div id="form categories status" class="label">
+<span><% $i18n->get('Status') %></span>
+<% $formfield->{status}{message}%>
+</div>
+<div>
+<select name="category_status">
+<% select_options($formfield->{category_status}, $i18n) |n %>
+</select>
+</div>
+
+<div id="form categories folderlist" class="label folderlist">
+<span><% $i18n->get('Folders') %></span>
+<span id="folderlist">
+<% $dragdrop |n %>
+</span>
+</div>
+
+      <div class="submit"><% $FormBuilder->submit |n %></div>
+      <div class="reset"><% $FormBuilder->reset |n %></div>
+      </div>
+</div>
+
+<% $FormBuilder->end |n %>
+
+<%args>
+$FormBuilder
+$message => undef
+$parents_dropdown
+$dragdrop
+$i18n
+</%args>
+
+<%init>
+use LIXUZ::HelperModules::Forms('select_options');
+my $formfield=();
+</%init>

@@ -1,0 +1,38 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<%args>
+$mode => 'script'
+</%args>
+<%perl>
+my $UI = 0;
+$UI = 1 if $c->stash->{lz_preview_mode};
+
+if($mode eq 'LAB')
+ {
+    $mode = 'rawLAB';
+</%perl>
+<script type="text/javascript">
+%}
+<& CDN-hosted.html, mode => $mode, UI => $UI &>
+%if($mode eq 'rawLAB') {
+$LAB.queue('/js/live.js',true);
+</script>
+%} else {
+<script src="/js/live.js"></script>
+%}
+%$m->print($c->stash->{lz_preview_mode}) if $c->stash->{lz_preview_mode};

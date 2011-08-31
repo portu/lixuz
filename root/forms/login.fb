@@ -1,0 +1,12 @@
+name: lixuz_login
+method: post
+fields:
+	user_name:
+		required: 1
+		type: text
+		size: 40
+	password:
+		required: 1
+		type: password
+		size: 40
+submit: Login

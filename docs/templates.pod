@@ -1,0 +1,87 @@
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=head1 LIXUZ TEMPLATE MANUAL - INTRODUCTION
+
+This is the Lixuz template manual. It serves as an introduction and reference
+for the Lixuz template system.
+
+The version described here is version B<1> of the Lixuz template API.
+
+=head2 Conventions used
+
+Whenever the word "{as}" (without the quotes) appear, what is meant is the
+value supplied to the as= parameter to a needinfo source.
+
+=head1 BASIC FORMAT
+
+At the base of the Liuxz template format lies Mason (HTML::Mason) and Catalyst.
+Anything you can do with mason, you can do with a Lixuz template, and you also
+have access to the $c catalyst object. Lixuz leaves all of the actual code
+parsing to Mason, but requires an additional data block to be present
+in all templates that lets Lixuz know things about the template.
+
+A block can look like this (all options are not required, see the section on
+INFOBLOCK DATA for more information on the various settings):
+
+    <%perl>
+    # BEGIN LIXUZ_INFOBLOCK
+    # TEMPLATE_VERSION=0.1
+    # TEMPLATE_NAME=Lixuz basic article page
+    # TEMPLATE_LICENSE=Proprietary
+    # TEMPLATE_APIVERSION=1
+    # TEMPLATE_TYPE=article
+    # TEMPLATE_NEEDSINFO=article_get_[artid=url,as=article,includeRelations=1,includeComments=1,handleComments=1]
+    # TEMPLATE_FILESPOT=[type=image,name=Primary image,as=primaryImage,id=1]
+    # TEMPLATE_INCLUDES=no.lixuz.header no.lixuz.footer no.lixuz.subscribeNewsletter
+    # TEMPLATE_UNIQUEID=no.lixuz.basicArticle
+    # END LIXUZ_INFOBLOCK
+    </%perl>
+
+Any template can only have one infoblock and Lixuz will stop processing the file
+when it hits the first END LIXUZ_INFOBLOCK. You can have comments inside
+an infoblock by using ## at the start of the line instead of just #.
+
+=head1 VALIDATION AND DEBUGGING
+
+As Lixuz templates are primarily mason templates, the first thing you
+should do if you experience issues is to try to validate that the
+Mason template is valid. This can for instance be done with the 
+./tools/masontest.pl file included with Lixuz. This program is an
+approximate equivalent to 'perl -c' for mason templates.
+
+Secondly, consult the list of required infoblock data above. If you have
+forgotten an entry, it will not render the template.
+
+Thirdly, check the Lixuz logfile. If something goes wrong while rendering
+the template, that's where the error information will be available.
+
+=head2 UPDATING LIVE TEMPLATES MANUALLY
+
+Lixuz has a builtin template replacement function, but for quick updates
+it is often much easier to upload it manually (ie. using rsync or scp) to
+the server than to enter the Lixuz web UI. The templates can be found in
+the directory defined by LIXUZ:template_path in the Lixuz config file.
+Here the files are named with both their template_id (at the beginning
+of the filename) and their uniqueid, so it should be simple to find the
+one you want to replace. Once you have found it you can simply overwrite
+it with your new version. If you did not change the infoblock then you
+can just reload the page that is not working to see if your changes
+are now working (checking the logfile for whining). If you did change
+the infoblock then you will have to empty memcached. It's not recommended
+that you do that on a live server so you ought to have a debugging server.
+Emptying memcached can be done either from within the Lixuz web UI on
+the templates page, or by restarting memcached.

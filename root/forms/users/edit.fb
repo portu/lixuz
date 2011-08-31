@@ -1,0 +1,39 @@
+name: lixuz_userEdit
+method:post
+fields:
+	firstname:
+		required: 1
+		type: text
+		size: 40
+		validate: VALUE
+	lastname:
+		required: 1
+		type: text
+		size: 40
+		validate: VALUE
+	email:
+		required: 1
+		type: text
+		size: 40
+		validate: EMAIL
+	password:
+		required: 1
+		type: password
+		size: 40
+	user_name:
+		required: 1
+		type: text
+		size: 40
+		validate: VALUE
+	language:
+		required: 0
+		type: select
+	user_status:
+		required: 1
+		type: select
+	role:
+		required: 1
+		type: select
+	type:
+		required: 1
+		type: hidden

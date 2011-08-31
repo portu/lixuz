@@ -1,0 +1,49 @@
+<%perl>
+$m->interp->set_escape( h => \&HTML::Mason::Escapes::basic_html_escape );
+if($displaySite)
+{
+    if($c->req->param('_JSON_Submit') && $c->req->param('_JSON_Submit') eq '1')
+    {
+</%perl>
+{ "status": "ERR", "error": "MASON_HANDLER_GOT_JSON" }
+<%perl>
+    }
+    else
+    {
+        try
+        {
+            $m->comp('core/header.html',%ARGS);
+            $m->call_next();
+            $m->comp('core/footer.html',%ARGS);
+        }
+        catch
+        {
+            $c->log->error($_);
+            $ARGS{errorMessages} = [ $_ ];
+            $m->clear_buffer;
+            $m->comp('core/error.html',%ARGS);
+        };
+    }
+}
+else
+{
+    try
+    {
+        $m->call_next();
+    }
+    catch
+    {
+        $c->log->error($_);
+        $ARGS{errorMessages} = [ $_ ];
+        try { $m->call_next() };
+        $m->clear_buffer;
+        $m->comp('core/error.html',%ARGS);
+    };
+}
+</%perl>
+<%args>
+$displaySite => 1
+</%args>
+<%once>
+use Try::Tiny;
+</%once>

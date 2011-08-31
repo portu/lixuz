@@ -1,0 +1,38 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="LZWorkflowNewCommentContainer">
+<% $i18n->get('Subject') %><br/>
+<input type="text" size="40" id="LZWF_CommentSubject" name="LZWF_CommentSubject" />
+<br/><br/>
+%# We specify a width in the style tag here to ensure proper display on small screens
+<% $i18n->get('Comment') %><br/>
+<textarea cols="70" id="LZWF_CommentBody" name="LZWF_CommentBody" rows="8" style="width: 100%"></textarea>
+<br/>
+<input type="button" value="<%$i18n->get('Submit new comment')%>" id="LZWF_CommentSubmit" />
+<script type="text/javascript">
+$LAB.queue(function () {
+    $(function (){
+        $('#LZWF_CommentSubmit').lButton(LZWF_SubmitComment);
+    })
+});
+</script>
+</div>
+
+<%args>
+$i18n
+</%args>

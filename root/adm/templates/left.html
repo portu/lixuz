@@ -1,0 +1,36 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div>
+    <div class="buttonHolder"><a href="/admin/templates/upload"><img src="/static/images/icons/templates-upload.png" border="0" align="left" />&nbsp;<% $i18n->get('Upload template') |n %></a></div>
+
+<br clear="all" />
+<br/>
+
+%if($c->user->can_access('/admin/settings/admin/info/memcached/flush')) {
+<div class="buttonHolder"><a href="/admin/settings/admin/info/memcached/flush"><img src="/static/images/icons/memcached-clear.png" border="0" align="left" />&nbsp;<% $i18n->get('Empty cache') |n %></a></div>
+<br clear="all" />
+<small><i><% $i18n->get('(Use with care, this will make any template changes done before the cache was emptied take effect on the live website immediately (instead of within 24 hours), but will also slow down the website while the cache gets refilled)') %></i></small>
+%} else {
+<i><% $i18n->get('(you do not have permission to empty memcached)') |n %></i>
+%}
+
+</div>
+
+<%args>
+$i18n
+</%args>

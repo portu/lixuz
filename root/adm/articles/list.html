@@ -1,0 +1,194 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($message) {
+% # FIXME: drop the <b></b> tags and do that in CSS
+<div id="lzArticleListMessage">
+<b><% $message %></b>
+</div>
+%}
+
+<& ../core/listnavigation.html, %ARGS &>
+
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead aiHead"><a href="<% $c->request->uri_with({ orderby => 'article_id', ordertype => $ordertype}) %>"><% $i18n->get('Article ID') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'title', ordertype => $ordertype}) %>"><% $i18n->get('Article title') %></a></td>
+%#        <td class="rowHead"><% $i18n->get('Template') %></td>
+%#        <td class="rowHead"><% $i18n->get('Parent') %></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'status_id', ordertype => $ordertype}) %>"><% $i18n->get('Status') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'author', ordertype => $ordertype}) %>"><% $i18n->get('Author') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'assigned_to_user', ordertype => $ordertype}) %>"><% $i18n->get('Assigned to') %></a></td>
+	<td class="rowHead rowHeadIcon">&nbsp;</td>
+	<td class="rowHead rowHeadIcon">&nbsp;</td>
+	<td class="rowHead rowHeadIcon">&nbsp;</td>
+	<td class="rowHead rowHeadIcon">&nbsp;</td>
+    </tr>
+
+<%perl>
+if(defined $article && $article->count > 0){
+my $i=0;
+my $suppressed = 0;
+while(my $article = $article->next){
+if(not $article->can_read($c))
+{
+    $suppressed++;
+    next;
+}
+my $lockedBy = $article->locked_by($c);
+$i++;
+my $art_title = $article->title;
+my $list_title = $article->shortText('title',50);
+if(not defined $art_title or not length $art_title)
+{
+    $art_title = $i18n->get('(unnamed)');
+    $list_title = $art_title;
+}
+my $listTooltip = '';
+if($lockedBy)
+{
+    $listTooltip .= $i18n->get_advanced('Locked by %(USER)', { USER => $lockedBy } );
+}
+if($art_title ne $list_title)
+{
+    if($listTooltip)
+    {
+        $listTooltip .= $i18n->get_advanced('Full title: %(TITLE)', { TITLE => $art_title });
+    }
+    else
+    {
+        $listTooltip = $art_title;
+    }
+}
+</%perl>
+
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+        <td><% $article->article_id %></td>
+%if(not $trashMode and ($article->can_write($c) or $c->user->can_access('EDIT_OTHER_ARTICLES'))) {
+<td><a class="useTipsy" title="<% $listTooltip %>" href="/admin/articles/edit/<% $article->article_id %>"><% $list_title %></a></td>
+%}elsif($article->can_write($c) or $c->user->can_access('PREVIEW_OTHER_ARTICLES')) {
+<td><a  class="useTipsy" title="<% $listTooltip %>" href="/admin/articles/preview/<% $article->article_id %>" target="_blank"><% $list_title %></a></td>
+%}
+%else
+%{
+% $c->log->warn('Article '.$article->article_id.' was in our list, even though it isn\'t mine and I can\'t edit nor preview it');
+&nbsp;
+%}
+%# TODO: Template should be a link to the template, as should display_type and link should be a link
+%#        <td><% $article->template_id || '&nbsp;'  |n %></td>
+%#        <td><% $article->parent || '&nbsp;'  |n %></td>
+<%perl>
+my $status = $article->status;
+my $stat_name;
+if(not $status)
+{
+    $stat_name = 'LOOKUP FAILED';
+    if(defined $article->status_id and length $article->status_id)
+    {
+        $c->log->error('Failed to look up status with ID: '.$article->status_id);
+    }
+    else
+    {
+        $c->log->error('The article '.$article->article_id.' doesn\'t have any status');
+    }
+}
+else
+{
+    $stat_name = $status->status_name($i18n);
+}
+my $author = $article->shortText('author',40);
+if(not defined $author or not length $author)
+{
+    $author = $i18n->get('(none)');
+}
+my $artAuthor = $article->author;
+if($artAuthor eq $author)
+{
+    $artAuthor = '';
+}
+</%perl>
+    <td><% $stat_name %></td>
+    <td><span class="useTipsy" title="<% $artAuthor %>"><% $author %></span></td>
+%if($article->workflow) {
+%my $title = $article->workflow->assigned_to_string($c,0,1);
+    <td><span title="<% $title |h %>" class="useTipsy"><% $article->workflow->assigned_to_string($c,1) %></span></td>
+%} else {
+% $c->log->debug('Article '.$article->article_id.' is missing a workflow entry!');
+    <td><% $i18n->get('(nobody)') |n %></td>
+%}
+<td>
+%if($article->can_write($c) or $c->user->can_access('PREVIEW_OTHER_ARTICLES')) {
+    <td><a href="/admin/articles/preview/<% $article->article_id %>" target="_blank"><img class="useTipsy" src="/static/images/icons/article-preview.png" border="0" title="<% $i18n->get('Preview') %>" class="useTipsy" alt="<% $i18n->get('Preview') %>"/></a></td>
+%} else {
+    <td>&nbsp;</td>
+%}
+%if ($trashMode) {
+%if($c->user->can_access('/articles/trash/restore') and ($article->can_write($c) or $c->user->can_access('EDIT_OTHER_ARTICLES'))) {
+<td><a href="#" onclick="restoreArticleId(<%$article->article_id%>,'<%$art_title |n %>');return false;"><img class="useTipsy" src="/static/images/icons/article-restore.png" border="0" class="useTipsy" title="<% $i18n->get('Restore') %>" alt="<% $i18n->get('Restore') %>" /></a></td>
+%} else {
+    <td>&nbsp;</td>
+%}
+%}
+%if(not $trashMode) {
+%if($article->can_write($c) or $c->user->can_access('EDIT_OTHER_ARTICLES')) {
+%if($lockedBy) {
+    <td><img class="useTipsy" src="/static/images/icons/article-edit-locked.png" border="0" title="<% $i18n->get_advanced('Locked by %(USER)',{ USER => $lockedBy }) %>" /></td>
+%} else {
+    <td><a href="/admin/articles/edit/<% $article->article_id %>"><img class="useTipsy" src="/static/images/icons/article-edit.png" border="0" title="<% $i18n->get('Edit') %>" alt="<% $i18n->get('Edit') %>" class="useTipsy" /></a></td>
+<%perl>
+        }
+    }
+    else
+    {
+    </%perl>
+    <td>&nbsp;</td>
+    <%perl>
+    }
+    if($article->can_write($c) or $c->user->can_access('PREVIEW_OTHER_ARTICLES')) {
+    </%perl>
+%} else {
+<td>&nbsp;</td>
+<%perl>
+}
+    if($article->can_write($c) or $c->user->can_access('EDIT_OTHER_ARTICLES') && $c->user->can_access('/articles/trash/move')) {
+    </%perl>
+<td><a href="#" onclick="moveArticleIdToTrash(<%$article->article_id%>,'<%$art_title|n %>',<% defined $article->status_id ? $article->status_id : 'null'%>);return false;"><img class="useTipsy" src="/static/images/icons/trash.png" class="useTipsy" border="0" title="<% $i18n->get('Move to trash') %>" alt="<% $i18n->get('Trash') %>"/></a></td>
+%} else {
+<td>&nbsp;</td>
+%}
+%} else {
+%if($c->user->can_access('/articles/trash/delete') and ($article->can_write($c) or $c->user->can_access('EDIT_OTHER_ARTICLES'))) {
+    <td><a href="#" onclick="deleteArticleId(<%$article->article_id%>,'<%$art_title |n %>');return false;"><img src="/static/images/icons/delete.png" border="0" class="useTipsy" title="<% $i18n->get('Delete') %>" alt="<% $i18n->get('Delete') %>"/></a></td>
+%} else {
+&nbsp;
+%}
+%}
+</td>
+    </tr>
+%}
+<& ../core/suppressedInfo.html, %ARGS, suppressed => $suppressed, name => $i18n->get('articles') &>
+%}
+
+</table>
+
+<%args>
+$article=>undef
+$message => undef
+$trashMode => undef
+$i18n
+$ordertype
+</%args>

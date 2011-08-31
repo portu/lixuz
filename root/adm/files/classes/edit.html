@@ -1,0 +1,58 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="form_edit">
+    <form method="POST">
+        <input name="class_id" value="<% $values->{id} %>" type="hidden" />
+        <input name="class_submit" value="true" type="hidden" />
+        <div class="label type"><span><%$i18n->get('Name')%></span></div>
+        <div>
+            <input id="name" name="name" size="40" type="text" value="<%$values->{name}%>" />
+        </div>
+%if (defined $values->{id}) {
+        <a id="editFields" href="#" onclick="LZ_DisplayFieldEditForm('files',<% $values->{id} %>); return false;" class="useTipsyW" title="<% $i18n->get('Define the fields to use for this file class') |n %>"><% $i18n->get('Edit fields') |n %></a>
+%}
+        <br />
+        <br />
+<%perl>
+my $saveLabel;
+if($formType eq 'add')
+{
+    $saveLabel = $i18n->get('Create class and edit fields');
+}
+else
+{
+    $saveLabel = $i18n->get('Save and close');
+}
+</%perl>
+        <div class="submit"><input id="saveFileClass" name="_SaveFileClass" onclick="LZ_FieldSave(); return false" type="submit" value="<% $saveLabel |n %>" /></div>
+%if($editFields) {
+<script type="text/javascript">
+    $LAB.onLoaded(function ()
+    {
+        $('#editFields').click();
+    });
+</script>
+%}
+    </form>
+</div>
+<%args>
+$values => {}
+$editFields => 0
+$formType => 'add'
+$i18n
+</%args>

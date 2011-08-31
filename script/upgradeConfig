@@ -1,0 +1,142 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Config::Any;
+use Data::Dumper qw(Dumper);
+
+my %settings;
+my %defaults = (
+    DEFAULT_URL_CATEGORY => '\%c',
+    DEFAULT_URL_ARTICLE => '\%c/\%a',
+    RSS_IMPORT_ACTIVE_DEFAULT => 'false',
+    FILES_COMPAT => 'false',
+);
+my $file = shift;
+die("USAGE: $0 [FILE]\n") if not defined $file;
+my $template = shift;
+if(not $template)
+{
+    $template = $file.'.tpl';
+}
+die($file.": does not exist\n") if not -e $file;
+die($template.": does not exist\n") if not -e $template;
+
+$| = 1;
+
+print "Upgrading configuration file...";
+loadConf();
+print ".";
+writeConfigFile();
+print "done\n";
+
+sub loadConf
+{
+    my $conf = Config::Any->load_files( { files =>  [ $file ], use_ext => 1} ) or die("Failed to load config: $file: $!\n");
+    if(ref($conf) eq 'ARRAY')
+    {
+        $conf = $conf->[0]->{$file};
+    }
+
+    # Upgrade DBNAME/DBUSER/DB_PASSWD
+    if(ref($conf->{'Model::LIXUZDB'}->{'connect_info'}) eq 'ARRAY')
+    {
+        $settings{DBNAME} = $conf->{'Model::LIXUZDB'}->{'connect_info'}[0];
+        $settings{DBUSER} = $conf->{'Model::LIXUZDB'}->{'connect_info'}[1];
+        $settings{DB_PASSWD} = $conf->{'Model::LIXUZDB'}->{'connect_info'}[2];
+    }
+    else
+    {
+        $settings{DBNAME} = $conf->{'Model::LIXUZDB'}->{'connect_info'}->{dsn};
+        $settings{DBUSER} = $conf->{'Model::LIXUZDB'}->{'connect_info'}->{user};
+        $settings{DB_PASSWD} = $conf->{'Model::LIXUZDB'}->{'connect_info'}->{password};
+    }
+
+    $settings{DBNAME} =~ s/dbi:\S+:dbname=//g;
+
+    $settings{SESSION_STORAGE} = $conf->{'session'}->{'storage'};
+
+    my $mcref;
+    if ($conf->{cache})
+    {
+        $mcref = $conf->{cache};
+    }
+    else
+    {
+        $mcref = $conf->{'Plugin::Cache'}->{backend};
+    }
+    $settings{MEMCACHED_SERVER} = $mcref->{servers}->[0];
+    $settings{MEMCACHED_NAMESPACE} = $mcref->{namespace};
+
+    $settings{MASON_DATADIR} = $conf->{'View::Mason'}->{data_dir};
+    $settings{LIXUZ_ROOT} = $conf->{'View::Mason'}->{comp_root}->[0]->[1];
+    $settings{TEMPLATE_PATH} = $conf->{'View::Mason'}->{comp_root}->[1]->[1];
+
+    my $lc = $conf->{LIXUZ};
+    $settings{TMP_PATH} = $lc->{temp_path};
+    $settings{FILE_PATH} = $lc->{file_path};
+    $settings{FROM_EMAIL} = $lc->{from_email};
+    $settings{EMAIL_TO_OVERRIDE} = $lc->{email_to_override};
+    $settings{DEFAULT_URL_CATEGORY} = $lc->{category_url};
+    $settings{DEFAULT_URL_ARTICLE} = $lc->{article_url};
+    $settings{FILES_COMPAT} = $lc->{files_compat};
+    if(not defined $settings{FILES_COMPAT} or not length $settings{FILES_COMPAT})
+    {
+        # This defaults to true, simply because if it's not set, we're upgrading from
+        # an older version of Lixuz that may have been using the old-style files
+        # fetching.
+        $settings{FILES_COMPAT} = '1';
+    }
+    if(not $settings{EMAIL_TO_OVERRIDE})
+    {
+        $settings{EMAIL_TO_OVERRIDE} = 'false';
+    }
+    $settings{RSS_SOURCES} = $lc->{rss_sources};
+
+	if(ref($lc->{indexer}))
+	{
+		$settings{INDEXER_STORAGE_PATH} = $lc->{indexer}->{indexFiles};
+		$settings{INDEXER_LANGUAGE} = $lc->{indexer}->{language};
+	}
+	else
+	{
+		$settings{INDEXER_STORAGE_PATH} = $lc->{file_path}.'/../searchIndex';
+		$settings{INDEXER_LANGUAGE} = 'no';
+	}
+}
+
+sub writeConfigFile
+{
+    open(my $templateFile,'<',$template);
+    undef $/;
+    my $template = <$templateFile>;
+    close($templateFile);
+    my @baseSources = qw(DBNAME DBUSER DB_PASSWD SESSION_STORAGE MEMCACHED_SERVER MEMCACHED_NAMESPACE MASON_DATADIR LIXUZ_ROOT TEMPLATE_PATH TMP_PATH FILE_PATH FROM_EMAIL EMAIL_TO_OVERRIDE DEFAULT_URL_CATEGORY DEFAULT_URL_ARTICLE RSS_IMPORT_ACTIVE_DEFAULT INDEXER_LANGUAGE INDEXER_STORAGE_PATH FILES_COMPAT);
+    foreach my $s (@baseSources)
+    {
+        my $setting;
+        $setting = $settings{$s};
+        if(not defined $setting and defined($defaults{$s}))
+        {
+            $setting = $defaults{$s};
+        }
+        if(not defined $setting)
+        {
+            die("Missing setting for $s\n");
+        }
+        elsif(ref($setting))
+        {
+            die("Setting $s is a ref. Dumping: ".Dumper($setting));
+        }
+        $template =~ s/\[$s\]/$setting/g;
+    }
+    if ($settings{RSS_SOURCES})
+    {
+        my $joinWith = "\n        - ";
+        my $sources = join($joinWith,@{$settings{RSS_SOURCES}});
+        $template =~ s/rss_sources:/rss_sources:$joinWith$sources/;
+    }
+    $template =~ s/# -- .*--\n//g;
+    open(my $out,'>',$file);
+    print {$out} $template;
+    close($out);
+}

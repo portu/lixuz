@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+#
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+use warnings;
+use strict;
+use FindBin;
+use Fatal qw(open close);
+use lib $FindBin::RealBin.'/../lib/';
+
+my $file = shift or die("Needs one parameter: the file to import from\n");
+open(my $i,'<',$file);
+$| = 1;
+# Lixuz doesn't like not being in its own dir when initializing
+chdir($FindBin::RealBin.'/..');
+require LIXUZ;
+
+while(my $l = <$i>)
+{
+    chomp($l);
+    print "Adding $l...";
+    if(LIXUZ->model('LIXUZDB::LzNewsletterSubscription')->search({ email => $l })->count)
+    {
+        print "already exists, skipping\n";
+        next;
+    }
+    my $o = LIXUZ->model('LIXUZDB::LzNewsletterSubscription')->create({
+            email => $l,
+            name => $l,
+            format => 'html',
+            send_every => 'month',
+            validated => 1
+        });
+    LIXUZ->model('LIXUZDB::LzNewsletterSubscriptionGroup')->create({
+            group_id => 1,
+            subscription_id => $o->subscription_id
+        });
+    print "done\n";
+}

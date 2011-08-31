@@ -1,0 +1,45 @@
+JS_BUILDER=perl -p -e 'if ($$lastArg ne $$ARGV) { print "// FILE: $$ARGV\n" ; $$lastArg = $$ARGV; }; s/^\x{FEFF}//g; s/\r\n/\n/g;'
+JS_BUILD_INFO=printf "  [BUILDJS]  %-46s > %s\n"
+
+REPO_ROOT?=$(shell pwd)
+JS_TARGET_DIR=$(REPO_ROOT)/root/js/
+JS_BUILD_METHOD= \
+	for dir in *; do \
+		if [ -d "$$dir" ] && [ "`basename $$dir`" != "3rdparty-libs" ]; then \
+			$(JS_BUILD_INFO) "`pwd |perl -pi -e "s/.+root/root/"`/js/$$dir" "root/js/$$dir$$js_ext"; \
+			if [ -e "$$dir/Makefile" ]; then \
+				make --silent -C "$$dir/" OUTFILE="$$dir$$js_ext" buildjs_sub; \
+			else \
+				$(JS_BUILDER) $$dir/*.js > $(JS_TARGET_DIR)/$$dir$$js_ext; \
+			fi;\
+		fi;\
+	done \
+
+buildjs:
+	mkdir -p "$(JS_TARGET_DIR)"
+	@cd root/source-js/ && \
+	js_ext=".js"; \
+	$(JS_BUILD_METHOD)
+	@cd root/source-js/3rdparty-libs && \
+	js_ext=".lib.js"; \
+	$(JS_BUILD_METHOD)
+	
+buildcss:
+	@make --no-print-directory -C root/css
+build: buildjs buildcss buildi18n
+buildi18n:
+	./script/buildlocale.pl buildonly
+	mkdir -p root/js/i18n
+	for file in i18n/*-js.po; do \
+		lang="$$(echo $$file|perl -pi -e 's#.+/##;s#-js.po##;')"; \
+		jsmsgfmt root/js/i18n/"$$lang.js" "$$file"; \
+		perl -pi -e "s/\"$$lang-js\"/\"$$lang\"/g" root/js/i18n/"$$lang.js"; \
+	done
+updatepo:
+	./script/buildlocale.pl
+	rm -f ./i18n/lixuz-js.pot
+	jsxgettext --addfunc "i18n.get" --addfunc "i18n.get_advanced" ./i18n/lixuz-js.pot `find ./root/source-js -iname "*.js" |egrep -vi 3rdparty-libs`
+	for f in ./i18n/*-js.po; do msgmerge -q -U "$$f" ./i18n/lixuz-js.pot;done
+postat:
+	for f in ./i18n/*.po; do printf "%-18s: " "$$f"; msgfmt -o /dev/null --stat "$$f" ;done
+# vim: set ft=make :

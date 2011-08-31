@@ -1,0 +1,38 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<%perl>
+$ARGS{articleList} = $ARGS{"dashboard_articlesInStatus$status_id"};
+if(not $ARGS{articleList})
+{
+$c->log->debug('Err, articleList: '.$status_id);
+}
+$ARGS{articleListType} = 'articles';
+if ($status_id != 2)
+{
+$ARGS{displayAssignee} = 1;
+}
+else
+{
+$ARGS{hideDeadline} = 1;
+}
+</%perl>
+<& widgetHelper_articleList.html, %ARGS &>
+
+<%args>
+$status_id
+</%args>

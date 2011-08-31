@@ -1,0 +1,21 @@
+# Lixuz Makefile
+#
+# Run make help to see the main targets
+VERSION=$(shell grep 'my $$VERSION_NO' lib/LIXUZ.pm | perl -pi -e 's/.*=\s*.(.*).;.*/$$1/')
+
+# Silencing perl helper
+BESILENT = perl -e "open(STDIN,'<','/dev/null'); open(STDOUT,'>','/dev/null'); open(STDERR,'>','/dev/null'); exec(@ARGV);"
+
+HPRINTF=@printf "%-15s %s\n"
+help:
+	@echo "";echo "Lixuz makefile targets:"
+	$(HPRINTF) "sanitycheck" "Run a basic sanitycheck on all source files"
+	$(HPRINTF) "quicksanity" "Run a basic sanitycheck on the last 4 changed files"
+	$(HPRINTF) "sanity" "Run sanitycheck and swec_sanity"
+	$(HPRINTF) "test" "currently the same as sanity"
+	$(HPRINTF) "swec" "Run a full swec test, requires running lixuz test server"
+	$(HPRINTF) "swec_basic" "Run a basic swec test, liminting the amount of pages tested"
+	$(HPRINTF) "swec_sanity" "Run a very basic swec sanity test, this is fast but doesn't test as much as the other two"
+	$(HPRINTF) "minify"	"Minify javascript files"
+	$(HPRINTF) "buildjs" "Build javascript files"
+# vim: set ft=make :

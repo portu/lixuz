@@ -1,0 +1,202 @@
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=head1 LIXUZ INSTALLATION MANUAL
+
+This is the Lixuz installation manual.
+
+=head1 REQUIREMENTS
+
+Lixuz runs on top of Catalyst and Mason. It also needs a few other perl
+modules. To find out if you have any deps missing, run
+
+    make depscheck
+
+within a Lixuz source tree. It will then check all of the Lixuz dependencies
+and tell you which are missing.
+
+=head2 VIDEO
+
+Lixuz can convert uploaded videos to FLV for use on the website, however
+to do this it needs to have some utilities available, namely I<ffmpeg>.
+The codecs Lixuz can convert from then depends upon which are installed
+for ffmpeg.
+
+=head3 DEBIAN/UBUNTU
+
+These packages in Debian/Ubuntu (or similarly named, unstripped, packages)
+will give most of the codec support that Lixuz might need. For Ubuntu
+these come from the Medibuntu repository.
+
+    libavcodec-unstripped-51 libavdevice-unstripped-52
+    libavformat-unstripped-52 libavutil-unstripped-49 libpostproc-unstripped-51
+    libswscale-unstripped-0 libamrnb3 libamrwb3
+
+=head1 INITIAL SETUP
+
+=head2 CREATING THE DATABASE
+
+Before you can proceed to the installation, you need to create the database
+and the database user for your new installation of Lixuz. Skip this section
+if you have already done so.
+
+In the following commands, replace [NAME] with the name of the database, [USER]
+with the database username you want to use and [PWD] with the database password
+you want to use. You may generate a random password with this command if you
+need to: 
+
+    perl -le 'print map { (a..z,A..Z,0..9)[rand 62] } 0..pop' 10
+
+Get a mysql console logged in as an admin user. Then enter the following commands.
+
+Create the database:
+    CREATE DATABASE [NAME];
+
+Create the user:
+    CREATE USER '[NAME]'@'localhost' IDENTIFIED BY '[PWD]';
+
+Grant the user access:
+    GRANT ALL PRIVILEGES ON [NAME].* TO '[NAME]'@'localhost';
+
+All done. You can now proceed to the next step. Keep the information here
+in mind, as the installation script will prompt you for this information.
+
+=head2 INSTALLATION
+
+Most of the initial setup (including copying files and configuration) can be
+automated. Simply run the I<./scripts/lixuz_install.pl> script and follow the
+instructions. The following sections will outline what needs to be done 
+manually.
+
+B<Note on HTTP servers:> as Lixuz uses FastCGI, you do not need to use any of
+the web servers listed as examples here, you can just follow the instructions
+for setting up fastcgi, and then configure whichever websever you're using to
+serve Lixuz via the FastCGI instance.
+
+=head3 SETTING UP FASTCGI
+
+The easiest way to set up FastCGI is to use the L<fcgim(1)> utility from
+I<http://random.zerodogg.org/fcgim>. If you want to configure it manually,
+refer to the Catalyst docs, we will assume you're using fcgim here.
+
+Relevant fcgim documentation for a generic Lixuz app:
+
+        "lixuz": {
+            // The root directory that the app is installed at
+            "path":"/var/www/lixuz/",
+            // Supports: Catalyst, PHP
+            // Case sensitive.
+            "type":"Catalyst",
+            // The max number of processes to use for this app
+            "processes":4,
+            // The location of the server process file
+            "serverFile":"/tmp/lixuz.socket",
+            // Any environment variables you want set in the environment of
+            // this application
+            "ENV": {},
+        },
+
+Modify the number of processes to suit the load for your site.
+
+If you're using L<local::lib> to mange the perl modules for Lixuz, set the
+PERL5LIB environment variable from local::lib for it in the config:
+
+            "ENV": {
+                "PERL5LIB":"/usr/local/lixuzModules/perl5/lib/perl5:/usr/local/lixuzModules/perl5/lib/perl5/i486-linux-gnu-thread-multi"
+            },
+
+Once these are set up you can use the normal fcgim commands to mange the app.
+I<fcgim lixuz start> to start it, I<fcgim lixuz stop> to stop, etc. Lixuz
+also works fine with the fcgim sanitycheck feature.
+
+=head3 APACHE2
+
+First follow the instructions to set up the FastCGI instance.
+
+Here is an example of an apache config file configured to talk to Lixuz FastCGI.
+
+    <VirtualHost *:80>
+        ServerAdmin youruser@example.org
+        ServerName example.org
+        ServerAlias stage.example.org www.example.org
+
+        DocumentRoot /var/www/example.org/root
+        <Directory /var/www/example.org/root>
+            Options -Indexes FollowSymLinks MultiViews
+            AllowOverride None
+            Order allow,deny
+            allow from all
+        </Directory>
+
+        ErrorLog /var/log/apache2/www.example.org-error.log
+        CustomLog /var/log/apache2/www.example.org-access.log combined
+        LogLevel warn
+        ServerSignature On
+
+        # You should define some location for these error pages, as they will
+        # be displayed should the fcgi server for some reason go down
+        Alias /_errors /var/www/default/
+        ErrorDocument 500 /_errors/index.html
+        ErrorDocument 502 /_errors/index.html
+
+        # Static data that the web server can serve itself
+        Alias /css /var/www/lixuz/root/css
+        Alias /js /var/www/lixuz/root/js
+        Alias /livedata /var/www/lixuz/root/livedata
+        Alias /static /var/www/lixuz/root/static
+        Alias /swf /var/www/lixuz/root/swf
+
+        # Connect to the Lixuz FastCGI instance
+        FastCgiExternalServer /tmp/lixuz.fcgi -socket /tmp/lixuz.socket
+        Alias / /tmp/lixuz.fcgi/
+    </VirtualHost>
+
+Put it in ie. /etc/apache2/sites-available/mysite.conf - and possibly symlink it into
+/etc/apache2/sites-enabled/
+
+=head2 CRONJOBS
+
+Lixuz has two different cronjob types in use. One lives within the Lixuz
+engine, the other ones are standalone, both should be added.
+
+=head3 BUILTIN
+
+Lixuz has some builtin cronjobs for operations that need full
+access to every part of the Lixuz engine (not just the parts that are
+available from standalone scripts). These cronjobs need to be explicitly
+triggered by submitting a request to the webserver.
+
+B<Daily>
+
+Request the cron handler (/cron) of your Lixuz install with the parameter
+schedule_trigger=lixuz_daily_cron - ie.:
+
+    wget -O/dev/null -q http://example.org/cron/?schedule_trigger=lixuz_daily_cron
+
+Needless to say, this should be run daily.
+
+B<Second daily>
+
+There is also a second daily cronjob, this should be run twelve hours
+after the above cronjob. It is triggered by "lixuz_daily_cron_two". Ie.:
+
+    wget -O/dev/null -q http://example.org/cron/?schedule_trigger=lixuz_daily_cron_two
+
+=head3 EXTERNAL
+
+The external cronjobs can be found in the cronjobs/ subdirectory.
+Their names should be self-explanatory and you can simply symlink them into
+the respective /etc/cron.* directories.

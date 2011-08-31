@@ -1,0 +1,125 @@
+<%args>
+$comment_list => undef
+$comment_subject => ''
+$comment_author_name => ''
+$comment_body => ''
+$comment_message => ''
+$comment_message_error => undef
+$captcha_id
+$article
+</%args>
+<br />
+<div id="comments">
+<script type="text/javascript">
+function validateCommentSubmission ()
+{
+    if (!$)
+    {
+        var $ = function (id) { return document.getElementById(id);};
+    }
+    var notFilledIn = new Array();
+    if (!$('comment_author_name_input').value || $('comment_author_name_input').value.length < 2 || ! $('comment_author_name_input').value.match(/\S/))
+    {
+        notFilledIn.push('your name');
+    }
+    if (!$('comment_subject_input').value || $('comment_subject_input').value.length < 2 || ! $('comment_subject_input').value.match(/\S/))
+    {
+        notFilledIn.push('subject');
+    }
+    if (!$('comment_body_input').value || $('comment_body_input').value.length < 2 || ! $('comment_body_input').value.match(/\S/))
+    {
+        notFilledIn.push('comment');
+    }
+    if (!$('comment_captcha_input').value || $('comment_captcha_input').value.length != 6 || ! $('comment_captcha_input').value.match(/\S/))
+    {
+        notFilledIn.push('visual validation code (captcha)');
+    }
+    if(notFilledIn.length > 0)
+    {
+        if(notFilledIn.length > 1)
+        {
+            var list = '';
+            for(var i = 0; i < notFilledIn.length; i++)
+            {
+                list = ' - '+notFilledIn[i]+"\n"+list;
+            }
+            alert("You have not filled in:\n"+list);
+        }
+        else
+        {
+            alert("You have not filled in "+notFilledIn[0]+".");
+        }
+        return false;
+    }
+    return true;
+}
+</script>
+<h2>Kommentér denne artikkelen</h2>
+% # --- New comment ---
+<form name="newComment" method="post">
+<input type="hidden" name="_lz_artCommentSubmitted" value="1" />
+<input type="hidden" name="captcha_id" value="<%$captcha_id%>" />
+<table border="0">
+<tr>
+
+%if($comment_message) {
+<td colspan="2"><b>
+<% $comment_message_error ? '<font color="#FF0000">' : '' |n%>
+<%$comment_message|n%>
+<% $comment_message_error ? '</font>' : '' |n%>
+</b></td>
+</tr><tr>
+<td colspan="2">&nbsp;</td>
+</tr><tr>
+%}
+
+<td style="min-width: 110px"><b>Name:</b></td><td><input size="40" id="comment_author_name_input" name="author_name" type="text" value="<%$comment_author_name%>" /></td>
+</tr><tr>
+<td><b>Subject:</b></td><td><input id="comment_subject_input" size="40" name="subject" type="text" value="<%$comment_subject%>" /></td>
+</tr><tr>
+<td colspan="2"><b>Comment:</b> (only text, HTML not permitted)</td>
+</tr><tr>
+<td colspan="2"><textarea name="body" rows="8" cols="45" id="comment_body_input"><% $comment_body %></textarea></td>
+</tr><tr>
+<td colspan="2">&nbsp;</td>
+</tr><tr>
+<td><img src="<% $c->uri_for('/files/captcha/'.$captcha_id) %>" align="middle" /></td><td><b>Enter the text from the image:</b> <input id="comment_captcha_input" name="captcha" type="text" size="10" /></td>
+</tr><tr>
+<td colspan="2">&nbsp;</td>
+</tr><tr>
+<td colspan="2"><input type="submit" value="Send inn kommentar" onclick="return validateCommentSubmission();" /></td>
+</tr>
+</table>
+</form>
+<br /><br />
+<a name="comments">&nbsp;</a>
+<h3>Comments</h3>
+% # --- /New comment ---
+% # --- Comments ---
+% my $no = 0;
+%while(defined($comment_list) && (my $comment = $comment_list->next)) {
+% $no++;
+<div class="<% ($no % 2 == 0) ? 'item1' : 'item2' %>">
+<b><a name="<% $article->article_id + $comment->comment_id %>"><% $comment->subject |n %></a></b><br />
+by <% $comment->author_name|n%> <% datetime_from_SQL($comment->created_date) %>
+<p class="commentBody">
+<% $comment->body |n%>
+</p>
+</div>
+%}
+%# --- /Comments ---
+</div>
+
+<%perl>
+# BEGIN LIXUZ_INFOBLOCK
+# TEMPLATE_VERSION=0.1
+# TEMPLATE_NAME=Lixuz live comments example
+# TEMPLATE_LICENSE=GPLv3
+# TEMPLATE_APIVERSION=1
+# TEMPLATE_TYPE=include
+# TEMPLATE_UNIQUEID=org.lixuz.example.liveComments
+# END LIXUZ_INFOBLOCK
+</%perl>
+<%init>
+use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL);
+</%init>

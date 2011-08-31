@@ -1,0 +1,39 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div style="padding: 5px;">
+<div id="cropMenu" style="clear:both; padding-bottom: 0.5em;">
+<b><% $i18n->get('Tools') |n %>: </b>
+<input id="showCropPreview" type="button" value="<% $i18n->get('Show crop preview') %>" onclick="updateCropPreview();" />
+<input id="saveCrop" type="button" value="<% $i18n->get('Save crop') %>" onclick="saveCrop();" />
+<input id="hideOrig" type="button" value="<% $i18n->get('Hide original') %>" onclick="hideOriginalToggle()" />
+</div>
+<div style="float:left;" id="cropTargetContainer">
+<input type="hidden" id="file_id" value="<%$image->file_id%>" />
+<img src="<% $image->get_url($c) %>" id="cropTarget" />
+</div>
+<div style="float:right;" id="image_preview"></div>
+</div>
+<div style="clear:both;" />
+
+<%args>
+$image
+$i18n
+</%args>
+<%init>
+use LIXUZ::HelperModules::Forms qw(createCheckbox);
+</%init>

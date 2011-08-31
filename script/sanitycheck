@@ -1,0 +1,55 @@
+#!/bin/bash
+cd $(dirname $0) || exit 1
+cd .. || exit 1
+[ -e "./lib" ] || exit 1
+CHECKED=0
+TOTAL_LINES="0"
+PERL_LINES="0"
+MASON_LINES="0"
+JS_LINES="0"
+for file in ` ls -c $(find -regextype posix-extended -iregex ".*\.(pm|pl|html|js)$")|\egrep -v '(/js/|script|Makefile|live_utrop/incl|livedata/|3rdparty-libs)'`; do
+    if [ "$1" == "stats" ]; then
+        if [ "`echo "$file"|egrep -v '(3rdparty-libs)'`" == "" ]; then
+            continue
+        fi
+        WCL="`wc -l "$file" |perl -ni -e 'chomp;my $f = $_; $f =~ s/^\d+\s*//; s/\s*\D.*//; printf("%-10s %s\n",$_,$f);'`"
+        echo "$WCL"
+        LINES="`echo "$WCL"|perl -pi -e 's#^(\d+).*#$1#g;'`"
+        let TOTAL_LINES=$TOTAL_LINES+$LINES
+        if [ "`echo "$file" |egrep -i '.js$'`" != "" ]; then
+            let JS_LINES=$JS_LINES+$LINES
+        elif [ "`echo "$file" |egrep -i '.pm$'`" != "" ]; then
+            let PERL_LINES=$PERL_LINES+$LINES
+        else
+            let MASON_LINES=$MASON_LINES+$LINES
+        fi
+    else
+        let CHECKED=$CHECKED+1
+        if [ "$1" == "quick" ] && [ $CHECKED -gt 5 ]; then
+            exit 0
+        fi
+        if echo $file |egrep -i '\.html$' &>/dev/null; then
+            perl -I $PWD/lib ./tools/masontest.pl "$file" || exit 2
+        elif echo $file |egrep -i '\.js$' &>/dev/null; then
+            echo -n "$file"
+            java -jar ~/.local/yuiminify/yuicompressor.jar "$file" -o /dev/null || exit 3
+            echo -e "\r$file syntax OK"
+        else
+            perl -I $PWD/lib -c "$file" || exit 1
+        fi
+    fi
+done
+if [ "$1" == "stats" ]; then
+    let ALLPERL=$MASON_LINES+$PERL_LINES
+    echo "----"
+    JS_PERC="`perl -e 'printf("%.1f", (($ARGV[0]/$ARGV[1])*100));' $JS_LINES $TOTAL_LINES`"
+    PERL_PERC="`perl -e 'printf("%.1f", (($ARGV[0]/$ARGV[1])*100));' $PERL_LINES $TOTAL_LINES`"
+    MASON_PERC="`perl -e 'printf("%.1f", (($ARGV[0]/$ARGV[1])*100));' $MASON_LINES $TOTAL_LINES`"
+    ALLPERL_PERC="`perl -e 'printf("%.1f", (($ARGV[0]/$ARGV[1])*100));' $ALLPERL $TOTAL_LINES`"
+    PRINTF_FORMAT="%-40s: %-6s %s\n"
+    printf "$PRINTF_FORMAT" "Total lines of JavaScript" "$JS_LINES" "($JS_PERC%)"
+    printf "$PRINTF_FORMAT" "Total lines of perl (non-mason)" "$PERL_LINES" "($PERL_PERC%)"
+    printf "$PRINTF_FORMAT" "Total lines of mason/HTML" "$MASON_LINES" "($MASON_PERC%)"
+    printf "$PRINTF_FORMAT" "Total lines of mason/HTML+perl" "$ALLPERL" "($ALLPERL_PERC%)"
+    printf "$PRINTF_FORMAT" "Total lines" "$TOTAL_LINES"
+fi

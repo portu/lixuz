@@ -1,0 +1,47 @@
+name: lixuz_articleEdit
+method:post
+fields:
+    uid:
+        type: hidden
+        required: 0
+    title:
+        required: 1
+        type: text
+        size: 40
+    lead:
+        type: textarea
+        required: 0
+        cols: 75
+        rows: 8
+    author:
+        type: text
+        required: 1
+    body:
+        type: textarea
+        required: 0
+        cols: 75
+        rows: 20
+    pubtime:
+        type: text
+        required: 0
+    exptime:
+        type: text
+        required: 0
+    exptime_enabled:
+        options:
+            - Enabled
+    article_order:
+        type: text
+        required: 1
+    article_status:
+        type: select
+        required: 1
+    template:
+        type: select
+        required: 0
+    folder:
+        type: select
+        required: 1
+    type:
+        type: hidden
+        required: 1

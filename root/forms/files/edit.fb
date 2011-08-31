@@ -1,0 +1,26 @@
+name: lixuz_userEdit
+method:post
+fields:
+    file_name:
+        required: 1
+        type: text
+        size: 40
+        validate: VALUE
+    title:
+        required: 0
+        type: text
+    caption:
+        required: 0
+        type: text
+        validate: VALUE
+    status:
+        type: select
+        required: 1
+    height:
+        type:text
+        required: 0
+        validate: NUM
+    width:
+        type:text
+        required: 0
+        validate: NUM

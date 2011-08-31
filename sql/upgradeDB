@@ -1,0 +1,1062 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Config::Any;
+use IPC::Open3;
+use Cwd qw(realpath getcwd);
+use File::Basename qw(dirname);
+use DBI;
+use FindBin;
+use Try::Tiny;
+use constant { true => 1, false => 0 };
+use Getopt::Long;
+use FindBin;
+use lib $FindBin::RealBin.'/../lib/';
+use LIXUZ::HelperModules::Scripts qw(fakeC);
+
+$0 = realpath($0);
+my %dumpTargets = (
+    'full' => undef,
+    'stripped' => undef,
+);
+my $DBRevision;
+my $currentDBRevision;
+my $conf;
+my $controlledDie = 0;
+my $c;
+my $lfile = './db-upgrade.log';
+my $restore = 0;
+
+$SIG{INT} = \&sigintTerm;
+$SIG{TERM} = sub
+{
+    print "SIGTERM ignored for safety\n";
+    print "Send SIGINT for emergency console (kill -2 $$)\n";
+};
+
+my %flags = (
+    standard => 1,
+);
+my $chained = false;
+my $fromVersion;
+
+GetOptions(
+    'chained' => \$chained,
+    'logfile=s' => \$lfile,
+    'fromversion=s' => \$fromVersion,
+    'restore' => \$restore
+) or die();
+
+my ($user,$pwd,$dbnam,$rawDBH);
+sub mysql_exec
+{
+    my $stmt = shift;
+    my $exit = shift;
+    my $useForce = shift;
+    my @extraArgs;
+    if ($useForce)
+    {
+        push(@extraArgs,'--force');
+    }
+    my $r = logSystem('mysql',@extraArgs,'--silent','-n','-u'.$user,'-p'.$pwd,$dbnam,'-e',$stmt);
+    if ($exit && $r != 0)
+    {
+        dualDie("failed - mysql returned nonzero\n");
+    }
+    return $r;
+}
+# Predeclare the fatalRestore block
+sub fatalRestore(&){}
+
+my $file = shift;
+$| = 1;
+
+print "NOTE: Lixuz should be stopped before running this script\n" if not $chained;
+
+if(not $file or not -e $file)
+{
+    dualDie("Required argument: path to a Lixuz config file\n");
+}
+
+$file = realpath($file);
+
+print 'Preparing...' if not $chained;
+print 'Preparing for database upgrade...' if $chained;
+loadConfig();
+$DBRevision = readDBRevision();
+$currentDBRevision = getCurrentDBRevision();
+detectFlags();
+print "done\n";
+if ($currentDBRevision > $DBRevision)
+{
+    my $origINT = $SIG{INT};
+    $SIG{INT} = sub { exit(0); };
+    warn("WARNING: DATABASE IS NEWER THAN THE VERSION WE ARE \"UPGRADING\" TO\n(upgrading to revision $DBRevision - database currently at revision $currentDBRevision)\nPress enter to \"upgrade\" anyway. Control+C to cancel (recommended)\n");
+    <STDIN>;
+    $SIG{INT} = $origINT;
+}
+if ($currentDBRevision == $DBRevision)
+{
+    print "Database is the same revision as it is being upgraded to ($DBRevision)\n";
+    print "An upgrade is probably not required.";
+    if ($ENV{DBUPGRADE_FORCE})
+    {
+        print " But running anyway due to DBUPGRADE_FORCE\n";
+    }
+    else
+    {
+        print " Exiting\n";
+        print "Set the env var DBUPGRADE_FORCE to 1 to force an upgrade anyway.\n";
+        exit(0);
+    }
+}
+else
+{
+    my $outRev = $currentDBRevision;
+    if ($currentDBRevision == -1)
+    {
+        $outRev = '(unrevisioned)';
+    }
+    print "Upgrading database from revision $outRev to revision $DBRevision\n";
+}
+open(my $logfile,'>>',$lfile) or dualDie("Failed to open logfile \"$lfile\" for writing: $!\n");
+my $lExisted = 0;
+if (-e $lfile)
+{
+    $lExisted = 1;
+}
+if ($lExisted and not $chained)
+{
+    print {$logfile} "\n";
+}
+
+print "Upgrade flags:";
+{
+    my $uflags = '';
+    foreach my $k (sort keys %flags)
+    {
+        if ($flags{$k})
+        {
+            $uflags .= ' '.$k;
+            print " $k";
+        }
+    }
+    logAction('Upgrade flags: '.$uflags);
+}
+print "\n";
+print "Logging to: $lfile\n" if not $chained;
+
+logAction('Starting database upgrade of Lixuz installation referenced by config file '.$file);
+logAction('Using config '.$file);
+{
+    my $dir = dirname($0);
+    chdir($dir) or die("Failed to chdir($dir): $!\n");
+}
+
+dualPrint('Creating backup dump of database...');
+dumpDB($dumpTargets{full},true);
+print "done\n";
+dualPrint('Performing pre-upgrade database structure changes...');
+fatalRestore
+{
+    performPreStructureChanges();
+};
+print "done\n";
+dualPrint('Dumping database contents...');
+# The table list can be generated with:
+# mysql -uUSER -pPWD DB -e 'SHOW TABLES;'|cat|perl -ni -e 'next if /(dm_map|Tables_in)/;chomp;print "$_ ";';echo
+dumpDB($dumpTargets{stripped},undef, qw(lz_action lz_article lz_article_elements lz_article_file lz_article_folder lz_article_lock lz_article_relations lz_article_tag lz_article_watch lz_backup lz_category lz_category_folder lz_field lz_field_module lz_field_options lz_field_value lz_file lz_file_tag lz_folder lz_key_value lz_live_captcha lz_live_comment lz_newsletter_group lz_newsletter_saved lz_newsletter_subscription lz_newsletter_subscription_category lz_newsletter_subscription_group lz_perms lz_revision lz_role lz_role_action lz_rss_article lz_status lz_tag lz_template lz_template_dependencies lz_template_includes lz_user lz_widget_config lz_workflow lz_workflow_comments lz_user_config));
+print "done\n";
+
+fatalRestore
+{
+    dualPrint('Removing old database and creating the new...');
+    resetDB();
+    print "done\n";
+    dualPrint('Importing old data into new database...');
+    my $ret = mysql_exec('source '.$dumpTargets{stripped},false,true);
+    if ($ret != 0)
+    {
+        die("SQL errors occurred during sourcing of old data\n");
+    }
+    print "done\n";
+    upgradeData();
+};
+
+dualPrint("Database successfully upgraded.\n");
+print "You may remove the data dump in $dumpTargets{full}\n" if not $chained;
+dExit(0);
+
+# Load the config file
+sub loadConfig
+{
+    $conf = Config::Any->load_files( { files =>  [ $file ], use_ext => true } ) or dualDie("failed to load config\n");
+    $conf = $conf->[0]->{$file};
+    print '.';
+    if(ref($conf->{'Model::LIXUZDB'}->{'connect_info'}) eq 'ARRAY')
+    {
+        dualDie("Old-style config. Unable to continue.\n");
+    }
+    if(not $conf->{'Model::LIXUZDB'}->{'connect_info'}->{dsn} =~ /mysql/)
+    {
+        dualDie("Not using MySQL, unable to continue\n");
+    }
+    $dbnam = $conf->{'Model::LIXUZDB'}->{'connect_info'}->{dsn};
+    if(not $dbnam =~ s/.*dbname=//)
+    {
+        dualDie("failed to extract database name from config\n");
+    }
+    $user = $conf->{'Model::LIXUZDB'}->{'connect_info'}->{user};
+    $pwd  = $conf->{'Model::LIXUZDB'}->{'connect_info'}->{password};
+    if(not $user or not $pwd or not $dbnam)
+    {
+        dualDie("Invalid config file, database user/pwd/dbname missing\n");
+    }
+    print '.';
+    # (must never have the mysql_enable_utf8 flag set, see upgradePasswords())
+    $rawDBH = DBI->connect($conf->{'Model::LIXUZDB'}->{'connect_info'}->{dsn},$user,$pwd) or dualDie("Failed to open database connection: $DBI::errstr\n");
+    $dumpTargets{full} = dirname($0).'/lixuz-dbupgrade-dump-db:'.$dbnam.'-'.time.'-full.sql';
+    $dumpTargets{stripped} = dirname($0).'/lixuz-dbupgrade-dump-db:'.$dbnam.'-'.time.'-stripped.sql';
+    if(not -w dirname($0))
+    {
+        dualDie('Unable to write to '.dirname($0)." - please fix the permissions then re-run this script.\n");
+    }
+    foreach (qw(full stripped))
+    {
+        if (-e $dumpTargets{$_} and not -w $dumpTargets{$_})
+        {
+            dualDie('Unable to write to '.$dumpTargets{$_}." - please fix the permissions then re-run this script.\n");
+        }
+    }
+}
+
+# Run a piece of code in silence
+sub silent(&)
+{
+    my $cref = shift;
+    my $err;
+    no warnings;
+    open(STDOUT_SAVED,'>&STDOUT');
+    open(STDERR_SAVED,'>&STDERR');
+    open(STDOUT,'>','/dev/null');
+    open(STDERR,'>','/dev/null');
+    try
+    {
+        $cref->();
+    }
+    catch
+    {
+        $err = $_;
+    };
+    open(STDOUT,'>&STDOUT_SAVED');
+    open(STDERR,'>&STDERR_SAVED');
+    use warnings;
+    die($err) if $err;
+}
+
+# Create a dump of the old DB
+sub dumpDB
+{
+    my $target = shift;
+    my $includeSchema = shift;
+    my @tables = @_;
+    if (-e $target)
+    {
+        dualDie('failed - '.$target.' already exists, remove or move this file first'."\n");
+    }
+    my @cmd = qw(mysqldump --force --complete-insert --opt);
+    if(not $includeSchema)
+    {
+        push(@cmd,'-t');
+    }
+    push(@cmd,$dbnam,'-u'.$user,'-p'.$pwd,'-r',$target);
+    if (@tables)
+    {
+        push(@cmd,@tables);
+    }
+    silent
+    {
+        logSystem(@cmd);
+    };
+    print '.';
+    if(not -e $target)
+    {
+        dualDie("failed, $target missing\n");
+    }
+    print '.';
+    if(-s $target < 10000)
+    {
+        dualDie("failed - $target is strangely small\n");
+    }
+    print '.';
+    # This validates the dump somewhat by checking the first and
+    # last lines of it.
+    open(my $input, '<', $target);
+    my $line = <$input>;
+    $line =~ /MySQL dump/ or dualDie("Failed to verify dump\n");
+    my $lastLine;
+    $lastLine = $line while($line = <$input>);
+    $lastLine =~ /Dump completed/ or dualDie("Failed to verify dump\n");
+    close($input);
+}
+
+# Reset the database
+sub resetDB
+{
+    my $schema = shift;
+    if(not $schema)
+    {
+        if(not -e './lixuz_schema.sql')
+        {
+            dualDie(getcwd()."/lixuz_schema.sql is missing!\n");
+        }
+        else
+        {
+            $schema = './lixuz_schema.sql';
+        }
+    }
+    mysql_exec('source '.$schema,true);
+    print '.';
+}
+
+# Upgrade data in the DB
+sub upgradeData
+{
+    my $pathToData = dirname(realpath($file));
+    if(not -d $pathToData)
+    {
+        dualDie($pathToData.' (Lixuz location) does not exist or is not a directory!');
+    }
+    if (not $chained)
+    {
+        dualPrint("Using Lixuz located at $pathToData\n");
+    }
+    else
+    {
+        logAction("Using Lixuz located at $pathToData");
+    }
+    dualPrint("Preparing to upgrade data...");
+    my $loaded = 1;
+    try
+    {
+        chdir($pathToData);
+        print '.';
+        require LIXUZ;
+        logAction('Working dir after LIXUZ init: '.getcwd);
+    }
+    catch
+    {
+        $loaded = 0;
+        logAction('Failed, perl crash while initializing LIXUZ: '.$_);
+        print "failed, unable to perform data upgrade (see the logfile).\n";
+    };
+    return if not $loaded;
+    print "done\n";
+    dualPrint('Upgrading data...');
+    $c = fakeC();
+    try
+    {
+        updateActionPath($c);
+        print '.';
+        setupInlineFields($c);
+        print '.';
+        upgradePasswords($c);
+        if ($flags{revisions})
+        {
+            print '.';
+            revisionUpgrade($c);
+        }
+        if ($flags{fileIDs})
+        {
+            print '.';
+            fileIdentifierUpgrade($c);
+        }
+        if ($flags{articleLatestStatus})
+        {
+            print '.';
+            articleLatestStatusUpgrade($c);
+        }
+        if ($flags{fileClasses})
+        {
+            print '.';
+            addDefaultFileClass($c);
+            convertFileFields($c);
+        }
+        silent
+        {
+            mysql_exec('DROP TABLE lz_workflow_change');
+        };
+    } 
+    catch
+    {
+        logAction('Failed, perl crash: '.$_);
+        print "failed (see the logfile).\n";
+        return;
+    };
+    setDBRevision();
+    print "done\n";
+}
+
+# Upgrade passwords to md5_hex rather than md5
+sub upgradePasswords
+{
+    my $c = shift;
+    my $u = getModel('LIXUZDB::LzUser');
+    while(my $user = $u->next)
+    {
+        # Must use rawDBH to ensure we get correct data (breaks with mysql_enable_utf8)
+        my $pwd = $rawDBH->selectrow_array('SELECT password FROM lz_user WHERE user_id='.$user->user_id);
+        if ($pwd =~ /^(0x)?[0-9A-F]+$/i)
+        {
+            next;
+        }
+        $pwd = unpack('H*', $pwd);
+        $user->set_column('password',$pwd);
+        $user->update();
+    }
+}
+
+# Add and remove lz_action's
+sub updateActionPath
+{
+    my $i18n = LIXUZ::HelperModules::I18N->new('lixuz','nn_NO','./i18n/locale');
+
+    my %renamedPaths = (
+        '/articles/json/submit' => '/articles/submit',
+        '/tagging' => '/tags',
+        '/tagging/complete' => '/tags/complete',
+        '/tagging/exists' => '/tags/exists',
+        '/tagging/create' => '/tags/create',
+    );
+
+    foreach my $path (keys(%renamedPaths))
+    {
+        my $s = getModel('LIXUZDB::LzAction')->find({ action_path => $path });
+        if ($s)
+        {
+            print '.';
+            $s->set_column('action_path',$renamedPaths{$path});
+            $s->update();
+        }
+    }
+
+    my %paths = LIXUZ::Schema::LzAction->getPathsHash($i18n);
+    foreach my $path (keys(%paths))
+    {
+        my $s = getModel('LIXUZDB::LzAction')->search({ action_path => $path });
+        if ($s && $s->count)
+        {
+            next;
+        }
+        print '.';
+        logAction('Created lz_action action_path entry for '.$path);
+        $s = getModel('LIXUZDB::LzAction')->create({ action_path => $path });
+        $s->update();
+    }
+
+    my $existing = getModel('LIXUZDB::LzAction')->search(undef, { order_by => 'action_id' });
+    my %seen;
+    while((defined $existing) && (my $s = $existing->next))
+    {
+        my $name = $s->action_path;
+        if ($name =~ m#/#)
+        {
+            if(not defined $paths{$name})
+            {
+                logAction('Deleted unknown lz_action with action_path '.$name.' (action_id '.$s->action_id.')');
+                $s->delete();
+                print '.';
+            }
+        }
+        if (defined $seen{$name})
+        {
+            print '.';
+            my $badPerms = getModel('LIXUZDB::LzRoleAction')->search({ action_id => $s->action_id });
+            logAction('Detected duplicate actions for '.$name.' will delete '.$s->action_id.' and merge permission settings for the duplicates together');
+            while((defined $badPerms) && (my $bad = $badPerms->next))
+            {
+                if ($bad->allowed)
+                {
+                    my $good = getModel('LIXUZDB::LzRoleAction')->find({ action_id => $seen{$name}, role_id => $bad->role_id});
+                    if(not $good->allowed)
+                    {
+                        $good->set_column('allowed',1);
+                        $good->Update();
+                    }
+                }
+                $bad->delete();
+            }
+            $s->delete();
+        }
+        else
+        {
+            $seen{$name} = $s->action_id;
+        }
+    }
+}
+
+# Ensure that we have the standard inline fields
+sub setupInlineFields
+{
+    checkOrAddField('inline: title','singleline','title','articles',true,undef,undef);
+    checkOrAddField('inline: lead','multiline','lead','articles',false,5,true);
+    checkOrAddField('inline: author','singleline','author','articles',false,undef,undef);
+    checkOrAddField('inline: body','multiline','body','articles',false,25,true);
+    checkOrAddField('inline: publish_time','datetime','publish_time','articles',true,undef,undef);
+    checkOrAddField('inline: expiry_time','datetime','expiry_time','articles',false,undef,undef);
+    checkOrAddField('inline: status_id','user-pulldown','status_id','articles',true,undef,undef);
+    checkOrAddField('inline: folder','user-pulldown','folder','articles',true,undef,undef);
+    checkOrAddField('inline: template_id','user-pulldown','template_id','articles',false,undef,undef);
+}
+
+# This actually checks a field
+sub checkOrAddField
+{
+    my($name,$type,$inline,$exclusive,$obligatory,$height,$richtext) = @_;
+    my $existing = getModel('LIXUZDB::LzField')->search({ field_name => $name });
+    if (defined $existing && $existing->count)
+    {
+        if (defined $height)
+        {
+            $existing = $existing->next;
+            if (!defined($existing->field_height) || $existing->field_height != $height)
+            {
+                $existing->set_column('field_height',$height);
+                $existing->update();
+            }
+        }
+        return;
+    }
+    print '.';
+    logAction('Created the inline field '.$name);
+    my $newField = getModel('LIXUZDB::LzField')->create({
+            field_name => $name,
+            field_type => $type,
+            field_height => $height,
+            inline => $inline,
+            obligatory => $obligatory,
+            field_richtext => $richtext,});
+    $newField->update();
+
+    my $folders = $c->model('LIXUZDB::LzFolder')->search({ parent => \'IS NULL'});
+    while((defined $folders) && (my $f = $folders->next))
+    {
+        my $positions = $c->model('LIXUZDB::LzFieldModule')->search({
+                object_id => $f->folder_id,
+                module => 'folders',
+                position => \'IS NOT NULL',
+                enabled => 1,
+            }, { order_by => \'position DESC' });
+        my $pos;
+        if ($positions)
+        {
+            $pos = $positions->next;
+            if ($pos)
+            {
+                $pos = $pos->position + 1;
+            }
+        }
+        $c->model('LIXUZDB::LzFieldModule')->create({
+                field_id => $newField->field_id,
+                module => 'folders',
+                object_id => $f->folder_id,
+                position => $pos,
+            });
+        logAction('Added the inline field '.$name.' to the folder '.$f->folder_id);
+    }
+    return $newField->field_id;
+}
+
+# Upgrade revisions
+sub revisionUpgrade
+{
+    my $c = shift;
+
+    logAction('Performing revision upgrade');
+
+    my $articles = $c->model('LIXUZDB::LzArticle')->search(undef, { order_by => 'article_id'});;
+    my $upgradedNO = 0;
+
+    while(my $art = $articles->next)
+    {
+        if(not $art->revisionMeta)
+        {
+            $upgradedNO++;
+            $c->model('LIXUZDB::LzRevision')->create({
+                    type => 'article',
+                    type_revision => $art->revision,
+                    is_latest => 1,
+                    type_id => $art->article_id,
+                });
+            if ($upgradedNO >= 500)
+            {
+                $upgradedNO = 0;
+                print '.';
+            }
+        }
+    }
+    logAction('Revision upgrade done');
+}
+
+# Upgrade to identifier-based lz_files
+sub fileIdentifierUpgrade
+{
+    my $c = shift;
+
+    logAction('Performing file identifier upgrade');
+    my $files = $c->model('LIXUZDB::LzFile')->search(undef, { order_by => 'file_id'});;
+    my $upgradedNO = 0;
+
+    while(my $file = $files->next)
+    {
+        my $upgradeIT = 0;
+        if (not defined $file->get_column('identifier') or not length $file->get_column('identifier'))
+        {
+            $upgradeIT = 1;
+        }
+        elsif($file->get_column('identifier') =~ /^\d+$/)
+        {
+            $file->_addIdentifier();
+            $upgradedNO++;
+            if ($upgradedNO >= 250)
+            {
+                $upgradedNO = 0;
+                print '.';
+            }
+        }
+    }
+    logAction('File identifier upgrade done');
+}
+
+# Detect upgrade flags
+sub detectFlags
+{
+    # Note: In most cases it's best to do feature detection, where that is
+    # simple. That allows us to perform actions to repair databases as
+    # well as upgrade them (if that would be needed). If it's non-trivial
+    # though, a check against $currentDBRevision is just fine. Reading
+    # through this sub, you will find both.
+
+    # This is a generic feature test that checks for the presence of articles
+    # or files and ignores article/file upgrades if none are.
+    my $hasArticles;
+    my $hasFiles;
+    try
+    {
+        silent
+        {
+            my $articles = $rawDBH->selectall_arrayref('SELECT COUNT(*) FROM lz_article')->[0]->[0];
+            if ($articles)
+            {
+                $hasArticles = 1;
+            }
+            my $files = $rawDBH->selectall_arrayref('SELECT COUNT(*) FROM lz_files')->[0]->[0];
+            if ($files)
+            {
+                $hasFiles = 1;
+            }
+        }
+    };
+
+    try
+    {
+        silent
+        {
+            return if not $hasArticles;
+            my $revCols = $rawDBH->selectall_arrayref('SELECT COUNT(*) FROM lz_article WHERE revision=2')->[0]->[0];
+            if (not $revCols)
+            {
+                $flags{revisions} = 1;
+            }
+        };
+    }
+    catch
+    {
+        $flags{revisions} = 1;
+    };
+    print '.';
+    try
+    {
+        silent
+        {
+            my $identified = $rawDBH->selectall_arrayref('SELECT COUNT(*) FROM lz_file WHERE identifier IS NULL');
+
+            if($identified && $identified->[0]->[0] > 0)
+            {
+                $flags{fileIDs} = 1;
+            }
+        };
+    };
+    if ($currentDBRevision < 2)
+    {
+        $flags{fileIDs} = 1;
+    }
+    print '.';
+    if ($currentDBRevision < 1 && $hasArticles)
+    {
+        $flags{articleLatestStatus} = 1;
+    }
+    print '.';
+    try
+    {
+        silent
+        {
+            my $classes = $rawDBH->selectall_arrayref('SELECT COUNT(*) FROM lz_file_class WHERE identifier IS NULL');
+
+            if(not $classes or $classes->[0]->[0] <= 0)
+            {
+                $flags{fileClasses} = 1;
+            }
+        }
+    }
+    catch
+    {
+        $flags{fileClasses} = 1;
+    };
+}
+
+sub getCurrentDBRevision
+{
+    my $rev;
+    silent
+    {
+        $rev = $rawDBH->selectall_arrayref('SELECT value FROM lz_lixuz_meta WHERE entry="dbrevision"');
+    };
+    if ($rev)
+    {
+        $rev = $rev->[0]->[0];
+    }
+    if (defined $rev)
+    {
+        return $rev;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+sub setDBRevision
+{
+    $c = fakeC() if not $c;
+    my $rev = $c->model('LIXUZDB::LzLixuzMeta')->find({ entry => 'dbrevision' });
+    if ($rev)
+    {
+        $rev->set_column('value',$DBRevision);
+        $rev->update();
+    }
+    else
+    {
+        $c->model('LIXUZDB::LzLixuzMeta')->create({ entry => ,'dbrevision', value => $DBRevision});
+    }
+}
+
+sub readDBRevision
+{
+    my $rev;
+    my $file = './dbrevision';
+    if (-d './sql')
+    {
+        $file = './sql/'.$file;
+    }
+    open(my $in,'<',$file) or die("Failed to read $file: $!");
+    $rev = <$in>;
+    chomp($rev);
+    close($in);
+    die("Failed to read DB revision") if not defined $rev;
+    return $rev;
+}
+
+sub articleLatestStatusUpgrade
+{
+    my $c = shift;
+
+    logAction('Performing article latest_in_status upgrade');
+
+    my $articles = $c->model('LIXUZDB::LzArticle')->search(undef, { order_by => 'article_id'});;
+    my $upgradedNo = 0;
+
+    my %map;
+    while(my $art = $articles->next)
+    {
+        my $id = $art->article_id;
+        if (not $map{ $id })
+        {
+            $map{ $id } = {};
+        }
+        my $rev = $art->revision;
+        my $status = $art->status_id;
+        my $set = 0;
+        if (not defined $map{$id}->{$status})
+        {
+            $set = 1;
+        }
+        elsif ($map{$id}->{$status} < $rev)
+        {
+            $set = 1;
+        }
+        if ($set)
+        {
+            $upgradedNo++;
+            $map{$id}->{$status} = $rev;
+            $art->revisionMeta->update({
+                    is_latest_in_status => 1
+                });
+            $c->model('LIXUZDB::LzArticle')->search({
+                    article_id => $id,
+                    status_id => $status,
+                    revision => { '!=' => $rev},
+                    'revisionMeta.is_latest_in_status' => 1
+                }, { join => 'revisionMeta' })->search_related('revisionMeta')->update({ is_latest_in_status => 0 });
+            if ($upgradedNo > 250)
+            {
+                $upgradedNo = 0;
+                print '.';
+            }
+        }
+    }
+    logAction('Revision upgrade done');
+}
+
+sub performPreStructureChanges
+{
+    if ($currentDBRevision < 3)
+    {
+        try
+        {
+            $rawDBH->do('ALTER TABLE lz_field_module CHANGE folder_id object_id INT;') or die($DBI::errstr);
+            $rawDBH->do('ALTER TABLE lz_article DROP article_order;') or die($DBI::errstr);
+            $rawDBH->do('ALTER TABLE lz_article DROP hits;') or die($DBI::errstr);
+            $rawDBH->do('ALTER TABLE lz_file DROP hits;') or die($DBI::errstr);
+            $rawDBH->do('ALTER TABLE lz_file DROP dpi;') or die($DBI::errstr);
+        }
+        catch
+        {
+            die("Failed to perform structure upgrades: $_\n");
+        };
+    }
+}
+sub addDefaultFileClass
+{
+    silent
+    {
+        $rawDBH->do('INSERT INTO lz_file_class (id,name) VALUES(0,"Default/generic");') or die($DBI::errstr);
+        # It can set it as id=1 when we want id=0, so update it to be certain
+        $rawDBH->do('UPDATE lz_file_class SET id=0 WHERE name="Default/generic";') or die($DBI::errstr);
+    };
+    print '.';
+}
+sub convertFileFields
+{
+    my $c = shift;
+    silent
+    {
+        $c->model('LIXUZDB::LzFieldModule')->search({ module => 'files', 'object_id' => \'IS NULL'})->update({ object_id => 0 });
+    };
+    print '.';
+}
+
+# Run a system() and log it as well
+sub logSystem
+{
+    my $logged = join('\',\'',@_);
+    $logged =~ s/-(p|u)[^']+/-$1XXXX/g;
+    logAction('Running system(\''.$logged.'\');');
+    return system(@_);
+}
+
+# Both log and print to STDOUT
+sub dualPrint
+{
+    my $msg = shift;
+    print $msg;
+    chomp($msg);
+    logAction($msg);
+}
+
+# Both log and die()
+sub dualDie
+{
+    $controlledDie = 1;
+    if ($logfile)
+    {
+        my $msg = $_[0];
+        chomp($msg);
+        logAction('Dying: '.$msg);
+    }
+    die(@_);
+}
+
+# Log something
+sub logAction
+{
+    my $msg = shift;
+    my ($lsec,$lmin,$lhour,$lmday,$lmon,$lyear,$lwday,$lyday,$lisdst) = localtime(time());
+    $lmon++;
+    $lhour = "0$lhour" if not $lhour >= 10;
+    $lmin = "0$lmin" if not $lmin >= 10;
+    $lsec = "0$lsec" if not $lsec >= 10;
+    $lmon = "0$lmon" if not $lmon >= 10;
+    $lmday = "0$lmday" if not $lmday >= 10;
+    $lyear += 1900;
+    print {$logfile} "[$lmday/$lmon/$lyear $lhour:$lmin:$lsec ($$)] ".$msg."\n";
+}
+
+# Fetch a model, attempting two different methods
+sub getModel
+{
+    my $model = shift;
+    my $result;
+    try
+    {
+        $result = $c->model($model);
+        1;
+    }
+    catch
+    {
+        $result = LIXUZ->model($model);
+    };
+    return $result;
+}
+
+# Exit
+sub dExit
+{
+    my $ret = shift;
+    unlink($dumpTargets{stripped}) if -e $dumpTargets{stripped};
+    exit($ret);
+}
+
+# Simple sigINT handler
+sub sigintTerm
+{
+    print "\nSIGINT received\n";
+    while(1)
+    {
+        print "\n";
+        print "SIGINT emergency console - enter one of the following commands:\n";
+        print "restore    - restore original database state\n";
+        print "continue   - continue whatever the script was doing\n";
+        print "shell      - run a shell\n";
+        print "quit       - terminate upgradeDB (DANGEROUS!)\n";
+        print "> ";
+        my $in = <STDIN>;
+        next if not $in;
+        chomp($in);
+        if ($in =~ /^continue$/)
+        {
+            print "continuing...";
+            return;
+        }
+        elsif($in =~ /^restore$/)
+        {
+            fatalRestore
+            {
+                die("Restoration triggered by SIGINT console\n");
+            };
+            print "fatalRestore returned control...\n";
+        }
+        elsif($in =~ /^shell$/)
+        {
+            runShell();
+        }
+        elsif($in =~ /^quit$/)
+        {
+            print "\nAre you COMPLETELY SURE you want to terminate upgradeDB?\n";
+            print "Your database may be left in a broken or inconsistent state.\n";
+            print "In most cases, using the \"restore\" command is what you actually\n";
+            print "want. It will restore the database to the state it was in before\n";
+            print "upgradeDB was started, and then exit.\n\n";
+            print "Type \"do it\" if you are sure: ";
+            my $in = <STDIN>;
+            next if not $in;
+            chomp($in);
+            exit if $in eq 'do it';
+        }
+        else
+        {
+            print "$in: unknown command\n";
+        }
+    }
+}
+
+no warnings;
+# Run a subroutine inside an try/catch container that will automatically
+# restore the old database on failure. Use it around code blocks performing
+# destructive operations.
+sub fatalRestore(&)
+{
+    my $ref = shift;
+    try
+    {
+        $ref->();
+    }
+    catch
+    {
+        if ($controlledDie)
+        {
+            die($_);
+        }
+        dualPrint("===========\n");
+        dualPrint("FATAL ERROR\n");
+        dualPrint("===========\n");
+        dualPrint(" -- Error : --\n");
+        dualPrint($_);
+        dualPrint(" --         --\n");
+        dualPrint("A fatal error has occurred, and Lixuz is unable to upgrade the database.\n");
+        dualPrint("The database upgrader will now restore the database to its original state\n");
+        dualPrint("before exiting.\n\n");
+        print "Restoring...";
+        if (not -e $dumpTargets{full})
+        {
+            restoreFailure('SCHEMA OR DUMP FILES MISSING!',"It looks like dumping of the old schema or data has failed.\n");
+        }
+        try
+        {
+            my $ret = mysql_exec('source '.$dumpTargets{full},false,true);
+        }
+        catch
+        {
+            restoreFailure('RESTORATION CRASHED',"Error: $_\n");
+        };
+        print "done - old database has been restored.\n";
+        dExit(1);
+    }
+}
+use warnings;
+
+sub restoreFailure
+{
+    my $reason = shift;
+    my $fullReason = shift;
+    print "FAILED!\n";
+    print "\nERROR DURING RESTORATION: $reason\n";
+    print "$fullReason";
+    print "Will now start a shell so that you may investigate the issue.";
+    print "Some information:\n";
+    print "  Data+schema dump for the old DB should be at $dumpTargets{full}\n";
+    print "  Selective data dump for insertion into the new DB should\n";
+    print "    be at $dumpTargets{stripped}\n";
+    print "  Logfile should be at $logfile\n";
+    runShell();
+    print "\nPress enter to exit\n";
+    <STDIN>;
+    print "Exiting without cleaning up.\n";
+    exit(2);
+}
+
+sub runShell
+{
+    foreach my $shell (qw(bash sh dash ksh))
+    {
+        foreach my $loc (qw(/bin /usr/local/bin /usr/bin))
+        {
+            if (-x $loc.'/'.$shell)
+            {
+                print " [ running $loc/$shell ]\n";
+                system($loc.'/'.$shell);
+                last;
+            }
+        }
+    }
+}

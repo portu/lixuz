@@ -1,0 +1,103 @@
+#!/usr/bin/perl
+# flvConverter.manual
+#
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+use strict;
+use warnings;
+use FindBin;
+use Time::HiRes qw(sleep);
+
+sub runIt
+{
+    print "Running: ".join(' ',@_)."\n";
+    return system(@_);
+}
+
+my $file = shift or die("Needs a single argument, file ID to convert\n");
+
+if ($file =~ /\D/)
+{
+    $file =~ s{^.*/(\d+)$}{$1};
+    if ($file =~ /\D/)
+    {
+        die("Failed to extract file ID from path '$file'\n");
+    }
+}
+
+$| = 1;
+print "Initializing...";
+use lib $FindBin::RealBin.'/../lib/';
+# Lixuz doesn't like not being in its own dir when initializing
+chdir($FindBin::RealBin.'/..');
+require LIXUZ;
+print ".";
+my $fobj = LIXUZ->model('LIXUZDB::LzFile')->find({file_id => $file});
+my $fakeC = bless({},'LIXUZ');
+die("Filed to locate file object with file_id $file\n") if not $fobj;
+die("File id $file is not a video file\n") if not $fobj->is_video();
+print "done\n";
+print "\n";
+my $triedRM;
+while(1)
+{
+    if(runIt($FindBin::RealBin.'/flvConverter',$fobj->get_path($fakeC),$fobj->get_flv_path($fakeC),$fobj->get_flv_tmpFile($fakeC)) != 0)
+    {
+        if ($triedRM or $fobj->flv_status($fakeC) =~ /INPROGRESS/)
+        {
+            die("\nFailed to run flvConverter.\n");
+        }
+        else
+        {
+            unlink($fobj->get_flv_path($fakeC));
+            unlink($fobj->get_flv_tmpFile($fakeC));
+            $triedRM = 1;
+        }
+    }
+    else
+    {
+        last;
+    }
+}
+print "\n";
+
+while(1)
+{
+    print "\r                                                     ";
+    print "\rConversion: ";
+    my $s = $fobj->flv_status($fakeC);
+    if ($s =~ /INPROGRESS/)
+    {
+        print "Running";
+    }
+    elsif($s =~ /FAILURE/)
+    {
+        print "Failed\n";
+        print "Have a look at ".$fobj->get_flv_tmpFile($fakeC)." for error information\n";
+        exit(1);
+    }
+    elsif($s =~ /SUCCESS/)
+    {
+        print "Done - flv successfully created\n";
+        exit(0);
+    }
+    else
+    {
+        print "(unknown state)";
+    }
+    sleep(0.2);
+}

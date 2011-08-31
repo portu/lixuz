@@ -1,0 +1,12 @@
+name: lixuz_dictionaryEdit
+method:post
+fields:
+    word:
+        required: 1
+        type: text
+    definition:
+        required: 1
+        type: textarea
+    type:
+        type: hidden
+        required: 1

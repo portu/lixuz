@@ -1,0 +1,66 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($message) {
+% # FIXME: drop the <b></b> tags and do that in CSS
+<div id="lzCategoryListMessage"><b><% $message %></b></div>
+%}
+
+<& ../core/listnavigation.html, %ARGS &>
+
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'keyvalue_id', ordertype => $ordertype}) %>"><% $i18n->get('Word ID') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'thekey', ordertype => $ordertype}) %>"><% $i18n->get('Word') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'value', ordertype => $ordertype}) %>"><% $i18n->get('Definition') %></a></td>
+	<td class="rowHead rowHeadIcon">&nbsp;</td>
+	<td class="rowHead rowHeadIcon">&nbsp;</td>
+    </tr>
+
+%if(defined $dictionary && $dictionary->count > 0){
+%my $i=0;
+%while(my $word = $dictionary->next){
+%$i++;
+
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+        <td><% $word->keyvalue_id %></td>
+        <td><a href="/admin/dictionary/edit/<% $word->keyvalue_id%>"><% $word->thekey %></a></td>
+<%perl>
+my $definition = $word->value;
+$definition =~ s#\n+# #g;
+if(length($definition) > 60)
+{
+    $definition = substr($definition,0,57);
+    $definition .= ' ...';
+}
+</%perl>
+    <td><a href="/admin/dictionary/edit/<% $word->keyvalue_id%>"><%$definition%></a></td>
+    <td><a href="/admin/dictionary/edit/<% $word->keyvalue_id %>"><img class="useTipsy" src="/static/images/icons/dictionary-edit.png" border="0" title="<% $i18n->get('Edit') %>" alt="<% $i18n->get('Edit') %>" /></a></td>
+    <td><a href="/admin/dictionary/delete/<% $word->keyvalue_id %>" onclick="return userQuestion('<% $i18n->get_advanced('Are you sure you want to delete the definition of the word "%(WORD)"?', { WORD => $word->thekey} ) %>')"><img class="useTipsy" src="/static/images/icons/trash.png" border="0" title="<% $i18n->get('Delete') %>" alt="<% $i18n->get('Delete') %>" /></a></td>
+    </tr>
+%}
+%}
+
+</table>
+
+
+<%args>
+$dictionary=>undef
+$message => undef
+$i18n
+$ordertype
+</%args>

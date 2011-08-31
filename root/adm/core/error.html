@@ -1,0 +1,109 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<%perl>
+try {
+if($c->req->param('_JSON_Submit'))
+{
+    json_error($c,'INTERNALERROR','An unrecoverable internal error has occurred. Please try again later. If the problem persists, contact your system administrator or the Lixuz developers');
+}
+else
+{
+</%perl>
+<& header.html, %ARGS &>
+<br /><br /><br />
+<center>
+<%perl>
+my $crashId = time().'.'.int(rand(100));
+my $ePath = '';
+try
+{
+    my $userID;
+    try
+    {
+        $userID = $c->user->user_id;
+        $ePath = $c->req->uri->as_string;
+    };
+    if (defined $userID)
+    {
+        $crashId .= '-u'.$userID;
+    }
+};
+try
+{
+    $c->log->debug('Lixuz crash id: '.$crashId.' (ePath: '.$ePath.')');
+    1;
+} catch { $crashId = '(unknown - logging failed)'; }
+</%perl>
+<script type="text/javascript">
+try
+{
+document.title = 'Lixuz - Error';
+} catch(e) { };
+</script>
+<b>An unrecoverable error has occurred. Please try again later.</b><br />
+If the problem persists, contact your system administrator or the Lixuz developers.<br />
+<small>Crash ID: <%$crashId%></small>
+<%perl>
+try
+{
+    if($c->user->can_access('SUPER_USER') && $errorMessages)
+    {
+</%perl>
+<br /><br /> <a href="#" title="You are a super user and may therefore view the error log" onclick="$('#errorMessages').show(); $(this).hide();return false;">Show error log</a><br />
+</center>
+<div id="errorMessages" style="display:none;">
+<code>
+%foreach my $err (@{$errorMessages}) { $err =~ s/\n/<br \/>/g; $m->out($err) }
+</code>
+<div id="jsUinfo"></div>
+<script type="text/javascript">
+    $LAB.onReady(function ()
+    {
+        $(function ()
+        {
+            try
+            {
+                $('#jsUinfo').html(getLzErrInfo(""));
+            } catch(e) {}
+        });
+    });
+</script>
+</div>
+<center>
+<%perl>
+    }
+};
+</%perl>
+</center>
+<br /><br /><br />
+<& footer.html, %ARGS &>
+<%perl>
+}
+1;
+}
+ catch {
+</%perl>
+<html><head>Lixuz - Fatal error</head><body><br /><br /><b>A fatal unrecoverable error has occurred, in addition another fatal error occurred while processing the error handling</b><br />Please contact your system administrator, or alternatively, the Lixuz developers.</body></html>
+%}
+<%once>
+use Try::Tiny;
+use LIXUZ::HelperModules::JSON qw(json_error);
+</%once>
+<%args>
+$errorMessages => undef
+</%args>

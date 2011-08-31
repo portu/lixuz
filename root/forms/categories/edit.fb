@@ -1,0 +1,26 @@
+name: lixuz_userEdit
+method:post
+fields:
+    hilightedFolders:
+        required: 0
+        type: hidden
+    category_name:
+        required: 1
+        type: text
+        size: 40
+        validate: VALUE
+    template:
+        type: select
+        required: 0
+    parent:
+        type: select
+        required: 0
+    external_link:
+        type: text
+        required: 0
+    category_status:
+        type: select
+        required: 1
+    type:
+        type: hidden
+        required: 1

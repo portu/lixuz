@@ -1,0 +1,43 @@
+	.dhtmlgoodies_tree,#floatingContainer{
+		margin:0px;
+		padding:0px;
+	}
+	.dhtmlgoodies_tree ul{	/* Sub menu groups */
+		margin: 4px 0px 4px 20px;	/* Left spacing */
+		padding-left:0px;
+		display:none;	/* Initially hide sub nodes */
+	}
+	
+	#floatingContainer ul{
+		margin: 4px 0px 4px 20px;	/* Left spacing */
+		padding-left:0px;	
+	}
+	.dhtmlgoodies_tree li,#floatingContainer li{	/* Nodes */
+		list-style-type:none;
+		vertical-align:middle;
+		margin: 3px 0px;		
+	}
+	.dhtmlgoodies_tree li a,#floatingContainer li a{	/* Node links */
+		text-decoration:none;
+		padding-left:1px;
+		line-height:13px;
+		margin-left:2px;
+
+	}
+	.dhtmlgoodies_tree li a.highlightedNodeItem{
+		color:#FFF;
+		background-color:#009;
+	}
+	
+		
+	body{
+		margin:0px;
+		padding:0px;
+	}
+	
+	.dhtmlgoodies_tree input.folderTreeTextBox{	/* Css for the text input - rename item */
+		font-size:10px;
+		margin:0px;
+		padding:0px;
+		height:12px;
+	}

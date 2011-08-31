@@ -1,0 +1,50 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="form_edit">
+    <% $i18n->get('Lixuz has multiple file classes available. Select the class that best fits the file(s) you wish to upload.') |n %>
+    <br /> <% $i18n->get('File class') |n %>: 
+    <select id="fileClassSelect">
+%while(my $class = $classes->next) {
+        <option value="<% $class->id %>"><% $class->name($i18n) |n %></option>
+%}
+    </select>
+    <br />
+    <input type="hidden" id="skeleton" value="<% $onlySkeletonHTML %>" />
+    <input type="button" id="continueButton" value="<% $i18n->get('Continue') %>" />
+    <script type="text/javascript">
+        $LAB.onLoaded(function ()
+        {
+            var submit = function ()
+            {
+                var redir = '/admin/files/upload/'+$('#fileClassSelect').val();
+                if($('#skeleton').val() != 0)
+                {
+                    redir = redir +'?asyncUpload=1';
+                }
+                location.href = redir;
+            };
+            $('#fileClassSelect').change(submit);
+            $('#continueButton').click(submit);
+        });
+    </script>
+</div>
+<%args>
+$i18n
+$classes
+$onlySkeletonHTML => 0
+</%args>

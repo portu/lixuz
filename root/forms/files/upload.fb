@@ -1,0 +1,8 @@
+name: lixuz_fileUpload
+method:post
+enctype:multipart/form-data
+fields:
+    file_upload:
+        required: 1
+        type: file
+        enctype:multipart/form-data

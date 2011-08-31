@@ -1,0 +1,203 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($username){
+<td class="modules">
+<ul>
+<%perl>
+my @menu = (
+    {
+        name => $i18n->get('Dashboard'),
+        url => '/dashboard',
+        icon => 'dashboard.png'
+    },
+    {
+        name => $i18n->get('Articles'),
+         url => '/articles',
+         icon => 'article.png',
+         subentries => [
+             {
+                 name => $i18n->get('New article'),
+                 url => '/articles/add',
+                 click => 'LZ_NewArticle(); return false;',
+             },
+             {
+                 name => $i18n->get('Trash'),
+                url => '/articles/trash',
+            },
+         ],
+     },
+     {
+         name => $i18n->get('Categories'),
+         url => '/categories',
+         icon => 'categories.png',
+         subentries => [
+            {
+                name => $i18n->get('New category'),
+                url => '/categories/add',
+            },
+        ],
+     },
+     {
+         name => $i18n->get('Dictionary'),
+        url => '/dictionary',
+        icon => 'dictionary.png',
+        subentries => [
+            {
+                name => $i18n->get('Add a new word'),
+                url => '/dictionary/add',
+            },
+        ],
+    },
+    {
+        name => $i18n->get('Files'),
+         url => '/files',
+         icon => 'files.png',
+         subentries => [
+            {
+                name => $i18n->get('Upload files'),
+                url => '/files/upload'
+            },
+            {
+                name => $i18n->get('File classes'),
+                url => '/files/classes',
+            },
+         ],
+     },
+     {
+        name => $i18n->get('Tags'),
+        url => '/tags/list',
+        icon => 'tags.png',
+     },
+     {
+         name => $i18n->get('RSS Import'),
+         url => '/rssimport',
+         icon => 'rssimport.png',
+         extrahtml => 'onclick="showPI(\''.$i18n->get('Updating feeds...').'\');"',
+     },
+     {
+         name => $i18n->get('Newsletter'),
+         url => '/newsletter',
+         icon => 'newsletter.png',
+         subentries => [
+             {
+                 name => $i18n->get('Send a manual newsletter'),
+                url => '/newsletter/send',
+             },
+         ],
+     },
+     {
+         name => $i18n->get('Users'),
+         url => '/users',
+         icon => 'users.png',
+         subentries => [
+             {
+                 name => $i18n->get('New user'),
+                url => '/users/add',
+             },
+             {
+                 name => $i18n->get('Roles'),
+                url => '/users/roles',
+             },
+             {
+                 name => $i18n->get('New role'),
+                url => '/users/roles/add',
+            },
+         ],
+     },
+     {
+         name => $i18n->get('Settings'),
+         url => '/settings',
+         icon => 'settings.png',
+         subentries => [
+            {
+                name => $i18n->get('Administrative settings'),
+                url => '/settings/admin',
+            },
+            {
+                name => $i18n->get('Manage templates'),
+                url => '/templates'
+            },
+            {
+                name => $i18n->get('Upload template'),
+                url => '/templates/upload',
+            },
+            {
+                name => $i18n->get('Empty memcached'),
+                url => '/settings/admin/info/memcached/flush',
+            }
+         ],
+     },
+);
+my $menuHTML = '';
+my $onLoadJS = '';
+foreach my $entry ( @menu)
+{
+    my $module = $entry->{name};
+    my $URL = '/admin'.$entry->{url};
+    if (not $c->user->can_access($URL))
+    {
+        next;
+    }
+    my $submenu = '';
+    if($entry->{subentries})
+    {
+        foreach my $sub (@{$entry->{subentries}})
+        {
+            my $suburl = '/admin'.$sub->{url};
+            if(not $c->user->can_access($suburl))
+            {
+                next;
+            }
+            my $name = $sub->{name};
+            $submenu .= '<div class="subMenuHolder"><a';
+            $submenu .= ' onclick="'.$sub->{click}.'"' if $sub->{click};
+            $submenu .= ' href="'.$suburl.'"><img src="/static/images/icons/bullet_blue.png" border="0" align="left" />'.$name.'</a></div>';
+        }
+    }
+    my $sel = 0;
+    if ($c->req->path =~ m{^/?admin/?$entry->{url}})
+    {
+        $sel = 1;
+    }
+    my $html = '<div style="float: left; padding-right: 1em;" class="menu';
+    $html .= ' hoverMenu' if $submenu;
+    $html .= '">';
+    $html .= '<span class="menuOn">' if $sel;
+    $html .= '<a href="'.$URL.'"';
+    $html .= ' '.$entry->{extrahtml} if $entry->{extrahtml};
+    $html .= '><img src="/static/images/icons/'.$entry->{icon}.'" border="0" align="left"/>'.$module.'</a>';
+    $html .= '</span>' if $sel;
+    if ($submenu)
+    {
+        $html .= '<div class="subMenu">'.$submenu.'</div>';
+    }
+    $html .= '</div>';
+    $menuHTML .= $html;
+}
+</%perl>
+<% $menuHTML |n %>
+</td>
+%}
+
+
+<%args>
+$username => undef
+$submenu => undef
+$i18n
+</%args>
+

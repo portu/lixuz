@@ -1,0 +1,14 @@
+#!/bin/bash
+VERSION="$1"
+if [ "$VERSION" == "" ]; then
+    echo "USAGE: ./script/setVersion VERSION"
+    exit 1
+fi
+if [ ! -e "./lib/LIXUZ.pm" ]; then
+    cd ..
+    if [ ! -e "./lib/LIXUZ.pm" ]; then
+        echo "Run me from the root Lixuz directory"
+        exit 1
+    fi
+fi
+perl -pi -e "s/(VERSION_NO\s+=\s+)\S+;?\s*/\$1'$VERSION';\n/;" lib/LIXUZ.pm

@@ -1,0 +1,17 @@
+# --
+# Cleaning
+# --
+clean:
+	find -regextype posix-egrep -iregex '.*~$$' -print0 |xargs -0 rm -fv
+	rm -f root/js/*.js
+	rm -rf packages
+fullclean: clean
+	rm -rf lib/LIXUZ/Controller/SiteHacks*
+
+# --
+# Various development helpers
+# --
+updateddb:
+	(cd sql; ./dumpschema)
+	./script/lixuz_updatedb.pl
+# vim: set ft=make :

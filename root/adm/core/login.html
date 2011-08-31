@@ -1,0 +1,47 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div class="form_login">
+%if($message) {
+    <% $message |n %>
+    <br />
+    <br />
+%}
+
+    <form action="/admin/logout" method="post"> 
+        <input id="_submitted_lixuz_login" name="_submitted_lixuz_login" type="hidden" value="1" />
+        <table>
+            <tr>
+                <td><b><% $i18n->get('Username') |n %></b></td>
+                <td><input id="user_name" name="user_name" size="40" type="text" value="" /></td>
+            </tr>
+            <tr>
+                <td><b><% $i18n->get('Password') |n %></b></td>
+                <td><input id="password" name="password" size="40" type="password" value="" /></td>
+            </tr>
+            <tr>
+                <td align="center" colspan="2"><input id="lixuz_login_submit" name="_submit" onclick="this.form._submit.value = this.value;" type="submit" value="<% $i18n->get('Log in') |n %>" /></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<& /adm/core/preloadJS.html, %ARGS &>
+<%args>
+$message => undef
+$i18n
+</%args>

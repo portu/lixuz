@@ -1,0 +1,88 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="searchFilter">
+<% $FormBuilder->start |n %>
+<% $FormBuilder->statetags |n %>
+
+%if(defined $filterFolder) {
+<input id="folder" name="folder" type="hidden" value="<%$filterFolder%>" />
+%}
+
+<%perl>
+# Render filter list
+foreach my $filter (@{$searchFilters})
+{
+</%perl>
+<span id="filter_<%$filter->{realname}%>_container">
+<% $filter->{name} %>:
+<select name="filter_<%$filter->{realname}%>">
+    <option value="" <% $filter->{selected} ? '' : 'selected="selected"' |n %>>
+%my $anyString;
+%if($filter->{anyString}) {
+% $anyString = $filter->{anyString};
+% } else {
+% $anyString = $i18n->get('(any)');
+%}
+<% $anyString |n %>
+</option>
+%foreach my $opt (@{$filter->{options}})
+%{
+<option value="<% $opt->{value}%>"<% (defined $filter->{selected} and $filter->{selected} eq $opt->{value}) ? ' selected="selected"' : '' |n%>><%$opt->{label}%></option>
+%} # end of foreach my $opt () ..
+</select>
+&nbsp;
+</span>
+%} # end of foreach my $filter () ..
+
+&nbsp;&nbsp;&nbsp;
+<input id="query" name="query" type="text" value="<% $FormBuilder->fields->{query} %>" /> <% $FormBuilder->submit |n %>
+<% $FormBuilder->end |n %>
+</div>
+
+
+<%init>
+=cut USAGE
+
+This is the search and filtering template. In addition to the standard FormBuilder
+search object, it can also take a $searchFilters arrayref.
+
+This is an arrayref of zero or more hashrefs in the following form:
+{
+    name => "Publicly shown name of filter",
+    realname => 'tech_name_of_filter', ie the column name
+    options => [ - arrayref of zero or more of the following hashes:
+        {
+            value => value of option, ie. an uid for a user,
+            label => label of option, ie. username of a user,
+        },
+    ],
+    selected => the value that is selected in the options list, if undef then '(any)' will be selected,
+}
+
+Using this template and the perform_advanced_search function you can add both filters
+and freeform search to a list.
+
+=cut
+
+</%init>
+<%args>
+$FormBuilder
+$searchFilters => []
+$filterFolder => undef
+$i18n
+</%args>

@@ -1,0 +1,103 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+
+<& ../core/listnavigation.html, %ARGS &>
+
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead"><% $i18n->get('Active') |n %></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'rss_id', ordertype => $ordertype}) %>"><% $i18n->get('RSS ID') %></a></td>
+        <td class="rowHead"><% $i18n->get('Title/content') |n %></td>
+        <td class="rowHead"><% $i18n->get('Link') |n %></td>
+        <td class="rowHead"><% $i18n->get('Source') |n %></td>
+    </tr>
+
+%my @rssItems;
+%if(defined $rss_articles && $rss_articles->count > 0){
+%my $i=0;
+%while(my $art = $rss_articles->next){
+% push(@rssItems,$art->rss_id);
+%$i++;
+
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+    <td>
+        <input type="checkbox" <% $art->status eq 'Active' ? 'checked="checked"' : ''%> id="rss_art_<%$art->rss_id%>_checkbox" />
+    </td>
+    <td><% $art->rss_id %></td>
+<%perl>
+my $title = $art->title;
+if (length($title) > 70)
+{
+    $title = substr($title,0,67);
+    $title .= '...';
+}
+</%perl>
+<td><a href="#" id="rss_js_sliderButton_<%$art->rss_id%>"><% $title %></a>
+<div id="rss_slide_<%$art->rss_id%>" class="rss_slider">
+<table><tr><td>
+<% $art->lead |n %>
+</td><td align="right">
+<a href="#" onclick="editRSSEntry(<%$art->rss_id%>); return false;">Edit</a><br />
+<a href="#" onclick="deleteRSSEntry(<%$art->rss_id%>); return false;">Delete</a>
+</td></tr></table>
+</div>
+</div>
+</td>
+<td>
+<a href="<% $art->link %>" target="_blank"><% $art->domain_name %></a>
+</td>
+<%perl>
+my $source = $art->source;
+if(length($source) > 41)
+{
+    $source = substr($source,0,41);
+    $source .= '...';
+}
+else
+{
+    $source =~ s/(.{45})/$1<br \/>/g;
+}
+</%perl>
+    <td><a href="<% $art->source %>" title="<% $art->source %>"><% $source |n %></a></td>
+    </tr>
+%}
+%}
+<input type="hidden" id="rssItems" value="<% join(',',@rssItems)%>" />
+</table>
+<a href="#" onclick="submitRSSImportSettings(); return false;"><input type="button" value="<%$i18n->get('Save changes')%>" /></a>
+<script type="text/javascript">
+$LAB.queue(function(){
+    $('.rss_slider').each(function ()
+    {
+        var currId = $(this).attr('id').replace(/^rss_slide_/,'');
+        var $slide = $("#rss_slide_"+currId)
+        $("#rss_js_sliderButton_"+currId).click(function (ev) {
+            $slide.slideToggle();
+            ev.preventDefault();
+        });
+        $slide.hide();
+    });
+});
+</script>
+
+<%args>
+$rss_articles=>undef
+$message => undef
+$ordertype => ''
+$i18n
+</%args>

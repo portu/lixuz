@@ -1,0 +1,37 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="form_edit">
+<form name="ignoreStatuses" method="POST">
+Check the statuses that you do not want to be included in the "My Assignments"
+widget on the dashboard. You are currently setting the default global
+value.<br />
+<input type="hidden" name="statusSubmission" value="true" />
+%while(my $status = $statuses->next)
+%{
+<input <% $active->{$status->status_id} ? 'checked="checked"' : '' %> type="checkbox" name="status_<%$status->status_id%>" value="<%$status->status_id%>" /> <% $status->status_name($i18n) %><br />
+%}
+<br/><br/>
+<input type="submit" /> <input type="reset" />
+</form>
+</div>
+
+<%args>
+$i18n
+$statuses
+$active => { 2 => 1}
+</%args>

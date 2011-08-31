@@ -1,0 +1,68 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%# --- Normal pulldown ---
+<%perl>
+my $opts = [];
+if(ref($field->{value}))
+{
+    if ($field->{value}->{rawtree})
+    {
+        $opts = $field->{value}->{rawtree};
+    }
+    else
+    {
+        $opts = $field->{value}->{options};
+        $field->{value} = $field->{value}->{real_value};
+    }
+}
+elsif ($field->{options})
+{
+    while((defined $field->{options}) && (my $opt = $field->{options}->next))
+    {
+        my $selected;
+        if ($moduleFieldId.'-'.$opt->option_id eq $field->{value})
+        {
+            $selected = 1;
+        }
+        push(@{$opts}, {
+            value => $moduleFieldId.'-'.$opt->option_id,
+            selected => $selected,
+            name => $opt->option_name,
+            });
+    }
+}
+else
+{
+    $c->log->warn('userpulldown.html: nothing to do :o');
+}
+</%perl>
+%if(ref($opts)) {
+<option value="" <% $field->{value} ? '' : 'selected="selected"' %>><% $i18n->get('-select-') %></option>
+% foreach my $opt (@{$opts}) {
+<option value="<%$opt->{value}%>" <%$opt->{selected} ? 'selected="selected"' : ''%>><%$opt->{name}%></option>
+%}
+%} else {
+<% $opts|n %>
+%}
+<%args>
+$field
+$i18n
+$moduleFieldId => undef
+$component
+$fieldExtraHTML
+</%args>

@@ -1,0 +1,140 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="form_edit">
+<div id="LZAdditionalFieldContainer">
+<p>
+
+<div class="label type"><span><%$i18n->get('Field name')%></span></div>
+<div>
+<input id="name" name="name" size="40" type="text" value="<%$values->{name}%>" />
+</div>
+
+<div id="typeselection">
+%if($formType eq 'add') {
+<div class="label type"><span><%$i18n->get('Field type')%></span></div>
+<div>
+<select name="type" id="type" onchange="LZ_FieldTypeChanged()">
+<% $typeOptions |n %>
+</select>
+</div>
+%} else {
+<input type="hidden" id="type" name="type" value="<% $type %>" />
+%}
+</div>
+
+<div id="rangeselection" <% $type =~ /range/ ? '' : 'style="display:none;"' |n%>>
+<div class="label rangeselection"><span><%$i18n->get('Range')%></span></div>
+<div>
+<input id="range" name="range" value="<%$values->{range}%>" size="40" />
+</div>
+</div>
+
+<div id="valuesselection" <% $type =~ /^(multi-select|user-pulldown)$/? '' : 'style="display:none;"' |n%>>
+<div class="label valuesselection"><span><%$i18n->get('Values, separated by a comma followed by an optional space')%></span></div>
+<div>
+<input id="values" name="values" value="<%$values->{pullvalues}%>" size="60" />
+</div>
+</div>
+
+<div id="heightselection" <% $type eq 'multiline' ? '' : 'style="display:none;"' |n%>>
+<div class="label heightselection"><span><%$i18n->get('Height')%></span></div>
+<div>
+<input id="height" name="height" value="<%$values->{height}%>" size="40" />
+</div>
+</div>
+
+<div id="rteselection" <% $type eq 'multiline' ? '' : 'style="display:none;"' |n%>>
+<input type="checkbox" name="rte" id="rte" value="true" <% $values->{use_RTE} ? 'checked="checked"' : '' %> /> <% $i18n->get('Use the rich text editor on this field') %>
+</div>
+
+<input name="formType" id="formType" type="hidden" value="<%$formType%>" />
+<input name="uid" id="uid" type="hidden" value="<%$uid%>" />
+<br />
+<div class="submit"><input id="saveArticle" name="_SaveArticle" onclick="LZ_FieldSave(); return false" type="button" value="<% $i18n->get('Save') %>" /></div>
+<div class="submit"><input id="saveArticle" name="_SaveArticle" onclick="LZ_FieldSaveAndClose(); return false" type="button" value="<% $i18n->get('Save and close') %>" /></div>
+</p>
+</div>
+</div>
+
+<%args>
+$values => {}
+$formType => 'add'
+$i18n
+</%args>
+
+<%init>
+use LIXUZ::HelperModules::Forms qw(select_options_manually);
+my $type = $values->{type} ? $values->{type} : 'singleline';
+if ($type eq 'user-pulldown' and $values->{range})
+{
+    $type = 'range-pulldown';
+}
+my $uid  = defined $values->{uid} ? $values->{uid} : '';
+my $typeOptions = select_options_manually([
+	{
+		value => 'singleline',
+		name => $i18n->get('Single line input'),
+		selected => $type eq 'singleline',
+	},
+	{
+		value => 'multiline',
+		name => $i18n->get('Multi line input'),
+		selected => $type eq 'multiline',
+	},
+	{
+		value => 'checkbox',
+		name => $i18n->get('Checkbox'),
+		selected => $type eq 'checkbox',
+	},
+    {
+        value => 'multi-select',
+        name => $i18n->get('Multiple-choice checkbox'),
+        selected => $type eq 'multi-select',
+    },
+	{
+		value => 'user-pulldown',
+		name => $i18n->get('Custom pulldown'),
+		selected => $type eq 'user-pulldown',
+	},
+	{
+		value => 'range-pulldown',
+		name => $i18n->get('Range-defined pulldown'),
+		selected => $type eq 'range-pulldown',
+	},
+#	{
+#		value => 'predefined-pulldown',
+#		name => $i18n->get('Predefined pulldown'),
+#		selected => $type eq 'predefined-pulldown',
+#	},
+    {
+        value => 'range',
+        name => $i18n->get('Range'),
+        selected => $type eq 'range',
+    },
+    {
+        value => 'datetime',
+        name => $i18n->get('Date and time'),
+        selected => $type eq 'datetime',
+    },
+    {
+        value => 'date',
+        name => $i18n->get('Date'),
+        selected => $type eq 'date',
+    },
+	]);
+</%init>

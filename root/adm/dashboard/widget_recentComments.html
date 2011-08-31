@@ -1,0 +1,64 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead"><%$i18n->get('ID') %></td>
+        <td class="rowHead"><% $i18n->get('Subject') %></td>
+        <td class="rowHead"><% $i18n->get('Article') %></td>
+    </tr>
+%my $i = 0;
+%if(defined $dashboard_comments) {
+%while(my $comment = $dashboard_comments->next) {
+<%perl>
+$i++;
+my $article_is_mine = 0;
+my $article = get_live_or_latest_article($c,$comment->article_id);
+if ((defined $article->workflow->assigned_to_user && $article->workflow->assigned_to_user == $c->user->user_id) || (defined $article->workflow->assigned_to_role && $article->workflow->assigned_to_role == $c->user->role->role_id))
+{
+    $article_is_mine = 1;
+}
+my $fullTitle = '';
+if($article->shorttitle ne $article->title)
+{
+    $fullTitle = $article->title;
+}
+</%perl>
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+    <td><% $comment->comment_id %></td>
+    <td><% $comment->shortsubject %></td>
+%if($article_is_mine or $c->user->can_access('EDIT_OTHER_ARTICLES')) {
+    <td><a class="useTipsy" title="<% $fullTitle %>" href="/admin/articles/edit/<% $article->article_id %>"><% $article->shorttitle |n %></a></td>
+%}elsif($article_is_mine or $c->user->can_access('PREVIEW_OTHER_ARTICLES')) {
+    <td><a class="useTipsy" title="<% $fullTitle %>" href="/admin/articles/preview/<% $article->article_id %>" target="_blank"><% $article->shorttitle |n %></a></td>
+%} else {
+    <td><span class="useTipsy" title="<% $fullTitle %>"><% $article->shorttitle |n %></span></a></td>
+%}
+    </tr>
+%}
+%} else {
+<tr class="odd"><td colspan="3"><%$i18n->get('(none)')%></td></tr>
+%}
+</table>
+
+<%args>
+$dashboard_comments => undef
+$i18n
+</%args>
+<%once>
+use LIXUZ::HelperModules::RevisionHelpers qw(get_live_or_latest_article);
+</%once>

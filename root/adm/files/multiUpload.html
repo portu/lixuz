@@ -1,0 +1,44 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="form_edit">
+
+%if($c->req->param('asyncUpload')) {
+<input id="asyncUpload" name="asyncUpload" type="hidden" value="1" />
+%}
+<div id="uploadForm">
+    <form enctype="multipart/form-data" id="lixuz_multiFileUpload" method="post" action="/admin/files/upload/<% $fileClassID %>" onsubmit="return prepFormSubmission();">
+<div><a href="#" onclick="addFile();return false;"><img src="/static/images/icons/files-upload.png" border="0" align="left" />&nbsp;<% $i18n->get('Upload more') %></a></div><br /><br />
+%if(defined $artid) {
+<input type="hidden" id="artid" name="artid" value="<%$artid%>" />
+%}
+<input type="hidden" id="totalFileEntries" name="totalFileEntries" value="1" />
+<input type="hidden" id="multiFileUpload_submitted" name="multiFileUpload_submitted" value="true" />
+<div id="fileUploadArea"></div>
+<div id="fileInfoArea"><& edit.html, %ARGS, multiMode => 1 &></div>
+<input id="multi_upload_submit" name="_submit" type="submit" value="<%$i18n->get('Upload')%>" />  
+</form>
+</div>
+
+</div>
+
+<%args>
+$i18n
+$fileClassID
+$folder_list
+$artid => undef
+</%args>

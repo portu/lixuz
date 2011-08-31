@@ -1,0 +1,18 @@
+This directory contains various tools used by Lixuz when in production.
+
+flvConverter is the script used to convert video files of any filetype
+to a flv file.
+
+flvConverter.manual is a script that you can manually run to perform
+a conversion of a video file. This is useful if the conversion failed
+and you have repaired the cause. Simply run ./flvConverter.manual FILE_ID
+and it will create an flv for FILE_ID and let you know when it has finished
+and what the status is.
+
+masontest.pl is a script that checks the syntax of HTML::Mason files,
+the templating format used by Lixuz.
+
+lixuzIndexer.pl is a helper script for indexing individual articles or files
+while Lixuz is in production. It gets called automatically whenever
+a file or article is created/updated/deleted. Mass indexing is done
+in the daily cronjob.

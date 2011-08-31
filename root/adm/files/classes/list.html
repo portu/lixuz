@@ -1,0 +1,58 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($message) {
+% # FIXME: drop the <b></b> tags and do that in CSS
+<div id="lzStatusListMessage"><b><% $message %></b></div>
+%}
+
+<& ../../core/listnavigation.html, %ARGS &>
+
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'id', ordertype => $ordertype}) %>"><% $i18n->get('ID') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'name', ordertype => $ordertype}) %>"><% $i18n->get('Name') %></a></td>
+	<td class="rowHead">&nbsp;</td>
+    </tr>
+
+%if(defined $classes && $classes->count > 0){
+%my $i=0;
+%while(my $class = $classes->next) {
+%$i++;
+
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+        <td><% $class->id %></td>
+        <td><% $class->name($i18n) %></td>
+        <td colspan="2">
+            <a href="/admin/files/classes/edit/<% $class->id %>" class="useTipsy" title="Edit class"><img src="/static/images/icons/fileClass-edit.png" alt="" /></a>
+%if($class->id != 0) {
+            <a href="/admin/files/classes/delete/<% $class->id %>" onclick="return confirm('Are you sure you want to delete the file class <% $class->id %>?');" class="useTipsy" title="Delete class"><img src="/static/images/icons/fileClass-delete.png" alt="" /></a>
+%}
+        </td>
+    </tr>
+%}
+%}
+
+</table>
+
+
+<%args>
+$classes=>undef
+$message => undef
+$i18n
+$ordertype
+</%args>

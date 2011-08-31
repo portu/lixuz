@@ -1,0 +1,42 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if(not $onlySkeletonHTML) {
+<div id="footer">
+%my $versVal = $VERSION;
+%if($c->user) {
+<% $i18n->get_advanced("Lixuz version %(VERSION)",{ VERSION => $VERSION }) %>
+%} else  {
+% $versVal = '';
+Lixuz
+%}
+- Copyright &copy; Utrop AS <a href="http://www.portu.no/">Portu media &amp; communications</a><br />
+Lixuz is free software, available under the <a href="/lixuz/license">GNU General Public License version 3</a>
+</div>
+<input type="hidden" id="lixuz_version" value="<% $versVal %>" />
+%}
+<script type="text/javascript">
+    $LAB.executeQueue();
+</script>
+</body>
+</html>
+
+<%args>
+$VERSION
+$i18n
+$onlySkeletonHTML => undef
+</%args>

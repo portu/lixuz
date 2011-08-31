@@ -1,0 +1,45 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<input type="button" value="<%$i18n->get('Attach a file to this article') |n %>" id="LZAddFileToArticleButton" />  
+<input type="button" value="<%$i18n->get('Upload new files') |n %>" id="LZUploadFileInArticleButton" />
+<script type="text/javascript">
+$LAB.queue(function () {
+$(function() {
+    $('#LZAddFileToArticleButton').lButton(LZ_addFileToArticle);
+    $('#LZUploadFileInArticleButton').lButton(LZ_AsyncUploadFiles);
+})
+});
+</script>
+<br />
+<div id="article_file_list">
+% my @files;
+%while(($files) && (my $file = $files->next)) {
+% push(@files,$file->to_hash);
+%}
+<script type="text/javascript">
+    var FILES_BOOTSTRAP = <% $j->to_json({ entries => \@files }) |n %>;
+</script>
+</div>
+<%args>
+$i18n
+$files => undef
+</%args>
+<%init>
+use JSON::DWIW;
+my $j = JSON::DWIW->new();
+</%init>

@@ -1,0 +1,25 @@
+*~
+*.swp
+*.swo
+*.xml
+.swecpwd
+lixuzUpgrade.log
+lixuz.yml
+sql/lixuz_livedummy.sql
+sql/resetdb
+sql/massReassign
+nytprof*
+scheduler.state
+db-upgrade.log
+lixuz-dbupgrade-dump*.sql
+packages/
+root/livedata
+lib/LIXUZ/Controller/SiteHacks.pm
+lib/LIXUZ/Controller/SiteHacks/
+
+# Built JS files
+root/js
+# Built CSS
+root/css/lixuz.css
+# Built MO files
+i18n/locale

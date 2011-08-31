@@ -1,0 +1,292 @@
+#!/usr/bin/perl
+# Database fixing script for Lixuz.
+#
+# Older versions of Lixuz did not handle UTF-8 properly. This script will go
+# through all text strings in a Lixuz database and attempt to guess if the
+# string is proper UTF8 or not, and if it isn't convert it to one that is. The
+# script has been tested on and should be safe to run on a database that is
+# already properly utf-8, it is discouraged however.
+use strict;
+use warnings;
+use Config::Any;
+use constant { true => 1, false => 0 };
+use Encode qw(encode_utf8 is_utf8 decode encode _utf8_on _utf8_off);
+use utf8;
+
+my $file = shift or die("Usage: $0 path/to/lixuz.yml\n");
+my $confirmed = shift;
+if (not $confirmed)
+{
+    die("WARNING: This script will modify LARGE PARTS of the database\nPlease make sure:\n 1) That you need this update\nand\n 2) That you have up-to-date backups to revert back to in case something breaks\n\nIf you have done so and understand the implications, run:\n$0 $file 1\n");
+}
+$| = 1;
+print "Initializing...";
+my ($user,$pwd,$dbnam,$conf,$db,$dbUTF8);
+my ($prevIprintText,$prevLen) = ('');
+loadConfig();
+{
+    # We don't need DBIx::Class whining about missing primary keys here, so ignore it
+    local *STDERR;
+    $ENV{SCHEMA_LOADER_BACKCOMPAT} = 1;
+    $db = LixuzDB->connect('DBI:mysql:'.$dbnam.':localhost',$user,$pwd) or die;
+    print ".";
+    $dbUTF8 = LixuzDBUTF8->connect('DBI:mysql:'.$dbnam.':localhost',$user,$pwd, { mysql_enable_utf8 => 1 }) or die;
+    print ".";
+};
+print "done\n";
+print "Operating on database \"$dbnam\" as the user \"$user\"\n";
+print "Upgrading:\n";
+upgradeTable('LzArticle','article_id',[ 'title','lead','body','author' ]);
+upgradeTable('LzArticleFile',['article_id','file_id'],['caption']);
+upgradeTable('LzLiveComment','comment_id',['author_name','subject','body']);
+upgradeTable('LzWorkflowComments','comment_id',['comment_body','comment_subject']);
+upgradeTable('LzKeyValue','keyvalue_id',['thekey','value']);
+upgradeTable('LzFolder','folder_id',['folder_name']);
+upgradeTable('LzFile','file_id',['file_name','path','title','caption']);
+upgradeTable('LzBackup','backup_id',['backup_string']);
+upgradeTable('LzNewsletterGroup','group_id',['group_name']);
+upgradeTable('LzNewsletterSaved','saved_id',['from_address','subject','body']);
+upgradeTable('LzNewsletterSubscription','subscription_id',['name','email']);
+upgradeTable('LzFieldValue',['field_id','module_id','module_name'],['value']);
+upgradeTable('LzCategory','category_id',['category_name','external_link']);
+upgradeTable('LzField','field_id',['field_name']);
+upgradeTable('LzFieldOptions',['field_id','option_id'],['option_name']);
+upgradeTable('LzRssArticle','rss_id',['guid','title','lead','link','source']);
+upgradeTable('LzStatus','status_id',['status_name']);
+upgradeTable('LzUser','user_id',['user_name','firstname','lastname','email']);
+
+# Load the config file
+sub loadConfig
+{
+    $conf = Config::Any->load_files( { files =>  [ $file ], use_ext => true } ) or die("failed to load config\n");
+    $conf = $conf->[0]->{$file};
+    print '.';
+    if(ref($conf->{'Model::LIXUZDB'}->{'connect_info'}) eq 'ARRAY')
+    {
+        die("Old-style config. Unable to continue.\n");
+    }
+    $dbnam = $conf->{'Model::LIXUZDB'}->{'connect_info'}->{dsn};
+    if(not $dbnam =~ /mysql/i)
+    {
+        die("Not using MySQL, unable to continue\n");
+    }
+    if(not $dbnam =~ s/.*dbname=//)
+    {
+        die("failed to extract database name from config\n");
+    }
+    $user = $conf->{'Model::LIXUZDB'}->{'connect_info'}->{user};
+    $pwd  = $conf->{'Model::LIXUZDB'}->{'connect_info'}->{password};
+    if(not $user or not $pwd or not $dbnam)
+    {
+        die("Invalid config file, database user/pwd/dbname missing\n");
+    }
+	if(ref($user) || ref($pwd) || ref($dbnam))
+	{
+		die("Strange (and invalid) config loaded. Recieved references instead of scalars.\nValues: user=$user, pwd=$pwd, dbnam=$dbnam\n");
+	}
+    print '.';
+}
+
+sub upgradeTable
+{
+    my $table = shift;
+    my $id = shift;
+    my @columns = @{$_[0]};
+    my $t = $db->resultset($table);
+    my $o = $dbUTF8->resultset($table);
+    print "$table: ";
+    iprint('(preparing)');
+    my $entries = $t->count();
+    my $curr = 0;
+	my $changed = 0;
+	my $rowsChanged = 0;
+    while(my $e = $t->next)
+    {
+        $curr++;
+        my $idstr;
+        my $ueSearch = {};
+        if(ref($id))
+        {
+            foreach my $idp (@{$id})
+            {
+                if(not $idstr)
+                {
+                    $idstr = $e->get_column($idp);
+                }
+                else
+                {
+                    $idstr .= '<->'.$e->get_column($idp);
+                }
+                $ueSearch->{$idp} = $e->get_column($idp);
+            }
+        }
+        else
+        {
+            $ueSearch->{$id} = $e->get_column($id);
+            $idstr = $e->get_column($id);
+        }
+
+        ciprint($idstr,$entries,$curr);
+        my $ue = $o->find($ueSearch);
+		my $changeFlag = 0;
+        foreach my $col (@columns)
+        {
+			my $origStr = $e->get_column($col);
+			my $upgraded = upgradeEntry($e->get_column($col));
+            $ue->set_column($col,$upgraded);
+			if ($upgraded && $origStr && $upgraded ne $origStr)
+			{
+				$changeFlag = 1;
+				$changed++;
+			}
+        }
+		$rowsChanged++ if $changeFlag;
+        $ue->update();
+    }
+	iprint('done. Modified '.$rowsChanged.'/'.$curr.' rows ('.$changed.' strings changed)');
+    $prevLen = 0;
+    print "\n";
+}
+
+sub whateverToUTF8
+{
+    my $string = shift;
+
+    if(not defined $string)
+    {
+        return;
+    }
+
+    my $ol = length($string);
+
+    foreach(qw(ISO-8859-1 ISO-8859-15 UTF-8))
+    {
+        my $s = decode($_,$string);
+        if(length($s) == $ol)
+        {
+            $s = encode('UTF-8',$s);
+            if(length($s) == $ol)
+            {
+                return $s;
+            }
+            elsif(length(decode('UTF-8',$s)) == $ol)
+            {
+                return $s;
+            }
+        }
+    }
+    return undef;
+}
+
+sub lengthGuessConvert
+{
+    my $string = shift;
+
+    my %attempts;
+
+    foreach my $try (qw(RAW iso-8859-1 iso-8859-15 utf-8))
+    {
+        if ($try eq 'RAW')
+        {
+            $attempts{$try} = $string;
+            next;
+        }
+        my $result = decode($try,$string);
+        $attempts{$result.'_norc'} = $result;
+        $attempts{$result} = encode_utf8($result);
+    }
+    $attempts{whatever} = whateverToUTF8($string);
+    my $best;
+    my $bestType;
+    while(my($e,$v) = each(%attempts))
+    {
+        next if not defined $v;
+        if(not $best)
+        {
+            $best = $v;
+            $bestType = $e;
+            next;
+        }
+        if(length($v) < length($best))
+        {
+            $best = $v;
+            $bestType = $e;
+        }
+        elsif(length($v) == length($best))
+        {
+            if (
+                ($best =~ /�/)
+                    or
+                ($bestType eq 'raw')
+                    or
+                ($e eq 'utf-8')
+                    or
+                (not $best =~ /[æøåÆØÅòÒ]/ and $v =~ /[æøåÆØÅòÒ]/)
+            )
+            {
+                $best = $v;
+                $bestType = $e;
+            }
+        }
+    }
+    return $best;
+}
+
+sub upgradeEntry
+{
+    my $entry = shift;
+    if(defined $entry)
+    {
+        $entry = lengthGuessConvert($entry);
+    }
+    return $entry;
+}
+
+# Summary: A print that removes previous text before printing. Used for status Information messages.
+sub iprint
+{
+    $| = 0;
+    my $data = shift;
+    if ($data eq $prevIprintText)
+    {
+        return;
+    }
+    if ($prevLen)
+    {
+        for(my $i = 0; $i < $prevLen; $i++)
+        {
+            print "\b \b";
+        }
+    }
+    $prevLen = length($data);
+    $prevIprintText = $data;
+    print $data;
+    $| = 1;
+    return;
+}
+
+# Summary: A counter wrapper around iprint
+sub ciprint
+{
+    my $id = shift;
+    my $total = shift;
+    my $curr = shift;
+    my $p = sprintf('%d',($curr / $total ) * 100);
+    $p = ' '.$p while(length($p) < 2);
+    iprint(sprintf("%-10s [%s%%]",$id, $p));
+}
+
+package LixuzDB;
+use strict;
+use warnings;
+use base qw/DBIx::Class::Schema::Loader/;
+__PACKAGE__->loader_options(
+    debug         => 0,
+);
+package LixuzDBUTF8;
+use strict;
+use warnings;
+use base qw/DBIx::Class::Schema::Loader/;
+__PACKAGE__->loader_options(
+    debug         => 0,
+);

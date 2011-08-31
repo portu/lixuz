@@ -1,0 +1,7 @@
+(incomplete) TODO list for Lixuz
+- Improve code documentation
+- Add automated failover for cdn-hosted libs
+- Add support for proper (non-SiteHacks) plugins
+- Rewrite ACL permissions (currently we store each path
+	as either permitted or denied, rather use symbolic names
+	that maps to sets of paths to simplify upgrades)

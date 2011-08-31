@@ -1,0 +1,135 @@
+#!/usr/bin/perl
+# This file contains a list of all dependencies Lixuz has. You can read it by hand
+# or just run "perl DEPSLIST list" to get a quick list. "perl DEPSLIST check" or
+# "perl DEPSLIST verbosecheck" checks for missing dependencies.
+use strict;use warnings;use 5.010;
+my %deps = (
+    'Carp'                                         => 0,
+    'Catalyst'                                     => 0,
+    'Catalyst::Authentication::Store::DBIx::Class' => 0,
+    'Catalyst::Controller::FormBuilder'            => 0,
+    'Catalyst::Controller::REST'                   => 0,
+    'Catalyst::Plugin::Authentication'             => 0,
+    'Catalyst::Plugin::Cache'                      => 0,
+    'Catalyst::Plugin::ConfigLoader'               => 0,
+    'Catalyst::Plugin::Session'                    => 0,
+    'Catalyst::Plugin::Session::State::Cookie'     => 0,
+    'Catalyst::Plugin::Session::Store::FastMmap'   => 0,
+    'Catalyst::Plugin::Static::Simple'             => 0,
+    'Catalyst::Plugin::Unicode::Encoding'          => 0,
+    'Catalyst::View::JSON'                         => 0,
+    'Catalyst::View::Mason'                        => 0,
+    'Cache::Memcached::Fast'                       => 0,
+    'Config::Any'                                  => 0,
+    'Cwd'                                          => 0,
+    'Data::Dumper'                                 => 0,
+    'DBI'                                          => 0,
+    'Digest::MD5'                                  => 0,
+    'Digest::SHA'                                  => 0,
+    'Encode'                                       => 0,
+    'Exporter'                                     => 0,
+    'Fatal'                                        => 0,
+    'FCGI::ProcManager'                            => 0,
+    'File::Basename'                               => 0,
+    'File::Copy'                                   => 0,
+    'File::MMagic::XS'                             => 0,
+    'File::Path'                                   => 0,
+    'File::stat'                                   => 0,
+    'File::Temp'                                   => 0,
+    'FindBin'                                      => 0,
+    'Getopt::Long'                                 => 0,
+    'Graphics::Magick'                             => 0,
+    'Hash::Merge'                                  => 0,
+    'HTML::Entities'                               => 0,
+    'HTML::Mason'                                  => 0,
+    'HTML::Mason::Interp'                          => 0,
+    'HTML::Normalize'                              => 0,
+    'HTML::Scrubber'                               => 0,
+    'IO::File'                                     => 0,
+    'IO::Socket::INET'                             => 0,
+    'JSON::Any'                                    => 0,
+    'JSON::XS'                                     => 0,
+    'JSON::DWIW'                                   => 0,
+    'KinoSearch1'                                  => 0,
+    'KinoSearch1::Analysis::PolyAnalyzer'          => 0,
+    'KinoSearch1::Index::Term'                     => 0,
+    'KinoSearch1::InvIndexer'                      => 0,
+    'KinoSearch1::QueryParser::QueryParser'        => 0,
+    'KinoSearch1::Searcher'                        => 0,
+    'KinoSearch1::Search::PhraseQuery'             => 0,
+    'KinoSearch1::Search::QueryFilter'             => 0,
+    'List::MoreUtils'                              => 0,
+    'Mail::RFC822::Address'                        => 0,
+    'Math::Int2Base'                               => 0,
+    'MIME::Lite'                                   => 0,
+    'Moose'                                        => 0,
+    'Moose::Role'                                  => 0,
+    'MooseX::NonMoose'                             => 0,
+    'namespace::autoclean'                         => 0,
+    'Paranoid::Lockfile'                           => 0,
+    'POSIX'                                        => 0,
+    'Regexp::Common'                               => 0,
+    'Scalar::Util'                                 => 0,
+    'SMS::CPAGateway'                              => 0,
+    'Test::MockClass'                              => 0,
+    'Text::Aspell'                                 => 0,
+    'Text::FromAny'                                => 0,
+    'Try::Tiny'                                    => 0,
+    'URI::Escape'                                  => 0,
+    'XML::FeedPP'                                  => 0,
+);
+
+my $pkgNo = 0;
+$ARGV[0] //= '';
+
+given($ARGV[0])
+{
+    when('list')
+    {
+        print "$_ " foreach(sort keys %deps);
+        print "\b\n"
+    }
+
+    when(/check/)
+    {
+        $| = 1;
+        my @missing;
+        print 'Performing dependencies check...';
+        foreach (sort keys %deps)
+        {
+            print '.';
+            eval
+            {
+                $pkgNo++;
+                my $pkg = $_;
+                $pkg =~ s/::/_/g;
+                $pkg = 'lzDepsList_testPkg_'.$pkgNo.'_'.int(rand(9999)).'_'.$pkg;
+                if(not eval('package '.$pkg.'; use '.$_.';1;'))
+                {
+                    push(@missing,$_);
+                }
+            };
+        }
+        if (@missing)
+        {
+            say 'done';
+            print 'Found missing libs:';
+            print " $_" foreach(@missing);
+            print "\n";
+            exit(1);
+        }
+        else
+        {
+            say 'done - all dependencies are present';
+            exit(0);
+        }
+    }
+
+    default
+    {
+        say "Usage: perl $0 ACTION";
+        say "  where ACTION is one of:";
+        say "  list         - quickly list all deps";
+        say "  check        - check for missing deps";
+    }
+}

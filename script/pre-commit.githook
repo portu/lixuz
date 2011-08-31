@@ -1,0 +1,63 @@
+#!/bin/bash
+# To enable this script, symlink it into .git/hooks/ - ie. from the root of
+# the Lixuz tree:
+# cd .git/hooks ; ln -sf ../script/pre-commit.githook ./pre-commit; cd -
+ret=0
+yuiPath="$HOME/.local/yuiminify/yuicompressor.jar"
+JSTYPE=""
+
+function jsSanity ()
+{
+    file="$1"
+    if [ "$JSTYPE" == "" ]; then
+        return 0
+    fi
+    java -jar "$yuiPath" "$file" -o "/dev/null"
+    return $?
+}
+
+function is ()
+{
+    file="$1"
+
+    if [ ! -e "$file" ]; then
+        return 1
+    fi
+
+    t="$2"
+    mime="$(LC_ALL=C file "$file")"
+    if [ "$t" == "perl" ]; then
+        if echo "$file" |grep -q -E '\.(pm|pl)$'; then
+            return 0
+        elif echo "$mime" |egrep -q -i '(/usr/bin/perl|Perl5 module source text)'; then
+            return 0
+        fi
+    elif [ "$t" == "mason" ]; then
+        if echo "$file" |grep -q -E '\.(html)$'; then
+            return 0
+        fi
+    elif [ "$t" == "js" ]; then
+        if echo "$file" |grep -q -e '\.(js)$'; then
+            return 0
+        fi
+    fi
+    return 1
+}
+
+if type java &>/dev/null && [ -e "$yuiPath" ];then
+    JSTYPE="YUI"
+fi
+
+for file in $(git diff-index --name-only --cached HEAD --); do
+    if is "$file" "perl"; then
+        perl -Ilib -c "$file"
+        let ret=$ret+$?
+    elif is "$file" "mason"; then
+        ./tools/masontest.pl "$file"
+        let ret=$ret+$?
+    elif is "$file" "js"; then
+        jsSanity "$file"
+        let ret=$ret+$?
+    fi
+done
+exit $ret

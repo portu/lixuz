@@ -1,0 +1,35 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div class="<% $component %> label field">
+%if(not $field->{obligatory}) {
+% if(not $field->{value}) { $field->{disabled} = 1 }
+<input type="checkbox" class="<% $component %> checkbox field" name="<%$field->{fieldname}%>_disabled" <%$field->{disabled} ? '' : 'checked="checked"' %> id="<%$field->{fieldname}%>_enabled" onclick="if($('#<%$field->{fieldname}%>_enabled')[0].checked) { $('#<%$field->{fieldname}%>')[0].disabled = false ; } else { $('<%$field->{fieldname}%>')[0].disabled = 'disabled'; }; return true;" />
+%}
+<span id="<%$field->{fieldname}%>_label"><% $field->{label} %></span> 
+</div>
+
+<input type="text" size="65" class="<% $component %> jsCalendar text field dateOnly" <%$fieldExtraHTML|n %> id="<%$field->{fieldname}%>" name="<%$field->{fieldname}%>" value="<%$field->{value}%>" <% $field->{disabled} ? 'disabled="disabled"' : '' %> />
+<a href="#" onclick="return false;" id="<%$field->{fieldname}%>-triggerButton"><img src="/static/images/calendar.png" style="border:0;" /></a>
+
+<%args>
+$field
+$i18n
+$component
+$moduleFieldId => undef
+$fieldExtraHTML
+</%args>

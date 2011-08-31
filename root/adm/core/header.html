@@ -1,0 +1,232 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- Lixuz CMS - Copyright (C) Portu media & communications
+Licensed under the GNU GPLv3, see gnu.org/licenses/gpl.html -->
+<title>Lixuz<% $pageTitle ? ' - '.$pageTitle : '' %></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="robots" content="noindex, nofollow" />
+% # Request google chrome frame when in IE, if available. Lixuz
+% # will work without it though. But Chrome is a LOT better than IE's
+% # rendering engine.
+%if ($isIe) {
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+%}
+<link rel="shortcut icon" href="/static/images/lixuz_favicon.png?2" />
+
+<link rel="stylesheet" type="text/css" href="/css/lixuz.css?<%$GITREVISION%>" />
+
+<script language="JavaScript" type="text/javascript" src="/js/LABjs.lib.js?<%$GITREVISION%>"></script>
+<script type="text/javascript">
+%if($lixuzLang) {
+window._LANGUAGE="<%$lixuzLang%>";
+%}
+<%perl>
+my @jsFiles;
+if($jsIncl)
+{
+    @jsFiles = @{$jsIncl};
+}
+# The order of these can be important, therefore they are unshifted onto the array
+# here, rather than added with add_jsIncl().
+foreach my $baseIncl (qw(core.js jquery.plugins.lib.js))
+{
+    unshift(@jsFiles,$c->uri_for('/js/'.$baseIncl));
+}
+
+# jQuery+UI loaded from CDN
+$m->comp('/core/CDN-hosted.html', mode => 'rawLAB', %{$CDNLoadParams});
+
+if($lixuzLang)
+{
+    unshift(@jsFiles,'/js/i18n/'.$lixuzLang.'.js');
+}
+
+my %seenJSFile;
+foreach my $jsFile (@jsFiles)
+{
+    next if $seenJSFile{$jsFile};
+    $seenJSFile{$jsFile} = 1;
+</%perl>
+    $LAB.queue("<% $jsFile %>?<% $GITREVISION %>",true);
+%}
+</script>
+
+%foreach my $incFile (@{$c->stash->{masonHeaderIncl}}) {
+<& $incFile &>
+%}
+
+<script language="JavaScript" type="text/javascript">
+$LAB.queue(function ()
+{
+    function lzOlErr (err,msg) { try { lzException(err,msg); } catch(y) { alert(msg+"\n\nException: "+e.message+"") } };
+    try
+    {
+%if($c->stash->{jsvar}) {
+%foreach my $var (sort keys %{$c->stash->{jsvar}}) {
+%if($c->stash->{jsvar}->{$var}) {
+    window.<% $var |n%> = <%$c->stash->{jsvar}->{$var}|n%>;
+% } else {
+    window.<% $var |n%> = null;
+%}
+%}
+%}
+%if($jsOnLoad || $jsOnLoadHeadCode) {
+    $LAB.onReady(function () {
+            try
+            {
+%if($jsOnLoad) {
+%foreach my $func (@{$jsOnLoad}) {
+                try { <% $func |n%>(); } catch (e) { lzOlErr(e,"Error executing onLoad function <% $func|n%>()"); }
+%}
+%}
+%if($jsOnLoadHeadCode) {
+% my $s = 0;
+%foreach my $snippet (@{$jsOnLoadHeadCode}) {
+% $s ++;
+                // Snippet <% $s %>
+                try
+                {
+            <% $snippet |n%>;
+                } catch(e) { lzOlErr(e,"JavaScript onload code snippet (<% $s %>) in header failed");}
+%}
+%}
+            }
+            catch(e) { lzOlErr(e,"generic dynamic initialization error"); }
+%}
+%if($jsHeadCode) {
+% my $s = 0;
+%foreach my $snippet (@{$jsHeadCode}) {
+% $s ++;
+        // Snippet <% $s %>
+        try
+        {
+        <% $snippet |n%>;
+        } catch(e) { lzOlErr(e,"JavaScript code snippet (<% $s %>) in header failed");}
+%}
+%}
+%if($jsOnLoad || $jsOnLoadHeadCode) {
+    });
+%}
+        } catch(e) { lzOlErr(e,"Everything that could possibly go wrong, went wrong in the header");}
+});
+</script>
+</head>
+
+<body<% $bodyAttributes |n %>>
+%if(not $onlySkeletonHTML) {
+<div id="progInd" style="display:none; visibility:hidden;">
+<img src="/static/images/progind.gif" width="24" height="25" />
+</div>
+<div id="topLayer">
+<table cellspacing="0" cellpadding="0">
+<tr>
+<td class="tdlogo">
+<a href="/admin/"><img id="lixuzlogo" src="/static/images/lixuz-white.png" /></a>
+</td>
+<& menu.html, %ARGS &>
+<td class="headerInfo">
+%if($username) {
+    <div class="userinfo">
+        <a href="/admin/myaccount" title="<% $i18n->get('Edit account information') |n %>" class="useTipsy"><img src="/static/images/icons/account-edit.png" />&nbsp;<% $username %></a><br />
+        <input type="hidden" name="currentUsername" id="currentUsername" value="<% $username %>" />
+        <input type="hidden" name="currentUserId" id="currentUserId" value="<% $c->user->user_id %>" />
+    </div>
+    <div class="buttonHolder"><a href="/admin/logout"><img src="/static/images/icons/logout.png" border="0" align="left" />&nbsp;<% $i18n->get('Log out') %></a></div>
+%} else {
+	    <a href="/admin/login"><% $i18n->get('Log in') %></a>
+%}
+</td>
+</tr>
+</table>
+</div>
+%}
+
+%# Warning for users using an old version of IE. Show warning for all older than 8
+%# on login, older than 7 when logged in.
+%if($isIe) {
+%my $lte = 6;
+%if(not $username) {
+%$lte = 7;
+%}
+<!--[if lte IE <%$lte%>]>
+<style type="text/css">
+    #oldIEmsg {margin: 0 0 3px 128px; border: 3px solid #090; background: #cfc; color: #000; width: 651px;}
+    #oldIEmsg h4 {margin: 8px; padding: 0;}
+    #oldIEmsg p {margin: 8px; padding: 0;}
+</style>
+<div id="oldIEmsg">
+    <h4>You are using an old version of Internet Explorer.</h4>
+    <p>
+<![endif]-->
+<!--[if lte IE 6]>
+    Lixuz is not supported with this version of Internet Explorer, and will not function correctly.
+<![endif]-->
+<!--[if IE 7]>
+    You may have problems using Lixuz with this version.
+<![endif]-->
+<!--[if lte IE <%$lte%>]>
+    We recommend that you upgrade to <a href="http://www.firefox.com/">Mozilla Firefox</a> to avoid any issues.
+        If you are using a work-PC you should contact your system administrator.<br />
+    </p>
+</div>
+<![endif]-->
+%}
+
+<div style="visibility:hidden; display:none;">
+<div id="progressWrapper"></div>
+<div id="dialogWrapper"></div>
+<div id="messageWrapper"></div>
+</div>
+
+<%args>
+$pageTitle => ''
+$username  => undef
+$submenu   => undef
+$jsOnLoad  => undef
+$jsOnLoadHeadCode => undef
+$jsHeadCode => undef
+$jsIncl => undef
+$CDNLoadParams => {}
+$onlySkeletonHTML => undef
+$GITREVISION => 'git'
+$lixuzLang => undef
+$i18n
+</%args>
+
+<%init>
+use LIXUZ::HelperModules::Includes qw(add_jsIncl add_bodyClass);
+
+my $bodyAttributes .= '';
+if ($c->stash->{bodyclass})
+{
+$bodyAttributes .= ' class="';
+my $prev = 0;
+foreach my $class (@{$c->stash->{bodyclass}})
+{
+$bodyAttributes .= ' ' if $prev;
+$bodyAttributes .= $class;
+$prev = 1;
+}
+$bodyAttributes .= '"';
+}
+
+my $isIe = $c->req->user_agent =~ /(microsoft|explorer|msie)/i ? 1 : 0;
+</%init>

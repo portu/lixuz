@@ -1,0 +1,5 @@
+name: list_search
+method: GET
+fields:
+  query:
+    type: text

@@ -1,0 +1,41 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<html>
+<head>
+<!-- Lixuz error -->
+<title>Error</title>
+</head>
+<body>
+<h4><% $error|n %></h4>
+<h5><% $error_no|n %></h5>
+<b><i>EN</i></b>: <% $text |n %>
+<br /><br />
+<b><i>NO</i></b>: <% $text_no |n %>
+<br /><br /><br /><br />
+<br /><br /><br /><br />
+<small><code>
+Technical: <% $techie |n %>
+</code></small>
+</body></html>
+<%args>
+$error => 'UNKNOWN ERROR'
+$error_no => 'UKJENT FEIL'
+$text => 'An unknown error has occurred'
+$text_no => 'Ein ukjent feil har oppst&aring;tt'
+$techie => 'This is likely caused by missing parameters to renderError.html'
+</%args>

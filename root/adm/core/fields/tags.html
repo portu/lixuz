@@ -1,0 +1,36 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="tags">
+    <div class="tags label"><% $i18n->get('Tags') %></div>
+    <div class="list">
+%if($tags) { while(my $tag = $tags->next) {
+    <span class="tagEntry" uid="<% $tag->tag_id %>"><% $tag->tag->name |n %> <img src="/static/images/icons/delete-mono.png" class="remove" /></span>
+%} }
+    </div>
+    <input style="width: 500px" type="text" class="tagEditor" /> <input type="button" value="<% $i18n->get('Add') %>" />
+</div>
+<script type="text/javascript">
+    $LAB.onLoaded(function()
+            {
+                articleTags.init('#tags');
+            });
+</script>
+<%args>
+$tags => undef
+$i18n
+</%args>

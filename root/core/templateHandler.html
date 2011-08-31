@@ -1,0 +1,56 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+% eval {
+%if(not defined $lz_template or not length $lz_template) {
+%$lz_template = '(undefined)';
+% $c->log->error('core/templateHandler.html: lz_template is missing! No clue what is suppose to be rendered.');
+%0;
+%} else {
+<& '/'.$lz_template, %ARGS &>
+% 1;
+%}
+%} or do {
+<%perl>
+my $e = $@;
+$m->clear_buffer;
+my $referer = '(none)';
+my $reqFor = '(unknown)';
+eval { $referer = $c->req->referer; };
+eval { $reqFor = $c->req->uri->as_string; };
+eval { $c->response->status(500); };
+eval { $referer = $referer ? $referer : '(none)'; $reqFor = $reqFor ? $reqFor : '(unknown)'; };
+$c->log->debug('Fatal error while processing lixuz template "'.$lz_template.'": '.$e);
+$c->log->warn('This likely indicates a problem with your template. The page requested was "'.$reqFor.'" and the referer was "'.$referer.'"');
+
+my $error = 'Unable to complete the request';
+my $error_no = 'Kunne ikke fullf&oslash;re foresp&oslash;rselen';
+my $text = 'A problem has occurred while processing your request and the<br />
+server was unable to complete it. The system administrator of this server<br />
+has been notified of the issue. Please try again soon.<br /><br />';
+my $text_no = 'Et problem oppstod under utf&oslash;relsen av din foresp&oslash;rsel og<br />
+tjeneren kunne ikke fullf&oslash;re den. Systemadministratoren til denne<br />
+tjeneren har f&aring;tt beskjed om problemet. Pr&oslash;v igjen snart.';
+my $techie = 'This is caused by an exception thrown while processing a template <br />
+and likely indicates a problem with one of your templates. See the logfile <br />
+for more information.';
+</%perl>
+<& renderError.html, error => $error, error_no => $error_no, text => $text, text_no => $text_no, techie => $techie &>
+%}
+<%args>
+$lz_template
+</%args>

@@ -1,0 +1,46 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use FindBin;
+$| = 1;
+print "Initializing...";
+use lib $FindBin::RealBin.'/../lib/';
+# Lixuz doesn't like not being in its own dir when initializing
+chdir($FindBin::RealBin.'/..');
+require LIXUZ;
+print "done\n";
+
+sub migrateObject
+{
+    my $object = shift;
+    my $new = shift;
+    my $t = 0;
+    while((defined $object) and my $o = $object->next)
+    {
+        $t++;
+        $o->set_column('folder_id',$new);
+        $o->update();
+    }
+    return $t;
+}
+
+foreach my $map (@ARGV)
+{
+    (my $old = $map) =~ s/\D+\d+$//;
+    (my $new = $map) =~ s/^\d+\D+//;
+    my $oldF = LIXUZ->model('LIXUZDB::LzFolder')->find({folder_id => $old});
+    my $newF = LIXUZ->model('LIXUZDB::LzFolder')->find({folder_id => $new});
+    die if not $oldF;
+    die if not $newF;
+    print 'Moving ';
+    print $oldF->get_path.' ('.$old.')';
+    print ' to ';
+    print $newF->get_path.' ('.$new.')';
+    print "... ";
+    my $total = 0;
+    my $articles = LIXUZ->model('LIXUZDB::LzArticleFolder')->search({folder_id => $old});
+    $total += migrateObject($articles,$new);
+    my $files = LIXUZ->model('LIXUZDB::LzFile')->search({folder_id => $old});
+    $total += migrateObject($files,$new);
+    print "done - moved $total entries\n";
+}

@@ -1,0 +1,186 @@
+/*
+ * theme1.css
+ * Lixuz themed style
+ *
+ * This file should contain CSS rules that defines the visual style of the app.
+ */
+#contentFrame .list {
+    margin-left: -20px;
+    list-style: square;
+}
+	
+#topLayer{
+	background-color: #5F94BF;
+	color: #FFF;
+}
+
+a:hover {
+	color: #CF1919;
+}
+
+.menu
+{
+    padding-bottom:10px;
+    margin-top:10px;
+}
+
+.subMenu{
+	background-color: #000000;
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+	margin-top: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+/* top left logo image #lixuzlogo and its container .tdlogo */
+.tdlogo, #lixuzlogo {
+    width: 150px;
+    margin: 0px;
+    padding: 0px;
+    padding-left: 3px;
+    padding-top: 2px;
+}
+
+body a{
+    color: #17507F;
+}
+
+body a:visited, .listView a:visited, .buttonHolder a:hover, .pageBox a:hover {
+    color: #17507F;
+}
+
+.subMenu a, .subMenu a:visited, .subMenuHolder a, .subMenuHolder a:visited
+{
+	color: #FFF;	 
+}
+
+#topLayer table .modules {
+   padding-left: 6px;
+}
+
+#contentFrame .left {
+   padding: 0px;
+   border-right: 1px solid #9BB8CF;
+}
+
+.left a {
+   /* font-weight: normal; */
+}
+
+.dhtmlgoodies_tree li a, #floatingContainer li a {
+   font-weight: normal;
+}
+
+#form_edit{
+	background-color: #E0E8EF;	
+}
+
+#form_edit .folderlist{
+	background-color: #FFF;	
+}
+
+.edit_form {
+   margin-left: 30px;
+   float: left;
+}
+
+
+/* Row colors */
+
+.listView .even{
+	  background-color: #E0E8EF;
+}
+
+.listView .odd{
+	  background-color: #FFF;
+}
+
+.listView .rowHead{
+	  background-color: #9BB8CF;
+}
+
+.dashboardTable .widget{
+	border: 1px solid #9BB8CF;
+}
+
+
+/* Footer */
+
+#footer{
+	background-color: #C3D2DF;
+}
+
+
+/* Article styles */
+#topLayer table .headerInfo .buttonHolder{
+    background-color: #99C0DF;
+}
+
+.buttonHolder{
+		background-color: #E0E8EF;
+		border:	1px solid #5F94BF;
+		padding: 2px 0px 2px 4px;
+		min-width: 115px;
+        padding-right: 2px;
+		margin: 1px;
+		float: left;
+}
+
+#sliders_outer h2{
+		background-color: #E0E8EF;
+	   	padding: 2px 8px;
+	   	margin-bottom: 0px;
+}
+
+.expandable_holder{
+		background-color: #F4F4F4;
+		padding: 12px;
+}
+
+.pageSelect{
+		background-color: #E0E8EF;
+		border: 1px solid #5F94BF;
+		padding: 2px 4px;
+}
+
+.pagination .pageBox{
+		background-color: #E0E8EF;
+		border: 1px solid #5F94BF;
+		padding: 2px 4px;
+}
+
+
+/* Files styles */
+
+#filesViewList .fileEntry{
+		background-color: #E0E8EF;
+		border: 1px solid #5F94BF;
+}
+
+#filesViewList .fileInfo{
+		background-color: #E0E8EF;
+		border-left: 1px solid #5F94BF;
+		border-right: 1px solid #5F94BF;
+		border-bottom: 1px solid #5F94BF;
+}
+
+.aidHead
+{
+    max-width:60px;
+}
+
+.tagEntry
+{
+    padding-left: 5px;
+    padding-right: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    background-color: #F4F4F4;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.tagEntry:hover
+{
+    background-color: #E0E8EF;
+}

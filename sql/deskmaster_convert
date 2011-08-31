@@ -1,0 +1,1756 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use FindBin;
+use lib $FindBin::RealBin.'/../lib/';
+use Encode qw(encode_utf8 decode_utf8);
+use HTML::Entities qw/decode_entities/;
+use Carp qw(carp cluck confess croak);
+use Data::Dumper;
+use File::Basename qw(basename);
+use File::Copy qw(copy);
+use DBI;
+# Lixuz doesn't like not being in its own dir when initializing
+chdir($FindBin::RealBin.'/..');
+
+# --- CONFIGURATION ---
+my @deskmasterDb = qw(DBI:mysql:DATABASE:localhost USER PWD);
+my $DM_Files_Path = $ENV{HOME}.'/dm_files/';
+# ---------------------
+
+my $started = time;
+my $debug = (@ARGV and $ARGV[0] eq 'debug') ? 1 : 0;
+my $prevLen = 0;
+my $prevIprintText = '';
+my $prevStatus = undef;
+my $logHandle;
+my $LZ_Target_Path;
+my %DeskMasterToLixuzMap = (
+    article => {},
+    file => {},
+    fileNames => [],
+    field => {},
+    fieldOpts => {},
+    catFolder => {},
+    invalidPlaceholders => {},
+    );
+my $dm;
+$| = 1;
+
+main();
+
+# Summary: Main function
+sub main
+{
+    if(not (-r $DM_Files_Path) or not (-d $DM_Files_Path.'/img/publish') or not (-x $DM_Files_Path.'/img/publish'))
+    {
+        die("You need to fix DM_Files_Path ($DM_Files_Path || $!)");
+    }
+    print 'Initializing...' if not $debug;
+    require LIXUZ;
+    print '.' if not $debug;
+    $LZ_Target_Path = LIXUZ->config->{LIXUZ}->{file_path};
+    if(not $LZ_Target_Path or not -e $LZ_Target_Path or not -w $LZ_Target_Path or not -d $LZ_Target_Path)
+    {
+        die("failed to get a usable LZ_Target_Path ($LZ_Target_Path || $!)");
+    }
+    print '.' if not $debug;
+    {
+        # We don't need DBIx::Class whining about missing primary keys here, so ignore it unless
+        # we're in debugging mode.
+        local *STDERR;
+        if (not $debug)
+        {
+            open(STDERR,'>','/dev/null');
+        }
+        $dm = DeskmasterDB->connect(@deskmasterDb) or die;
+    }
+    print "done\n" if not $debug;
+    open($logHandle,'>',$FindBin::RealBin.'/deskmaster_convert.log') or
+        die("FATAL: Failed to open ".$FindBin::RealBin.'/deskmaster_convert.log for writing: '.$!."\n");
+    binmode($logHandle,'utf8');
+    # Set autoflush on the logfile
+    {
+        my $main_fh = select($logHandle);
+        $| = 1;
+        select($main_fh);
+    }
+    print " Dumping existing lixuz database...";
+    my $db = LIXUZ->config->{'Model::LIXUZDB'}->{connect_info}->{dsn};
+    $db =~ s/^.*=([^=]+)$/$1/;
+    my $user = LIXUZ->config->{'Model::LIXUZDB'}->{connect_info}->{user};
+    my $pwd = LIXUZ->config->{'Model::LIXUZDB'}->{connect_info}->{password};
+    system('mysqldump',qw(--complete-insert --opt -t),'-r',$FindBin::RealBin.'/deskmaster_convert-prebackup.sql','-u'.$user,'-p'.$pwd,$db);
+    print "done - wrote deskmaster_convert-prebackup.sql\n";
+    _log('Starting conversion');
+    # First, categories become folders
+    sw('convertCategoryToFolder');
+    # Then additional fields get converted
+    sw('convertFields');
+    # Files
+    sw('convertFiles');
+    # Articles
+    sw('convertArticles');
+    sw('convertArticleAdFields');
+    sw('convertArticleFilesAndContent');
+    sw('convertArticleComments');
+    sw('convertArticleRelations');
+    sw('convertArticleCategories');
+
+    sw('localHacks');
+    sw('finalizeConversionMap');
+    sw('runCronJobs');
+    finalStats();
+}
+
+# Summary: Safe wrapper around a sub. Runs it inside an eval and outputs
+#   error info if it crashes, but also allows it to continue.
+sub sw
+{
+    my $sub = shift;
+    _log("Starting to run $sub");
+    my $s = time;
+    no strict 'refs';
+    eval
+    {
+        $sub->();
+    };
+    use strict 'refs';
+    my $e = $@;
+    $s = (time - $s);
+    if ($e)
+    {
+        mainStatus("FAILED!");
+        chomp($e);
+        _log('Error when running sub ('.$sub.'): '.$e);
+        print "   ! Error when running sub ($sub): $e !\n";
+        print "     Will attempt to continue running. Press enter to continue.";
+        <STDIN>;
+    }
+    _log($sub.' done, took '. $s. ( $s == 1 ? ' second' : ' seconds' ));
+}
+
+# Summary: Safe wrapper around a sub. Runs it inside an eval and outputs
+#   error info if it crashes, but also allows the calling sub to continue.
+#   This is almost identical to sw, except this is tailored to be run
+#   on any sub, while sw is only tailored to be run on a set of specific subs
+#   in main()
+# Usage: safesub('subname',parameter list);
+sub safesub
+{
+    my $sub = shift;
+    my @reply;
+    no strict 'refs';
+    eval
+    {
+        @reply = $sub->(@_);
+    };
+    use strict 'refs';
+    my $e = $@;
+    if ($e)
+    {
+        if (not $e =~ /\n.*\n/)
+        {
+            chomp($e);
+        }
+        _log('Exception when running sub ('.$sub.'): '.$e);
+        print "   ! Caught exception when running sub ($sub): $e !\n";
+        print "     Will attempt to continue running. Press enter to continue.";
+        <STDIN>;
+    }
+    return @reply;
+}
+
+# Summary: A print that removes previous text before printing. Used for status Information messages.
+sub iprint
+{
+    $| = 0;
+    my $data = shift;
+    if ($data eq $prevIprintText)
+    {
+        return;
+    }
+    if ($prevLen)
+    {
+        for(my $i = 0; $i < $prevLen; $i++)
+        {
+            print "\b \b";
+        }
+    }
+    $prevLen = length($data);
+    $prevIprintText = $data;
+    print $data;
+    $| = 1;
+    return;
+}
+
+# Summary: Sub to output main status messages
+sub mainStatus
+{
+    my $status = shift;
+    $| = 0;
+    if (defined $prevStatus)
+    {
+        iprint('    ');
+        for(my $i = 0; $i < 60; $i++)
+        {
+            print " ";
+        }
+        print "\r\b\r";
+        print $prevStatus;
+        $prevStatus = undef;
+        $prevLen = 0;
+    }
+    else
+    {
+        $prevStatus = $status;
+    }
+    print $status."\n";
+    $| = 1;
+}
+
+# Summary: Prints the final statistics of how much has been converted
+sub finalStats
+{
+    iprint(' ');
+    print "\r                         \n";
+    printAndLog(" All done. Converted:\n");
+    printAndLog('  Articles:             '.scalar keys (%{$DeskMasterToLixuzMap{article}})."\n");
+    printAndLog('  Files:                '.scalar keys (%{$DeskMasterToLixuzMap{file}})."\n");
+    printAndLog('  Fields:               '.scalar keys (%{$DeskMasterToLixuzMap{field}})."\n");
+    printAndLog('  Categories:           '.scalar keys (%{$DeskMasterToLixuzMap{catFolder}})."\n");
+    printAndLog('  Invalid placeholders: '.scalar keys (%{$DeskMasterToLixuzMap{invalidPlaceholders}})."\n");
+    printAndLog("  (invalid placeholders are removed)\n");
+    _log( 'Started running at '.scalar localtime($started)."\n");
+    _log( 'Finished at        '.scalar localtime()."\n");
+    _log( 'Ran for            '.(time()-$started)." seconds\n\n");
+    _log( " log:\n");
+    $Data::Dumper::Terse = 1;
+    $Data::Dumper::Sortkeys = 1;
+    $Data::Dumper::Indent = 1;
+    _log( "Invalid placeholder dump:\n");
+    print {$logHandle} Dumper($DeskMasterToLixuzMap{invalidPlaceholders});
+    _log( "Full dump: \n");
+    print {$logHandle} Dumper(\%DeskMasterToLixuzMap);
+    close($logHandle);
+    print "Log written to ./deskmaster_convert.log\n";
+    print "To finalize the conversion, run the upgradeDB script (ensures database\n";
+    print " consistency)\n";
+}
+
+sub printAndLog
+{
+    foreach(@_)
+    {
+        print $_;
+        _log($_);
+    }
+}
+
+sub _log
+{
+    die('logHandle is false!') if not $logHandle;
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime;
+    $sec = "0$sec" if length($sec) < 2;
+    $min = "0$min" if length($min) < 2;
+    $hour = "0$hour" if length($hour) < 2;
+    foreach my $m (@_)
+    {
+        my $v = "$m";
+        chomp($v);
+        print {$logHandle} '['.$hour.':'.$min.':'.$sec.'] '.$v."\n";
+    }
+}
+
+sub convertStringToPlain
+{
+    my $string = shift;
+    $string = decode_entities($string);
+    $string = encode_utf8($string);
+    return $string;
+}
+
+sub getLixuzID
+{
+    my $type = shift or confess;
+    $type = ($type =~ /^(folder|category)$/i) ? 'catFolder' : $type;
+    my $id = shift or confess;
+    if(not $type =~ /^(article|file|field|catFolder)$/)
+    {
+        confess("getLixuzID($type,$id): invalid type");
+    }
+    
+    my $lz_id = $DeskMasterToLixuzMap{$type}->{$id};
+    return $lz_id;
+}
+
+sub setLixuzID
+{
+    my $type = shift or confess;
+    my $id = shift or confess;
+    my $lz_id = shift or confess;
+    $type = ($type =~ /^(folder|category)$/i) ? 'catFolder' : $type;
+    if(not $type =~ /^(article|file|field|catFolder)$/)
+    {
+        confess("setLixuzID($type,$id,$lz_id): invalid type");
+    }
+    
+    if(defined $DeskMasterToLixuzMap{$type}->{$id})
+    {
+        confess("setLixuzID($type,$id,$lz_id): attempted to remap $id from the existing one ".$DeskMasterToLixuzMap{$type}->{$id}." to $lz_id");
+    }
+    $DeskMasterToLixuzMap{$type}->{$id} = $lz_id;
+    return $lz_id;
+}
+
+sub finalizeConversionMap
+{
+    mainStatus(' Finalizing conversion map...');
+    my $dbh;
+    if (
+        not $dbh = DBI->connect(LIXUZ->config->{'Model::LIXUZDB'}->{connect_info}->{dsn},
+            LIXUZ->config->{'Model::LIXUZDB'}->{connect_info}->{user},
+            LIXUZ->config->{'Model::LIXUZDB'}->{connect_info}->{password})
+    )
+    {
+        _log("FATAL: Failed to open up connection to database for conversion mapping");
+        mainstatus('failed');
+        return;
+    }
+    $dbh->do('DROP TABLE lz_dm_map');
+    if(not $dbh->do('CREATE TABLE lz_dm_map (dm_article int(10), lz_article int(11), PRIMARY KEY(dm_article, lz_article))') )
+    {
+        _log("FATAL: Failed to create lz_dm_map table");
+        mainstatus('failed');
+        return;
+    }
+    while(my ($old,$new) = each(%{$DeskMasterToLixuzMap{article}}))
+    {
+        iprint(sprintf('%-5s <-> %s',$new,$old));
+        eval
+        {
+            if(not $dbh->do('INSERT INTO lz_dm_map VALUES ('.$old.','.$new.');'))
+            {
+                _log('Mapping error: Failed to run: INSERT INTO lz_dm_map VALUES ('.$old.','.$new.');');
+            }
+        };
+        my $i = $@;
+        if ($i)
+        {
+            _log('Mapping error: Failed to run: INSERT INTO lz_dm_map VALUES ('.$old.','.$new.');. Threw exception: '.$i);
+        }
+    }
+    #$dbh->commit;
+    mainStatus('done');
+}
+
+sub runCronJobs
+{
+    mainStatus(' Running daily cronjob once...');
+    if (-x './cronjobs/lixuz_cron_daily.pl')
+    {
+        system('./cronjobs/lixuz_cron_daily.pl');
+    }
+    mainStatus('done');
+}
+
+# ---
+# FIELD CONVERSION
+# ---
+sub convertFields
+{
+    mainStatus(' Converting DeskMaster additional fields to Lixuz additional fields...');
+    print '  Converting: ';
+    iprint('(preparing)');
+    my $fields = $dm->resultset('DmField');
+    while(my $field = $fields->next)
+    {
+        safesub('convertThisField',$field);
+    }
+    mainStatus('done');
+}
+
+sub convertThisField
+{
+    my $field = shift;
+    iprint($field->fieldid);
+    my $type = $field->type;
+    # Mapping for basic types
+    my %typeMap =
+    (
+        text => 'singleline',
+        textarea => 'multiline',
+    );
+    my $lz_field = LIXUZ->model('LIXUZDB::LzField')->create({
+            field_name => convertStringToPlain($field->fieldtitle),
+        });
+    if ($typeMap{$type})
+    {
+        $lz_field->set_column('field_type',$typeMap{$type});
+    }
+    elsif ($type eq 'select')
+    {
+        if(
+            (defined $field->usr_opts and length $field->usr_opts) and 
+            ((defined $field->seq_opts_frm and length $field->seq_opts_frm) or (defined $field->seq_opts_to and length $field->seq_opts_to))
+        )
+        {
+            _log('Corrupt DB? A field ('.$field->fieldid.') has both usr_opts and seq_opts_*. Skipping this field.');
+            return;
+        }
+        elsif((defined $field->seq_opts_frm and length $field->seq_opts_frm) || (defined $field->seq_opts_to and length $field->seq_opts_to))
+        {
+            $lz_field->set_column('field_type','range');
+            if(not defined $field->seq_opts_frm or not defined $field->seq_opts_to)
+            {
+                _log('seq_opts_frm/seq_opts_to is null, should not be possible');
+                return;
+            }
+            my $lz_seq = LIXUZ->model('LIXUZDB::LzFieldOptions')->create({
+                    field_id => $lz_field->field_id,
+                    range_from => $field->seq_opts_frm,
+                    range_to => $field->seq_opts_to,
+                });
+            $lz_seq->update();
+        }
+        elsif(defined $field->usr_opts and length $field->usr_opts)
+        {
+            $lz_field->set_column('field_type','user-pulldown');
+
+            my $usr_opts = $field->usr_opts;
+            my $i = 0;
+            $DeskMasterToLixuzMap{fieldOpts}->{$field->fieldid} = {};
+            my @options = split(/,+/,$usr_opts);
+            foreach my $opt (@options)
+            {
+                (my $key = $opt) =~ s/^([^:]+):+.*$/$1/g;
+                (my $value = $opt) =~ s/^[^:]+:+(.*)$/$1/g;
+                my $opts = LIXUZ->model('LIXUZDB::LzFieldOptions')->create({
+                        field_id => $lz_field->field_id,
+                        option_id => $i,
+                        option_name => $value,
+                    });
+                $opts->update();
+                $DeskMasterToLixuzMap{fieldOpts}->{$field->fieldid}->{$key} = $i;
+                $i++;
+            }
+        }
+        else
+        {
+            _log('Field ('.$field->fieldid.') with the type select appears to not contain any usable fields');
+            return;
+        }
+    }
+    else
+    {
+        _log('Unhandled field type: '.$type);
+    }
+    $lz_field->update();
+    setLixuzID('field',$field->fieldid, $lz_field->field_id);
+}
+
+# ---
+# ARTICLE FOLDER CONVERSION
+# ---
+sub convertArticleCategories
+{
+    mainStatus(' Converting DeskMaster Article<->Category relations to Lixuz folder relations...');
+    print '  Converting: ';
+    iprint('(preparing)');
+    my $art_cats = $dm->resultset('DmArtCat')->search(undef,{order_by => 'artid'});
+    while(my $art_cat = $art_cats->next)
+    {
+        if(defined $art_cat->artid and defined $art_cat->catid and not $art_cat->catid == 0)
+        {
+            iprint($art_cat->artid);
+            my $article_id = getLixuzID('article',$art_cat->artid);
+            my $folder_id = getLixuzID('folder',$art_cat->catid);
+            if(not defined $article_id)
+            {
+                _log("FATAL: failed to locate NEW artid for article id: ".$art_cat->artid);
+                next;
+            }
+            elsif(not defined $folder_id)
+            {
+                _log("FATAL: Failed to locate NEW folder_id for category: ".$art_cat->catid);
+                next;
+            }
+            LIXUZ->model('LIXUZDB::LzArticleFolder')->create({
+                    article_id => $article_id,
+                    folder_id => $folder_id,
+                    primary_folder => $art_cat->main,
+                });
+        }
+    }
+    mainStatus('done');
+}
+
+# ---
+# ARTICLE BODY/FILES RELATIONS CONVERSION
+# ---
+# Note: This COULD have been done inside of convertArticles() to avoid having to query
+# the DB yet again, BUT then any links to future articles that had yet to be converted
+# would be missing, so we do it in a two-pass operation to ensure the accuracy of
+# converted links.
+sub convertArticleFilesAndContent
+{
+    mainStatus(' Converting DeskMaster article bodies and leads to Lixuz article bodies and leads...');
+    print "  Converting: ";
+    iprint('(preparing)');
+    foreach my $artid (sort keys(%{$DeskMasterToLixuzMap{article}}))
+    {
+        my $lz_article_id = getLixuzID('article',$artid);
+        iprint($lz_article_id);
+        my $article = LIXUZ->model('LIXUZDB::LzArticle')->find({
+                article_id => $lz_article_id,
+            });
+        my ($body, $b_changed) = safesub('performArtContentConversion',$artid, $article, $article->body);
+        my ($lead, $l_changed) = safesub('performArtContentConversion',$artid, $article, $article->lead);
+        if(defined $body && $b_changed)
+        {
+            $article->set_column('body',encode_utf8($body));
+        }
+        if(defined $lead && $l_changed)
+        {
+            $article->set_column('lead',encode_utf8($lead));
+        }
+        if ($b_changed or $l_changed)
+        {
+            $article->update();
+        }
+    }
+    mainStatus('done');
+}
+
+sub performArtContentConversion
+{
+    my $deskmaster_artid = shift;
+    my $lz_article = shift;
+    my $content = shift;
+    my $changed = 0;
+    if(not defined $content or not length $content or not $content =~ /\S/)
+    {
+        return $content;
+    }
+    my %replacements;
+    my %spots;
+
+    $content = decode_utf8($content);
+
+    if ($content =~ s/\r?\n/<br \/>/g)
+    {
+        study($content);
+        $changed = 1;
+    }
+
+    my $art_files = $dm->resultset('DmArtFile')->search({artid => $deskmaster_artid});
+
+    my $lixuzSpotNo = 0;
+    while(my $file = $art_files->next)
+    {
+        if(defined $spots{$file->spot})
+        {
+            _log("Fighting over a single spot ".$file->spot.' for artid '.$deskmaster_artid.'. '.$file->fid.' lost');
+            next;
+        }
+        my $lixuzFileID = getLixuzID('file',$file->fid);
+        my $obj = LIXUZ->model('LIXUZDB::LzFile')->find({
+                file_id => $lixuzFileID,
+            });
+        my $fobj = $dm->resultset('DmFile')->find({
+                fid => $file->fid,
+            });
+        if(not defined $fobj)
+        {
+#            _log("Skipped DmArtFile relationship between article ".$deskmaster_artid." and the file ".$file->fid." because the DmFile was no longer in the DB");
+            next;
+        }
+        if(not defined $obj)
+        {
+            my $id = $file->id;
+            if(not defined $lixuzFileID)
+            {
+                _log("Deskmaster file \"$id\" appears to not have been converted to LzFile, getLixuzID() failed.");
+                if ($DeskMasterToLixuzMap{'file'}->{$id})
+                {
+                    _log('Strangely, a direct lookup in DeskMasterToLixuzMap succeeds');
+                }
+            }
+            else
+            {
+                _log("Deskmaster file $id which is suppose to map to Lixuz file $lixuzFileID failed to retrieve the Lixuz file object");
+            }
+            die();
+            next;
+        }
+        $spots{$file->spot} = {
+            file => $obj->file_id,
+            align => $file->align,
+            file_obj => $obj,
+        };
+        $lixuzSpotNo++;
+        # Create relationship if it isn't already there
+        if(not LIXUZ->model('LIXUZDB::LzArticleFile')->find({
+                    article_id => $lz_article->article_id,
+                    file_id => getLixuzID('file',$file->fid),
+                }))
+        {
+            my $new = LIXUZ->model('LIXUZDB::LzArticleFile')->create({
+                    article_id => $lz_article->article_id,
+                    file_id => getLixuzID('file',$file->fid),
+                    spot_no => $lixuzSpotNo,
+                });
+        }
+    }
+
+    my @parts = split(/(\s+|>|<)/,$content);
+
+    foreach my $p (@parts)
+    {
+        next if not $p =~ s/^.*(@@[^@]+@@).*$/$1/g;
+        next if defined $replacements{$p};
+        $replacements{$p} = artContentConvert_getElement($deskmaster_artid,$lz_article,\%spots,$p);
+    }
+
+    study($content);    # Prepare var for heavy regexing
+    while(my ($placeholder,$replacement) = each(%replacements))
+    {
+        if(not defined $replacement)
+        {
+            $replacement = '';
+        }
+        if(not $content =~ s/$placeholder/$replacement/g)
+        {
+            _log('replacement failed: s/'.$placeholder.'/'.$replacement.'/g');
+            next;
+        }
+        study($content);
+        $changed = 1;
+    }
+
+    if ($content =~ /@@\S*@@/)
+    {
+        _log("Content for deskmaster artid ".$deskmaster_artid." which is lz artid: ".$lz_article->article_id.' still contained @@@@ placeholders after conversion');
+    }
+    # Try to fix (lowercase) some of the HTML
+    if ($content =~ s/<([^>+])>/<\L$1\E>/g)
+    {
+        $changed = 1;
+        study($content);
+    }
+    # Fix <br>
+    if($content =~ s/<\s*br\s*>/<br \/>/gi)
+    {
+        $changed = 1;
+        study($content);
+    }
+    my %manualURLConvert = (
+        '../../abonner' => '/Abonner-25',
+        '../../img/publish' => '/img/publish', # This doesn't really fix much, but simplifies future regexes for repairing /img links
+        '../../art.html' => '/art.html',
+        '../../soundasia/' => 'http://www.soundasia.no/',
+    );
+    my $didClean = 0;
+    while(my ($URL, $new) = each(%manualURLConvert))
+    {
+        if ($content =~ s/(..\/)*\Q$URL\E/$new/)
+        {
+            $didClean = 1;
+            study($content);
+        }
+    }
+    # Find oddball URLs
+    if ($content =~ /<a[^>]+href=["'].*\.\..*["']/i)
+    {
+        my @cont = split(/</,$content);
+        my $e = 0;
+        foreach my $l (@cont)
+        {
+            next if not $l =~ s/^\s*a[^>]+href=["']+//i;
+            next if $l =~ /^(https?|www|mailto|rss|wap|aim)/;
+            #$l =~ s/["'].*//;
+            $l =~ s/^([^>]+)>*.*/$1/;
+            $l =~ s/["']\s+.*$//;
+            if ($l =~ /\.\./i)
+            {
+                $e = 1;
+                _log("Strange internal URL, might lead to indefinite recursiveness ($l). Maybe this should be cleaned? Found in lz_article ".$lz_article->article_id);
+            }
+            elsif(not $l =~ /(http|www)/i and not $l =~ /img\/publish/)
+            {
+                if(not $l =~ /\d$/)
+                {
+                    $e = 1;
+                    _log("Internal URL, might not work with Lixuz ($l). Maybe this should be cleaned? Found in lz_article ".$lz_article->article_id);
+                }
+            }
+        }
+#        if(not $e)
+#        {
+#            _log("Located nasty strange stuff inside article, but were unable to parse them out. Found in lz_article ".$lz_article->article_id);
+#        }
+    }
+    my $replacementError = 0;
+    if ($content =~ m#/img/publish#)
+    {
+        my @cont = split(/(<|\s+|&)/,$content);
+        my %convertImg;
+        foreach my $l (@cont)
+        {
+            if ($l =~ /\s*(img|a)/ and $l =~ m#/img/publish#)
+            {
+                my $o = $l;
+                $l =~ s/.*(src|href)=["'](.+)["'].*/$2/i;
+                if(not $l =~ m#/img/publish#)
+                {
+                    _log("Strange, extracted img I thought was bad, but it turned out to be $l (from $o)");
+                    next;
+                }
+                elsif($l =~ /^(http|www)/ and not $l =~ /utrop\.no/)
+                {
+                    next;
+                }
+
+                my $base = $l;
+                my $name = basename($l);
+                $base =~ s{.*(/img.*)$}{$1};
+                $base =~ s{/+}{/}g;
+                $base =~ s/\Q$name\E$//;
+                $base =~ s{/+$}{}g;
+                my $files = $dm->resultset('DmFile')->search({
+                        srcfile => $name,
+                        dirurl => $base,
+
+                    });
+                if ($files->count == 0)
+                {
+                    _log("Failed to locate file matching srcfile => $name, dirurl => $base, skipped");
+                    $replacementError = 1;
+                    next;
+                }
+                elsif($files->count > 1)
+                {
+                    _log("Found multiple files matching srcfile => $name, dirurl => $base, skipped");
+                    $replacementError = 1;
+                    next;
+                }
+                my $file = $files->next;
+                if(not $file)
+                {
+                    _log("Failed to locate file matching srcfile => $name, dirurl => $base, skipped");
+                    $replacementError = 1;
+                    next;
+                }
+                else
+                {
+                    my $lz = getLixuzID('file',$file->fid);
+                    if(not defined $lz)
+                    {
+                        _log("Failed to find lz file for ".$file->fid);
+                        next;
+                    }
+                    my $lzObj = LIXUZ->model('LIXUZDB::LzFile')->find({file_id => $lz});
+                    if(not $lzObj)
+                    {
+                        _log("Failed to find file object for lz file ".$lz);
+                    }
+                    $convertImg{$l} = $lzObj->get_url();
+                }
+            }
+        }
+        while(my ($orig, $replace) = each %convertImg)
+        {
+            my $delim = '"';
+            if ($orig =~ /"/)
+            {
+                $delim = "'";
+            }
+            if(not $content =~ s/['"]\Q$orig\E['"]/$delim$replace$delim/g)
+            {
+                _log('Wanted to perform the following replacement on dm art '.$deskmaster_artid.', but it failed: s/[\'"]'.$orig.'[\'"]/'.$delim.$replace.$delim.'/g');
+                $replacementError = 1;
+            }
+            else
+            {
+                study($content);
+            }
+        }
+        if (not $replacementError and $content =~ m#/img/publish#)
+        {
+            _log('Even after the replacement the dm_art '.$deskmaster_artid.' (lz_art '.$lz_article->article_id.') contained /img/publish. Somewhere some extraction or regex logic failed');
+        }
+    }
+
+    return ($content,$changed);
+}
+
+sub artContentConvert_getElement
+{
+    my $deskmaster_artid = shift;
+    my $lz_article = shift;
+    my $spots = shift;
+    my $element = shift;
+    chomp($element);
+    if(not $element =~ /@/)
+    {
+        confess("element didn't have an @, this shouldn't be possible");
+    }
+
+    (my $elementId = $element) =~ s/\D//g;
+    (my $type = $element) =~ s/^@@(.+)@@+$/$1/g;
+    $type =~ s/\d//g;
+
+    if(not length $elementId)
+    {
+        # Silently skip this, we really don't care
+        #placeHolderErr($deskmaster_artid, $lz_article, $element, 'skipped, no elementId');
+        return '';
+    }
+
+    if ($type =~ /^(rel)?art/)
+    {
+        if(not getLixuzID('article',$elementId))
+        {
+            placeHolderErr($deskmaster_artid, $lz_article, $element, 'failed to look up element with the supplied ID',$elementId);
+            return '';
+        }
+        my $lz_art = LIXUZ->model('LIXUZDB::LzArticle')->find({
+                article_id => getLixuzID('article',$elementId),
+            });
+        if(not $lz_art)
+        {
+            placeHolderErr($deskmaster_artid, $lz_article, $element, 'failed to locate lz_article with id '.getLixuzID('article',$elementId),$elementId);
+            return '';
+        }
+        if ($type eq 'relart')
+        {
+            return $lz_art->get_url();
+        }
+        elsif($type eq 'art')
+        {
+            return '<a href="'.$lz_art->get_url().'">Les mer</a>';
+        }
+        else
+        {
+            return invalidPlaceHolder($deskmaster_artid, $lz_article,$type,$element);
+        }
+    }
+    # Some instances have a typoed liink, so we allow that and handle it.
+    elsif($type =~ /^li+nk$/)
+    {
+        my $relLink = $dm->resultset('DmArtLink')->find({
+                artid => $deskmaster_artid,
+                spot => $elementId,
+            });
+        if (not $relLink)
+        {
+            placeHolderErr($deskmaster_artid, $lz_article, $element, 'failed to locate link for link spot '.$elementId);
+            return '';
+        }
+        my $link = $dm->resultset('DmLink')->find({ linkid => $relLink->linkid});
+        if(not $link)
+        {
+            placeHolderErr($deskmaster_artid, $lz_article, $element, 'failed to locate link with id '.$relLink->linkid);
+            return '';
+        }
+        if(not $link->state eq 'active')
+        {
+            placeHolderErr($deskmaster_artid, $lz_article, $element, 'wanted to use inactive link, denied. Returning empty string');
+            return '';
+        }
+        return '<a href="'.$link->url.'">'.$link->title.'</a>';
+    }
+    # Some typo file as fil, just handle it silently.
+    elsif($type =~ /^file?$/)
+    {
+        my $fid = $spots->{$elementId}->{file};
+        if(not $spots->{$elementId})
+        {
+            placeHolderErr($deskmaster_artid, $lz_article, $element, 'failed to locate content for spot',$elementId);
+            return '';
+        }
+        elsif(not $fid)
+        {
+            placeHolderErr($deskmaster_artid, $lz_article, $element, 'failed to locate file id for spot',$elementId);
+            return '';
+        }
+        my $f = LIXUZ->model('LIXUZDB::LzFile')->find({
+                file_id => $fid,
+            });
+        if(not $f)
+        {
+            placeHolderErr($deskmaster_artid, $lz_article, $element, 'failed to locate file for spot',$elementId);
+            return '';
+        }
+        my $url = $f->get_url();
+        if(not $url)
+        {
+            placeHolderErr($deskmaster_artid, $lz_article, $element, 'Failed to find URL for file : '.$f->file_id,$elementId);
+            return '';
+        }
+        if(not $f->is_image)
+        {
+            my $title = $f->title ? $f->title : $f->file_name;
+            if(not $title)
+            {
+                _log($f->file_id.' (file) did not appear to have a title nor a file_name, returning empty string');
+                return '';
+            }
+            return('<a href="'.$f->get_url().'">'.$title.'</a>');
+        }
+        else
+        {
+            if ((defined $f->file_name and $f->file_name =~ /pdf/) or (defined $f->title and $f->title =~ /pdf/))
+            {
+                _log("File ".$f->file_id." appears to be an image but also a pdf? Something is not quite right here");
+            }
+        }
+        # TODO: Create relationship if not present
+        return '<img src="'.$f->get_url().'"  imgid="'.$f->file_id.'" id="image_etfdm_'.time().$lz_article->article_id.int(rand(1000)).$fid.'" />';
+    }
+    elsif($type =~ s/^(obj|img)//)
+    {
+        my $locEnt = $spots->{$elementId};
+        if(not $locEnt)
+        {
+            placeHolderErr($deskmaster_artid, $lz_article, $element, 'Failed to locate spot',$elementId);
+            return '';
+        }
+        my $obj = LIXUZ->model('LIXUZDB::LzFile')->find({
+                file_id => $locEnt->{file},
+            });
+        if ($type eq 'align')
+        {
+             return undefEmpty( $locEnt->{align});
+        }
+        elsif ($type eq 'width' or $type eq '_w')
+        {
+             return undefEmpty( $obj->width);
+        }
+        elsif($type eq 'height' or $type eq '_h')
+        {
+             return undefEmpty( $obj->height);
+        }
+        elsif($type eq 'caption')
+        {
+             return undefEmpty( $obj->caption);
+        }
+        elsif($type eq 'title')
+        {
+             return undefEmpty( $obj->title);
+        }
+        elsif($type eq 'srcfile')
+        {
+             return undefEmpty( $obj->file_name);
+        }
+        elsif($type eq '')
+        {
+             return undefEmpty( $obj->get_url);
+        }
+        else
+        {
+            return invalidPlaceHolder($deskmaster_artid, $lz_article,$type,$element);
+        }
+    }
+    else
+    {
+        return invalidPlaceHolder($deskmaster_artid, $lz_article,$type,$element);
+    }
+
+    return $element;
+}
+
+sub placeHolderErr
+{
+    # The latter param is optional
+    my($dm_art, $lz_art, $element, $error,$elementId) = @_;
+    my $debugStr = '';
+    if(defined $elementId)
+    {
+        $debugStr = ' ';
+        $debugStr .= debug_artFilePlaceholder($dm_art, $lz_art, $elementId);
+        # If test one succeeded and second failed, ignore this error.
+        if ($debugStr =~ m#^\s*\(debug:\s*OK//failed#)
+        {
+            return;
+        }
+    }
+    _log('Error locating content for placeholder '.$element.': '.$error.' (processing lz_article '.$lz_art->article_id.' - dm_art '.$dm_art.')'.$debugStr);
+}
+
+sub invalidPlaceHolder
+{
+    my ($dm_art, $lz_art, $placeHolder, $element) = @_;
+    if(not length $placeHolder)
+    {
+        $placeHolder = $element;
+    }
+    if(not length $placeHolder and not length $element)
+    {
+        confess;
+    }
+    placeHolderErr($dm_art, $lz_art, $element,'Invalid placeholder');
+    $DeskMasterToLixuzMap{invalidPlaceholders}->{$placeHolder} += 1;
+    return '';
+}
+
+sub debug_artFilePlaceholder
+{
+    my ($deskmaster_artid, $lz_article, $elementId) = @_;
+    my %tests = (
+        artexist => 'failed',
+        relexist => 'failed',
+        fileexist => 'failed',
+        fileconverted => 'failed',
+        lzfileexist => 'failed',
+    );
+    my $dm_art = $dm->resultset('DmArt')->find({artid => $deskmaster_artid});
+    if ($dm_art)
+    {
+        $tests{artexist} = 'OK';
+    }
+    my $rel = $dm->resultset('DmArtFile')->find({ artid => $deskmaster_artid, spot => $elementId});
+    if ($rel)
+    {
+        $tests{relexist} = 'OK';
+        my $file = $dm->resultset('DmFile')->find({fid => $rel->fid});
+        if ($file)
+        {
+            $tests{fileexist} = 'OK';
+            if (getLixuzID('file',$file->fid))
+            {
+                $tests{fileconverted} = 'OK';
+                my $lzf = LIXUZ->model('LzFile')->find({file_id => getLixuzID('file',$file->fid)});
+                if ($lzf)
+                {
+                    $tests{lzfileexist} = 'OK';
+                }
+            }
+        }
+    }
+
+    return '(debug: '." $tests{artexist}//$tests{relexist}//$tests{fileexist}//$tests{fileconverted}//$tests{lzfileexist})";
+}
+
+sub undefEmpty
+{
+    my $param = shift;
+    if(not defined $param)
+    {
+        return '';
+    }
+    else
+    {
+        return $param;
+    }
+}
+
+sub undefDateTime
+{
+    my $param = shift;
+    if(not defined $param)
+    {
+        return undef;
+    }
+    elsif($param eq '0000-00-00 00:00:00')
+    {
+        return undef;
+    }
+    else
+    {
+        return $param;
+    }
+}
+
+# ---
+# ARTICLE CONVERSION
+# ---
+sub convertArticles
+{
+    mainStatus(' Preparing Lixuz database for article conversion...');
+    iprint('Creating metadata fields...');
+    my %fieldMap;
+    my %metaFields = (
+        byline => 'singleline',
+        uptime => 'meta-date',
+        front => 'meta-int',
+        tabloid => 'meta-int',
+        reltime => 'meta-date',
+        lastedit => 'meta-date',
+        tabtitle => 'singleline',
+        tablead => 'multiline',
+        arttype => 'singleline',
+    );
+    while(my ($name,$type) = each %metaFields)
+    {
+        my $existing = LIXUZ->model('LIXUZDB::LzField')->find({
+                field_name => $name,
+                field_type => $type,
+            });
+        my $setName = $name;
+        if ($existing)
+        {
+            $fieldMap{$name} = $existing->field_id;
+            next;
+        }
+        elsif(my $secondExisting = LIXUZ->model('LIXUZDB::LzField')->find({
+                field_name => $name.' (from DeskMaster)',
+                field_type => $type,
+                }))
+        {
+            $fieldMap{$name} = $secondExisting;
+            next;
+        }
+        elsif(my $named = LIXUZ->model('LIXUZDB::LzField')->find({
+                field_name => $name,
+                field_type => $type,
+                }))
+        {
+            $setName = $name.' (from DeskMaster';
+        }
+        my $lz_field = LIXUZ->model('LIXUZDB::LzField')->create({
+                field_name => $setName,
+                field_type => $type,
+            });
+        $fieldMap{$name} = $lz_field->field_id;
+    }
+    mainStatus('done');
+
+    mainStatus(' Converting DeskMaster articles to Lixuz articles...');
+    print '  Converting: ';
+    iprint('(preparing)');
+    my $articles = $dm->resultset('DmArt')->search(undef,{order_by => 'artid'});
+    while(my $article = $articles->next)
+    {
+        safesub('convertThisArticle',$article,\%fieldMap);
+    }
+    mainStatus('done');
+}
+
+sub convertThisArticle
+{
+    my $article = shift;
+    my $fieldMap = shift;
+    iprint($article->artid);
+    # This is a map of fields that have (near) 1:1 mapping where
+    # we don't need to perform any kind of special conversion of the value.
+    my %map = (
+        modtime => 'modified_time',
+        regtime => 'created_time',
+        pubtime => 'publish_time',
+        body => 'body',     # This is converted separately later when files are converted.
+        lead => 'lead',     # And so is this
+        title => 'title',
+        byline => {
+            type => 'meta field',
+            target => $fieldMap->{byline},
+        },
+        uptime => {
+            type => 'meta field',
+            target => $fieldMap->{uptime},
+        },
+        front => {
+            type => 'meta field',
+            target => $fieldMap->{front},
+        },
+        tabloid => {
+            type => 'meta field',
+            target => $fieldMap->{tabloid},
+        },
+        reltime => {
+            type => 'meta field',
+            target => $fieldMap->{reltime},
+        },
+        lastedit => {
+            type => 'meta field',
+            target => $fieldMap->{lastedit},
+        },
+        tabtitle => {
+            type => 'meta field',
+            target => $fieldMap->{tabtitle},
+        },
+        tablead => {
+            type => 'meta field',
+            target => $fieldMap->{tablead},
+        },
+        arttype => {
+            type => 'meta field',
+            target => $fieldMap->{arttype},
+        },
+    );
+    my $lz_article = LIXUZ->model('LIXUZDB::LzArticle')->create({});
+    my $lz_workflow = LIXUZ->model('LIXUZDB::LzWorkflow')->create({article_id => $lz_article->article_id});
+
+    while(my ($key,$value) = each(%map))
+    {
+        if(ref($value))
+        {
+            if ($value->{type} eq 'meta field')
+            {
+                if(defined $article->get_column($key) and length $article->get_column($key))
+                {
+                    my $lz_value= LIXUZ->model('LIXUZDB::LzFieldValue')->create({
+                            module_name => 'article',
+                            value => convertStringToPlain($article->get_column($key)),
+                            field_id => $value->{target},
+                            module_id => $lz_article->article_id,
+                        });
+                    $lz_value->update();
+                }
+            }
+            else
+            {
+                _log('Unknown field type: '.$value->{type});
+            }
+        }
+        else
+        {
+            if(defined $article->get_column($key) and length $article->get_column($key))
+            {
+                my $val;
+                if (not $key =~ /^(body|lead)$/)
+                {
+                    $val = convertStringToPlain($article->get_column($key));
+                }
+                else
+                {
+                    $val = encode_utf8($article->get_column($key));
+                }
+                $lz_article->set_column($value,$val);
+            }
+        }
+    }
+
+    $lz_article->set_column('expiry_time',undefDateTime($article->get_column('exptime')));
+
+    my %StatusMap = (
+        draft => 1,
+        live => 2,
+        desk => 6, # FIXME: This is not a system one so we might want to autodetect if it's there and set it to 1
+        inactive => 4,
+    );
+    my $status = $StatusMap{$article->status} ? $StatusMap{$article->status} : 1;
+    $lz_article->set_column('status_id',$status);
+
+    if ($article->author)
+    {
+        my $author = encode_utf8($article->author);
+        $author =~ s/^(By|Av)\s*:?\s*//g;
+        $lz_article->set_column('author',$author);
+    }
+
+    my $defaultUser = 24;
+    if(my $regby = $article->regby)
+    {
+        my $rb =  LIXUZ->model('LIXUZDB::LzUser')->find({
+                user_name => $regby
+            });
+        if(not $rb)
+        {
+            $regby =~ tr/[A-Z]/[a-z]/;
+            $rb =  LIXUZ->model('LIXUZDB::LzUser')->find({
+                    user_name => $regby
+                });
+        }
+        if ($rb)
+        {
+            $rb = $rb->user_id;
+        }
+        else
+        {
+            $rb = $defaultUser;
+        }
+        $lz_workflow->set_column('assigned_to_user',$rb);
+    }
+    else
+    {
+        $lz_workflow->set_column('assigned_to_user',$defaultUser);
+    }
+    $lz_workflow->set_column('assigned_by',$defaultUser);
+
+    $lz_article->update();
+    $lz_workflow->update();
+    setLixuzID('article',$article->artid,$lz_article->article_id);
+}
+
+sub convertArticleRelations
+{
+    mainStatus(' Converting DeskMaster article relationships to Lixuz article relationships...');
+    print ' Converting : ';
+    iprint('(preparing)');
+
+    my $rels = $dm->resultset('DmRelart')->search(undef,{ order_by => 'artid' });
+    while(my $rel = $rels->next)
+    {
+        iprint(sprintf('%-5s <-> %s',$rel->artid,$rel->relid));
+        my $lz_article = getLixuzID('article',$rel->artid);
+        my $lz_relart = getLixuzID('article',$rel->relid);
+        if(not $lz_article)
+        {
+            _log('Failed to locate Lixuz article_id for artid in article relationship between dm_art '.$rel->artid.' and '.$rel->relid);
+            next;
+        }
+        elsif(not $lz_relart)
+        {
+            _log('Failed to locate Lixuz article_id for relid in article relationship between dm_art '.$rel->artid.' and '.$rel->relid);
+            next;
+        }
+        my $newRel = LIXUZ->model('LIXUZDB::LzArticleRelations')->create({
+                article_id => $lz_article,
+                related_article_id => $lz_relart,
+                relation_type => 'related',
+            });
+        $newRel->update();
+    }
+    iprint('');
+    print "\b\bprevids : ";
+    iprint('(preparing)');
+    my $articles = $dm->resultset('DmArt')->search({
+            -and => {
+                previd => \'IS NOT NULL',
+                previd => { '!=' => 0 },
+            }});
+    while(my $article = $articles->next)
+    {
+        iprint($article->artid);
+        my $artid = getLixuzID('article',$article->artid);
+        my $prev = getLixuzID('article',$article->previd);
+        if(not $artid)
+        {
+            _log('Failed to locate Lixuz article_id for artid in article prev relationship between dm_art '.$artid.' and '.$prev);
+            next;
+        }
+        elsif(not $prev)
+        {
+            _log('Failed to locate Lixuz article_id for previd in article prev relationship between dm_art '.$artid.' and '.$prev);
+            next;
+        }
+        my $newRel = LIXUZ->model('LIXUZDB::LzArticleRelations')->create({
+                article_id => $artid,
+                related_article_id => $prev,
+                relation_type => 'previous',
+            });
+        $newRel->update();
+    }
+    mainStatus('done');
+}
+
+sub convertArticleAdFields
+{
+    mainStatus(' Converting DeskMaster additional field values to Lixuz additional field values...');
+    print '  Converting: ';
+    iprint('(preparing)');
+    my $fields = $dm->resultset('DmArtField')->search(undef, {order_by => 'artid'});
+    while(my $field = $fields->next)
+    {
+        iprint($field->artid);
+        if(not defined $field->content or not length $field->content)
+        {
+            next;
+        }
+        if(not defined getLixuzID('field',$field->fieldid))
+        {
+            _log("Got invalid field that no longer exists when converting values: ".$field->fieldid);
+            next;
+        }
+        elsif(not defined getLixuzID('article',$field->artid))
+        {
+            _log("Got invalid article that no longer exists when converting values: ".$field->artid);
+            next;
+        }
+
+        my $lz_art = LIXUZ->model('LIXUZDB::LzArticle')->find({
+                article_id => getLixuzID('article',$field->artid),
+            });
+        if(not $lz_art)
+        {
+            _log("FATAL, failed to look up LZ art for ".$field->artid);
+        }
+        my $folder;
+        eval
+        {
+            $folder = $lz_art->folder->folder;
+        };
+        next if $@;
+        my $fields = LIXUZ->model('LIXUZDB::LzFieldModule')->search({
+                folder_id => $folder->folder_id,
+                module => 'folder',
+                field_id => getLixuzID('article',$field->fieldid),
+            });
+        if(not $fields->count())
+        {
+            my $newField = LIXUZ->model('LIXUZDB::LzFieldModule')->create({
+                    folder_id => $folder->folder_id,
+                    module => 'folder',
+                    field_id => getLixuzID('field',$field->fieldid),
+                });
+            $newField->update();
+        }
+        my $content = LIXUZ->model('LIXUZDB::LzFieldValue')->create({
+                field_id => getLixuzID('field',$field->fieldid),
+                module_id => $lz_art->article_id,
+                value => encode_utf8($field->content),
+                module_name => 'articles',
+            });
+        $content->update();
+    }
+    mainStatus('done');
+}
+
+# ---
+# ARTICLE COMMENTS CONVERSION
+# ---
+
+sub convertArticleComments
+{
+    mainStatus(' Converting DeskMaster article comments to Lixuz article comments...');
+    print '  Converting: ';
+    iprint('(preparing)');
+    my $comments = $dm->resultset('MbComment')->search(undef,{order_by => 'artid'});
+    my %map = (
+        'ipaddress' => 'ip',
+        'user' => 'author_name',
+        'regtime' => 'created_date',
+        'body' => 'body',
+        'title' => 'subject',
+    );
+    while(my $comment = $comments->next)
+    {
+        iprint($comment->artid);
+        if ($comment->status eq 'Hide')
+        {
+            next;
+        }
+        my $lzArtid = getLixuzID('article',$comment->artid);
+        if(not defined $lzArtid)
+        {
+            if (my $e = $dm->resultset('DmArt')->find({ artid => $comment->artid}))
+            {
+                _log('Comment '.$comment->comid.' referred to an unmigrated article THAT EXISTS in DeskMaster with artid '.$e->artid.'. Something is very wrong somewhere');
+            }
+            next;
+        }
+        if(not defined $comment->body or not length $comment->body)
+        {
+            _log('Comment '.$comment->comid.' was empty, ignoring');
+            next;
+        }
+        my $com = LIXUZ->model('LIXUZDB::LzLiveComment')->create({
+                article_id => $lzArtid,
+            });
+        my $modified = 0;
+        while(my ($old,$new) = each(%map))
+        {
+            if(my $value = $comment->get_column($old))
+            {
+                $modified = 1;
+                $com->set_column($new,encode_utf8($value));
+            }
+        }
+        if(not $modified)
+        {
+            _log('Attempted to migrate empty comment '.$comment->comid.' - ignoring');
+            $com->delete();
+            next;
+        }
+        $com->update();
+    }
+    mainStatus('done');
+}
+
+# ---
+# FILE CONVERSION
+# ---
+sub convertFiles
+{
+    mainStatus(' Converting DeskMaster files to Lixuz files...');
+    print '  Converting: ';
+    iprint('(preparing)');
+    my %convertChildren;
+    my $files = $dm->resultset('DmFile');
+    my $leaves = $files->search({parent => 0},{order_by => 'fid'});
+
+    while(my $file = $leaves->next)
+    {
+        safesub('convertThisFile',$file,undef);
+        $convertChildren{$file->fid} = 1;
+    }
+
+    # "each" does not handle getting keys added while running very
+    # well, so we loop until the convertChildren hash is empty as well.
+    while(%convertChildren)
+    {
+        my $checkno = 0;
+        while(my ($fileid, $val) = each(%convertChildren))
+        {
+            my $parent;
+            my $converted = 0;
+            if ($fileid != 0)
+            {
+                $parent = $dm->resultset('DmFile')->find({fid => $fileid});
+            }
+            my $children = $dm->resultset('DmFile')->search({parent => $fileid},{order_by => 'fid'});
+            while((defined $children) && (my $file = $children->next))
+            {
+                if(not safesub('convertThisFile',$file,$parent))
+                {
+                    $checkno++;
+                }
+                else
+                {
+                    $converted = 1;
+                    $checkno = 0;
+                }
+                $convertChildren{$file->fid} = 1;
+            }
+            delete($convertChildren{$fileid});
+            if(not $converted)
+            {
+                $checkno++;
+            }
+        }
+        if ($checkno >= 10)
+        {
+            iprint('(resolving dependencies)');
+            $checkno = 0;
+        }
+    }
+    iprint('(scanning for unreferenced files)');
+    my $allFiles = $dm->resultset('DmFile');
+    while(defined($allFiles) and (my $file = $allFiles->next))
+    {
+        iprint('(scanning for unreferenced files)');
+        next if getLixuzID('file',$file->fid);
+        safesub('convertThisFile',$file,undef);
+    }
+    mainStatus('done');
+}
+
+sub convertThisFile
+{
+    my $file = shift;
+    my $parent = shift;
+    return if defined getLixuzID('file',$file->fid);
+    iprint($file->fid);
+    my $lz_file = LIXUZ->model('LIXUZDB::LzFile')->create({});
+    # This is a map of fields that have (near) 1:1 mapping where
+    # we don't need to perform any kind of special conversion of the value.
+    my %map = (
+        modtime => 'last_edited',
+        regtime => 'upload_time',
+        title => 'title',
+        ext => 'format',
+        caption => 'caption',
+        size => 'size',
+        dpi => 'dpi',
+        srcfile => 'file_name',
+    );
+
+    while(my ($key,$value) = each(%map))
+    {
+        if(defined $file->get_column($key) and length $file->get_column($key))
+        {
+            my $val = encode_utf8($file->get_column($key));
+            $lz_file->set_column($value,$val);
+        }
+    }
+    # Don't add zero width/height
+    if(defined $file->width and $file->width != 0)
+    {
+        $lz_file->set_column('width',$file->width);
+    }
+    if(defined $file->height and $file->height != 0)
+    {
+        $lz_file->set_column('height',$file->height);
+    }
+
+    my %StatusMap = (
+        active => 'Active',
+        inactive => 'Inactive',
+    );
+    my $status;
+    if ($file->state eq 'sus')
+    {
+        $status = 'Inactive';
+        $lz_file->set_column('trashed',1);
+    }
+    else
+    {
+        $status = $StatusMap{$file->state} ? $StatusMap{$file->state} : 'Inactive';
+    }
+    $lz_file->set_column('status',$status);
+    if ($parent)
+    {
+        $lz_file->set_column('clone', getLixuzID('file',$parent->fid));
+    }
+
+    $lz_file->update();
+    if(not copyFile($file,$lz_file))
+    {
+        _log('copyFile() failed - deleting lz_file object '.$lz_file->file_id);
+        $lz_file->delete();
+    }
+    setLixuzID('file',$file->fid,$lz_file->file_id);
+    return 1;
+}
+
+sub copyFile
+{
+    my($dm_file, $lz_file) = @_;
+    my $location = $DM_Files_Path;
+    my $path = $dm_file->dirurl.'/'.$dm_file->srcfile;
+    my $target = $LZ_Target_Path.'/'.$lz_file->file_id;
+    push(@{$DeskMasterToLixuzMap{fileNames}},{ $location.$path => $target });
+    if(not $path =~ /img/)
+    {
+        _log('WARNING: Path without /img/ : '.$path);
+    }
+    if(defined $ENV{DESKMASTER_CONVERT_SKIP_FILECHECK} and $ENV{DESKMASTER_CONVERT_SKIP_FILECHECK} == 1)
+    {
+        return 1;
+    }
+    if (-l $target || -e $target)
+    {
+        return 1;
+    }
+    if (not -e $location.'/'.$path)
+    {
+        _log('Fatal: failed to locate file at '.$location.'/'.$path.' for dm_file '.$dm_file->fid.' which is becoming lz_file '.$lz_file->file_id);
+        return;
+    }
+    copy($location.'/'.$path, $target) or _log('Failed to perform copy('.$location.'/'.$path, $target.'): '.$!);
+    return 1;
+}
+
+# ---
+# CATEGORIES -> FOLDERS
+# ---
+sub convertCategoryToFolder
+{
+    mainStatus(' Converting DeskMaster categories to Lixuz folders...');
+    print '  Converting: ';
+    iprint('(preparing)');
+    my %hasConverted;
+    my %convertChildren;
+    my $categories = $dm->resultset('DmCat');
+    my $leaves = $categories->search({parent => 0},{order_by => 'catid'});
+
+    while(my $cat = $leaves->next)
+    {
+        safesub('convertThisCategory',\%hasConverted,$cat,undef);
+        $hasConverted{$cat->catid} = 1;
+        $convertChildren{$cat->catid} = 1;
+    }
+
+    # "each" does not handle getting keys added while running very
+    # well, so we loop until the convertChildren hash is empty as well.
+    while(%convertChildren)
+    {
+        while(my ($catid, $val) = each(%convertChildren))
+        {
+            my $parent;
+            if ($catid != 0)
+            {
+                $parent = $categories->find({catid => $catid});
+            }
+            my $children = $categories->search({parent => $catid},{order_by => 'catid'});
+            while((defined $children) && (my $cat = $children->next))
+            {
+                safesub('convertThisCategory',\%hasConverted,$cat,$parent);
+                $hasConverted{$cat->catid} = 1;
+                $convertChildren{$cat->catid} = 1;
+            }
+            delete($convertChildren{$catid});
+        }
+    }
+    my $allCategories = $categories->search(undef,{order_by => 'catid'});
+    while(defined($allCategories) and (my $cat = $allCategories->next))
+    {
+        iprint('(scanning for unreferenced categories)');
+        if(not $hasConverted{$cat->catid})
+        {
+            convertThisCategory(\%hasConverted, $cat, undef);
+            $hasConverted{$cat->catid} = 1;
+        }
+    }
+    mainStatus('done');
+}
+
+sub convertThisCategory
+{
+    my($alreadyConverted, $cat, $parentCat) = @_;
+    return if $alreadyConverted->{$cat->catid};
+    iprint($cat->catid);
+    my $folders = LIXUZ->model('LIXUZDB::LzFolder');
+    my $folder;
+    my $similar_folders = $folders->search({folder_name => $cat->catname});
+    while(defined($similar_folders) && ($folder = $similar_folders->next))
+    {
+        if ($parentCat)
+        {
+            if(defined getLixuzID('catFolder',$parentCat->catid))
+            {
+                if (not defined $folder->parent or not $folder->parent == getLixuzID('catFolder',$parentCat->catid))
+                {
+                    $folder = undef;
+                }
+            }
+            else
+            {
+                _log('parent '.$parentCat->catid.' of '.$cat->catid.' has not been converted yet!');
+                return;
+            }
+        }
+    }
+    if(not $folder)
+    {
+        $folder = $folders->create({
+                folder_name => encode_utf8($cat->catname),
+            });
+        if ($parentCat)
+        {
+            if(defined getLixuzID('catFolder',$parentCat->catid))
+            {
+                $folder->set_column('parent',getLixuzID('catFolder',$parentCat->catid));
+            }
+            else
+            {
+                _log('parent '.$parentCat->catid.' of '.$cat->catid.' has not been converted yet!');
+            }
+        }
+        $folder->update();
+    }
+    setLixuzID('catFolder',$cat->catid,$folder->folder_id);
+}
+
+# ---
+# LOCAL SITE-SPECIFIC HACKS
+# ---
+sub localHacks
+{
+    print "Main conversion has finished, running localHacks:\n";
+    # Remove this line and replace it with any subs you want to call.
+    print "(no hacks defined)\n";
+}
+
+# =======
+# The DBIx::Class interface, this is mostly just initialization stuff
+# =======
+package DeskmasterDB;
+use strict;
+use warnings;
+use base qw/DBIx::Class::Schema::Loader/;
+
+if (@main::ARGV && $main::ARGV[0] eq 'debug')
+{
+    __PACKAGE__->loader_options(
+        debug         => 1,
+    );
+}
+else
+{
+    __PACKAGE__->loader_options(
+        debug         => 0,
+    );
+}
+

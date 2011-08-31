@@ -1,0 +1,50 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<%args>
+$GITREVISION => ''
+</%args>
+<%once>
+use File::Basename qw(basename);
+</%once>
+<script type="text/javascript">
+    $LAB.onLoaded(function ()
+    {
+        setTimeout(function ()
+            {
+<%perl>
+
+$m->out('$LAB');
+$m->comp('/core/CDN-hosted.html', mode => 'LABchain', UI => 0, JQcore => 0, YUI => 1);
+
+my @files = glob($LIXUZ::PATH.'/root/js/*.lib.js');
+push(@files, glob($LIXUZ::PATH.'/root/js/*.js'));
+my %seen;
+
+foreach my $JSFile (@files)
+{
+    $JSFile = basename($JSFile);
+    next if $JSFile =~ /(core|LABjs|previewUI|articles|live)/;
+    next if $seen{$JSFile};
+    $seen{$JSFile} = 1;
+    $m->out('.script("/js/'.basename($JSFile).'?'.$GITREVISION.'").wait()');
+}
+$m->out(';'."\n");
+</%perl>
+            }, 1000);
+    });
+</script>

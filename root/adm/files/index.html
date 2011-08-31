@@ -1,0 +1,36 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<table id="contentFrame">
+<tr>
+  <td class="left"><& left.html, %ARGS &></td>
+  <td class="main">
+
+  <table>
+  <tr>
+    <td class="menu"><& menu.html, %ARGS &></td>
+    <td class="filter">&nbsp;</td>
+    <td class="search"><& ../core/searchAndFilter.html, %ARGS &></td>
+  </tr>
+  <tr>
+    <td colspan="3" class="list"><& list.html, %ARGS &></td>
+  </tr>
+  </table>
+
+  </td>
+</tr>
+</table>

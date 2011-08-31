@@ -1,0 +1,177 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="LZWorkflowContainer">
+<form name="LZWorkflow" id="LZWorkflowForm" onsubmit="return false">
+<table id="lzWorkflowContainerTable" class="spaceyTable">
+%if($w_can_accept) {
+<tr>
+<td colspan="2" id="LZWorkflowAcceptButton">
+<center>
+<input type="button" value="<% $i18n->get('Accept this assignment') %>" onclick="LZWF_AcceptAssignment(); return false" />
+</center>
+</td>
+</tr>
+%}
+
+<tr>
+<td>
+<%$i18n->get('Assigned by')%>
+</td>
+
+<td id="LZWorkflowAssignedBy">
+<% $w_assigned_by %>
+</td>
+</tr>
+
+<tr>
+<td>
+<% $i18n->get('Assigned to')%>
+</td>
+
+<td id="LZWorkflowAssignedTo">
+<% $w_assigned_to %>
+</td>
+</tr>
+
+%if($w_can_reassign_toUser) {
+<tr>
+<td>
+<%$w_assignUserString%>
+</td>
+
+<td>
+<select class="enableChosen" id="workflow_reassignToUser" name="workflow_reassignToUser" style="width:470px;">
+<% $w_userOptions |n %>
+</select>
+</td>
+</tr>
+%}
+%else
+%{
+<span id="workflow_reassignToUser" style="visibility:hidden; display: none;">null</span>
+%}
+
+%if($w_can_reassign_toRole) {
+<tr>
+<td>
+<%$w_assignRoleString%>
+</td>
+
+<td>
+<select class="enableChosen" id="workflow_reassignToRole" name="workflow_reassignToRole" style="width:470px;">
+<% $w_roleOptions |n %>
+</select>
+</td>
+</tr>
+%}
+
+
+<td>
+<%$i18n->get('Priority')%>
+</td>
+
+<td>
+<select class="enableChosen" id="workflow_priority" name="workflow_priority" style="width:470px;">
+<% $priorityOptions |n %>
+</select>
+</td>
+
+<tr>
+
+<td>
+<% $i18n->get('Start date') %>
+</td>
+
+<td>
+<% $w_startdateInput |n %>
+</td>
+
+</tr>
+
+<tr>
+<td>
+<% $i18n->get('Deadline') %>
+</td>
+
+<td>
+<% $w_deadlineInput |n %>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<input id="workflow_watch_article" type="checkbox" name="watch" <% $w_watched ? 'checked="checked" ' : '' %> /> <% $i18n->get('Notify me via e-mail when any changes are made to this article') %>
+</td>
+</tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr>
+<td colspan="2">
+    <img src="/static/images/icons/revisions.png" align="left" />&nbsp;<a href="#" id="RevisionsLabel" onclick="artRevUI.showDialog($('#artid').val());return false;"><% $i18n->get('List revisions')%></a><br />
+</tr>
+</td>
+
+<%perl>
+#<tr>
+#<td colspan="2">
+#<input type="button" value="<%$i18n->get('Submit changes')%>" id="LZWF_WorkflowSubmit" onclick="LZWF_SubmitWorkflow(); return false;" />
+#</td>
+#</tr>
+</%perl>
+
+</table>
+</form>
+</div>
+<%args>
+$i18n
+$w_priority => 1
+$w_watched => undef
+$w_deadlineInput
+$w_startdateInput
+$w_assigned_to
+$w_assigned_by
+$w_can_reassign
+$w_can_reassign_toRole => undef
+$w_can_reassign_toUser => undef
+$w_can_accept => undef
+$w_assignUserString => undef
+$w_assignRoleString => undef
+$w_roleOptions => undef
+$w_userOptions => undef
+</%args>
+<%init>
+# NOTE: Most of the variables used in this template ($w_) are defined in the
+# Articles/Workflow.pm controller.
+
+use LIXUZ::HelperModules::Forms qw(select_options_manually);
+my $priorityOptions = select_options_manually([
+	{
+		value => 'low',
+		name => $i18n->get('Low'),
+		selected => (defined $w_priority and $w_priority == 1),
+	},
+	{
+		value => 'medium',
+		name => $i18n->get('Medium'),
+		selected => (not defined $w_priority or $w_priority == 2),
+	},
+	{
+		value => 'high',
+		name => $i18n->get('High'),
+		selected => (defined $w_priority and $w_priority == 3),
+	}
+	]);
+</%init>

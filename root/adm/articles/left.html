@@ -1,0 +1,57 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%# TODO: noFolderList might not be the most useful name for this var as it hides more than folders
+<div>
+%if(not $noFolderList) {
+<div class="buttonHolder"><a href="#" onclick="LZ_NewArticle(); return false"><img src="/static/images/icons/article-create.png" border="0" align="left" />&nbsp;<%$i18n->get('New Article')%></a></div>
+%}
+<div class="buttonHolder"><a href="/admin/articles/trash"><img src="/static/images/icons/trash.png" border="0" align="left" />&nbsp;<%$i18n->get('Trash') %> (<% $trashCount %>)</a></div>
+%if(not $noFolderList) {
+<div style="height:16px; clear:both;">&nbsp;</div>
+<div class="buttonHolder"><a href="#" onclick="$(this).parent().hide(); $('#folderActionsHolder').fadeIn(); return false;"><img src="/static/images/icons/folder.png" border="0" align="left" alt="" /> <% $i18n->get('Folder actions') |n %></a></div>
+<div id="folderActionsHolder" style="display:none;">
+<div class="buttonHolder"><a href="#" onclick="lixuz_DD_NewItem(null,'root'); return false;"><img src="/static/images/icons/folder-add.png" border="0" align="left" />&nbsp;<%$i18n->get('New folder')%></a></div>
+%if($c->user->can_access('/admin/services/setPerm')) {
+<div class="buttonHolder"><a href="#" onclick="new folderPermEditor(); return false;"><img src="/static/images/icons/folder-edit.png" border="0" align="left" />&nbsp;<% $i18n->get('Edit folder') |n %></a></div>
+%}
+%if($c->user->can_access('/admin/services/deleteFolder')) {
+<div class="buttonHolder"><a href="#" onclick="lixuzFolders.deleteDialog(); return false;"><img src="/static/images/icons/folder-delete.png" border="0" align="left" />&nbsp;<% $i18n->get('Delete a folder') |n %></a></div>
+%}
+%if($c->user->can_access('/admin/services/renameFolder')) {
+<div class="buttonHolder"><a href="#" onclick="lixuzFolders.renameDialog(); return false;"><img src="/static/images/icons/folder-rename.png" border="0" align="left" />&nbsp;<% $i18n->get('Rename a folder') |n %></a></div>
+%}
+</div>
+</div>
+<br clear="both" /><br/>
+%if(not $dragdrop) { die }
+<% $dragdrop |n %>
+%}
+
+<%args>
+$noFolderList => 0
+$dragdrop => undef
+$i18n
+</%args>
+<%init>
+my $trashCount = 0;
+my $trash = $c->model('LIXUZDB::LzArticle')->search({trashed => 1});
+if ($trash)
+{
+    $trashCount = $trash->count;
+}
+</%init>

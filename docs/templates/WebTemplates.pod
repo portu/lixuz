@@ -1,0 +1,618 @@
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=head1 LIXUZ TEMPLATE MANUAL
+
+This is the Lixuz template manual for web templates.
+
+This file describes version B<1> of the Lixuz template API.
+
+B<Note>: the text in this file assumes you have already read the general
+template introduction found in doc/templates.pod of the Lixuz source tree.
+
+=head1 A NOTE ABOUT SITEHACKS
+
+You can put site-specific controllers into either lib/LIXUZ/Controller/SiteHacks.pm
+or anything under lib/LIXUZ/Controller/SiteHacks/. These will be preserved upon upgrade,
+and allows you to add any controller you need into a Lixuz instance, the former
+being useful for a collection of random minor handlers, and the latter for
+inserting more complex handlers, possibly adding functionality to the admin UI.
+
+The syntax of the files is the standard syntax for Catalyst controllers.
+
+=head1 INFOBLOCK DATA
+
+The Lixuz infoblock can contain various pieces of information. The entries that
+are required to be present are: TEMPLATE_NAME TEMPLATE_LICENSE TEMPLATE_VERSION
+TEMPLATE_TYPE TEMPLATE_APIVERSION and TEMPLATE_UNIQUEID. ALL other entries
+are optional, and you should use them as you see fit.
+
+Here follows a list of all possible infoblock entries, and their permitted
+values and syntax.
+
+=over
+
+=item B<TEMPLATE_VERSION>
+
+This option should contain the version number of your template. This is
+mostly present to let you track versions yourself, but might also be used
+by Lixuz in the future. It accepts any string and is required.
+
+=item B<TEMPLATE_NAME>
+
+This option should contain the human-readable name of the template. This
+is the string that will be displayed within the Lixuz interface. It accepts
+any string and is required.
+
+=item B<TEMPLATE_LICENSE>
+
+This option should contain the license of your template. Like TEMPLATE_VERSION
+this is mostly present to let you track which license a template has yourself
+and to let you find out if you can redistribute that nice template you have.
+It accepts any string and is required.
+
+=item B<TEMPLATE_APIVERSION>
+
+This option must contain the Lixuz template API version the template is written
+for, as of this document that version is 1. This will make sure that Lixuz does
+not accept templates for newer versions than the one installed, and might also
+allow it to activate a compatibility mode in the future for templates that
+are using an old api version. It accepts a single integer and is required.
+
+=item B<TEMPLATE_TYPE>
+
+This option determines which type of template it is, and thus also
+what kind of pages and data Lixuz will use it for. The allowed settings
+are:
+
+=over
+
+=item list
+
+A list of articles, such as the front page of a news site.
+
+=item search
+
+The results of a search query.
+
+=item article
+
+An article, with lead, body, author, comments and anything else needed.
+
+=item include
+
+A template that is to be included in other templates. Lixuz will
+never use it directly.
+
+=item message
+
+A template that displays either a message from lixuz, or an error
+(either a standard error form Lixuz, or a customized error message).
+This template will always recieve a $lz_message and $lz_message_type
+variable. The lz_message_type contains which type of message it is,
+allowing you to display your own message if you recognize it,
+and just fall back to the value of $lz_message if you do not. $lz_message_type
+is usually the HTTP error code being displayed (ie. 404).
+
+It MIGHT recieve a $lz_message_intMsg - which is an internal Lixuz
+message from the method that triggered the message to be displayed.
+If this is set then it will contain technical information about why
+it failed. You should not display this message to users in either case,
+but it might make it easier to troubleshoot issues if you output this
+inside a HTML comment block when it is present, so that it can be
+seen by viewing the HTML source.
+
+=item rssimport
+
+A template that displays data from the Lixuz RSS Import module.
+This is quite similar to list, except that it gets data in a slightly
+different format (and is not used by Lixuz directly right now, it needs
+a handler in SiteHacks.pm).
+
+=back
+
+This option is required, and only accepts one of the values listed above.
+
+=item B<TEMPLATE_UNIQUEID>
+
+This is a unique identifier for this template. This is used both internally
+by Lixuz, and is the means that other templates have for referreing to
+Lixuz templates it wants to include. It can contain any string (without
+spaces), but the recommended format is:
+
+    TLD.MYDOMAIN.descriptiveCamelCaseName
+
+Where TLD is the top-level domain you have (for instance "com", "org" or "no"),
+MYDOMAIN is your domain name (for instance "example" or "lixuz") and
+descriptiveCamelCaseName is some descriptive string explaining
+the template.
+
+So for instance if you are using the domain "example.org" and have just
+written a basic article template, its uniqueid might be:
+
+    org.example.basicArticle
+
+This option is required, and must never contain spaces (and should
+be in the form explained above).
+
+=item B<TEMPLATE_FILESPOT>
+
+This is a space-separated list of file spots available in the template.
+Each spot is defined by a pair of values inside brackets ([]). Inside
+the brackets you define the settings for a single spot. The following
+settings can be used:
+
+=over
+
+=item type
+
+Required. Defines what kind of spot it is. One of: video, image, flash, multi
+
+=item accepts
+
+Required IF type=multi. Ignored if type is not multi. A space separated list
+of the kind of files this spot accepts. One or more of: video, image, flash
+
+=item name
+
+Required. Defines a human-readable name for the spot. Feel free to include any
+characters except I<=,]>.
+
+=item as
+
+Required. Defines the variable that the image object will get assigned
+to in the stash. The image object is a LzArticleFile, you can get the
+LzFile by calling ->file on it.
+
+=item id
+
+Required. Used internally to pair files to spots. Must be an integer.
+Note that this must not conflict with any other spot (of any type) or
+includes' spots, if any. In general though, includes have hardcoded images (no
+spots) so it should normally not be a problem.
+
+=item default
+
+Optional, integer. This setting marks the spot as a default spot for the
+type it defined. The number sets its priority. A default value of 1 will
+assign the first image added to an article to this spot, 2 will assign
+the second and so on.
+
+It is important to note that although you can not have several default settings
+with the same value, that only applies to the type selected. So it is possible
+to have a default=1 for video and another for images, but not two for
+either of them.
+
+=back
+
+Example:
+
+    TEMPLATE_FILESPOT=[name=Primary image,as=primaryImage,id=1]
+
+This option is optional, can contain spaces separating [] blocks as well
+as spaces supplied to the name= parameter. The other parameters can
+not contain spaces.
+
+=item B<TEMPLATE_INCLUDES>
+
+This is a space separated list of the uniqueids of templates that this
+template will include (using $m->comp() or <& &>). Lixuz will resolve
+all NEEDSINFO requirements for those templates and stash them inside
+a $templateFileMap hashref that you have access to (ie. put it in <%args>).
+This hashref contains a map of uniqueid => filenames that will allow you
+to include any template without needing to have hardcoded filenames (that
+will most likely not work in Lixuz anyway, as the filenames are dynamically
+generated during upload based upon a number of factors).
+
+For example, if you have the template org.example.basicArticle that needs
+to include org.example.basicHeader you set
+TEMPLATE_INCLUDES=org.example.basicHeader and then include the header where
+you want it using <& $templateFileMap->{'org.example.basicHeader'} &>.
+
+If you wish you may have several TEMPLATE_INCLUDES= settings, or you may
+have a single one that contains a space-separated list.
+
+All templates listed in this are hard deps, so the template will not
+be allowed to render if the includes do not exist. This option is optional.
+
+=item B<TEMPLATE_NEEDSINFO>
+
+This is the most advanced and also the most powerful entry you
+can have. This is how you tell Lixuz what kind of data your template wants.
+Lixuz will then look up the data and prepare it for use for you. The various
+data sources are explained in detail in the DATA SOURCES section below, here
+we will only explain the syntax. This setting can, like TEMPLATE_INCLUDES,
+contain a space separated list of settings, or you can have several
+TEMPLATE_NEEDSINFO= entries, Lixuz does not care which one you use (or even if
+you mix the two).
+
+The basic syntax is:
+
+    SOURCE_ACTION_[KEY=VALUE]
+
+Where SOURCE is the source of the data, this can for instance be 'article'
+or 'rssimport'. ACTION determines the type of data you want, for instance
+'list' (to get a list of articles) or 'get' (to get a single article).
+
+[KEY=VALUE] contains a comma-separated list of key=value pairs that can
+set a vareiety of settings determining how data is looked up and what
+is returned. Most NEEDSINFO settings requires at least one key=value pair,
+namely [as=something], as= sets the name of the variable that the data
+returned will be stashed in. Keys can only contain alphanumeric characters,
+values can contain anything except ], and space. If you need a space then
+you can use %20 and Lixuz will convert it for you before retrieving the
+data.
+
+This option is not required, but anything listed in it is a hard dependency
+and the template will not be allowed to render if the action does not
+return any data (or can not be performed).
+
+=back
+
+=head1 DATA SOURCES
+
+=head2 Article
+
+The article data source provides single articles or lists of articles,
+and lets you retrieve them by ID or automatically depending on the URL.
+
+=head3 B<Parameters usable on any article action>
+
+=over
+
+=item B<extraLiveStatus>
+
+This is a list of extra status_id's that should count the same as the core
+live one. The IDs should be separated by +.
+
+Ie:
+    extraLiveStatus=5
+    extraLiveStatus=5+7
+
+This setting affects listing and fetching articles.
+
+=item B<overrideLiveStatus>
+
+This is similar to I<extraLiveStatus>, however instead of appending, this will
+replace the original live status.
+
+Ie.
+    overrideLiveStatus=5
+
+Will make Lixuz consider 5 to be the live status_id, rather than whatever the id
+of the core 'live' status is. This is useful if you need to fetch articles from
+other statuses and wish to filter out those that are already considered live.
+
+Unlike extraLiveStatus this does not take more than one status, though you can
+combine them for the same effect.
+
+=back
+
+=head3 B<list>
+
+The list action provides a list of articles (in a DBIx::Class::ResultSet),
+optionally paginated or from a specific category.
+
+Options:
+
+=over
+
+=item B<as>
+
+This determines the primary name of the variable that the list will
+be stored in. Any legal perl variable name is allowed.
+
+=item B<catid>
+
+This determines the category ID the data will be pulled from. It must
+either be a Lixuz category number (int) or the string "url" (without the
+quotes). If it is "url" or "arturl" then Lixuz will fetch the article from the
+URL (this is probably the most common use for this option in list templates).
+The difference between "url" and "arturl" is that "arturl" expects the URL
+to point to an article, and fetches the category accordingly, while
+"url" expects the URL to point to a category.
+
+If you omit this parameter then Lixuz will fetch ALL articles that match
+the other parameters, regardless of category. Any article that is live will
+be returned.
+
+=item B<root_catid>
+
+This sets the 'root' category ID. This is the category ID that Lixuz
+falls back to when the url does not contain a category path (ie. when it is 
+simply /).
+
+=item B<soft>
+
+This is a numeric boolean (1=true, 0=false). If it is set to any nonzero
+value Lixuz will not automatically go to a 404 error if the query failed
+to return anything.
+
+=item B<includePager>
+
+This is a numeric boolean (1=true, 0=false). If it is set to any nonzero
+value then a pager will be included as {as}_pager. If it is zero, or not
+present then the pager will not be present (and the option allowPaging
+will do nothing).
+
+=item B<allowPaging>
+
+This is a numeric boolean (1=true, 0=false). If it is set to any nonzero
+value then it will look for the parameter "page" (without the quotes) in
+either GET or POST parameters, if found and it is an integer then that will
+be the page from the pager that gets returned in {as}. This option has
+no effect whatsoever if includePager is missing or zero.
+
+=item B<ignoreDupes>
+
+This is a numeric boolean (1=true, 0=false). If it is set to any nonzero
+value then it will exclude the article mentioned in the URL from
+being included in the returned object. This only has an effect on
+article pages that utilize artid=url (see below).
+
+=back
+
+=head3 B<get>
+
+The get action provides a single article object, optionally including
+various optional metadata about the article.
+
+Options:
+
+=over
+
+=item B<as>
+
+This determines the primary name of the variable that the article will
+be stored in. Any legal perl variable name is allowed.
+
+=item B<artid>
+
+This determines the article ID of the article. It must either be a Lixuz
+article number (int) or the string "url" (without the quotes). If it is "url"
+then Lixuz will fetch the article from the URL (this is probably the most
+common use for this option in article templates).
+
+If you do not provide it then a 404 will be displayed instead, because Lixuz
+does not know which article to fetch.
+
+=item B<handleComments>
+
+This is a numeric boolean (1=true, 0=false). If it is set to any nonzero
+value and the article has live comments enabled, Lixuz will handle comment
+submissions for the article.
+
+=item B<includeComments>
+
+This is a numeric boolean (1=true, 0=false). If it is set to any nonzero value
+and the article has live comments enabled, Lixuz will retrieve any comments
+the article has and stash it in a DBIx::Class::ResultSet with the name
+"comment_list" (without the quotes, and because the name is hardcoded, only
+one includeComments article can be on any single page). This contains a list of
+all comments the article has.
+
+=item B<includeRelations>
+
+This is a numeric boolean (1=true, 0=false). If it is set to any nonzero
+value Lixuz will retrieve relationships the article has. These will be
+retrieved in three separate variables: {as}_prevArt {as}_relArt and 
+{as}_nextArt.
+
+{as}_prevArt contains a DBIx::Class::ResultSet of articles that the
+author of the current article has marked as 'previous' related articles
+for this one.
+
+{as}_nextArt contains a DBIx::Class::ResultSet of articles that has
+marked this article as a 'previous' article.
+
+{as}_relArt contains a DBIx::Class::ResultSet of articles that the author
+of this article has marked as related (but not previous/next).
+
+=back
+
+=head2 Comments
+
+=head3 list
+
+The list action provides a list of comments (in a DBIx::Class::ResultSet).
+Currently it only returns the latest comments (how many is defined by limit).
+
+Options:
+
+=over
+
+=item B<as>
+
+This determines the primary name of the variable that the comment list will
+be stored in. Any legal perl variable name is allowed.
+
+=item B<limit>
+
+This is an integer and it sets how many comments are returned in the ResultSet.
+If it is not set then the number returned will be 10.
+
+=back
+
+=head2 RSSImport
+
+=head3 list
+
+The list action provides a list of the latest RSSImport entries (in a
+DBIx::Class::ResultSet), optionally paginated. RSSImport objects have
+an API very similar to that of an article.
+
+Options:
+
+=over
+
+=item B<as>
+
+This determines the primary name of the variable that the RSSImport list will
+be stored in. Any legal perl variable name is allowed.
+
+=item B<limit>
+
+This is an integer and it sets how many RSSImport entries are returned in the
+ResultSet.  If it is not set then the number returned will be 10.
+
+=item B<allowPagination>
+
+This option works like the article "allowPaging" and "includePager" together.
+This is a numeric boolean (1=true, 0=false). If it is set to any nonzero
+value then it will look for the parameter "page" (without the quotes) in
+either GET or POST parameters, if found and it is an integer then that will
+be the page from the pager that gets returned in {as}. It will also
+return a {as}_pager variable containing the pager object.
+
+=back
+
+=head2 Search
+
+=head3 results
+
+The list action provides a paginated list of the articles (in a
+DBIx::Class::ResultSet), matching the search query submitted to the
+page as query=. It also honors the page= parameter as well as category=
+if there is any.
+
+Options:
+
+=over
+
+=item B<as>
+
+This determines the primary name of the variable that the search results will
+be stored in. Any legal perl variable name is allowed.
+
+=item B<extraLiveStatus>
+
+This is a list of extra status_id's that should count the same as the core
+live one. The IDs should be separated by +.
+
+Ie:
+    extraLiveStatus=5
+    extraLiveStatus=5+7
+
+This setting affects listing and fetching articles.
+
+=item B<overrideLiveStatus>
+
+This is similar to I<extraLiveStatus>, however instead of appending, this will
+replace the original live status.
+
+Ie.
+    overrideLiveStatus=5
+
+Will make Lixuz consider 5 to be the live status_id, rather than whatever the id
+of the core 'live' status is. This is useful if you need to fetch articles from
+other statuses and wish to filter out those that are already considered live.
+
+Unlike extraLiveStatus this does not take more than one status, though you can
+combine them for the same effect.
+
+=back
+
+=head2 Utils
+
+This pprovides various simple utility functions that does not fit into any of
+the other livehandlers.
+
+=head3 captcha
+
+This provides you with a captcha ID. This ID can be used to generate a
+captcha image. Example:
+
+    <img src="<% $c->uri_for('/files/captcha/'.$captcha_id) %>" align="middle" />
+    <br /><b>Enter the text from the image:</b> <input id="mycaptcha" name="captcha" type="text" size="10" />
+    <input type="hidden" name="captcha_id" value="<% $captcha_id %>" />
+
+=over
+
+=item B<as>
+
+This determines the name of the variable that the captcha id will be stored
+in. Any legal perl variable name is allowed.
+
+=back
+
+=head2 EXAMPLES
+
+This section contains several examples of NEEDSINFO values, along
+with explanations of what they would do.
+
+=over
+
+=item B<article_get_[artid=url,as=article,includeRelations=1,includeComments=1,handleComments=1]>
+
+This will fetch a single article object as the variable $article. It fetches
+the article ID from the URL. It will include relationships in
+$article_prevArt, $article_nextArt and $article_relArt. It will also include a
+comment list as $comment_list.  If Lixuz recieves a submitted comment for the
+article, handleComments=1 tells it to handle it, saving it if needed.
+
+=item B<article_list_[root_catid=14,catid=url,limit=35,as=articles,includePager=1]>
+
+This will fetch a list of articles in a category in $articles. It will fetch
+articles from the category in the URL, or, if the URL is / then it will fetch
+articles from the category 14. It will return at most 35 articles and include
+a pager object (as $articles_pager).
+
+=item B<article_list_[catid=6,limit=1,as=hilighted]>
+
+This will fetch a list of a single article (that means it will be a
+DBIx::Class::ResultSet containing a single result) from the category 6 as
+$hilighted. This will be the latest published article in that category
+as the results are sorted by date.
+
+=item B<comment_list_[limit=5,as=lastComments]>
+
+This will fetch a list of the five most recently submitted comments
+as $lastComments. The resultSet contains I<LIXUZ::Schema::LzComment>s.
+
+=item B<RSSImport_list_[limit=10,as=imported]>
+
+This will fetch a list of the ten most recently imported RSS entries as
+$imported. The resultSet contains I<LIXUZ::Schema::LzRssArticle>s.
+
+=item B<RSSImport_list_[limit=31,as=articles,allowPagination=1]>
+
+Fetches 31 RSSImport entries as $articles. It will allow and honor
+pagination parameters (page= GET or POST parameter).
+
+=item B<search_results_[as=results]>
+
+Returns the results of a search query as $results. This automatically
+honors any pagination parameter (page=) as well as a category= parameter
+if there is any. The returned variable is a ResultSet of articles.
+
+=back
+
+=head1 FEATURE SUPPORT
+
+Lixuz contains builtin support for various features, such as video.
+This support requires external javascript files to be loaded and run
+on your pages. To take advantage of these features you will need to include
+the following in your <head>:
+
+    <& $ARGS{lixuzHeader} &>
+
+If it finds something to do (ie. a video) then it will pull in any
+extra javascript files automatically using DOM objects. The core Lixuz
+JS also contains some helper functions that you may use inside your templates.
+See the file I<root/js/live/core.js> within the Lixuz tree.
+
+Note that this includes jQuery (version will vary with each Lixuz release,
+as usually we track upstream), but not jQuery UI.

@@ -1,0 +1,70 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<table id="contentFrame">
+    <tr>
+        <td class="left"><& left.html, %ARGS &></td>
+	<td class="main">
+	    <table>
+	        <tr>
+		    <td class="filter">&nbsp;</td>
+%#		    <td class="search"><& ../core/searchAndFilter.html, %ARGS &></td>
+		</tr>
+        <tr>
+            <td colspan="3" class="list">
+%if($message) {
+% # FIXME: drop the <b></b> tags and do that in CSS
+<div id="lzTagsListMessage"><b><% $message %></b></div>
+%}
+
+<& ../core/listnavigation.html, %ARGS &>
+
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'tag_id', ordertype => $ordertype}) %>"><% $i18n->get('Tag ID') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'name', ordertype => $ordertype}) %>"><% $i18n->get('Tag name') %></a></td>
+        <td class="rowHead rowHeadIcon">&nbsp;</td>
+        <td class="rowHead rowHeadIcon">&nbsp;</td>
+    </tr>
+
+%if(defined $tags && $tags->count > 0){
+%my $i=0;
+%while(my $tag = $tags->next){
+%$i++;
+
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+        <td><% $tag->tag_id %></td>
+        <td><a href="#" onclick="tagsUI.edit(<% $tag->tag_id%>); return false" id="tag_name_<%$tag->tag_id%>"><% $tag->name %></a></td>
+        <td><a href="#" onclick="tagsUI.edit(<% $tag->tag_id%>); return false"><img class="useTipsy" src="/static/images/icons/tags-edit.png" border="0" title="<% $i18n->get('Edit') %>" alt="<% $i18n->get('Edit') %>" /></a></td>
+        <td><a href="#" onclick="tagsUI.delete(<% $tag->tag_id%>); return false"><img class="useTipsy" src="/static/images/icons/trash.png" border="0" title="<% $i18n->get('Delete') %>" alt="<% $i18n->get('Delete') %>" /></a></td>
+    </tr>
+%}
+%}
+
+</table>
+            </td>
+		</tr>
+	    </table>
+	</td>
+    </tr>
+</table>
+<%args>
+$tags=>undef
+$message => undef
+$i18n
+$ordertype => undef
+</%args>

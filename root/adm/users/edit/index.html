@@ -1,0 +1,176 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="form_edit">
+
+%if($ADF_CanEdit) {
+<div><a href="#" onclick="LZ_DisplayFieldEditForm('users',null); return false;"><img src="/static/images/icons/fields-edit.png" border="0" align="left" />&nbsp;<% $i18n->get('Edit fields') |n %></a></div>
+<br clear="all" />
+%}
+%if($message) {
+<b><% $message |n %></b> <br />
+%}
+%if($c->user->super_user && $myAccountMode) {
+<% $i18n->get_advanced('You are a super user, you may %(HTML_LINK_START_TAG)access the complete edit form', { HTML_LINK_START_TAG => "<a href='/admin/users/edit/".$c->user->user_id."'>" }) |n %></a>
+%}
+
+% my $formfield= {}; 
+<& /adm/core/formInit.html, %ARGS, formfield=>$formfield  &>
+
+%if($myAccountMode) {
+<script type="text/javascript">
+    $LAB.queue(function ()
+    {
+        validate_lixuz_userEdit_orig = validate_lixuz_userEdit;
+        validate_lixuz_userEdit = function (form)
+        {
+            var $form = $(form);
+            if($('[name=password]').val() != $('[name=password2]').val())
+            {
+                alert('<% $i18n->get('The new passwords do not match') |n %>');
+                return false;
+            }
+            if($('[name=password]').val() && $('[name=password]').val().length)
+            {
+                if( ! $('[name=oldPassword]').val() || $('[name=oldPassword]').val().length < 1)
+                {
+                    alert('<% $i18n->get('You must enter your old password for confirmation to be able to change it') %>');
+                    return false;
+                }
+                if($('[name=password]').val() == $('[name=oldPassword]').val())
+                {
+                    alert('<% $i18n->get('Your old password is the same as the new password')%>');
+                    return false;
+                }
+                if($('[name=password]').val().length < 5)
+                {
+                    alert('<% $i18n->get('Your new password is too short, it should be at least 5 characters long') %>');
+                    return false;
+                }
+            }
+            return validate_lixuz_userEdit_orig(form);
+        };
+    });
+</script>
+%}
+
+<div>
+  <p>
+    <div class="label firstname">
+      <span class="required"><% $i18n->get('First name') %></span> <% $formfield->{firstname}{message} %>
+    </div>
+    <div>
+      <input type="text" name="firstname" value="<% $formfield->{firstname}{value} %>" />
+    </div>
+    <div class="label lastname">
+      <span class="required"><% $i18n->get('Last name') %></span> <% $formfield->{lastname}{message} %>
+    </div>
+	<div>
+      <input type="text" name="lastname" value="<% $formfield->{lastname}{value} %>" />
+    </div>
+
+    <div class="label email">
+      <span class="required"><% $i18n->get('E-mail') %></span> <% $formfield->{email}{message} %>
+    </div>
+    <div><input type="text" name="email" value="<% $formfield->{email}{value} %>" /></div>
+    <div class="label user_status">
+%if(not $myAccountMode) {
+    <div class="label user_name">
+      <span ><% $i18n->get('User name')%></span> <% $formfield->{user_name}{message} %>
+    </div>
+	<div>
+      <input type="text" name="user_name" value="<% $formfield->{user_name}{value} %>" <% $formfield->{user_name}{value} ? 'DISABLED' : '' %> />
+    </div>
+%} else {
+    <input type="hidden" name="user_name" value="<% $formfield->{user_name}{value} %>" />
+    <div class="label oldpassword">
+      <span ><% $i18n->get('Your old password (only required when changing your password)') %></span> <% $formfield->{oldpassword}{message} %>
+    </div>
+	<div><input type="password" name="oldPassword" value="" /></div>
+%}
+    <div class="label password">
+      <span ><% $i18n->get('Change password to') %></span> <% $formfield->{password}{message} %>
+    </div>
+	<div><input type="password" name="password" value="" /></div>
+    <div class="label password">
+      <span ><% $i18n->get('Confirm password') %></span> <% $formfield->{password}{message} %>
+    </div>
+	<div><input type="password" name="password2" value="" /></div>
+
+    <div class="label language">
+        <span><% $i18n->get('Language') |n %></span> <% $formfield->{language}->{message} %>
+    </div>
+    <div><select name="language" id="language">
+%my $langVal = $formfield->{language}{value};
+%$langVal //= '';
+            <option value="default"><% $i18n->get('(autodetect)') |n %></option>
+            <option <% $langVal eq 'nb_NO' ? 'selected="selected" ': '' %> value="nb_NO">Norsk Bokm&aring;l/Norwegian Bokm&aring;l</option>
+            <option <% $langVal eq 'nn_NO' ? 'selected="selected" ': '' %> value="nn_NO">Norsk Nynorsk/Norwegian Nynorsk</option>
+            <option <% $langVal eq 'en_US' ? 'selected="selected" ': '' %> value="en_US">English</option>
+        </select>
+    </div>
+
+%if(not $myAccountMode) {
+    <div class="label status">
+      <span class="required"><% $i18n->get('Status') %></span> <% $formfield->{user_status}{message} %>
+    </div>
+    <div>
+	    <select name="user_status">
+	    <% select_options($formfield->{user_status}, $i18n ) |n %>
+	    </select>
+    </div>
+
+    <div class="label role">
+      <span class="required"><% $i18n->get('Role') %></span> <% $formfield->{role}{message} %>
+    </div>
+    <div>
+      <select name="role">
+	    <% select_options($formfield->{role}, $i18n) |n %>
+      </select>
+    </div>
+%}
+    <& /adm/core/renderFields.html, %ARGS, component => 'users' &>
+    </p>
+<br/><br/>
+<div>
+    <div class="submit"><% $FormBuilder->submit |n %></div>
+    <div class="reset"><% $FormBuilder->reset |n %></div>
+</div>
+</div>
+
+
+
+
+<div style="clear:both"></div>
+
+<% $FormBuilder->end |n %>
+</div>
+
+
+<%args>
+$FormBuilder
+$message => undef
+$myAccountMode => 0
+$i18n
+$ADF_CanEdit
+</%args>
+
+<%init>
+use LIXUZ::HelperModules::Forms('select_options');
+use 5.010;
+</%init>
+

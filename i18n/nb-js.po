@@ -1,0 +1,1514 @@
+# LIXUZ translation file
+# Copyright (C) 2011 Portu media & communications
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-06-06 08:40+0200\n"
+"PO-Revision-Date: 2011-08-18 10:00+0200\n"
+"Last-Translator: Eskild Hustvedt eskild@portu.no\n"
+"Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: root/source-js/files/fileSelector.js:16
+#: root/source-js/files/fileSelector.js:29
+msgid "File selector"
+msgstr "Filvelger"
+
+#: root/source-js/files/fileSelector.js:28
+msgid "Add files"
+msgstr "Legg til filer"
+
+#: root/source-js/files/asyncUpload.js:18
+#: root/source-js/newsletter/newsletter.js:393
+#: root/source-js/articles/viewArticleRevisions.js:115
+msgid "Close"
+msgstr "Lukk"
+
+#: root/source-js/files/asyncUpload.js:20
+msgid "Upload file"
+msgstr "Last opp fil"
+
+#: root/source-js/files/asyncUpload.js:26
+msgid "Loading form..."
+msgstr "Laster skjema …"
+
+#: root/source-js/dragdrop/lixuzdd.js:56
+msgid "Refreshing..."
+msgstr "Oppdaterer …"
+
+#: root/source-js/dragdrop/lixuzdd.js:268 root/source-js/core/folders.js:52
+#: root/source-js/core/objPermEditor.js:229
+msgid "Loading folder data ..."
+msgstr "Laster mapperdata …"
+
+#: root/source-js/dragdrop/lixuzdd.js:288
+msgid "Parent folder"
+msgstr "Foreldremappe"
+
+#: root/source-js/dragdrop/lixuzdd.js:291
+msgid "Folder name"
+msgstr "Mappenavn"
+
+#: root/source-js/dragdrop/lixuzdd.js:293
+#: root/source-js/core/createArticle.js:48
+msgid "Create"
+msgstr "Opprett"
+
+#: root/source-js/dragdrop/lixuzdd.js:304
+msgid "New folder"
+msgstr "Opprett mappe"
+
+#: root/source-js/dragdrop/lixuzdd.js:323
+msgid "You have to enter a name for the folder"
+msgstr "Du må skrive inn et navn for mappen"
+
+#: root/source-js/dragdrop/lixuzdd.js:334
+msgid "Creating folder..."
+msgstr "Oppretter mappe …"
+
+#: root/source-js/dragdrop/lixuzdd.js:350
+msgid "Failed to create a new folder"
+msgstr "Kunne ikke opprette en ny mappe"
+
+#: root/source-js/newsletter/newsletter.js:25
+msgid "Are you sure you wish to cancel this users subscription?"
+msgstr "Er du sikker på at du vil avslutte abonnementet til denne brukeren?"
+
+#: root/source-js/newsletter/newsletter.js:33
+#: root/source-js/newsletter/newsletter.js:444
+#: root/source-js/templates/templates.js:53
+#: root/source-js/articles/articles.js:60 root/source-js/tags/ui.js:79
+#: root/source-js/articles/trash.js:15
+#: root/source-js/rssimport/rssimport.js:166
+msgid "Deleting..."
+msgstr "Sletter …"
+
+#: root/source-js/newsletter/newsletter.js:71
+msgid "Loading group data..."
+msgstr "Laster gruppedata …"
+
+#: root/source-js/newsletter/newsletter.js:95
+#: root/source-js/newsletter/newsletter.js:421
+#: root/source-js/utils/arrangableList.js:84
+#: root/source-js/core/objPermEditor.js:158
+#: root/source-js/rssimport/rssimport.js:94
+msgid "Save and close"
+msgstr "Lagre og lukk"
+
+#: root/source-js/newsletter/newsletter.js:114
+#: root/source-js/newsletter/newsletter.js:453
+#: root/source-js/roles/roles.js:114 root/source-js/utils/elementEditor.js:61
+#: root/source-js/utils/ModuleFieldEditor.js:76
+#: root/source-js/rssimport/rssimport.js:33
+#: root/source-js/rssimport/rssimport.js:118
+#: root/source-js/admin/ADFieldsEdit.js:65
+msgid "Saving..."
+msgstr "Lagrer …"
+
+#: root/source-js/newsletter/newsletter.js:136
+msgid "From"
+msgstr "Fra"
+
+#: root/source-js/newsletter/newsletter.js:137
+#: root/source-js/newsletter/newsletter.js:166
+#: root/source-js/articles-previewUI/previewUI.js:154
+msgid "Subject"
+msgstr "Emne"
+
+#: root/source-js/newsletter/newsletter.js:147
+msgid "Message"
+msgstr "Melding"
+
+#: root/source-js/newsletter/newsletter.js:153
+msgid "Loading list..."
+msgstr "Laster liste …"
+
+#: root/source-js/newsletter/newsletter.js:162
+msgid "There are no saved newsletters."
+msgstr "Ingen nyheitsbrev har blitt lagret."
+
+#: root/source-js/newsletter/newsletter.js:166
+msgid "Sent at"
+msgstr "Sendt"
+
+#: root/source-js/newsletter/newsletter.js:167
+msgid "Select newsletter"
+msgstr "Velg nyhetsbrev"
+
+#: root/source-js/newsletter/newsletter.js:174
+msgid "Loading message..."
+msgstr "Laster medling …"
+
+#: root/source-js/newsletter/newsletter.js:195
+msgid "You need to add some recipients first"
+msgstr "Du må legge til noen mottakere først"
+
+#: root/source-js/newsletter/newsletter.js:200
+msgid "You need to enter a subject"
+msgstr "Du må skrive inn et emne"
+
+#: root/source-js/newsletter/newsletter.js:205
+msgid "The message can not be empty"
+msgstr "Meldingen kan ikke være tom"
+
+#: root/source-js/newsletter/newsletter.js:210
+msgid "The from e-mail can not be empty"
+msgstr "Fra-adressa kan ikke være tom"
+
+#: root/source-js/newsletter/newsletter.js:227
+msgid "Sending..."
+msgstr "Sender …"
+
+#: root/source-js/newsletter/newsletter.js:257
+#: root/source-js/newsletter/newsletter.js:258
+msgid "Add recipients"
+msgstr "Legg til mottakere"
+
+#: root/source-js/newsletter/newsletter.js:272
+msgid "Enter e-mail addresses here, separated by commas."
+msgstr "Skriv inn e-postadresser her, skillet med komma."
+
+#: root/source-js/newsletter/newsletter.js:272 root/source-js/tags/ui.js:4
+msgid "Add"
+msgstr "Legg til"
+
+#: root/source-js/newsletter/newsletter.js:313
+msgid "Group:"
+msgstr "Gruppe:"
+
+#: root/source-js/newsletter/newsletter.js:315
+msgid "remove"
+msgstr "fjern"
+
+#: root/source-js/newsletter/newsletter.js:337
+#: root/source-js/newsletter/newsletter.js:374
+msgid "Loading group list..."
+msgstr "Laster gruppeliste …"
+
+#: root/source-js/newsletter/newsletter.js:357
+msgid "Select the group(s) to add"
+msgstr "Velg gruppene som skal legges til"
+
+#: root/source-js/newsletter/newsletter.js:393
+msgid "Select the group to edit"
+msgstr "Velg gruppa du vil redigere"
+
+#: root/source-js/newsletter/newsletter.js:400
+msgid "Loading group information..."
+msgstr "Laster gruppeinformasjon …"
+
+#: root/source-js/newsletter/newsletter.js:418
+msgid "Group name"
+msgstr "Gruppenavn"
+
+#: root/source-js/newsletter/newsletter.js:419
+msgid "Internal only"
+msgstr "Bare intern"
+
+#: root/source-js/newsletter/newsletter.js:424
+msgid "Delete group"
+msgstr "Slett gruppe"
+
+#: root/source-js/newsletter/newsletter.js:428
+msgid "Newsletter group editor"
+msgstr "Grupperedigering for nyhetsbrev"
+
+#: root/source-js/newsletter/newsletter.js:436
+msgid "Are you sure you wish to delete this group?"
+msgstr "Er du sikker på at du vil slette denne gruppa?"
+
+#: root/source-js/roles/roles.js:132
+msgid "A name for the role is required. Please enter one."
+msgstr "Du må gi rollen et navn."
+
+#: root/source-js/files/multiUpload.js:13
+msgid "File"
+msgstr "Fil"
+
+#: root/source-js/files/multiUpload.js:13
+#: root/source-js/articles/articles.js:260 root/source-js/articles/files.js:46
+msgid "Remove"
+msgstr "Fjern"
+
+#: root/source-js/files/multiUpload.js:65
+msgid "You haven't selected any file(s) to upload"
+msgstr "Du har ikke valgt noen filer å laste opp"
+
+#: root/source-js/files/multiUpload.js:70
+msgid "You haven't selected any folder"
+msgstr "Du har ikke valgt en mappe"
+
+#: root/source-js/files/multiUpload.js:75
+#: root/source-js/files/multiUpload.js:79
+msgid "Uploading..."
+msgstr "Laster opp …"
+
+#: root/source-js/templates/templates.js:45
+msgid ""
+"Are you sure you wish to delete this template? If there are no other "
+"templates of the same type the website might crash when rendering pages that "
+"used to use this template."
+msgstr ""
+"Er du sikker på at du vil slette denne malen? Hvis det ikke er noen andre "
+"maler av samme type kan nettsiden krasje når den lager sider som brukte "
+"denne malen."
+
+#: root/source-js/templates/templates.js:62
+msgid "Are you sure you wish to set this template as the default for its type?"
+msgstr ""
+"Er du sikker på at du vil velge denne malen som standard for denne typen?"
+
+#: root/source-js/templates/templates.js:70
+msgid "Setting as default..."
+msgstr "Setter som standard …"
+
+#: root/source-js/articles/articles.js:26
+msgid ""
+"Are you sure that you want to move the article \"%(NAME)\" to trash? This "
+"will permanently change the status of the article from \"Live\" to \"Inactive"
+"\" (if you restore it, you will need to manually set the article Live again)."
+msgstr ""
+"Er du sikker på at du vil flytte artikkelen «%(NAME)» til papirkurven? Dette "
+"vil endre statusen til artikkelen fra «Live (på nett)» til «Inaktiv» (hvis "
+"du gjenoppretter den må du manuelt endre artikkelen til «Live (på nett)» "
+"igjen)."
+
+#: root/source-js/articles/articles.js:30
+msgid "Are you sure that you want to move the article \"%(NAME)\" to trash?"
+msgstr "Er du sikker på at du vil flytte artikkelen «%(NAME)» til papirkurven?"
+
+#: root/source-js/articles/articles.js:40
+msgid "Moving to trash..."
+msgstr "Flytter til papirkurven …"
+
+#: root/source-js/articles/articles.js:69
+msgid "Failed to delete: "
+msgstr "Kunne ikke slette: "
+
+#: root/source-js/articles/articles.js:81
+msgid "Backup deleted."
+msgstr "Sikkerhetskopien er slettet."
+
+#: root/source-js/articles/articles.js:88
+msgid "Backups found on server, loading information..."
+msgstr "Sikkerhetskopier ble funnet på tjeneren, laster informasjon …"
+
+#: root/source-js/articles/articles.js:97
+msgid ""
+"An error occurred, we recieved a message from the server saying that there "
+"was backups available for restoration. Now it says there aren't any. "
+"Something is not quite right somewhere"
+msgstr ""
+"En feil oppstod: mottok en melding fra tjeneren om at det var "
+"sikkerhetskopier tilgjengelig for gjenoppretting. Nå sier tjeneren at det "
+"ikke er noen. Noe er feil en plass."
+
+#: root/source-js/articles/articles.js:100
+#: root/source-js/articles/relationships.js:59
+msgid "Article ID"
+msgstr "Artikkel ID"
+
+#: root/source-js/articles/articles.js:100
+#: root/source-js/articles/relationships.js:59
+#: root/source-js/rssimport/rssimport.js:88
+#: root/source-js/articles/viewArticleRevisions.js:102
+msgid "Title"
+msgstr "Tittel"
+
+#: root/source-js/articles/articles.js:121
+msgid "Delete backup"
+msgstr "Slett sikkerhetskopi"
+
+#: root/source-js/articles/articles.js:124
+msgid ""
+"Backups of some of your articles was found. You may choose to restore these "
+"now, delete them, or postpone any action until later. Click on the title of "
+"an article to restore it"
+msgstr ""
+"Sikkerhetskopier av noen av dine artikler ble funnet. Du kan velge å "
+"gjenopprette disse nå, slette de, eller vente med å gjøre noe til senere. "
+"Trykk på tittelen til en artikkel for å gjenopprette den."
+
+#: root/source-js/articles/articles.js:127
+msgid "Backups found"
+msgstr "Sikkerhetskopier funnet"
+
+#: root/source-js/articles/articles.js:130
+msgid "Later"
+msgstr "Senere"
+
+#: root/source-js/articles/articles.js:205
+msgid ""
+"If you do not save this article within ten minutes, you will lose the edit "
+"lock on it."
+msgstr ""
+"Hvis du ikke lagrer denne artikkelen innen ti minutter vil du miste "
+"redigeringslåsen."
+
+#: root/source-js/articles/articles.js:214
+msgid "Edit lock lost"
+msgstr "Redigeringslås mistet"
+
+#: root/source-js/articles/articles.js:217
+msgid ""
+"You have lost the edit lock for this article, it is now locked by <i>%(USER)"
+"</i>. Your data has been backed up, but you will not be able to save or "
+"restore the backup until the article has been unlocked."
+msgstr ""
+"Du har mistet redigeringslåsen til denne artikkelen, den er nå låst av <i>"
+"%(USER)</i>. Dine data har blitt sikkerhetskopiert, men du vil ikke kunne "
+"lagre artikkelen eller gjenopprette sikkerhetskopien før artikkelen har "
+"blitt låst opp."
+
+#: root/source-js/articles/articles.js:260 root/source-js/articles/files.js:46
+msgid "Download"
+msgstr "Last ned"
+
+#: root/source-js/tags/ui.js:4
+msgid "Enter the name of the tag you wish to add"
+msgstr "Skriv inn navnet på emneordet du vil legge til"
+
+#: root/source-js/tags/ui.js:11
+msgid "Adding..."
+msgstr "Legger til …"
+
+#: root/source-js/tags/ui.js:28
+msgid "Tags may not contain commas"
+msgstr "Emneord kan ikke innholde komma"
+
+#: root/source-js/tags/ui.js:40
+msgid "That tag already exists."
+msgstr "Dette emneordet finnes allerede"
+
+#: root/source-js/tags/ui.js:52
+msgid "Enter the new name for this tag"
+msgstr "Skriv inn et nytt navn for dette emneordet"
+
+#: root/source-js/tags/ui.js:56
+msgid "Change"
+msgstr "Endre"
+
+#: root/source-js/tags/ui.js:63
+msgid "Changing..."
+msgstr "Endrer …"
+
+#: root/source-js/tags/ui.js:76
+msgid "Are you sure you want to delete the tag \"%(TAGNAME)\" (%(TAGID))?"
+msgstr "Er du sikker på at du vil slette emneordet «%(TAGNAME)» (%(TAGID))?"
+
+#: root/source-js/articles/workflow.js:32
+msgid "Accepting assingment ..."
+msgstr "Godtar oppgave …"
+
+#: root/source-js/articles/workflow.js:42
+msgid "You have accepted this assignment"
+msgstr "Du har godtatt denne oppgaven"
+
+#: root/source-js/articles/workflow.js:56
+msgid "You were denied access to accepting this assignment"
+msgstr "Du ble nektet tilgang til å godta denne oppgaven"
+
+#: root/source-js/articles/workflow.js:60
+msgid "Failed to accept assignment."
+msgstr "Klarte ikke å godta oppgaven."
+
+#: root/source-js/articles/workflow.js:61
+#: root/source-js/dashboard/dashboard.js:49
+msgid "Failed to accept assignment: "
+msgstr "Klarte ikke å godta oppgaven: "
+
+#: root/source-js/articles/workflow.js:80
+msgid ""
+"You have unsaved changes. If you move away from this page, those changes "
+"will be lost."
+msgstr ""
+"Du har ikke lagret endringene dine. Hvis du beveger deg bort fra denne sida "
+"vil disse endringene gå tapt."
+
+#: root/source-js/utils/elementEditor.js:10
+msgid "Loading element data..."
+msgstr "Laster elementdata …"
+
+#: root/source-js/utils/elementEditor.js:35
+msgid "Word/phrase"
+msgstr "Ord/uttrykk"
+
+#: root/source-js/utils/elementEditor.js:36
+msgid "Definition"
+msgstr "Definisjon"
+
+#: root/source-js/utils/elementEditor.js:49
+msgid "Save changes"
+msgstr "Lagre endringene"
+
+#: root/source-js/utils/elementEditor.js:50
+#: root/source-js/utils/arrangableList.js:246
+#: root/source-js/core/createArticle.js:59
+#: root/source-js/core/dialogHelpers.js:258
+#: root/source-js/core/dialogHelpers.js:292 root/source-js/core/folders.js:36
+#: root/source-js/core/folders.js:86
+#: root/source-js/articles/relationships.js:175
+#: root/source-js/core/objPermEditor.js:157
+#: root/source-js/core/objPermEditor.js:257
+#: root/source-js/rssimport/rssimport.js:100
+#: root/source-js/articles/viewArticleRevisions.js:89
+#: root/source-js/articles/files.js:560
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: root/source-js/utils/ModuleFieldEditor.js:16
+msgid "Loading field list..."
+msgstr "Laster feltliste …"
+
+#: root/source-js/utils/ModuleFieldEditor.js:37
+msgid "Add/remove additional fields"
+msgstr "Legg til/fjern tilleggsfelt"
+
+#: root/source-js/utils/ModuleFieldEditor.js:49
+msgid ""
+"A fatal error occurred when creating the edit dialog. Unable to continue."
+msgstr ""
+"En fatal feil oppstod under oppretting av redigeringsdialogboksen. Kan ikke "
+"fortsette."
+
+#: root/source-js/utils/ModuleFieldEditor.js:58
+msgid ""
+"The folder associated with this article was not found, you need to set a new "
+"folder"
+msgstr ""
+"Mappa denne artikkelen ligger i kunne ikke bli funnet. Du må velge en ny "
+"mappe."
+
+#: root/source-js/utils/ModuleFieldEditor.js:62
+msgid ""
+"This article does not have an associated folder, you need to place the "
+"article into a folder before you can add additional fields"
+msgstr ""
+"Denne artikkelen ligger ikke i en mappe. Du må legge artikkelen i en mappe "
+"før du kan redigere tilleggsfelt."
+
+#: root/source-js/utils/ModuleFieldEditor.js:66
+msgid ""
+"The article must be saved and added to a folder before you can edit "
+"additional fields"
+msgstr ""
+"Artikkelen må lagres og ligge i en mappe før du kan redigere tilleggsfelt"
+
+#: root/source-js/utils/tags.js:106
+msgid "The tag \"%(TAGNAME)\" does not exist. Do you want to create this tag?"
+msgstr "Emneordet «%(TAGNAME)» finnes ikke. Vil du opprette dette emneordet?"
+
+#: root/source-js/utils/tags.js:110
+msgid ""
+"The tag \"%(TAGNAME)\" does not exist, and you do not have permission to "
+"create new tags"
+msgstr ""
+"Emneordet «%(TAGNAME)» finnes ikke, og du har ikke tilgang til å opprette "
+"nye emneord."
+
+#: root/source-js/utils/tags.js:116
+msgid "Refusing to add empty tag."
+msgstr "Nekter å legge til et tomt emneord."
+
+#: root/source-js/utils/tags.js:124
+msgid "Creating tag..."
+msgstr "Oppretter emneord …"
+
+#: root/source-js/articles-previewUI/previewUI.js:33
+#: root/source-js/articles-previewUI/previewUI.js:93
+msgid "Show Lixuz sidebar"
+msgstr "Vis Lixuz sidestolpe"
+
+#: root/source-js/articles-previewUI/previewUI.js:35
+msgid "Working..."
+msgstr "Jobber …"
+
+#: root/source-js/articles-previewUI/previewUI.js:57
+msgid "This article is currently locked for editing by <i>%(USER)</i>."
+msgstr "Denne artikkelen er låst av <i>%(USER)</i> og kan ikke redigeres."
+
+#: root/source-js/articles-previewUI/previewUI.js:58
+msgid ""
+"<br /><br />This is a read-only preview of the article. You can steal this "
+"lock from the user by pressing the \"Steal lock\" button below. Use this "
+"function with care, if you steal a lock from a user that is currently "
+"working on this article, that user may not be able to save their changes"
+msgstr ""
+"<br /><br />Dette er en skrivebeskyttet forhåndsvisning av artikkelen. Du "
+"kan stjele låsen til artikkelen ved å trykke på «Stjel lås»-knappen. Vær "
+"forsiktig når du bruker denne funksjonen, hvis du stjeler en lås fra en "
+"bruker som jobber med artikkelen kan ikke den brukeren lagre arbeidet sitt"
+
+#: root/source-js/articles-previewUI/previewUI.js:77
+msgid "Locked"
+msgstr "Låst"
+
+#: root/source-js/articles-previewUI/previewUI.js:105
+msgid "Hide Lixuz sidebar"
+msgstr "Skjul Lixuz sidestolpe"
+
+#: root/source-js/articles-previewUI/previewUI.js:113
+msgid "Loading data ..."
+msgstr "Laster data …"
+
+#: root/source-js/articles-previewUI/previewUI.js:138
+msgid "Edit article"
+msgstr "Rediger artikkel"
+
+#: root/source-js/articles-previewUI/previewUI.js:141
+msgid "Article ID:"
+msgstr "Artikkel ID:"
+
+#: root/source-js/articles-previewUI/previewUI.js:142
+msgid "Publish time:"
+msgstr "Publiseringstid:"
+
+#: root/source-js/articles-previewUI/previewUI.js:143
+msgid "Expiry time:"
+msgstr "Gyldig til:"
+
+#: root/source-js/articles-previewUI/previewUI.js:144
+msgid "Folder path:"
+msgstr "Mappesti:"
+
+#: root/source-js/articles-previewUI/previewUI.js:145
+msgid "Status:"
+msgstr "Status:"
+
+#: root/source-js/articles-previewUI/previewUI.js:146
+msgid "Assigned to:"
+msgstr "Tildelt: "
+
+#: root/source-js/articles-previewUI/previewUI.js:147
+msgid "Assigned by:"
+msgstr "Tildelt av:"
+
+#: root/source-js/articles-previewUI/previewUI.js:148
+msgid "Priority:"
+msgstr "Prioritet:"
+
+#: root/source-js/articles-previewUI/previewUI.js:149
+msgid "Start date:"
+msgstr "Startdato:"
+
+#: root/source-js/articles-previewUI/previewUI.js:150
+msgid "Deadline:"
+msgstr "Tidsfrist:"
+
+#: root/source-js/articles-previewUI/previewUI.js:151
+msgid "Comments"
+msgstr "Kommentarer"
+
+#: root/source-js/articles-previewUI/previewUI.js:156
+msgid "Submit new comment"
+msgstr "Send inn kommentar"
+
+#: root/source-js/articles-previewUI/previewUI.js:160
+msgid "Files"
+msgstr "Filer"
+
+#: root/source-js/articles-previewUI/previewUI.js:172
+msgid "View caption"
+msgstr "Vis bildetekst"
+
+#: root/source-js/articles-previewUI/previewUI.js:174
+msgid "(no caption set)"
+msgstr "(ingen bildetekst er valgt)"
+
+#: root/source-js/articles-previewUI/previewUI.js:178
+msgid "Additional fields"
+msgstr "Tilleggsfelt"
+
+#: root/source-js/articles-previewUI/previewUI.js:183
+msgid "Additional elements"
+msgstr "Tilleggselement"
+
+#: root/source-js/articles-previewUI/previewUI.js:183
+msgid "ID"
+msgstr "ID"
+
+#: root/source-js/articles-previewUI/previewUI.js:183
+msgid "Key"
+msgstr "Nøkkel"
+
+#: root/source-js/articles-previewUI/previewUI.js:183
+msgid "Value"
+msgstr "Verdi"
+
+#: root/source-js/articles-previewUI/previewUI.js:183
+msgid "Type"
+msgstr "Type"
+
+#: root/source-js/articles-previewUI/previewUI.js:193
+msgid "Caption"
+msgstr "Bildetekst"
+
+#: root/source-js/articles-previewUI/previewUI.js:228
+msgid "Error"
+msgstr "Feil"
+
+#: root/source-js/articles-previewUI/previewUI.js:228
+msgid "You must enter a comment"
+msgstr "Du må skrive inn en kommentar"
+
+#: root/source-js/articles-previewUI/previewUI.js:251
+#: root/source-js/articles/files.js:499 root/source-js/articles/files.js:776
+#: root/source-js/articles/files.js:790
+msgid "(none)"
+msgstr "(ingen)"
+
+#: root/source-js/articles/trash.js:6
+msgid ""
+"Are you sure that you want to permanently delete the article \"%(NAME)\"? "
+"This operation can not be reversed."
+msgstr ""
+"Er du sikker på at du vil slette artikkelen «%(NAME)» permanent? Denne "
+"handlingen kan ikke gjøres om."
+
+#: root/source-js/articles/trash.js:27
+msgid "Are you sure that you want to restore the article \"%(NAME)\"?"
+msgstr "Er du sikker på at du vil gjenopprette artikkelen «%(NAME)»?"
+
+#: root/source-js/articles/trash.js:36
+msgid "Restoring..."
+msgstr "Gjenoppretter …"
+
+#: root/source-js/utils/arrangableList.js:83
+msgid "Enabled?"
+msgstr "Slått på?"
+
+#: root/source-js/articles/articleSubmit.js:64
+msgid "Saving article..."
+msgstr "Lagrer artikkel …"
+
+#: root/source-js/articles/articleSubmit.js:117
+msgid "<b><i>Changes saved at %(date)<b></i>"
+msgstr "<b><i>Endringer lagret %(date)</b></i>"
+
+#: root/source-js/articles/articleSubmit.js:151
+msgid "You don't have permission to set the article to the attempted status"
+msgstr ""
+"Du har ikke tilgang til å endre status på artikkelen til denne statusen"
+
+#: root/source-js/articles/articleSubmit.js:155
+msgid ""
+"Failed to save the article, it is currently locked for editing by <i>%(USER)"
+"</i>."
+msgstr "Kunne ikke lagre artikkelen, den er låst av <i>%(USER)</i>"
+
+#: root/source-js/articles/articleSubmit.js:159
+msgid ""
+"You are neither the assigner nor the assignee of this article, so you can "
+"not change any of the data."
+msgstr ""
+"Du er verken den som tildelte eller den som er tildelt denne artikkelen, så "
+"du kan ikke endre den."
+
+#: root/source-js/articles/articleSubmit.js:200
+msgid ""
+"There are files that live in the same directory as this article, do you want "
+"to move them to the new folder as well?"
+msgstr ""
+"Det er filer som ligger i samme mappe som denne artikkelen, vil du flytte "
+"disse filene også?"
+
+#: root/source-js/articles/articleSubmit.js:221
+msgid ""
+"You have an unsaved comment. Do you want to save it now? If you choose not "
+"to save it, the comment will be lost."
+msgstr ""
+"Du har en ulagret kommentar. Vil du lagre den? Hvis du ikke lagrer den vil "
+"kommentaren gå tapt."
+
+#: root/source-js/articles/articleSubmit.js:223
+msgid "You have an unsaved comment. Do you want to save it too?"
+msgstr "Du har en ulagret kommentar. Vil du lagre den også?"
+
+#: root/source-js/articles/articleSubmit.js:275
+msgid ""
+"You have reassigned this article. This will result in the article being "
+"automatically closed after saving. Do you want to save it now?"
+msgstr ""
+"Du har tildelt denne artikkelen til noen andre. Dette vil resultere i at "
+"artikkelen automatisk blir lukket etter at du har lagret den. Vil du lagre "
+"nå?"
+
+#: root/source-js/core/createArticle.js:10
+msgid "Loading folder and template data ..."
+msgstr "Laster mappe- og maldata …"
+
+#: root/source-js/core/createArticle.js:31
+msgid ""
+"Select the folder you wish to create the article in, and optionally a "
+"template, then click on create"
+msgstr ""
+"Velg mappen du vil opprette artikkelen i, og en mal (valgfritt), og så trykk "
+"på opprett."
+
+#: root/source-js/core/createArticle.js:32
+msgid "Folder:"
+msgstr "Mappe:"
+
+#: root/source-js/core/createArticle.js:35
+msgid "Template:"
+msgstr "Mal:"
+
+#: root/source-js/core/createArticle.js:37
+msgid "(use default)"
+msgstr "(bruk standard)"
+
+#: root/source-js/core/createArticle.js:54
+msgid "New article"
+msgstr "Opprett artikkel"
+
+#: root/source-js/core/createArticle.js:72
+msgid "Creating article ..."
+msgstr "Oppretter artikkel …"
+
+#: root/source-js/core/dialogHelpers.js:39
+msgid ""
+"The operation has timed out. This is caused by an unknown error that "
+"occurred while performing this operation. Please try again. If the problem "
+"persists, contact your system administrator with the information at the "
+"bottom of this message."
+msgstr ""
+"Operasjonen har fått et tidsavbrudd. Dette skjer på grunn av en ukjent feil "
+"som oppstod under utføring av denne operasjonen. Prøv igjen. Hvis problement "
+"vedvarer kontakt din systemadministrator med informasjonen på bunnen av "
+"denne meldingen."
+
+#: root/source-js/core/dialogHelpers.js:68
+msgid "Done any second now..."
+msgstr "Snart ferdig …"
+
+#: root/source-js/core/dialogHelpers.js:125
+msgid "Please wait..."
+msgstr "Vent …"
+
+#: root/source-js/core/dialogHelpers.js:191
+#: root/source-js/core/dialogHelpers.js:213
+msgid "No"
+msgstr "Nei"
+
+#: root/source-js/core/dialogHelpers.js:194
+#: root/source-js/core/dialogHelpers.js:214
+msgid "Yes"
+msgstr "Ja"
+
+#: root/source-js/core/dialogHelpers.js:250
+#: root/source-js/core/dialogHelpers.js:276
+#: root/source-js/articles/files.js:559
+msgid "Ok"
+msgstr "Ok"
+
+#: root/source-js/articles/additionalElements.js:41
+msgid "Loading list of additional elements..."
+msgstr "Laster liste over tilleggselement …"
+
+#: root/source-js/articles/additionalElements.js:43
+msgid "Add selected elements"
+msgstr "Legg til de valgte elementene"
+
+#: root/source-js/articles/additionalElements.js:44
+msgid "Add additional elements"
+msgstr "Legg til tilleggselement"
+
+#: root/source-js/core/folders.js:12
+msgid "Select the folder that you want to rename."
+msgstr "Velg mappen du vil endre navnet til."
+
+#: root/source-js/core/folders.js:16
+msgid "Rename to"
+msgstr "Endre navn til"
+
+#: root/source-js/core/folders.js:19
+msgid "Rename"
+msgstr "Endre navn"
+
+#: root/source-js/core/folders.js:23
+msgid "Please enter a folder name"
+msgstr "Skriv inn et mappenavn"
+
+#: root/source-js/core/folders.js:31
+msgid "Rename folder"
+msgstr "Endre navn på mappe"
+
+#: root/source-js/core/folders.js:43
+msgid "Renaming..."
+msgstr "Endrer navn …"
+
+#: root/source-js/core/folders.js:68
+msgid "Select the folder that you want to delete."
+msgstr "Velg mappen du vil slette."
+
+#: root/source-js/core/folders.js:72
+msgid "Note: This action is permanent, there is no undo"
+msgstr "Merg: Denne handlingen er permanent, du kan ikke angre"
+
+#: root/source-js/core/folders.js:75
+msgid "Delete"
+msgstr "Slett"
+
+#: root/source-js/core/folders.js:81
+msgid "Delete folder"
+msgstr "Slett mappe"
+
+#: root/source-js/core/folders.js:93
+msgid ""
+"<b>WARNING:</b> This action is permanent and can NOT be undone.<br /><br /"
+">Are you sure you want to delete the folder %(folder) and ALL OF ITS "
+"SUBFOLDERS?<br /><br />Any articles or files whose primary folder is the "
+"folder you are deleting will be moved to the first folder that can be "
+"located."
+msgstr ""
+"<b>ADVARSEL:</b> Denne handlingen er permanent og kan IKKE angres.<br /><br /"
+">Er du sikker på at du vil slette mappen %(folder) og ALLE UNDERMAPPER?<br /"
+"><br />Artikler eller filer som har denne mappen som hovedmappe vil bli "
+"flyttet til første tilgjengelige mappe."
+
+#: root/source-js/core/folders.js:94
+msgid "Confirm deletion"
+msgstr "Bekreft sletting"
+
+#: root/source-js/core/folders.js:103
+msgid "Deleting...<br />This is a heavy operation and may take a while"
+msgstr "Sletter …<br />Dette er en tung operasjon og kan ta en stund"
+
+#: root/source-js/articles/backup.js:13 root/source-js/core/backup.js:176
+msgid "Restoring backup..."
+msgstr "Gjenoppretter sikkerhetskopi …"
+
+#: root/source-js/articles/relationships.js:43
+#: root/source-js/articles/relationships.js:170
+msgid "Add relationships"
+msgstr "Legg til relasjoner"
+
+#: root/source-js/articles/relationships.js:45
+msgid "Add article relationships"
+msgstr "Opprett nye artikkelrelasjoner"
+
+#: root/source-js/articles/relationships.js:59
+#: root/source-js/articles/viewArticleRevisions.js:102
+msgid "Status"
+msgstr "Status"
+
+#: root/source-js/articles/relationships.js:141
+msgid ""
+"The following articles already has relationships with this article: "
+"%(ARTICLES)\n"
+"\n"
+"You will have to remove the existing relationship(s) first."
+msgstr ""
+"Følgende artiklar har allerede relasjoner med denne artikkelen: %(ARTICLES)\n"
+"\n"
+"Du må fjerne de eksisterende relasjonene først."
+
+#: root/source-js/articles/relationships.js:157
+msgid ""
+"Which type of relationship does the article \"%(ARTICLE_TITLE)\" have with "
+"this article?"
+msgstr ""
+"Hvilken type relasjon har artikkelen «%(ARTICLE_TITLE)» med denne artikkelen?"
+
+#: root/source-js/articles/relationships.js:161
+msgid "Which type of relationship does these articles have with this article?"
+msgstr "Hvilken type relasjon har disse artiklene med denne artikkelen?"
+
+#: root/source-js/articles/relationships.js:167
+msgid "Related"
+msgstr "Relatert"
+
+#: root/source-js/articles/relationships.js:168
+msgid "Previous article"
+msgstr "Forrige artikkel"
+
+#: root/source-js/articles/relationships.js:176
+msgid "Select relationship type"
+msgstr "Velg relasjonstype"
+
+#: root/source-js/core/objPermEditor.js:66
+msgid "Editing permissions for "
+msgstr "Redigerer tilgangsrettigheter for "
+
+#: root/source-js/core/objPermEditor.js:70
+msgid "the folder "
+msgstr "mappen "
+
+#: root/source-js/core/objPermEditor.js:81
+msgid "user"
+msgstr "bruker"
+
+#: root/source-js/core/objPermEditor.js:81
+msgid "role"
+msgstr "rolle"
+
+#: root/source-js/core/objPermEditor.js:112
+msgid "Override existing permissions on subfolders"
+msgstr "Overstyr eksisterende tilgangsrettigheter på undermapper"
+
+#: root/source-js/core/objPermEditor.js:160
+msgid "Permissions editor"
+msgstr "Redigering av tilgangsrettigheter"
+
+#: root/source-js/core/objPermEditor.js:168
+msgid "Retrieving permissions data..."
+msgstr "Henter tilgangsinformasjon …"
+
+#: root/source-js/core/objPermEditor.js:189
+msgid "Applying permissions..."
+msgstr "Tar i bruk tilgangsrettigheter …"
+
+#: root/source-js/core/objPermEditor.js:195
+msgid "You have to select which permission you want to grant."
+msgstr "Du må velge tilgangsrettigheten til vil gi."
+
+#: root/source-js/core/objPermEditor.js:239
+msgid "Select the folder that you want to edit permissions for."
+msgstr "Velg mappen du vil redigere tilgangsrettigheter for."
+
+#: root/source-js/core/objPermEditor.js:245
+msgid "Select"
+msgstr "Velg"
+
+#: root/source-js/core/objPermEditor.js:252
+msgid "Select folder"
+msgstr "Velg mappe"
+
+#: root/source-js/core/XHR.js:87
+msgid ""
+"The connection to the server has timed out. Please retry the request soon."
+msgstr "Tilkoblingen til tjeneren har hatt et tidsavbrukk. Prøv igjen snart."
+
+#: root/source-js/core/XHR.js:94
+msgid ""
+"The server returned invalid JSON data. This is either a temporary server "
+"problem, or a bug in Lixuz. If the problem persists, contact your system "
+"administrator with the information listed below."
+msgstr ""
+"Tjeneren svarte med ugyldig JSON-data. Dette er enten et midlertidig "
+"tjenerproblem, eller en feil i Lixuz. Hvis problemet fortsetter, kontakt din "
+"systemadministrator med informasjonen som er listet opp under denne "
+"meldingen."
+
+#: root/source-js/core/XHR.js:101
+msgid "An unhandled error occurred during the request to the server"
+msgstr "En ukjent feil oppstod under forespørselen til tjeneren."
+
+#: root/source-js/core/XHR.js:105
+msgid ""
+"An unknown and unhandled error occurred during the request to the server"
+msgstr "En ukjent feil oppstod under forespørselen til tjeneren."
+
+#: root/source-js/rssimport/rssimport.js:10
+msgid "Nothing to submit"
+msgstr "Ingenting å sende inn"
+
+#: root/source-js/rssimport/rssimport.js:60
+msgid "Retrieveing data..."
+msgstr "Henter data …"
+
+#: root/source-js/rssimport/rssimport.js:89
+msgid "Content"
+msgstr "Innhold"
+
+#: root/source-js/rssimport/rssimport.js:90
+msgid "Link"
+msgstr "Lenke"
+
+#: root/source-js/rssimport/rssimport.js:91
+msgid "Source"
+msgstr "Kilde"
+
+#: root/source-js/rssimport/rssimport.js:97
+msgid "Edit RSS entry"
+msgstr "Rediger RSS-oppføring"
+
+#: root/source-js/rssimport/rssimport.js:141
+#: root/source-js/rssimport/rssimport.js:177
+msgid "Reloading..."
+msgstr "Laster på nytt …"
+
+#: root/source-js/rssimport/rssimport.js:156
+msgid "Are you sure you wish to permanently delete this entry?"
+msgstr "Er du sikker på at du vil slette denne oppføringen permanent?"
+
+#: root/source-js/dashboard/dashboard.js:18
+msgid ""
+"Please wait until the other article has been accepted before accepting "
+"another"
+msgstr ""
+"Vent til den andre artikkelen har blitt godtatt før du prøver å godta en til"
+
+#: root/source-js/dashboard/dashboard.js:21
+msgid "Accepting..."
+msgstr "Godtar …"
+
+#: root/source-js/dashboard/dashboard.js:31
+msgid "Accepted!"
+msgstr "Godtatt."
+
+#: root/source-js/dashboard/dashboard.js:44
+msgid "Acceptance denied"
+msgstr "Ble nektet å godta"
+
+#: root/source-js/dashboard/dashboard.js:48
+msgid "Acceptance failed"
+msgstr "Klarte ikke godta"
+
+#: root/source-js/core/backup.js:86
+msgid "Last backed up at %(date)"
+msgstr "Sist sikkerhetskopiert %(date)"
+
+#: root/source-js/core/backup.js:248
+msgid ""
+"The backup has been fully restored. Note that any changes made by other "
+"users since this backup was created (other than comments) will be lost if "
+"you save it."
+msgstr ""
+"Sikkerhetskopien har blitt gjenopprettet. Merk at alle endringer gjort av "
+"andre brukere siden denne sikkerhetskopien ble opprettet (utenom "
+"kommentarer) vil gå tapt hvis du lagrer den."
+
+#: root/source-js/core/backup.js:330
+msgid "No backup data was found on the server that matched this dataset."
+msgstr ""
+"Fant ikke noen sikkerhetskopier på tjeneren som passet til dette datasettet."
+
+#: root/source-js/core/backup.js:334
+msgid "Failed to retrieve backup data: "
+msgstr "Kunne ikke hente sikkerhetskopien: "
+
+#: root/source-js/articles/viewArticleRevisions.js:18
+msgid "This article has not been saved so there are no revisions to list"
+msgstr ""
+"Denne artikkelen har ikke blitt lagret, så det er ingen revisjoner som kan "
+"listes opp"
+
+#: root/source-js/articles/viewArticleRevisions.js:21
+msgid "Fetching revisions..."
+msgstr "Henter revisjoner …"
+
+#: root/source-js/articles/viewArticleRevisions.js:37
+msgid "Loading statuses..."
+msgstr "Laster statuser …"
+
+#: root/source-js/articles/viewArticleRevisions.js:55
+msgid "(current)"
+msgstr "(gjeldende)"
+
+#: root/source-js/articles/viewArticleRevisions.js:67
+msgid ""
+"Select which status you want to change this revision to. Changing a new "
+"revision to \"Live\" will result in the current live revision being changed "
+"to \"Inactive\"."
+msgstr ""
+"Velg hvilken status du vil endre denne revisjonen til. Endring av en "
+"revisjon til «Live (på nett)» vil resultere i at den gjeldende «live»-"
+"revisjonen av artikkelen blir satt til «Inaktiv»."
+
+#: root/source-js/articles/viewArticleRevisions.js:67
+msgid "Change it to:"
+msgstr "Endre til:"
+
+#: root/source-js/articles/viewArticleRevisions.js:71
+msgid "Change it"
+msgstr "Endre"
+
+#: root/source-js/articles/viewArticleRevisions.js:76
+msgid "Changing status..."
+msgstr "Endrer status …"
+
+#: root/source-js/articles/viewArticleRevisions.js:94
+msgid "Change the status of revision %(REVISION)"
+msgstr "Endre status til revisjon %(REVISION)"
+
+#: root/source-js/articles/viewArticleRevisions.js:102
+msgid "Revision"
+msgstr "Revisjon"
+
+#: root/source-js/articles/viewArticleRevisions.js:102
+msgid "Saved by"
+msgstr "Lagret av"
+
+#: root/source-js/articles/viewArticleRevisions.js:102
+msgid "Saved at"
+msgstr "Lagret"
+
+#: root/source-js/articles/viewArticleRevisions.js:106
+msgid "View this revision of the article"
+msgstr "Vis denne revisjonen av artikkelen"
+
+#: root/source-js/articles/viewArticleRevisions.js:107
+msgid "Change the status of this revision"
+msgstr "Endre statusen til denne revisjonen"
+
+#: root/source-js/articles/viewArticleRevisions.js:114
+msgid "Revisions of %(ARTID)"
+msgstr "Revisjoner av %(ARTID)"
+
+#: root/source-js/articles/secondaryFolders.js:21
+msgid "You must first save the article."
+msgstr "Du må lagre artikkelen først."
+
+#: root/source-js/articles/secondaryFolders.js:25
+msgid "Loading folders..."
+msgstr "Laster mapper …"
+
+#: root/source-js/articles/files.js:323
+msgid ""
+"The video file with file_id %(FILEID) has not been converted to the FLV "
+"format used to serve video through Lixuz yet, the process is still running, "
+"please reload and try again in a few minutes.\\n\\nIf the conversion takes "
+"more than an hour, please contact your system administrator"
+msgstr ""
+"Videofila med fil IDen %(FILEID) har ikke blitt konvertert til FLV-formatet "
+"som blir brukt til å vise video via Lixuz ennå. Prosessen kjører fremdeles. "
+"Last sida på nytt og prøv igjen om noen minutter.\\n\\nHvis konverteringa "
+"tar mer enn en time, ta kontakt med din systemadministrator."
+
+#: root/source-js/articles/files.js:327
+msgid ""
+"The conversion of this file (%(FILEID)) to the FLV format failed. Please "
+"contact your system administrator."
+msgstr ""
+"Konverteringa av denne fila (%(FILEID)) til FLV-formatet mislyktes. Kontakt "
+"din systemadministrator."
+
+#: root/source-js/articles/files.js:475
+msgid "Reassign file"
+msgstr "Tildel fil"
+
+#: root/source-js/articles/files.js:479
+msgid "Assign file"
+msgstr "Tildel fil"
+
+#: root/source-js/articles/files.js:485
+msgid ""
+"Note: This file is already assigned to a spot. Reassigning it to another "
+"will remove it from its current spot and move it to the new one."
+msgstr ""
+"Merk: Denne fila er allerede tildelt et område. Om du tildeler den et annet "
+"område vil den bli fjerna fra det gjeldende området og flyttet til det nye."
+
+#: root/source-js/articles/files.js:490
+msgid "(can not assign to spots - this template has none)"
+msgstr "(kan ikke tildele til områder - denne malen har ingen)"
+
+#: root/source-js/articles/files.js:495
+msgid "Assign to spot: "
+msgstr "Tildel til område: "
+
+#: root/source-js/articles/files.js:515
+msgid "current spot"
+msgstr "gjeldende område"
+
+#: root/source-js/articles/files.js:527
+msgid "Change the caption to:"
+msgstr "Endre bildeteksten til: "
+
+#: root/source-js/articles/files.js:533
+msgid "Show advanced options"
+msgstr "Vis avanserte valg"
+
+#: root/source-js/articles/files.js:543
+msgid ""
+"Above you may choose to assign this file to a spot, these options allow you "
+"to add it directly to the body or lead of an article. Adding it to the body "
+"or lead is discouraged unless there are no suitable spots available (as the "
+"spots will properly scale and appear in lists properly, images in bodies "
+"will in most cases not)."
+msgstr ""
+"Over kan du velge å legge denne fila til et filområde, disse valgene lar deg "
+"legge den direkte til inngressen eller brødteksten til en artikkel. Det "
+"anbefalse at du ikke bruker denne funksjonen så lenge det er filområder "
+"tilgjengelig (ettersom filområder vil skaleres og vises i lister automatisk, "
+"mens bilder i inngress eller brødtekst ofte ikke vil)."
+
+#: root/source-js/articles/files.js:545
+msgid "Add to the lead"
+msgstr "Legg til i inngressen"
+
+#: root/source-js/articles/files.js:546 root/source-js/articles/files.js:550
+msgid "Add to the body"
+msgstr "Legg til i brødteksten"
+
+#: root/source-js/articles/files.js:586
+msgid ""
+"A file named \"%(NAME)\" (id %(ID)) is already assigned to this spot. Do you "
+"want to replace it with the file \"%(NEWNAME)\"?"
+msgstr ""
+"En fil med navnet «%(NAME)» (id %(ID)) er allerede tildelt dette området. "
+"Vil du bytte den ut med fila «%(NEWNAME)»?"
+
+#: root/source-js/articles/files.js:681
+msgid "Fetching list of file spots..."
+msgstr "Henter liste over filområder …"
+
+#: root/source-js/articles/files.js:729
+msgid "Fetching file information..."
+msgstr "Henter filinformasjon …"
+
+#: root/source-js/articles/files.js:742
+msgid ""
+"Are you sure you wish to remove that file from this article? The file will "
+"not be deleted."
+msgstr ""
+"Er du sikker på at du vil fjerne den fila fra denne artikkelen? Fila vil "
+"ikke bli slettet."
+
+#: root/source-js/articles/files.js:750
+msgid "Retrieving file spots"
+msgstr "Henter liste over filområder …"
+
+#: root/source-js/articles/files.js:774
+msgid "File ID:"
+msgstr "Fil ID:"
+
+#: root/source-js/articles/files.js:775
+msgid "Size:"
+msgstr "Størrelse:"
+
+#: root/source-js/articles/files.js:795
+msgid "Spot:"
+msgstr "Område:"
+
+#: root/source-js/core/asyncHelper.js:363
+msgid ""
+"If the problem persists please contact your system administrator and include "
+"the information at the bottom of this message."
+msgstr ""
+"Hvis problemet fortsetter kontakt din systemadministrator og ta med "
+"informasjonen under denne meldingen."
+
+#: root/source-js/core/asyncHelper.js:368
+msgid ""
+"Failed to submit data, you have been logged out of Lixuz. Please open the "
+"Dashboard page in another tab or window and log in there, and then try to "
+"save your data again"
+msgstr ""
+"Klarte ikke å sende inn data, du har blitt logget ut av Lixuz. Åpne opp "
+"dashbordet ditt i en annen fane eller vindu og logg inn der og så forsøk å "
+"lagre igjen."
+
+#: root/source-js/core/asyncHelper.js:372
+msgid "You do not have access to save or access this data"
+msgstr "Du har ikke tilgang til å se eller lagre dette"
+
+#: root/source-js/core/asyncHelper.js:376
+msgid ""
+"The data returned from the server was not safe, this is a bug. Your data may "
+"not have been saved."
+msgstr ""
+"Tjeneren svarte med utrygg data - dette er en feil. Dine data har kanskje "
+"ikke blitt lagret."
+
+#: root/source-js/core/asyncHelper.js:380
+msgid ""
+"The data returned from the server was missing essential fields, this is a "
+"bug. Your data may not have been saved."
+msgstr ""
+"Tjeneren svarte med en respons som manglet grunnleggende felt - dette er en "
+"feil. Dine data har kanskje ikke blitt lagret."
+
+#: root/source-js/core/asyncHelper.js:384
+msgid ""
+"The server did not reply with any data, this is a bug. Your data may not "
+"have been saved."
+msgstr ""
+"Tjeneren sendte ikke et svar tilbake - dette er en feil. Dine data har "
+"kanskje ikke blitt lagret."
+
+#: root/source-js/core/asyncHelper.js:388
+msgid ""
+"A failure occurred while talking to the database server, this is most likely "
+"a bug. Your data has probably not been saved."
+msgstr ""
+"En feil oppstod under kommunikasjon med databasetjeneren, dette er mest "
+"sannsynlig en feil i Lixuz. Dine data har kanskje ikke blitt lagret."
+
+#: root/source-js/core/asyncHelper.js:392
+msgid ""
+"An internal server error occurred while the server was processing your "
+"request. Please try again soon."
+msgstr ""
+"En intern tjenerfeil oppstod mens tjeneren behandler forespørselen. Prøv "
+"igjen snart."
+
+#: root/source-js/core/asyncHelper.js:396
+msgid ""
+"The server misunderstood our request and attempted to return invalid data. "
+"Please try again soon."
+msgstr ""
+"Tjeneren misforstod forespørselen og returnerte ugyldig data. Prøv igjen "
+"snart."
+
+#: root/source-js/core/asyncHelper.js:402
+msgid "An error occurred with the request that was submitted."
+msgstr "En feil oppstod med forespørselen som ble sendt inn."
+
+#: root/source-js/utils/FieldHelper.js:189
+msgid "The field \"%(field)\" must be filled in."
+msgstr "Feltet «%(field)» må fylles inn."
+
+#: root/source-js/utils/FieldHelper.js:206
+msgid "The field \"%(field)\" contains an invalid date."
+msgstr "Feltet «%(field)» inneholder en ugyldig dato."
+
+#: root/source-js/utils/FieldHelper.js:273
+msgid ""
+"The value for the field \"%(FIELD)\" must be within the range %(MIN)-%(MAX)"
+msgstr "Verdien til feltet «%(FIELD)» må være innen intervallet %(MIN)-%(MAX)"
+
+#: root/source-js/files/cropping.js:48
+msgid "Saving cropped image..."
+msgstr "Lagrer beskjært bilde …"
+
+#: root/source-js/files/cropping.js:67
+msgid "Hide original"
+msgstr "Skjul original"
+
+#: root/source-js/files/cropping.js:72
+msgid "Show original"
+msgstr "Vis original"
+
+#: root/source-js/articles/liveComments.js:22
+msgid ""
+"Are you sure you wish to delete that comment? It will be permanently lost."
+msgstr ""
+"Er du sikker på at du vil slette den komentaren? Den blir permanent tapt."
+
+#: root/source-js/articles/liveComments.js:30
+msgid "Deleting comment ..."
+msgstr "Sletter kommentar …"
+
+#: root/source-js/articles/liveComments.js:42
+msgid "You must save the article before you can view comments made to it"
+msgstr "Du må lagre artikkelen før du kan se på kommentarer"
+
+#: root/source-js/articles/liveComments.js:47
+msgid "Loading comment list ..."
+msgstr "Laster kommentarliste …"
+
+#: root/source-js/articles/liveComments.js:92
+msgid "By: "
+msgstr "Av: "
+
+#: root/source-js/articles/liveComments.js:96
+msgid "Delete this comment"
+msgstr "Slett denne kommentaren"
+
+#: root/source-js/articles/liveComments.js:111
+msgid ""
+"You do not have the sufficient priviliges required to retrieve the live "
+"comment list"
+msgstr ""
+"Du har ikke tilgangsrettigheter til å hente lista over kommentarer på nett"
+
+#: root/source-js/articles/liveComments.js:115
+msgid "Failed to retrieve the live comment list"
+msgstr "Kunne ikke hente lista over kommentarer på nett"
+
+#: root/source-js/utils/objectSelector.js:123
+msgid "Loading filtering rules..."
+msgstr "Laster filterregler …"
+
+#: root/source-js/utils/objectSelector.js:156
+msgid "(any)"
+msgstr "(hvilken som helst)"
+
+#: root/source-js/utils/objectSelector.js:191
+msgid "Search"
+msgstr "Søk"
+
+#: root/source-js/utils/objectSelector.js:208
+msgid "Loading data..."
+msgstr "Laster data …"
+
+#: root/source-js/utils/objectSelector.js:333
+msgid "Filtering..."
+msgstr "Filtrerer …"
+
+#: root/source-js/utils/objectSelector.js:364
+msgid "No files found matching the current filters"
+msgstr "Ingen filer som passet med disse filterene kunne bli funnet"
+
+#: root/source-js/utils/objectSelector.js:368
+msgid "No articles found matching the current filters"
+msgstr "Ingen artikler som passet med disse filterene kunne bli funnet"
+
+#: root/source-js/utils/objectSelector.js:372
+msgid "No entries found matching the current filters"
+msgstr "Ingen oppføringer som passet med disse filterene kunne bli funnet"
+
+#: root/source-js/utils/objectSelector.js:474
+msgid "Previous"
+msgstr "Forrige"
+
+#: root/source-js/utils/objectSelector.js:479
+msgid "of"
+msgstr "av"
+
+#: root/source-js/utils/objectSelector.js:485
+msgid "Next"
+msgstr "Neste"
+
+#: root/source-js/admin/ADFieldsEdit.js:20
+msgid "The range is invalid. It must be in the form: FROM-TO (ie. 20-40)"
+msgstr "Intervallet er ugyldig. Det må vere i typen: FRA-TIL (f.eks. 20-40)"
+
+#: root/source-js/admin/ADFieldsEdit.js:27
+msgid "The minimum range can not be higher than the maximum range"
+msgstr "Minimumstallet kan ikke være høyere enn maksimumstallet"
+
+#: root/source-js/admin/ADFieldsEdit.js:96
+msgid "All fields must be filled in."
+msgstr "Alle felt må være fylt inn."
+
+#: root/source-js/admin/ADFieldsEdit.js:131
+msgid "Failed to submit field data: "
+msgstr "Kunne ikke sende inn feltdata: "
+
+#: root/source-js/articles/commentSubmit.js:65
+msgid ""
+"Refusing to submit empty comment, please enter a comment, then re-submit."
+msgstr ""
+"Nekter å sende inn en tom kommentar. Skriv inn en kommentar og prøv igjen."
+
+#: root/source-js/articles/commentSubmit.js:69
+msgid "Submitting comment..."
+msgstr "Sender inn kommentar …"
+
+#: root/source-js/articles/commentSubmit.js:77
+msgid "You have to save the article before you can comment on it"
+msgstr "Du må lagre artikkelen før du kan kommentere på den"
+
+#: root/source-js/articles/commentSubmit.js:116
+msgid "Failed to submit comment: "
+msgstr "Klarte ikke sende inn kommentar: "
+
+#~ msgid ""
+#~ "This article is currently locked for editing by <i>%(USER)</i>. <br /"
+#~ "><br />You have been forwarded to a read-only preview of the article "
+#~ "instead."
+#~ msgstr ""
+#~ "Denne artikkelen er låst av <i>%(USER)</i>.<br /><br />Du har blitt "
+#~ "videresendt til en skrivebeskyttet forhåndsvisning av artikkelen i stedet."

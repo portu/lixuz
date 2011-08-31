@@ -1,0 +1,74 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($message) {
+% # FIXME: drop the <b></b> tags and do that in CSS
+<div id="lzCategoryListMessage"><b><% $message %></b></div>
+%}
+
+<& ../core/listnavigation.html, %ARGS &>
+
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'category_id', ordertype => $ordertype}) %>"><% $i18n->get('Category ID') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'category_name', ordertype => $ordertype}) %>"><% $i18n->get('Category name') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'template_id', ordertype => $ordertype}) %>"><% $i18n->get('Template') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'parent', ordertype => $ordertype}) %>"><% $i18n->get('Parent') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'external_link', ordertype => $ordertype}) %>"><% $i18n->get('Link') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'display_type_id', ordertype => $ordertype}) %>"><% $i18n->get('Display type') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'category_status', ordertype => $ordertype}) %>"><% $i18n->get('Status') %></a></td>
+	<td class="rowHead rowHeadIcon">&nbsp;</td>
+	<td class="rowHead rowHeadIcon">&nbsp;</td>
+    </tr>
+
+%if(defined $category && $category->count > 0){
+%my $i=0;
+%while(my $category = $category->next){
+%$i++;
+
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+        <td><% $category->category_id %></td>
+        <td><a href="/admin/categories/edit/<% $category->category_id%>"><% $category->category_name %></a></td>
+% # TODO: Template should be a link to the template, as should display_type and link should be a link
+            <td><% $category->template_id || '&nbsp;'  |n %></td>
+            <td>
+%if(defined $category->parent)
+% {
+<% $category->parent->category_id%> (<%$category->parent->category_name%>)
+%}
+%{
+&nbsp;
+%}
+</td>
+        <td><% $category->external_link || '&nbsp;'  |n %></td>
+        <td><% $category->display_type_id || '&nbsp;'  |n %></td>
+        <td><img class="useTipsy" src="/static/images/<% $category->category_status %>.png" border="0" title="<% $i18n->get($category->category_status) %>" alt="<% $i18n->get($category->category_status) %>" /></td>
+    <td><a href="/admin/categories/edit/<% $category->category_id %>"><img class="useTipsy" src="/static/images/icons/category-edit.png" border="0" title="<% $i18n->get('Edit') %>" alt="<% $i18n->get('Edit') %>" /></a></td>
+    <td><a href="/admin/categories/delete/<% $category->category_id %>" onclick="return userQuestion('<% $i18n->get_advanced('Are you sure you want to delete the category "%(CATEGORYNAME)"?', { CATEGORYNAME => $category->category_name} ) %>')"><img class="useTipsy" src="/static/images/icons/trash.png" border="0" title="<% $i18n->get('Delete') %>" alt="<% $i18n->get('Delete') %>" /></a></td>
+    </tr>
+%}
+%}
+
+</table>
+
+
+<%args>
+$category=>undef
+$message => undef
+$i18n
+$ordertype
+</%args>

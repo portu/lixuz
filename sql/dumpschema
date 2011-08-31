@@ -1,0 +1,37 @@
+#!/usr/bin/perl
+use IPC::Open3;
+use Fatal qw(open open3);
+my $schema = 'lixuz_schema.sql';
+
+if (@ARGV)
+{
+    $schema = shift(@ARGV);
+}
+open3(my $in, my $out, my $err,'mysqldump','-ulixuz','-pli09uz31','-d','lixuz');
+open(my $outf, '>',$schema);
+my $seenDM = 0;
+while($_ = <$out>)
+{
+    if ($seenDM)
+    {
+        if (/^--* Table/)
+        {
+            $seenDM = 0;
+        }
+        else
+        {
+            next;
+        }
+    }
+    elsif(/lz_dm_map/)
+    {
+        $seenDM = 1;
+        next;
+    }
+    s/AUTO_INCREMENT=\d+//g;
+    s/CHARSET=latin1/CHARSET=utf8/g;
+    print {$outf} $_;
+}
+close($outf);close($in);close($out);close($err);
+print "Wrote $schema\n";
+print "NOTE: If you ADDED tables, modify upgradeDB!\n";

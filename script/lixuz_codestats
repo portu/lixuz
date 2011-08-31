@@ -1,0 +1,65 @@
+#!/bin/bash
+cd $(dirname $0) || exit 1
+SILENT=0
+MODREPORT=0
+MODINFO=0
+function vecho ()
+{
+    if [ "$SILENT" != "1" ]; then
+        echo "$@"
+    fi
+}
+if [ "$1" == "modreport" ]; then
+    SILENT=1
+    MODREPORT=1
+    MODINFO=1
+elif [ "$1" == "modulesOnly" ]; then
+    SILENT=1
+    MODINFO=1
+fi
+cd .. || exit 1
+[ -e "./lib" ] || exit 1
+if [ "$MODINFO" != "1" ]; then
+    vecho "Line count:"
+    ./script/sanitycheck stats
+    vecho
+fi
+USEME=""
+[  "$SILENT" != "1" ] && echo -n "Gathering information about modules..."
+for file in ` ls -c $(find -regextype posix-extended -iregex ".*\.(pm|pl|html)$")|\egrep -v '(script|Makefile)'`; do
+     [ "$SILENT" != "1" ] && echo -n "."
+    THIS="`egrep '^use' "$file"|egrep -v '(constant|lib|strict|warning|base|autouse|utf8)'`"
+    USEME="$USEME
+$THIS"
+done
+for ent in `perl -e '$c = 0; foreach(<>) { if(not $c and not /use Catalyst /) { next; }; exit(0) if /\// and $c; $c = 1; next if /use Catalyst/; s/\s+//; print $_}' lib/LIXUZ.pm`; do
+    ent=Catalyst::Plugin::$ent
+    USEME="$USEME
+$ent"
+done
+USEME="`echo "$USEME"|perl -pi -e 's#^use\s*##; s#^(\S+)\s.*#$1#; s#;$##; $_ .= "\n";' |sort|uniq`"
+if [ "$MODREPORT" ]; then
+    for module in $USEME;do
+        if [ "`echo $module|grep -v LIXUZ`" != "" ]; then
+            perl -I./lib -M$module -e "printf('%-45s: %s','$module',\$$module::VERSION)"
+            echo
+        fi
+    done
+    exit 0
+fi
+if [ "$1" == "modulesOnly" ]; then
+    echo "$USEME"
+    exit 0
+fi
+LIXUZMODULES=""
+OTHER_MODULES=""
+for module in $USEME; do
+    if [ "`echo $module|egrep '^LIXUZ'`" != "" ]; then
+        LIXUZ_MODULES="$LIXUZ_MODULES `echo $module|perl -pi -e s#LIXUZ::##g`"
+    else
+        OTHER_MODULES="$OTHER_MODULES $module"
+    fi
+done
+echo "done"
+echo "Lixuz modules:$LIXUZ_MODULES"
+echo "Other modules:$OTHER_MODULES"

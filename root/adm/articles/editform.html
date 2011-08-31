@@ -1,0 +1,73 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($ADF_CanEdit) {
+%my $adfuid = $articleUid;
+%if($adfuid eq 'null') { $adfuid = '$(\'#lixuzArticleEdit_uid\').val()'; }
+<div class="buttonHolder"><a href="#" onclick="LZ_DisplayFieldEditForm('articles',<% $adfuid %>); return false;"><img src="/static/images/icons/fields-edit.png" border="0" alt="<% $i18n->get('Edit fields') |n %>" align="left"  />&nbsp;<% $i18n->get('Edit fields') |n %></a></div>
+<br clear="all" />
+%}
+
+%if($message) {
+<% $message |n %>
+%}
+
+<input type="hidden" name="uid" id="lixuzArticleEdit_uid" value="<% $articleUid eq 'null' ? '' : $articleUid%>" />
+<input type="hidden" name="type" id="lixuzArticleEdit_type" value="<% $artEditType eq 'null' ? '' : $artEditType%>" />
+%if($c->req->param('autorestore')) {
+<input type="hidden" name="article_autoRestoreBackup" id="article_autoRestoreBackup" value="true" />
+%}
+<input type="hidden" name="LZ_ArticleMoveFilesFound" id="LZ_ArticleMoveFilesFound" value="0" />
+<%perl>
+my $ref = $c->req->referer;
+if ((defined $ref) && ($ref =~ m#/admin/articles.*folder#))
+{
+    $ref =~ s/.*folder=(\d+).*/$1/;
+}
+else
+{
+    $ref = undef;
+}
+</%perl>
+%if($ref) {
+<input type="hidden" name="lz_forwardToFolder" id="lz_forwardToFolder" value="<%$ref%>" />
+%}
+
+<div id="form_article_edit">
+<div class="artid label">
+<div id="lastBackedUpAt">&nbsp;</div>
+<% $i18n->get('Article ID')  |n %>: <span id="lz_artid_value"><% $articleUid eq 'null' ? $i18n->get('(not saved)') : $articleUid  |n %></span>
+-
+<% $i18n->get('Revision')  |n %>: <span id="lz_revision_value"><% $articleRevision eq 'null' ? $i18n->get('(not saved)') : $articleRevision  |n %></span>
+<& form_save.html, formname => 'top', %ARGS &>
+</div>
+
+<& /adm/core/fields/tags.html, %ARGS &>
+
+<& /adm/core/renderFields.html, %ARGS, component => 'articles' &>
+
+<& form_save.html, formname => 'bottom', %ARGS &>
+
+<%args>
+$message => undef
+$tags => undef
+$i18n
+$ADF_CanEdit => 0
+$articleUid => 'null'
+$articleRevision => 'null'
+$artEditType
+</%args>

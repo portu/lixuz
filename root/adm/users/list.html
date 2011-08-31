@@ -1,0 +1,62 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+%if($message) {
+% # FIXME: drop the <b></b> tags and do that in CSS
+<div id="lzUserListMessage"><b><% $message %></b></div>
+%}
+
+<& ../core/listnavigation.html, %ARGS &>
+
+<table cellspacing="0" class="listView">
+    <tr>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'user_id', ordertype => $ordertype}) %>"><% $i18n->get('User ID') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'user_name', ordertype => $ordertype}) %>"><% $i18n->get('Username') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'firstname', ordertype => $ordertype}) %>"><% $i18n->get('Firstname') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'lastname', ordertype => $ordertype}) %>"><% $i18n->get('Lastname') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'email', ordertype => $ordertype}) %>"><% $i18n->get('Email') %></a></td>
+        <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'user_status', ordertype => $ordertype}) %>"><% $i18n->get('Status') %></a></td>
+	<td class="rowHead rowHeadIcon">&nbsp;</td>
+	<td class="rowHead rowHeadIcon">&nbsp;</td>
+    </tr>
+
+%if(defined $users && $users->count > 0){
+%my $i=0;
+%while(my $user = $users->next){
+%$i++;
+    <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+        <td><% $user->user_id %></td>
+        <td><a href="/admin/users/edit/<%$user->user_id%>"><% $user->user_name %></a></td>
+        <td><% $user->firstname %></td>
+	<td><% $user->lastname %></td>
+	<td><% $user->email %></td>
+	<td><img class="useTipsy" src="/static/images/<% $user->user_status %>.png" border="0" title="<% $i18n->get($user->user_status) %>" alt="<% $i18n->get($user->user_status) %>" /></td>
+	<td><a href="/admin/users/edit/<% $user->user_id %>"><img class="useTipsy" src="/static/images/icons/users-edit.png" border="0" title="<% $i18n->get('Edit') %>" alt="<% $i18n->get('Edit') %>" /></a></td>
+	<td><a href="/admin/users/delete/<% $user->user_id %>" onclick="return userQuestion('<% $i18n->get_advanced('Are you sure you want to delete the user "%(USERNAME)"?', { USERNAME => $user->user_name } ) %>')"><img class="useTipsy" src="/static/images/icons/trash.png" border="0" alt="<% $i18n->get('Delete') %>" title="<% $i18n->get('Delete') %>" /></a></td>
+    </tr>
+%}
+%}
+
+</table>
+
+
+<%args>
+$users=>undef
+$message => undef
+$i18n
+$ordertype
+</%args>
