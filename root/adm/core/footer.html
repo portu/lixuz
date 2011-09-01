@@ -18,12 +18,14 @@
 %if(not $onlySkeletonHTML) {
 <div id="footer">
 %my $versVal = $VERSION;
+<a href="http://www.lixuz.org/">
 %if($c->user) {
 <% $i18n->get_advanced("Lixuz version %(VERSION)",{ VERSION => $VERSION }) %>
 %} else  {
 % $versVal = '';
 Lixuz
 %}
+</a>
 - Copyright &copy; Utrop AS <a href="http://www.portu.no/">Portu media &amp; communications</a><br />
 Lixuz is free software, available under the <a href="/lixuz/license">GNU General Public License version 3</a>
 </div>
