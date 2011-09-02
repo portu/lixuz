@@ -12,9 +12,9 @@ sanity: sanitycheck swec_sanity
 test: sanitycheck swec_sanity
 
 depscheck:
-	for DEP in `./script/lixuz_codestats modulesOnly |grep -v '(' | perl -pi -e 'chomp; print " ";' ` ;do perl -Ilib -e "eval('use $$DEP;1') or die('$$DEP is missing'.\"\n\")" || exit 1;done
+	perl DEPSLIST check
 simpledepslist:
-	./script/lixuz_codestats modulesOnly | perl -pi -e 's/\s+:.*//;chomp; print " ";'; echo
+	perl DEPSLIST list
 depslist:
 	./script/lixuz_codestats modulesOnly
 modreport:
