@@ -16,6 +16,8 @@ help:
 	$(HPRINTF) "swec" "Run a full swec test, requires running lixuz test server"
 	$(HPRINTF) "swec_basic" "Run a basic swec test, liminting the amount of pages tested"
 	$(HPRINTF) "swec_sanity" "Run a very basic swec sanity test, this is fast but doesn't test as much as the other two"
+	$(HPRINTF) "build" "Build all javascript and CSS"
 	$(HPRINTF) "minify"	"Minify javascript files"
-	$(HPRINTF) "buildjs" "Build javascript files"
+	$(HPRINTF) "distrib" "Build distribution packages (tarball and .run-package) into ./packages"
+	$(HPRINTF) "gitdistrib" "Build git snapshot packages (tarball and .run-package) into ./packages"
 # vim: set ft=make :
