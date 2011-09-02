@@ -612,7 +612,7 @@ the following in your <head>:
 If it finds something to do (ie. a video) then it will pull in any
 extra javascript files automatically using DOM objects. The core Lixuz
 JS also contains some helper functions that you may use inside your templates.
-See the file I<root/js/live/core.js> within the Lixuz tree.
+See the file I<root/source-js/live/core.js> within the Lixuz tree.
 
 Note that this includes jQuery (version will vary with each Lixuz release,
 as usually we track upstream), but not jQuery UI.
