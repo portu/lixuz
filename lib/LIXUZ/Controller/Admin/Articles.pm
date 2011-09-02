@@ -681,12 +681,12 @@ sub art_fetch_fielddata
 
     if(not $had)
     {
-        $c->log->debug('Invalid field requested from Articles.pm: '.$fnam);
+        $c->log->warn('Invalid field requested from Articles.pm: '.$fnam);
         return;
     }
 
     my $info = $c->stash->{_art_info}->{$fnam};
-    if(not defined $uid)
+    if(not defined $article)
     {
         if(not $fnam =~ /(status_id|author|folder|publish_time|template_id)/)
         {
