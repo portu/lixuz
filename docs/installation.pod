@@ -23,10 +23,10 @@ This is the Lixuz installation manual.
 Lixuz runs on top of Catalyst and Mason. It also needs a few other perl
 modules. To find out if you have any deps missing, run
 
-    make depscheck
+    perl DEPSLIST check
 
-within a Lixuz source tree. It will then check all of the Lixuz dependencies
-and tell you which are missing.
+from the root of the Lixuz source tree. It will then check all of the Lixuz
+dependencies and tell you which are missing.
 
 =head2 VIDEO
 
@@ -77,8 +77,10 @@ in mind, as the installation script will prompt you for this information.
 =head2 INSTALLATION
 
 Most of the initial setup (including copying files and configuration) can be
-automated. Simply run the I<./scripts/lixuz_install.pl> script and follow the
-instructions. The following sections will outline what needs to be done 
+automated. Simply run the I<.run>-package you downloaded or
+I<./scripts/lixuz_install.pl> script from the Lixuz source tree (depending on
+which you have) with the path to where you want to install Lixuz and follow the
+instructions. The following sections will outline what needs to be done
 manually.
 
 B<Note on HTTP servers:> as Lixuz uses FastCGI, you do not need to use any of
