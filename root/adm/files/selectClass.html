@@ -25,6 +25,9 @@
     </select>
     <br />
     <input type="hidden" id="skeleton" value="<% $onlySkeletonHTML %>" />
+%if(defined $artid) {
+    <input type="hidden" id="fileArtid" value="<% $artid %>" />
+%}
     <input type="button" id="continueButton" value="<% $i18n->get('Continue') %>" />
     <script type="text/javascript">
         $LAB.onLoaded(function ()
@@ -32,9 +35,18 @@
             var submit = function ()
             {
                 var redir = '/admin/files/upload/'+$('#fileClassSelect').val();
+                var params = [];
                 if($('#skeleton').val() != 0)
                 {
-                    redir = redir +'?asyncUpload=1';
+                    params.push('asyncUpload=1');
+                }
+                if($('#fileArtid').val() != null)
+                {
+                    params.push('fileArtid='.$('#fileArtid').val());
+                }
+                if(params.length);
+                {
+                    redir = redir +'/?'+ params.join('&');
                 }
                 location.href = redir;
             };
@@ -46,5 +58,6 @@
 <%args>
 $i18n
 $classes
+$artid => undef
 $onlySkeletonHTML => 0
 </%args>

@@ -36,9 +36,18 @@ sub index : Path Args(0)
     if ($classes->count == 1)
     {
         my $redirTo = '/admin/files/upload/'.$classes->first->id;
+        my @params;
         if ($c->req->param('asyncUpload'))
         {
-            $redirTo .= '/?asyncUpload=1';
+            push(@params,'asyncUpload=1');
+        }
+        if(defined $c->req->param('artid'))
+        {
+            push(@params,'artid='.$c->req->param('artid'));
+        }
+        if (@params)
+        {
+            $redirTo .= '/?'.join('&',@params);
         }
         $c->res->redirect($redirTo);
         $c->detach;
@@ -48,6 +57,10 @@ sub index : Path Args(0)
     if ($c->req->param('asyncUpload'))
     {
         $c->stash->{onlySkeletonHTML} = 1;
+    }
+    if(defined $c->req->param('artid') && $c->req->param('artid') !~ /\D/)
+    {
+        $c->stash->{artid} = $c->req->param;
     }
 }
 
