@@ -356,6 +356,7 @@ sub get_groups : Private
                 paths => [ 
                 '/files/edit',
                 '/files/upload',
+                '/files/upload/upload',
                 '/files/ajax',
                 '/files/edit/file_edit',
                 '/files/edit/image_edit',

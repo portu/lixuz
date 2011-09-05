@@ -165,6 +165,7 @@ sub getPathsHash
           '/files/imgedit/saveCrop' => 'Save cropped files',
           '/files/edit' => 'Edit files',
           '/files/upload' => 'Upload new files',
+          '/files/upload/upload' => 'Upload new files',
           '/files/ajax' => 'Alter file data and move files',
           '/files/delete' => 'Delete files',
           '/files/edit/file_edit' => 'Edit normal files',

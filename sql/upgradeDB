@@ -165,7 +165,7 @@ print "done\n";
 dualPrint('Dumping database contents...');
 # The table list can be generated with:
 # mysql -uUSER -pPWD DB -e 'SHOW TABLES;'|cat|perl -ni -e 'next if /(dm_map|Tables_in)/;chomp;print "$_ ";';echo
-dumpDB($dumpTargets{stripped},undef, qw(lz_action lz_article lz_article_elements lz_article_file lz_article_folder lz_article_lock lz_article_relations lz_article_tag lz_article_watch lz_backup lz_category lz_category_folder lz_field lz_field_module lz_field_options lz_field_value lz_file lz_file_tag lz_folder lz_key_value lz_live_captcha lz_live_comment lz_newsletter_group lz_newsletter_saved lz_newsletter_subscription lz_newsletter_subscription_category lz_newsletter_subscription_group lz_perms lz_revision lz_role lz_role_action lz_rss_article lz_status lz_tag lz_template lz_template_dependencies lz_template_includes lz_user lz_widget_config lz_workflow lz_workflow_comments lz_user_config));
+dumpDB($dumpTargets{stripped},undef, qw(lz_action lz_article lz_article_elements lz_article_file lz_article_folder lz_article_lock lz_article_relations lz_article_tag lz_article_watch lz_backup lz_category lz_category_folder lz_field lz_field_module lz_field_options lz_field_value lz_file lz_file_tag lz_file_class lz_folder lz_key_value lz_live_captcha lz_live_comment lz_newsletter_group lz_newsletter_saved lz_newsletter_subscription lz_newsletter_subscription_category lz_newsletter_subscription_group lz_perms lz_revision lz_role lz_role_action lz_rss_article lz_status lz_tag lz_template lz_template_dependencies lz_template_includes lz_user lz_widget_config lz_workflow lz_workflow_comments lz_user_config));
 print "done\n";
 
 fatalRestore
@@ -341,7 +341,10 @@ sub upgradeData
     {
         chdir($pathToData);
         print '.';
-        require LIXUZ;
+        silent
+        {
+            require LIXUZ;
+        };
         logAction('Working dir after LIXUZ init: '.getcwd);
     }
     catch
@@ -381,6 +384,11 @@ sub upgradeData
             print '.';
             addDefaultFileClass($c);
             convertFileFields($c);
+            upgradeFileClassPerms($c);
+        }
+        if ($flags{fileClasses} || $flags{fileClassPerms})
+        {
+            upgradeFileClassPerms($c);
         }
         silent
         {
@@ -701,18 +709,24 @@ sub detectFlags
     {
         silent
         {
-            my $classes = $rawDBH->selectall_arrayref('SELECT COUNT(*) FROM lz_file_class WHERE identifier IS NULL');
+            my $classes = $rawDBH->selectall_arrayref('SELECT COUNT(*) FROM lz_file_class');
 
             if(not $classes or $classes->[0]->[0] <= 0)
             {
                 $flags{fileClasses} = 1;
             }
-        }
+        };
     }
     catch
     {
         $flags{fileClasses} = 1;
     };
+    print '.';
+    # Force an upgrade of file class perms if db rev is < 4
+    if ($currentDBRevision < 4)
+    {
+        $flags{fileClassPerms} = 1;
+    }
 }
 
 sub getCurrentDBRevision
@@ -855,6 +869,19 @@ sub convertFileFields
     };
     print '.';
 }
+sub upgradeFileClassPerms
+{
+    my $c = shift;
+    my $prevAction = $c->model('LIXUZDB::LzAction')->find({ action_path => '/files/upload' });
+    my $newAction = $c->model('LIXUZDB::LzAction')->find({ action_path => '/files/upload/upload' });
+    my $roles = $c->model('LIXUZDB::LzRoleAction')->search({ allowed =>1 , action_id => $prevAction->action_id });
+    while(my $r = $roles->next)
+    {
+        my $new = $c->model('LIXUZDB::LzRoleAction')->find_or_create({ action_id => $newAction->action_id, role_id => $r->role_id });
+        $new->set_column('allowed',1);
+        $new->update();
+    }
+}
 
 # Run a system() and log it as well
 sub logSystem
@@ -918,6 +945,7 @@ sub getModel
     };
     return $result;
 }
+
 
 # Exit
 sub dExit
