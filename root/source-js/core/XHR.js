@@ -129,6 +129,20 @@ var XHR = {
             genericError = genericError+errorCode;
         }
 
+        try
+        {
+            if(data.url)
+            {
+                var url = data.url;
+                url = url.replace(/^(https?...)?([^\/]+)/,'').replace(/^.?admin/,'');
+                if(errorCode)
+                {
+                    errorCode = errorCode + ' ';
+                }
+                errorCode = errorCode + '(request to '+url+')';
+            }
+        } catch(e) { }
+
         var ret = { message: genericError, tech: errorCode };
 
         return ret;
@@ -184,7 +198,8 @@ var XHR = {
                     var error = {
                         'status'         : 'ERR',
                         'internalStatus' : status,
-                        'internalThrown' : thrownError
+                        'internalThrown' : thrownError,
+                        'url'            : params.url
                     };
                     XHR._private.dataRetrieved(error,params);
                 },
@@ -213,7 +228,8 @@ var XHR = {
                         data = {
                             status: 'ERR',
                             internalStatus: 'parsererror',
-                            internalThrown: e.message
+                            internalThrown: e.message,
+                            url:            params.url
                         };
                     }
                 }
