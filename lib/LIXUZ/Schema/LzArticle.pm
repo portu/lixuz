@@ -689,6 +689,7 @@ sub is_live
 sub getField
 {
     my ($self,$c,$field_id) = @_;
+    croak('$c missing in getField call') if not ref $c;
     my $value = $self->getFieldRaw($c,$field_id);
     
     return '' if not defined $value;
