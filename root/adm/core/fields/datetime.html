@@ -18,7 +18,24 @@
 <div class="<% $component %> label field">
 %if(not $field->{obligatory}) {
 % if(not $field->{value}) { $field->{disabled} = 1 }
-<input type="checkbox" class="<% $component %> checkbox field" name="<%$field->{fieldname}%>_disabled" <%$field->{disabled} ? '' : 'checked="checked"' %> id="<%$field->{fieldname}%>_enabled" onclick="if($('#<%$field->{fieldname}%>_enabled')[0].checked) { $('#<%$field->{fieldname}%>')[0].disabled = false ; } else { $('<%$field->{fieldname}%>')[0].disabled = 'disabled'; }; return true;" />
+<input type="checkbox" class="<% $component %> checkbox field" name="<%$field->{fieldname}%>_disabled" <%$field->{disabled} ? '' : 'checked="checked"' %> id="<%$field->{fieldname}%>_enabled" />
+<script type="text/javascript">
+    $LAB.onLoaded(function ()
+    {
+        $('#<%$field->{fieldname}%>_enabled').click(function ()
+            {
+                var field = $('#<%$field->{fieldname}%>')[0];
+                if($(this)[0].checked)
+                {
+                    field.disabled = false;
+                }
+                else
+                {
+                    field.disabled = 'disabled';
+                }
+            });
+    });
+</script>
 %}
 <span id="<%$field->{fieldname}%>_label"><% $field->{label} %></span> 
 </div>
