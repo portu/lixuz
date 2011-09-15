@@ -4,9 +4,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: LIXUZ (Thu Sep 15 12:24:06 2011)\n"
+"Project-Id-Version: LIXUZ (Thu Sep 15 12:30:19 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2011-09-15 12:24+0200\n"
+"POT-Creation-Date: 2011-09-15 12:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
