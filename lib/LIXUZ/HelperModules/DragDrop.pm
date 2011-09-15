@@ -480,7 +480,7 @@ sub _handleCreate
             $c->model('LIXUZDB::LzFieldModule')->create({
                     field_id => $field->field_id,
                     module => 'folders',
-                    folder_id => $obj->folder_id,
+                    object_id => $obj->folder_id,
                     enabled => 1,
                     position => $pos,
                 });
