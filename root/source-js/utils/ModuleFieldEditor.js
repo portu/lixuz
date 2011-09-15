@@ -30,6 +30,11 @@ var FieldEdit_Type = null,
 
 function LZ_DisplayFieldEditForm (type,uid)
 {
+    if(type == 'articles' && ( /\D/.test($('#lixuzArticleEdit_uid').val()) || /\D/.test($('#lz_revision_value').text()) ) )
+    {
+        userMessage(i18n.get('You must save the article before you can edit the fields for its folder. Please save this article then try again.'));
+        return;
+    }
     showPI(i18n.get('Loading field list...'));
     FieldEdit_Type = type;
     FieldEdit_UID = uid;
