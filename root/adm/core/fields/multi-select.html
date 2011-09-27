@@ -20,7 +20,6 @@
 my $opts = [];
 if(ref($field->{value}))
 {
-    $c->log->debug('value');
     if ($field->{value}->{rawtree})
     {
         $opts = $field->{value}->{rawtree};
@@ -33,10 +32,11 @@ if(ref($field->{value}))
 }
 elsif (defined $field->{options})
 {
+    my @values = split(/,/,$field->{value});
     while(my $opt = $field->{options}->next)
     {
         my $selected;
-        if ($moduleFieldId.'-'.$opt->option_id eq $field->{value} || $opt->option_id eq $field->{value})
+        if(grep { $_ eq $moduleFieldId.'-'.$opt->option_id || $_ eq $opt->option_id } @values)
         {
             $selected = 1;
         }
@@ -51,9 +51,8 @@ else
 {
     $c->log->warn('userpulldown.html: nothing to do :o');
 }
-use Data::Dumper qw(Dumper);
 </%perl>
-<select class="articles select multiselect field enableChosen" title="<% $i18n->get('select') |n %>" multiple="multiple" style="min-width:470px;" data-placeholder="<% $i18n->get('Select') |n %>">
+<select class="articles select multiselect field enableChosen" title="<% $i18n->get('select') |n %>" multiple="multiple" style="min-width:470px;" data-placeholder="<% $i18n->get('Select') |n %>" id="<% $field->{fieldname}%>">
 %if(ref($opts)) {
 % foreach my $opt (@{$opts}) {
 <option value="<%$opt->{value}%>" <%$opt->{selected} ? 'selected="selected"' : ''%>><%$opt->{name}%></option>
