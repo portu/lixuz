@@ -46,7 +46,9 @@ sub default : Path('/admin/files/edit') Local Args
     {
         return $c->user->access_denied();
     }
-    my $fields = LIXUZ::HelperModules::Fields->new($c,'files',$file->class_id);
+    my $fields = LIXUZ::HelperModules::Fields->new($c,'files',$file->file_id, {
+            object_id => $file->class_id,
+        });
     $fields->editorInit();
     if ($c->req->param('asyncUpload'))
     {
@@ -237,7 +239,9 @@ sub savedata : Private
     }
     $file->update();
     # Save additional fields
-    my $fields = LIXUZ::HelperModules::Fields->new($c,'files',$file->file_id);
+    my $fields = LIXUZ::HelperModules::Fields->new($c,'files',$file->file_id, {
+            object_id => $file->class_id,
+        });
     $fields->saveData();
 
     # Sync tags with submitted data

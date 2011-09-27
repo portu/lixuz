@@ -138,7 +138,7 @@ sub BUILDARGS
         $options->{object_id} = $options->{folder_id};
         $module = 'folders';
     }
-    elsif($module eq 'files' && defined $uid && length($uid))
+    elsif($module eq 'files' && defined $uid && length($uid) && !defined($options->{object_id}))
     {
         $options->{object_id} = $uid;
     }
