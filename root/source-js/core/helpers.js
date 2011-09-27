@@ -478,8 +478,9 @@ function getFieldItems (fieldArray)
  */
 function getFieldData (fname)
 {
-    var field = $('#'+fname)[0],
-        fvalue;
+    var $field, fvalue,field;
+    $field = $('#'+fname);
+    field = $field[0];
     try
     {
         if (! field)
@@ -539,13 +540,34 @@ function getFieldData (fname)
                 {
                     try
                     {
-                        fvalue = field.value;
+                        fvalue = $field.val();
+                        if($.isArray(fvalue))
+                        {
+                            fvalue = fvalue.join(',');
+                        }
+                        else if (
+                            (!/^(number|string)/.test( typeof(fvalue))) &&
+                            fvalue != null
+                        )
+                        {
+                            lzlog('Unknown value type for field '+fname+' of type '+field.type+': '+typeof(fvalue));
+                            console.log(fvalue);
+                            throw('failure');
+                        }
                     }
-                    catch(e)
+                    catch (e)
                     {
-                        var type = 'unknown';
-                        try{type = field.type;} catch(e) {}
-                        userMessage('Error while fetching data from field "'+fname+'" (this is a bug): '+e.message+"\n\nDumping some info:\n tagName="+field.tagName+"\n.type:"+type);
+                        try
+                        {
+                            fvalue = field.value;
+                            lzlog('Catch all field handler triggered for field type '+field.type+' for field '+fname);
+                        }
+                        catch(e)
+                        {
+                            var type = 'unknown';
+                            try{type = field.type;} catch(e) {}
+                            userMessage('Error while fetching data from field "'+fname+'" (this is a bug): '+e.message+"\n\nDumping some info:\n tagName="+field.tagName+"\n.type:"+type);
+                        }
                     }
                 }
             }
