@@ -105,7 +105,9 @@ var articleSubmit = jClass.extend([articleDataManager,lzWrapperHelpers,lzProgres
         var workflow = this.getWorkflowData(false),
             article = this.getArticleData(false);
         if(article == null || workflow == null)
-            return this.abort();
+        {
+            return this.abort('article or workflow is null');
+        }
         if(this.forwardToPage)
         {
             article.articleSaveAndClose = 1;
@@ -202,6 +204,7 @@ var articleSubmit = jClass.extend([articleDataManager,lzWrapperHelpers,lzProgres
             XHR.Form.POST('/admin/articles/ajax', { 'wants':'folderMove', 'article_id':$L('lixuzArticleEdit_uid').value, 'newFolder':folder }, this.objMethodRef('folderCheck_response'));
             return;
         }
+        return true;
     },
 
     folderCheck_response: function(data)
@@ -300,8 +303,12 @@ var articleSubmit = jClass.extend([articleDataManager,lzWrapperHelpers,lzProgres
             return this.submitAndClose();
     },
 
-    abort: function()
+    abort: function(reason)
     {
+        if(reason)
+        {
+            lzlog('article submission aborted: '+reason);
+        }
         this.destroyPI();
         return false;
     }
