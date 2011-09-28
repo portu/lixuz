@@ -663,6 +663,7 @@ sub _get_fields_recursive
     my @finalFields;
     my @fields;
     my $cacheKey = 'fields_recursive_folder_'.$self->options->{folder_id}.'_lvl'.$level;
+    my %blacklist;
     if ($self->options->{$cacheKey})
     {
         return @{$self->options->{$cacheKey}};
@@ -679,7 +680,11 @@ sub _get_fields_recursive
         my $fields = $c->model('LIXUZDB::LzFieldModule')->search({module => 'folders', object_id => $folder->folder_id});
         while((defined $fields) and (my $f = $fields->next))
         {
-            next if not $f->enabled;
+            if(not $f->enabled)
+            {
+                $blacklist{ $f->field_id } = 1;
+            }
+            next if $blacklist{ $f->field_id };
             if(not $hasFields{$f->field_id})
             {
                 my $pos = defined $f->position ? $f->position : 100;
