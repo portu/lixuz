@@ -82,6 +82,7 @@ __PACKAGE__->has_many(categoryfolders => 'LIXUZ::Schema::LzCategoryFolder', 'fol
 __PACKAGE__->has_many(children => 'LIXUZ::Schema::LzFolder', { 'foreign.parent' => 'self.folder_id' });
 __PACKAGE__->belongs_to(parent => 'LIXUZ::Schema::LzFolder');
 
+use LIXUZ::HelperModules::Fields;
 use Moose;
 with 'LIXUZ::Role::AccessControl::Model';
 
@@ -187,6 +188,17 @@ sub recursive_delete
     $self->delete();
 
     return 1;
+}
+
+sub fields
+{
+    my $self = shift;
+    my $c = shift or die('$c missing');
+    my $fields = LIXUZ::HelperModules::Fields->new($c,'articles',$self->folder_id,
+        {
+            folder_id => $self->folder_id
+        });
+    return $fields->get_fields;
 }
 
 1;
