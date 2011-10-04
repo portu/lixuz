@@ -35,7 +35,7 @@ elsif ($field->{options})
     while((defined $field->{options}) && (my $opt = $field->{options}->next))
     {
         my $selected;
-        if ($moduleFieldId.'-'.$opt->option_id eq $field->{value})
+        if ($moduleFieldId.'-'.$opt->option_id eq $field->{value} || $opt->option_id eq $field->{value})
         {
             $selected = 1;
         }
