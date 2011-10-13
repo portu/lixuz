@@ -18,7 +18,11 @@ package LIXUZ::Controller::Admin::Files::ImgEdit;
 
 use strict;
 use warnings;
-use base 'Catalyst::Controller';
+use 5.010;
+
+use Moose;
+BEGIN { extends 'Catalyst::Controller' };
+
 use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl add_jsOnLoad add_bodyClass add_CDNload);
 use Graphics::Magick;
 use LIXUZ::HelperModules::Files qw(lixuz_serve_scalar_file);
@@ -60,7 +64,12 @@ sub saveCrop : Local
     my $gm = $self->_getResized($c,$file);
     my $blob = $gm->ImageToBlob();
 
-    my $newFile = $c->forward(qw(LIXUZ::Controller::Admin::Files::Upload rawHandleData), [ $file->file_name, $blob, { file_folder => $file->folder_id } ]);
+    my $fUploader = LIXUZ::HelperModules::FileUploader->new(c => $c);
+    my ($newFile,$error) = $fUploader->upload($file->file_name,$blob,{ file_folder => $file->folder_id, class_id => $file->class_id } );
+    if ($error)
+    {
+        die($error->{system});
+    }
     # Default is to be a clone of our parent, however that can be
     # changed to our parents' clone value later if parent has one.
     $newFile->set_column('clone',$file->file_id);

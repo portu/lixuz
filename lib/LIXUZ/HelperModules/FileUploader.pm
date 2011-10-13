@@ -5,6 +5,7 @@ use constant {
     ERR_DIRNOTFOUND  => 1,
     ERR_WRITEFAILURE => 3,
     };
+use 5.010;
 use Exporter qw(import);
 our @EXPORT_OK = qw(ERR_DIRNOTFOUND ERR_WRITEFAILURE);
 
@@ -38,6 +39,8 @@ sub upload
         $owner = $self->c->model('LIXUZDB::LzUser')->first;
     }
 
+    my $fileClass = $settings->{class_id} // $self->c->stash->{fileClassID};
+
     # Create the file
     $fileObj = $fileObj->create
     (
@@ -45,7 +48,7 @@ sub upload
             upload_time => \'now()',
             file_name => $fileName,
             owner => $owner->user_id,
-            class_id => $self->c->stash->{fileClassID},
+            class_id => $fileClass,
         }
     );
     if (defined $settings->{'file_folder'})
