@@ -45,8 +45,8 @@ function updateCropPreview ()
     {
         var src = "/admin/files/imgedit/resizer/"+$('#file_id').val()+"?"+getCropArgs();
         $('#image_preview').html('<img src="'+src+'" />');
-        $('#saveCrop').attr('disabled',false);
-        $('#hideOrig').attr('disabled',false);
+        $('#saveCrop').attr('disabled',false).button('enable');
+        $('#hideOrig').attr('disabled',false).button('enable');
     }
     catch(e) { lzException(e); }
 }
