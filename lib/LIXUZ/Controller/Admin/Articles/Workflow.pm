@@ -33,11 +33,12 @@ use constant { true => 1, false => 0};
 sub acceptAssignment : Local Arg
 {
     my ($self, $c, $artid) = @_;
-    my $workflow = $c->model('LIXUZDB::LzWorkflow')->find({article_id => $artid});
-    if(not $workflow)
+    my $article = get_latest_article($c,$artid);
+    if(not $article)
     {
         return json_error($c,'INVALIDARTID');
     }
+    my $workflow = $article->workflow;
     $self->prepare($c,undef,$workflow);
     if (not $c->stash->{w_can_accept} and not $c->user->can_access('SUPER_USER'))
     {
