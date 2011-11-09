@@ -165,6 +165,16 @@ sub title
         $dbh->do('INSERT INTO lz_action (action_path) VALUES ("WORKFLOW_REASSIGN_TO_ROLE_'.$role.'")');
     }
 }
+# Missing lz_action entries
+{
+	title('missing lz_action entries');
+	my $i18n = LIXUZ::HelperModules::I18N->new('lixuz','en_US',$fakeC->path_to('i18n','locale')->stringify);
+	my %actionPaths = LIXUZ::Schema::LzAction->getPathsHash($i18n);
+	foreach my $k (keys %actionPaths)
+	{
+		$fakeC->model('LIXUZDB::LzAction')->find_or_create({ action_path => $k });
+	}
+}
 # Article issues
 {
     title('article issues');
