@@ -80,7 +80,7 @@ has urlGenerator => (
 );
 
 has 'extraLiveStatus' => (
-    isa => 'Str',
+    isa => 'Maybe[Str]',
     default => undef,
     is => 'rw',
 );
