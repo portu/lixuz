@@ -19,10 +19,16 @@ use lib $FindBin::RealBin.'/../lib/';
 
 my $verbosity = 0;
 my $runAll = 0;
+my $skipIndex = 0;
 foreach (@ARGV)
 {
 	given($_)
 	{
+		when('--noindex')
+		{
+			$skipIndex = 1;
+		}
+
 		when('--verbose')
 		{
 			$verbosity++;
@@ -199,62 +205,65 @@ sub title
 # Make sure the search index is up to date
 # ---
 {
-    title('indexing (init)');
+	if (!$skipIndex)
+	{
+		title('indexing (init)');
 
-    my $internalIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'internal', c => $fakeC);
-    my $liveIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'external', c => $fakeC);
+		my $internalIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'internal', c => $fakeC);
+		my $liveIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'external', c => $fakeC);
 
-    title('indexing (articles)');
-    my $allArts = $fakeC->model('LIXUZDB::LzArticle')->page(1);
-    my $pager = $allArts->pager;
-    foreach my $page ($pager->first_page..$pager->last_page)
-    {
-        my $arts = $allArts->page($page);
-        while(my $art = $arts->next)
-        {
-            if ($art->status_id == 2)
-            {
-                $liveIndexer->add_ifmissing($art);
-            }
-            $internalIndexer->add_ifmissing($art);
-        }
-        # Commit changes now to avoid using too much memory This might be
-        # somewhat slower than bulk committing everything at the end, but it
-        # ensures somewhat consistent memory usage, no matter the size of the
-        # DB
-        $liveIndexer->commit_ifneeded;
-        $internalIndexer->commit_ifneeded;
-    }
+		title('indexing (articles)');
+		my $allArts = $fakeC->model('LIXUZDB::LzArticle')->page(1);
+		my $pager = $allArts->pager;
+		foreach my $page ($pager->first_page..$pager->last_page)
+		{
+			my $arts = $allArts->page($page);
+			while(my $art = $arts->next)
+			{
+				if ($art->status_id == 2)
+				{
+					$liveIndexer->add_ifmissing($art);
+				}
+				$internalIndexer->add_ifmissing($art);
+			}
+			# Commit changes now to avoid using too much memory This might be
+			# somewhat slower than bulk committing everything at the end, but it
+			# ensures somewhat consistent memory usage, no matter the size of the
+			# DB
+			$liveIndexer->commit_ifneeded;
+			$internalIndexer->commit_ifneeded;
+		}
 
-    title('indexing (files)');
-    my $allFiles = $fakeC->model('LIXUZDB::LzFile')->page(1);
-    $pager = $allFiles->pager;
-    my $added = 0;
-    foreach my $page ($pager->first_page..$pager->last_page)
-    {
-        my $files = $allFiles->page($page);
-        while(my $file = $files->next)
-        {
-            if ($internalIndexer->add_ifmissing($file))
-            {
-                $added++;
-            }
-        }
-        if ($added > 20)
-        {
-            # Commit changes now to avoid using too much memory This might be
-            # somewhat slower than bulk committing everything at the end, but it
-            # ensures somewhat consistent memory usage, no matter the size of the
-            # DB
-            $internalIndexer->commit_ifneeded;
-            $added = 0;
-        }
-    }
+		title('indexing (files)');
+		my $allFiles = $fakeC->model('LIXUZDB::LzFile')->page(1);
+		$pager = $allFiles->pager;
+		my $added = 0;
+		foreach my $page ($pager->first_page..$pager->last_page)
+		{
+			my $files = $allFiles->page($page);
+			while(my $file = $files->next)
+			{
+				if ($internalIndexer->add_ifmissing($file))
+				{
+					$added++;
+				}
+			}
+			if ($added > 20)
+			{
+				# Commit changes now to avoid using too much memory This might be
+				# somewhat slower than bulk committing everything at the end, but it
+				# ensures somewhat consistent memory usage, no matter the size of the
+				# DB
+				$internalIndexer->commit_ifneeded;
+				$added = 0;
+			}
+		}
 
-    title('indexing (committing)');
-    # Commit, and tell the indexer to optimize the index while we're at it
-    $liveIndexer->commit(1);
-    $internalIndexer->commit(1);
+		title('indexing (committing)');
+		# Commit, and tell the indexer to optimize the index while we're at it
+		$liveIndexer->commit(1);
+		$internalIndexer->commit(1);
+	}
 }
 
 # ===
