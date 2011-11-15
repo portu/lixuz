@@ -135,7 +135,19 @@ sub render
 sub autorender
 {
     my $self = shift;
-    $self->resolve();
+    try
+    {
+        $self->resolve();
+    }
+    catch
+    {
+        if ($_ eq "catalyst_detach\n")
+        {
+            $self->c->detach;
+        }
+        $self->c->log->error('Error in template resolver: '.$_);
+        $self->error(500,'An error occurred while attempting to serve this page, please try again later','Error in template resolver');
+    };
     $self->render();
 }
 
@@ -242,7 +254,7 @@ sub message
     {
         $template = $self->c->model('LIXUZDB::LzTemplate')->search({ type => 'message' });
     }
-    if(not $template->count)
+    if(!$template->count || $self->c->stash->{_triedPrimaryMessage})
     {
         my $c = $self->c;
         $c->stash->{lz_message} = $message;
@@ -257,6 +269,7 @@ sub message
     }
     else
     {
+        $self->c->stash->{_triedPrimaryMessage} = 1;
         $template = $template->next();
         $self->refreshTemplate($template);
         if ($fallback)
