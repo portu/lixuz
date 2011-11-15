@@ -348,6 +348,62 @@ if ($wday == 1 || $runAll)
 			}
         }
     }
+	{
+		title('Tree recursion checks');
+		foreach my $type (qw(LzFolder LzCategory))
+		{
+			my $objects = $fakeC->model('LIXUZDB::'.$type);
+			while(my $f = $objects->next)
+			{
+				next if not $f->parent;
+				my $p = $f;
+				while($p = $p->parent)
+				{
+					next if not $p->parent;
+					if ($p->id == $f->id)
+					{
+						# Invalid (recursive) relationship. Move the object to the root of the tree
+						# to resolve it
+						$f->set_column('parent',undef);
+						$f->update();
+						last;
+					}
+				}
+			}
+		}
+        title('Tree root checks');
+		foreach my $type (qw(LzFolder LzCategory))
+		{
+			my $objects = $fakeC->model('LIXUZDB::'.$type);
+			while(my $f = $objects->next)
+			{
+                my $foundRoot = 0;
+                my $loopC;
+				next if not $f->parent;
+				my $p = $f;
+				while($p = $p->parent)
+				{
+                    if(not $p->parent)
+                    {
+                        $foundRoot = 1;
+                        last;
+                    }
+                    $loopC++;
+                    if ($loopC > 99)
+                    {
+                        # Depth too great, move it
+                        last;
+                    }
+				}
+                if(not $foundRoot)
+                {
+                    # Move this object to the root of the tree
+                    $f->set_column('parent',undef);
+                    $f->update();
+                }
+			}
+		}
+	}
 }
 
 # ===
