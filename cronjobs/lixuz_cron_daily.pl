@@ -135,8 +135,9 @@ sub title
             $fno++;
 
             my $id = $dbh->selectall_arrayref('SELECT field_id FROM lz_field WHERE inline="'.$field.'"');
-            next if not $id || not $id->[0];
+            next if (not $id or not $id->[0]);
             $id = $id->[0]->[0];
+            next if (not defined $id or not length $id);
             $dbh->do('INSERT INTO lz_field_module (field_id,module,object_id,position,enabled) VALUES ('.$id.',"folders",'.$folder.','.$fno.',1)');
         }
     }
