@@ -3,6 +3,7 @@
     minus the time)
 - Added support for file classes
 - Added a fallback message template
+- Improved HTML filtering to handle tables correctly
 
 0.1.12
 - Fixed a crash that would occur when deleting articles from the trash

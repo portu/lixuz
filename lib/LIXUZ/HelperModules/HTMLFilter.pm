@@ -34,18 +34,35 @@ sub filter_string
 	my $string = shift;
     # Scrub
 	my $scrubber = HTML::Scrubber->new(
-		allow => [ 'b', 'i', 'u', 'a', 'p','hr','br', 'h1', 'h2', 'h3', 'h4', 'h5', 'div', 'img', 'object', 'embed', 'span', 'param', 'video', 'audio', 'iframe', 'li', 'ul', 'ol', 'section', 'nav', 'footer' ],
+		allow => [ 'b', 'i', 'u', 'a', 'p','hr','br', 'h1', 'h2', 'h3', 'h4', 'h5', 'div', 'img', 'object', 'embed', 'span', 'param', 'video', 'audio', 'iframe', 'li', 'ul', 'ol', 'section', 'nav', 'footer', 'table','tbody','tr','td','th','strong' ],
 		comment => 0,
 		process => 0,
 		script => 0,
 		style => 0,
 	);
     $scrubber->rules(
+        table => {
+            border => 1,
+            style => 1,
+            class => 1,
+            cellspacing => 1,
+            cellpadding => 1,
+        },
+        td => {
+            width => 1,
+            valign => 1,
+        },
+        th => {
+            width => 1,
+            valign => 1,
+        },
         img => {
             src => 1,
             alt => 1,
             style => 1,
             class => 1,
+            width => 1,
+            height => 1,
         },
         div => {
             name => 1,
