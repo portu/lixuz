@@ -60,7 +60,7 @@ sub _iHandleRequest
         my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ is_default => 1, type => 'search' });
         $self->template($template);
     }
-    elsif ($path[-1] =~ /^\d+$/ || $path[-1] =~ /-\d+$/)
+    elsif ($path[-1] =~ /^\d+(\?.+)?$/ || $path[-1] =~ /-\d+(\?.+)?$/)
     {
         my ($article,$template) = $self->getArticleFromURL(\@path);
         if(not $article)
@@ -182,6 +182,7 @@ sub cleanUrl
 {
     my ($self,$url) = @_;
 
+    $url =~ s{\?.+$}{};
     $url =~ s{^http://[^/]+}{};
     $url =~ s{/+}{/}g;
     $url =~ s{/+$}{};
