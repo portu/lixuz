@@ -180,6 +180,7 @@ sub buildform: Private
         name => 'type',
         value => $type,
     );
+    $c->stash->{editType} = $type;
     # Query for roles
     my $roles = $c->model('LIXUZDB::LzRole')->search({role_status => 'Active'});
     my @roleList;
@@ -208,9 +209,13 @@ sub buildform: Private
     # Set default role for a user if it exists
     else
     {
-        if ($populate->{role})
+        if ($populate->{role} && ref($populate->{role}))
         {
             $populate->{role} = $populate->{role}->role_name;
+        }
+        else
+        {
+            $populate->{role} = $populate->{role};
         }
         if ($populate->{user_status})
         {
@@ -253,7 +258,7 @@ sub savedata: Private
     }
     elsif($type eq 'add')
     {
-        $user = $c->model('LIXUZDB::LzUser')->create(
+        $user = $c->model('LIXUZDB::LzUser')->new_result(
             {
                 created => \'now()',
             }
@@ -276,16 +281,17 @@ sub savedata: Private
         {
             if(not $c->user->check_password($c->req->param('oldPassword')))
             {
-                $self->redirWithError($c,
+                $self->redirWithError($c,$uid,
                     $c->stash->{i18n}->get('Your current password was incorrect'),
                 );
             }
         }
         if(length($fields->{password}) < 5)
         {
-            $self->redirWithError($c,
+            $self->redirWithError($c,$uid,
                 $c->stash->{i18n}->get('Your new password is too short'),
                 $c->stash->{i18n}->get('The new password is too short'),
+                $c->stash->{i18n}->get('The password is too short'),
             );
         }
         $user->set_password($fields->{password});
@@ -321,7 +327,14 @@ sub savedata: Private
         }
     }
     # Update the DB
-    $user->update();
+    if($type eq 'add')
+    {
+        $user->insert;
+    }
+    else
+    {
+        $user->update();
+    }
     # Save additional fields
     my $fieldObj = LIXUZ::HelperModules::Fields->new($c,'users',$user->user_id);
     $fieldObj->saveData();
@@ -337,10 +350,11 @@ sub savedata: Private
 
 # Purpose: Handle creating a new user
 sub add: Local Form('/users/edit') {
-    my ( $self, $c ) = @_;
+    my ( $self, $c, $invalid ) = @_;
     my $i18n = $c->stash->{i18n};
     my $form = $self->formbuilder;
-    if ($form->submitted && $form->validate)
+    $c->stash->{madd}++;
+    if ($form->submitted && $form->validate && !$invalid)
     {
         my $user_uid = $c->model('LIXUZDB::LzUser')->find({user_id => $form->fields->{uid}});
         my $user_name= $c->model('LIXUZDB::LzUser')->find({user_name => $form->fields->{user_name}});
@@ -353,8 +367,8 @@ sub add: Local Form('/users/edit') {
         }
         $self->savedata($c,$form);
     }
-    $self->buildform($c,'add');
-    $c->{stash}->{template} = 'adm//users/edit/index.html';
+    $self->buildform($c,'add',scalar $form->field);
+    $c->{stash}->{template} = 'adm/users/edit/index.html';
 }
 
 # Purpose: Handle editing an existing user
@@ -440,16 +454,21 @@ sub delete: Args Local
 
 sub redirWithError : Private
 {
-    my($self,$c,$errorAcc, $errorEdit) = @_;
+    my($self,$c,$uid,$errorAcc, $errorEdit, $errorAdd) = @_;
     if ($c->stash->{myAccountMode})
     {
         $c->stash->{message} = $errorAcc;
         $c->detach(qw(LIXUZ::Controller::Admin::Users myaccount));
     }
+    elsif(not defined $uid)
+    {
+        $c->stash->{message} = $errorAdd // $errorEdit;
+        $c->detach(qw(LIXUZ::Controller::Admin::Users add), [ 1 ]);
+    }
     else
     {
         $c->stash->{message} = $errorEdit;
-        $c->detach(qw(LIXUZ::Controller::Admin::Users edit));
+        $c->detach(qw(LIXUZ::Controller::Admin::Users edit), [ $uid ]);
     }
 }
 
