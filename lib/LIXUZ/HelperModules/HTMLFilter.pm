@@ -51,10 +51,12 @@ sub filter_string
         td => {
             width => 1,
             valign => 1,
+            colspan => 1,
         },
         th => {
             width => 1,
             valign => 1,
+            colspan => 1,
         },
         img => {
             src => 1,
