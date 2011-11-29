@@ -17,6 +17,8 @@ use constant {
 };
 use lib $FindBin::RealBin.'/../lib/';
 
+my $return = 0;
+my $currTitle;
 my $verbosity = 0;
 my $runAll = 0;
 my $skipIndex = 0;
@@ -69,20 +71,37 @@ my (undef,undef,undef,$mday,undef,undef,$wday,undef,undef) = localtime;
 
 sub title
 {
-    $0 = $title .' - '.$_[0];
+    $currTitle = shift;
+    $0 = $title .' - '.$currTitle;
     if ($verbosity)
     {
         print $0."\n";
     }
 }
+sub tryRun (&)
+{
+    my $sub = shift;
+    try
+    {
+        $sub->();
+    }
+    catch
+    {
+        warn($_);
+        warn("The above error occurred during the step \"$currTitle\"\nWill attempt to continue anyway.\n");
+        $return = 1;
+    };
+}
 
 # Clean up captchas
+tryRun
 {
     title('captcha cleaning');
     $dbh->do('DELETE FROM lz_live_captcha WHERE UNIX_TIMESTAMP() > (UNIX_TIMESTAMP(created_date)+7400);');
-}
+};
 
 # Clean up old cached files
+tryRun
 {
     title('imgcache cleaning');
     my $path = $fakeC->config->{LIXUZ}->{file_path};
@@ -98,25 +117,28 @@ sub title
             }
         }
     }
-}
+};
 
 # ---
 # Clean up errors in the DB
 # ---
 
 # Self-referencing relationships
+tryRun
 {
     title('self-ref relationship cleaning');
     $dbh->do('DELETE FROM lz_article_relations WHERE article_id=related_article_id;');
-}
+};
 
 # Missing statuses
+tryRun
 {
     title('missing statuses');
     $dbh->do('UPDATE lz_article SET status_id=4 WHERE status_id IS NULL;');
-}
+};
 
 # Folders without a single field
+tryRun
 {
     title('missing fields');
     my $rootFolders = $dbh->selectall_arrayref('SELECT folder_id FROM lz_folder WHERE parent IS NULL');
@@ -141,8 +163,9 @@ sub title
             $dbh->do('INSERT INTO lz_field_module (field_id,module,object_id,position,enabled) VALUES ('.$id.',"folders",'.$folder.','.$fno.',1)');
         }
     }
-}
+};
 # Missing STATUSCHANGE_*
+tryRun
 {
     title('missing statuschange entries');
     my $statuses = $dbh->selectall_arrayref('SELECT status_id FROM lz_status');
@@ -156,8 +179,9 @@ sub title
         }
         $dbh->do('INSERT INTO lz_action (action_path) VALUES ("STATUSCHANGE_'.$status.'")');
     }
-}
+};
 # Missing WORKFLOW_REASSIGN_TO_ROLE_*
+tryRun
 {
     title('missing workflow-reassign ACL entries');
     my $roles = $dbh->selectall_arrayref('SELECT role_id FROM lz_role');
@@ -171,8 +195,9 @@ sub title
         }
         $dbh->do('INSERT INTO lz_action (action_path) VALUES ("WORKFLOW_REASSIGN_TO_ROLE_'.$role.'")');
     }
-}
+};
 # Missing lz_action entries
+tryRun
 {
 	title('missing lz_action entries');
 	my $i18n = LIXUZ::HelperModules::I18N->new('lixuz','en_US',$fakeC->path_to('i18n','locale')->stringify);
@@ -181,8 +206,9 @@ sub title
 	{
 		$fakeC->model('LIXUZDB::LzAction')->find_or_create({ action_path => $k });
 	}
-}
+};
 # Article issues
+tryRun
 {
     title('article issues');
     my %seen;
@@ -200,11 +226,12 @@ sub title
             $seen{$id} = 1;
         }
     }
-}
+};
 
 # ---
 # Make sure the search index is up to date
 # ---
+tryRun
 {
 	if (!$skipIndex)
 	{
@@ -213,59 +240,65 @@ sub title
 		my $internalIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'internal', c => $fakeC);
 		my $liveIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'external', c => $fakeC);
 
-		title('indexing (articles)');
-		my $allArts = $fakeC->model('LIXUZDB::LzArticle')->page(1);
-		my $pager = $allArts->pager;
-		foreach my $page ($pager->first_page..$pager->last_page)
-		{
-			my $arts = $allArts->page($page);
-			while(my $art = $arts->next)
-			{
-				if ($art->status_id == 2)
-				{
-					$liveIndexer->add_ifmissing($art);
-				}
-				$internalIndexer->add_ifmissing($art);
-			}
-			# Commit changes now to avoid using too much memory This might be
-			# somewhat slower than bulk committing everything at the end, but it
-			# ensures somewhat consistent memory usage, no matter the size of the
-			# DB
-			$liveIndexer->commit_ifneeded;
-			$internalIndexer->commit_ifneeded;
-		}
+        tryRun
+        {
+            title('indexing (articles)');
+            my $allArts = $fakeC->model('LIXUZDB::LzArticle')->page(1);
+            my $pager = $allArts->pager;
+            foreach my $page ($pager->first_page..$pager->last_page)
+            {
+                my $arts = $allArts->page($page);
+                while(my $art = $arts->next)
+                {
+                    if ($art->status_id == 2)
+                    {
+                        $liveIndexer->add_ifmissing($art);
+                    }
+                    $internalIndexer->add_ifmissing($art);
+                }
+                # Commit changes now to avoid using too much memory This might be
+                # somewhat slower than bulk committing everything at the end, but it
+                # ensures somewhat consistent memory usage, no matter the size of the
+                # DB
+                $liveIndexer->commit_ifneeded;
+                $internalIndexer->commit_ifneeded;
+            }
+        };
 
-		title('indexing (files)');
-		my $allFiles = $fakeC->model('LIXUZDB::LzFile')->page(1);
-		$pager = $allFiles->pager;
-		my $added = 0;
-		foreach my $page ($pager->first_page..$pager->last_page)
-		{
-			my $files = $allFiles->page($page);
-			while(my $file = $files->next)
-			{
-				if ($internalIndexer->add_ifmissing($file))
-				{
-					$added++;
-				}
-			}
-			if ($added > 20)
-			{
-				# Commit changes now to avoid using too much memory This might be
-				# somewhat slower than bulk committing everything at the end, but it
-				# ensures somewhat consistent memory usage, no matter the size of the
-				# DB
-				$internalIndexer->commit_ifneeded;
-				$added = 0;
-			}
-		}
+        tryRun
+        {
+            title('indexing (files)');
+            my $allFiles = $fakeC->model('LIXUZDB::LzFile')->page(1);
+            my $pager = $allFiles->pager;
+            my $added = 0;
+            foreach my $page ($pager->first_page..$pager->last_page)
+            {
+                my $files = $allFiles->page($page);
+                while(my $file = $files->next)
+                {
+                    if ($internalIndexer->add_ifmissing($file))
+                    {
+                        $added++;
+                    }
+                }
+                if ($added > 20)
+                {
+                    # Commit changes now to avoid using too much memory This might be
+                    # somewhat slower than bulk committing everything at the end, but it
+                    # ensures somewhat consistent memory usage, no matter the size of the
+                    # DB
+                    $internalIndexer->commit_ifneeded;
+                    $added = 0;
+                }
+            }
+        };
 
 		title('indexing (committing)');
 		# Commit, and tell the indexer to optimize the index while we're at it
 		$liveIndexer->commit(1);
 		$internalIndexer->commit(1);
 	}
-}
+};
 
 # ===
 # Weekly chunk
@@ -273,6 +306,7 @@ sub title
 if ($wday == 1 || $runAll)
 {
     $title =~ s/Daily/Weekly/g;
+    tryRun
     {
         title('Article sanitychecks');
         my $arts = $fakeC->model('LIXUZDB::LzArticle');
@@ -348,7 +382,8 @@ if ($wday == 1 || $runAll)
 				}
 			}
         }
-    }
+    };
+    tryRun
 	{
 		title('Tree recursion checks');
 		foreach my $type (qw(LzFolder LzCategory))
@@ -404,7 +439,7 @@ if ($wday == 1 || $runAll)
                 }
 			}
 		}
-	}
+	};
 }
 
 # ===
@@ -414,3 +449,4 @@ if ($mday == 1 || $runAll)
 {
     $title =~ s/(Daily|Weekly)/Monthly/g;
 }
+exit($return);
