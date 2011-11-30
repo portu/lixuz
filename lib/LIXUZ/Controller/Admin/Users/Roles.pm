@@ -297,6 +297,24 @@ sub get_groups : Private
                     'COMMENT_PREVIEWED_ARTICLES',
                 ],
             },
+            $i18n->get('Move articles to the trash') => {
+                paths => [
+                    '/articles/trash',
+                    '/articles/trash/move',
+                ],
+            },
+            $i18n->get('Delete trashed articles') => {
+                paths => [
+                    '/articles/trash',
+                    '/articles/trash/delete',
+                ],
+            },
+            $i18n->get('Restore trashed articles') => {
+                paths => [
+                    '/articles/trash',
+                    '/articles/trash/restore',
+                ],
+            },
         },
         $i18n->get('Manage categories') => {
             paths => [ 
