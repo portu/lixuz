@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-15 12:30+0200\n"
+"POT-Creation-Date: 2011-12-09 11:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -401,11 +402,11 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-#: ./root/source-js/utils/elementEditor.js:67 ./root/source-js/utils/arrangableList.js:263 ./root/source-js/core/createArticle.js:76
-#: ./root/source-js/core/dialogHelpers.js:275 ./root/source-js/core/dialogHelpers.js:309 ./root/source-js/core/folders.js:53
-#: ./root/source-js/core/folders.js:103 ./root/source-js/articles/relationships.js:192 ./root/source-js/core/objPermEditor.js:174
-#: ./root/source-js/core/objPermEditor.js:274 ./root/source-js/rssimport/rssimport.js:117 ./root/source-js/articles/viewArticleRevisions.js:106
-#: ./root/source-js/articles/files.js:577
+#: ./root/source-js/utils/elementEditor.js:67 ./root/source-js/utils/editorHelper.js:322 ./root/source-js/utils/arrangableList.js:263
+#: ./root/source-js/core/createArticle.js:76 ./root/source-js/core/dialogHelpers.js:275 ./root/source-js/core/dialogHelpers.js:309
+#: ./root/source-js/core/folders.js:53 ./root/source-js/core/folders.js:103 ./root/source-js/articles/relationships.js:192
+#: ./root/source-js/core/objPermEditor.js:174 ./root/source-js/core/objPermEditor.js:274 ./root/source-js/rssimport/rssimport.js:117
+#: ./root/source-js/articles/viewArticleRevisions.js:106 ./root/source-js/articles/files.js:577
 msgid "Cancel"
 msgstr ""
 
@@ -601,6 +602,18 @@ msgstr ""
 msgid "(none)"
 msgstr ""
 
+#: ./root/source-js/utils/editorHelper.js:273
+msgid "Insert HTML Code"
+msgstr ""
+
+#: ./root/source-js/utils/editorHelper.js:320
+msgid "Insert Code"
+msgstr ""
+
+#: ./root/source-js/utils/editorHelper.js:322
+msgid "Insert"
+msgstr ""
+
 #: ./root/source-js/articles/trash.js:23
 msgid ""
 "Are you sure that you want to permanently delete the article \"%(NAME)\"? "
@@ -623,43 +636,43 @@ msgstr ""
 msgid "Saving article..."
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:134
+#: ./root/source-js/articles/articleSubmit.js:136
 msgid "<b><i>Changes saved at %(date)<b></i>"
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:168
+#: ./root/source-js/articles/articleSubmit.js:170
 msgid "You don't have permission to set the article to the attempted status"
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:172
+#: ./root/source-js/articles/articleSubmit.js:174
 msgid ""
 "Failed to save the article, it is currently locked for editing by <i>%(USER)"
 "</i>."
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:176
+#: ./root/source-js/articles/articleSubmit.js:178
 msgid ""
 "You are neither the assigner nor the assignee of this article, so you can "
 "not change any of the data."
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:217
+#: ./root/source-js/articles/articleSubmit.js:220
 msgid ""
 "There are files that live in the same directory as this article, do you want "
 "to move them to the new folder as well?"
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:238
+#: ./root/source-js/articles/articleSubmit.js:241
 msgid ""
 "You have an unsaved comment. Do you want to save it now? If you choose not "
 "to save it, the comment will be lost."
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:240
+#: ./root/source-js/articles/articleSubmit.js:243
 msgid "You have an unsaved comment. Do you want to save it too?"
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:292
+#: ./root/source-js/articles/articleSubmit.js:295
 msgid ""
 "You have reassigned this article. This will result in the article being "
 "automatically closed after saving. Do you want to save it now?"
@@ -810,8 +823,8 @@ msgstr ""
 
 #: ./root/source-js/articles/relationships.js:158
 msgid ""
-"The following articles already has relationships with this article: %"
-"(ARTICLES)\n"
+"The following articles already has relationships with this article: "
+"%(ARTICLES)\n"
 "\n"
 "You will have to remove the existing relationship(s) first."
 msgstr ""
