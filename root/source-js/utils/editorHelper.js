@@ -272,7 +272,7 @@ function image_get_new_aspect (oldWidth, oldHeight, newWidth, newHeight)
 
                 //Create the Button
                 var codeConfig = {
-                    type: 'push', label: i18n.get('Insert HTML Code'), value: 'insertcode'
+                    type: 'push', label: i18n.get('Insert text or HTML code'), value: 'insertcode'
                 };
                 this.toolbar.addButtonToGroup(codeConfig, 'insertitem');
 
@@ -331,7 +331,7 @@ function image_get_new_aspect (oldWidth, oldHeight, newWidth, newHeight)
                 modal: true
             });
             //Set the Header
-            panel.setHeader(i18n.get('Insert Code'));
+            panel.setHeader(i18n.get('Insert text or HTML code'));
             //Add some content
             panel.setBody('<textarea cols="45" rows="19" id="newcode-'+id+'"></textarea><br><input type="button" id="newcode-button-'+id+'" value="'+i18n.get("Insert")+'"> <input type="button" id="newcode-cancel-button-'+id+'" value="'+i18n.get('Cancel')+'" />');
             panel.render(document.body);
