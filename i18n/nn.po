@@ -19,14 +19,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2011-11-28 09:41+0100\n"
-"PO-Revision-Date: 2011-11-28 09:41+0100\n"
+"POT-Creation-Date: 2011-12-09 16:08+0100\n"
+"PO-Revision-Date: 2011-12-09 16:13+0100\n"
 "Last-Translator: Eskild Hustvedt <eskild@portu.no>\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
+"Language: nn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: nn\n"
 
 #: lib/LIXUZ/Role/List.pm:308
 msgid "Search"
@@ -70,7 +70,7 @@ msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Files.pm:93
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:34
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:350 root/adm/core/menu.html:67
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:368 root/adm/core/menu.html:67
 #: root/adm/articles/rightside.html:30
 msgid "Files"
 msgstr "Filer"
@@ -255,8 +255,8 @@ msgstr "Kategoriar"
 
 #: lib/LIXUZ/Controller/Admin/Categories.pm:74
 msgid ""
-"Error: A category with the categoryname %(USERNAME) already exists (UID %"
-"(UID))."
+"Error: A category with the categoryname %(USERNAME) already exists (UID "
+"%(UID))."
 msgstr "Feil: Ein kategori med namnet %(USERNAME) finst allerete (ID %(UID))."
 
 #: lib/LIXUZ/Controller/Admin/Categories.pm:116
@@ -324,8 +324,8 @@ msgstr "Definisjonen er sletta"
 
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:76
 msgid ""
-"Error: a definition of the word \"%(WORD)\" already exists with the word id %"
-"(WORDID)"
+"Error: a definition of the word \"%(WORD)\" already exists with the word id "
+"%(WORDID)"
 msgstr ""
 "Feil: ein definisjon av ordet «%(WORD)» finst allereie med ord IDen %(WORDID)"
 
@@ -627,107 +627,119 @@ msgstr "Sjå førehandsvising av eigne artiklar"
 msgid "Preview others articles"
 msgstr "Sjå førehandsvising av andres artiklar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:301
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:300
+msgid "Move articles to the trash"
+msgstr "Flytte artiklar til papirkorga"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:306
+msgid "Delete trashed articles"
+msgstr "Slette artiklar frå papirkorga"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:312
+msgid "Restore trashed articles"
+msgstr "Gjenopprette artiklar frå papirkorga"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:319
 msgid "Manage categories"
 msgstr "Handter kategoriar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:309
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:327
 msgid "Access the dashboard"
 msgstr "Få tilgang til dashbordet"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:312
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:330
 msgid "Access dictionaries"
 msgstr "Få tilgang til ordlister"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:314
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:332
 msgid "Add/remove dictionary entries"
 msgstr "Leggja til og fjerna oppføringar i ordlista"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:322
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:340
 msgid "Access essential Lixuz services"
 msgstr "Få tilgang til grunnleggjande Lixuz-tenester"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:334
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:352
 msgid "Edit permissions on folders"
 msgstr "Rediger tilgangsrettar på mapper"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:340
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:358
 msgid "Delete folders"
 msgstr "Slette mapper"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:345
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:363
 msgid "Rename folders"
 msgstr "Gje nytt namn til mapper"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:355
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:373
 msgid "Upload or edit files"
 msgstr "Last opp eller rediger filer"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:365
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:383
 msgid "Delete files"
 msgstr "Slette filer"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:370
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:388
 msgid "Crop images"
 msgstr "Beskjær bilete"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:377
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:395
 msgid "View other users files"
 msgstr "Sjå på filer til andre brukarar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:380
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:398
 msgid "Edit other users files"
 msgstr "Rediger filer til andre brukarar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:383
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:401
 msgid "Manage file classes"
 msgstr "Handter filklassar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:392 root/adm/core/menu.html:93
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:410 root/adm/core/menu.html:93
 msgid "Newsletter"
 msgstr "Nyheitsbrev"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:396
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:414
 msgid "Send, delete and edit"
 msgstr "Send, slett og rediger"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:410
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:428
 msgid "Access tags"
 msgstr "Få tilgang til emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:415
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:433
 msgid "Create new tags"
 msgstr "Opprett emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:417
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:435
 msgid "Manage tags"
 msgstr "Handter emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:422
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:440
 msgid "RSSImport"
 msgstr "RSS importering"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:425 root/adm/core/menu.html:128
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:443 root/adm/core/menu.html:128
 msgid "Administrative settings"
 msgstr "Administrative innstillingar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:432
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:450
 msgid "Edit additional fields"
 msgstr "Rediger tilleggsfelt"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:443
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:461
 msgid "Edit statuses"
 msgstr "Rediger statuser"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:451 root/adm/users/left.html:19
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:469 root/adm/users/left.html:19
 msgid "Manage users"
 msgstr "Handter brukarar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:458 root/adm/users/left.html:21
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:476 root/adm/users/left.html:21
 msgid "Manage roles"
 msgstr "Handter roller"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:468 root/adm/core/menu.html:132
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:486 root/adm/core/menu.html:132
 msgid "Manage templates"
 msgstr "Handter malar"
 
@@ -890,11 +902,11 @@ msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:393
 msgid ""
-"%(FIRSTNAME) %(LASTNAME) (%(USERNAME)) commented on the article %(ARTID) (%"
-"(ARTICLE_TITLE))"
+"%(FIRSTNAME) %(LASTNAME) (%(USERNAME)) commented on the article %(ARTID) "
+"(%(ARTICLE_TITLE))"
 msgstr ""
-"%(FIRSTNAME) %(LASTNAME) (%(USERNAME)) kommenterte på artikkelen %(ARTID) (%"
-"(ARTICLE_TITLE))"
+"%(FIRSTNAME) %(LASTNAME) (%(USERNAME)) kommenterte på artikkelen %(ARTID) "
+"(%(ARTICLE_TITLE))"
 
 #: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:400
 msgid ""
@@ -2062,9 +2074,6 @@ msgstr "Er du viss på at du vil sletta definisjonen av ordet «%(WORD)»?"
 
 #~ msgid "Access the trash"
 #~ msgstr "Få tilgang til papirkurven"
-
-#~ msgid "Move an article to trash"
-#~ msgstr "Flytte en artikkel til papirkurven"
 
 #, fuzzy
 #~ msgid "Restore an article from the trash"

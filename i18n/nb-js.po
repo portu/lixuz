@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-09 11:49+0100\n"
-"PO-Revision-Date: 2011-12-09 11:50+0100\n"
+"POT-Creation-Date: 2011-12-09 16:08+0100\n"
+"PO-Revision-Date: 2011-12-09 16:12+0100\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
 "Language: \n"
@@ -502,7 +502,7 @@ msgstr "Ok"
 #: root/source-js/core/objPermEditor.js:274
 #: root/source-js/rssimport/rssimport.js:117
 #: root/source-js/utils/arrangableList.js:263
-#: root/source-js/utils/editorHelper.js:322
+#: root/source-js/utils/editorHelper.js:336
 #: root/source-js/utils/elementEditor.js:67
 msgid "Cancel"
 msgstr "Avbryt"
@@ -1432,15 +1432,20 @@ msgstr ""
 msgid "Enabled?"
 msgstr "Slått på?"
 
-#: root/source-js/utils/editorHelper.js:273
-msgid "Insert HTML Code"
-msgstr "Sett inn HTML-kode"
+#: root/source-js/utils/editorHelper.js:275
+#: root/source-js/utils/editorHelper.js:334
+msgid "Insert text or HTML code"
+msgstr "Sett inn tekst eller HTML-kode"
 
-#: root/source-js/utils/editorHelper.js:320
-msgid "Insert Code"
-msgstr "Sett inn kode"
+#: root/source-js/utils/editorHelper.js:316
+msgid "Table"
+msgstr "Tabell"
 
-#: root/source-js/utils/editorHelper.js:322
+#: root/source-js/utils/editorHelper.js:318
+msgid "Insert Table"
+msgstr "Sett inn en tabell"
+
+#: root/source-js/utils/editorHelper.js:336
 msgid "Insert"
 msgstr "Sett inn"
 

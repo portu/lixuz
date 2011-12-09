@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-09 11:49+0100\n"
+"POT-Creation-Date: 2011-12-09 16:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -402,7 +402,7 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-#: ./root/source-js/utils/elementEditor.js:67 ./root/source-js/utils/editorHelper.js:322 ./root/source-js/utils/arrangableList.js:263
+#: ./root/source-js/utils/elementEditor.js:67 ./root/source-js/utils/editorHelper.js:336 ./root/source-js/utils/arrangableList.js:263
 #: ./root/source-js/core/createArticle.js:76 ./root/source-js/core/dialogHelpers.js:275 ./root/source-js/core/dialogHelpers.js:309
 #: ./root/source-js/core/folders.js:53 ./root/source-js/core/folders.js:103 ./root/source-js/articles/relationships.js:192
 #: ./root/source-js/core/objPermEditor.js:174 ./root/source-js/core/objPermEditor.js:274 ./root/source-js/rssimport/rssimport.js:117
@@ -602,15 +602,19 @@ msgstr ""
 msgid "(none)"
 msgstr ""
 
-#: ./root/source-js/utils/editorHelper.js:273
-msgid "Insert HTML Code"
+#: ./root/source-js/utils/editorHelper.js:275 ./root/source-js/utils/editorHelper.js:334
+msgid "Insert text or HTML code"
 msgstr ""
 
-#: ./root/source-js/utils/editorHelper.js:320
-msgid "Insert Code"
+#: ./root/source-js/utils/editorHelper.js:316
+msgid "Table"
 msgstr ""
 
-#: ./root/source-js/utils/editorHelper.js:322
+#: ./root/source-js/utils/editorHelper.js:318
+msgid "Insert Table"
+msgstr ""
+
+#: ./root/source-js/utils/editorHelper.js:336
 msgid "Insert"
 msgstr ""
 
