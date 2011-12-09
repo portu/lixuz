@@ -184,3 +184,8 @@ body a:visited, .listView a:visited, .buttonHolder a:hover, .pageBox a:hover {
 {
     background-color: #E0E8EF;
 }
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-insertcode span.yui-toolbar-icon {
+    background-image: url(/static/images/icons/html_editor.gif);
+    background-position: 0 1px;
+    left: 5px;
+}

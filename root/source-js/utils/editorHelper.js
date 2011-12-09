@@ -17,25 +17,8 @@
  */
 function createLixuzRTE (id)
 {
-    try
-    {
-        var editor = new YAHOO.widget.Editor(id,{
-                    extracss: ".yui-spellcheck { background-color: yellow; }",
-                    animate: true,
-                    dompath: true
-                });
-        editor_enableSpellCheckOn(editor);
-        editor._defaultToolbar.buttonType = "advanced";
-        editor._defaultToolbar.titlebar = false;
-        editor.cmd_removeformat = editorHelper_removeFormat;
-        editor.render();
-        editor.on("toolbarLoaded",function() { editor.toolbar.on("insertimageClick", function () { insertImage_handler(id); } ) } );
-        return editor;
-    }
-    catch(e)
-    {
-        lzException(e)
-    }
+    deprecated('Superseded by initRTE()');
+    return window.initRTE(id);
 }
 
 function editorHelper_removeFormat ()
@@ -256,3 +239,98 @@ function image_get_new_aspect (oldWidth, oldHeight, newWidth, newHeight)
         return null;
     }
 }
+
+(function($)
+{
+    window.initRTE = function(id,inline)
+    {
+        try
+        {
+            var Dom = YAHOO.util.Dom,
+                Event = YAHOO.util.Event,
+                panel,
+                editor = new YAHOO.widget.Editor(id, {
+                    extracss: ".yui-spellcheck { background-color: yellow; }",
+                    animate: true,
+                    dompath: true
+            }); 
+            editor_enableSpellCheckOn(editor);
+            editor._defaultToolbar.buttonType = "advanced";
+            editor._defaultToolbar.titlebar = false;
+            editor.cmd_removeformat = editorHelper_removeFormat;
+            editor.render();
+            editor.on('toolbarLoaded', function() {
+                editor.toolbar.on("insertimageClick", function ()
+                {
+                    insertImage_handler(id);
+                });
+                /* The HTML button code is based on
+                 * http://new.davglass.com/files/yui/editor74/ (with various
+                 * changes) */
+
+                //Create the Button
+                var codeConfig = {
+                    type: 'push', label: i18n.get('Insert HTML Code'), value: 'insertcode'
+                };
+                this.toolbar.addButtonToGroup(codeConfig, 'insertitem');
+
+                //The button was clicked
+                editor.toolbar.on('insertcodeClick', function() {
+                    //Reset the edit area
+                    Dom.get('newcode-'+id).value = '';
+                    //Disable the Editor
+                    editor.set('disabled', true);
+                    //show the panel
+                    panel.show();
+                    //Stop the event
+                    return false;
+                });
+                //The button in the Panel
+                Event.on('newcode-button-'+id, 'click', function() {
+                    //Hide the panel
+                    panel.hide();
+                    //Enable the Editor
+                    editor.set('disabled', false);
+                    var html;
+                    try
+                    {
+                        html = Dom.get('newcode-'+id).value;
+                    } catch(e) { lzException(e); html = 'ERROR!'; }
+                    try
+                    {
+                        editor.execCommand('inserthtml',html);
+                    } catch(e) { lzException(e) }
+                });
+                Event.on('newcode-cancel-button-'+id, 'click', function()
+                {
+                    panel.hide();
+                    editor.set('disabled',false);
+                });
+            }, editor, true);
+            //Create a panel to show the Edit Window
+            panel = new YAHOO.widget.Panel('code-'+id, {
+                height: '400px',
+                width: '400px',
+                fixedcenter: true,
+                visible: false,
+                close: false,
+                modal: true
+            });
+            //Set the Header
+            panel.setHeader(i18n.get('Insert Code'));
+            //Add some content
+            panel.setBody('<textarea cols="45" rows="19" id="newcode-'+id+'"></textarea><br><input type="button" id="newcode-button-'+id+'" value="'+i18n.get("Insert")+'"> <input type="button" id="newcode-cancel-button-'+id+'" value="'+i18n.get('Cancel')+'" />');
+            panel.render(document.body);
+
+            editors[id] = editor;
+            if(inline != null)
+            {
+                editors[inline] = editor;
+            }
+        }
+        catch (e)
+        {
+            lzException(e,"Fatal: Failed to create editor widget");
+        }
+    };
+})(jQuery);

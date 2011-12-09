@@ -123,28 +123,8 @@ sub create_editor
     my $js = '';
     $js = '$LAB.queue(function () {'."\n";
     $js .= '$(function () {'."\n";
-    $js .= 'var '.$id.'_Editor;'."\n";
-    $js .= 'try {'."\n";
-    $js .= "\t" .  $id.'_Editor = new YAHOO.widget.Editor("'.$id.'", {'."\n";
-    $js .= "\t\t" .  'extracss: ".yui-spellcheck { background-color: yellow; }",';
-    $js .= "\t\t" .  'animate: true,'."\n"; # Animates the opening, closing and moving of Editor windows
-    $js .= "\t\t" .  'dompath: true'."\n";
-    $js .= "\t" .  '}); '."\n";
-    $js .= "\t" .  'editor_enableSpellCheckOn('.$id.'_Editor);'."\n";
-    $js .= "\t" .  $id.'_Editor._defaultToolbar.buttonType = "advanced";'."\n";
-    $js .= "\t" .  $id.'_Editor._defaultToolbar.titlebar = false;'."\n";
-    $js .= "\t" .  $id.'_Editor.cmd_removeformat = editorHelper_removeFormat;'."\n";
-    $js .= "\t" .  $id.'_Editor.render();'."\n";
-    # We need special handling for insertimage. Most of the magic happens inside editorHelper.js
-    $js .= "\t" .  $id.'_Editor.on("toolbarLoaded",function () { '.$id.'_Editor.toolbar.on("insertimageClick", function () { insertImage_handler("'.$id.'")})});'."\n";
-    $js .= "\t" .  'editors["'.$id.'"] = '.$id.'_Editor;'."\n";
-    if ($params->{inline})
-    {
-        $js .= "\t".'editors["inline_'.$params->{inline}.'"] = '.$id.'_Editor;'."\n";
-    }
-    $js .= '} catch (e) {'."\n";
-    $js .= "\t" .  'lzException(e,"Fatal: Failed to create editor widget");'."\n";
-    $js .= '};'."\n";
+    my $inline = $params->{inline} ? "'".$params->{inline}."'" : 'null';
+    $js .= "\tinitRTE('".$id."',".$inline.");\n";
     $js .= '})});'."\n";
     $html .= $js;
     $html .= "\n".'</script>';
