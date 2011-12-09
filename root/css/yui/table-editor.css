@@ -1,0 +1,36 @@
+
+    #table_container .yui-toolbar-group-padding {
+      width: 120px;
+    }
+
+    #table_container .yui-toolbar-group-border {
+      width: 180px;
+    }
+
+    #table_form {
+      clear: both;
+    }
+
+    #table_form label {
+      width: auto;
+      clear: none;
+      float: left;
+    }
+
+    .yui-editor-panel .number {
+      width:25px !important;
+    }
+
+    .yui-skin-sam .yui-toolbar-container .yui-toolbar-inserttable span.yui-toolbar-icon {
+        background-image: url( /static/images/icons/table.png ) !important;
+        background-position: 1px 0px !important;
+        top: 3px !important;
+        left: 6px !important;
+    }
+    .yui-skin-sam .yui-toolbar-container .yui-toolbar-inserttable-selected span.yui-toolbar-icon {
+        background-image: url( /static/images/icons/table.png ) !important;
+        background-position: 1px 0px !important;
+        top: 1px !important;
+        left: 6px !important;
+    }
+

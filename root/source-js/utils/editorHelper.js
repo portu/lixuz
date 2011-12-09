@@ -251,11 +251,12 @@ function image_get_new_aspect (oldWidth, oldHeight, newWidth, newHeight)
                 Event = YAHOO.util.Event,
                 panel,
                 editor = new YAHOO.widget.Editor(id, {
-                    extracss: ".yui-spellcheck { background-color: yellow; }",
+                    extracss: ".yui-spellcheck { background-color: yellow; } table td { border: 1px dashed #CCC } td { height: 15px; }",
                     animate: true,
                     dompath: true
             }); 
             editor_enableSpellCheckOn(editor);
+            editor.initTableEditor();
             editor._defaultToolbar.buttonType = "advanced";
             editor._defaultToolbar.titlebar = false;
             editor.cmd_removeformat = editorHelper_removeFormat;
@@ -307,6 +308,18 @@ function image_get_new_aspect (oldWidth, oldHeight, newWidth, newHeight)
                     panel.hide();
                     editor.set('disabled',false);
                 });
+
+
+                var tb = this.toolbar;
+                var config = {
+                    group: 'table',
+                    label: i18n.get('Table'),
+                    buttons: [
+                        { type: 'push', label: i18n.get('Insert Table'), value: 'inserttable' }
+                    ]
+                };
+                this.toolbar.addSeparator();
+                this.toolbar.addButtonGroup(config);
             }, editor, true);
             //Create a panel to show the Edit Window
             panel = new YAHOO.widget.Panel('code-'+id, {
