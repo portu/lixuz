@@ -246,6 +246,7 @@ function image_get_new_aspect (oldWidth, oldHeight, newWidth, newHeight)
     {
         try
         {
+            var content = $('#'+id)[0].value;
             var Dom = YAHOO.util.Dom,
                 Event = YAHOO.util.Event,
                 panel,
@@ -321,6 +322,55 @@ function image_get_new_aspect (oldWidth, oldHeight, newWidth, newHeight)
             //Add some content
             panel.setBody('<textarea cols="45" rows="19" id="newcode-'+id+'"></textarea><br><input type="button" id="newcode-button-'+id+'" value="'+i18n.get("Insert")+'"> <input type="button" id="newcode-cancel-button-'+id+'" value="'+i18n.get('Cancel')+'" />');
             panel.render(document.body);
+
+            /*
+             * The following block of code is used to work around issues with the YUI RTE
+             * where it can end up removing iframe content (like youtube videos) that already
+             * existed. It loops 6 times (600ms) checking if an iframe is present in the body,
+             * if at some point the iframe disappears, it will reset the body to the original
+             * one that was contained in the textarea.
+             *
+             * The code does nothing at all if there's no iframe tag present
+             */
+            if (/<iframe/.test(content))
+            {
+                $(function ()
+                {
+                    var tried = 0;
+                    var trySetT = function()
+                    {
+                        setTimeout(function()
+                        {
+                            // Loop a maximum number of 6 times
+                            tried++;
+                            if(tried > 6)
+                            {
+                                return;
+                            }
+                            // Get the 'document' object for this editor instance
+                            var doc = editor._getDoc();
+                            try
+                            {
+                                if (/<iframe/.test(doc.body.innerHTML))
+                                {
+                                    // There's an iframe present - but that might be because the editor
+                                    // just hasn't had a time to kill it off yet, so continue looping
+                                    trySetT();
+                                    return;
+                                }
+                            }catch(e) {}
+                            try
+                            {
+                                // Reset the content
+                                doc.body.innerHTML = content;
+                            } catch(e) {}
+                            // Continue looping
+                            trySetT();
+                        },100);
+                    };
+                    trySetT();
+                });
+            }
 
             editors[id] = editor;
             if(inline != null)
