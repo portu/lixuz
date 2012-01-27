@@ -17,6 +17,7 @@ JS_BUILD_METHOD= \
 
 buildjs:
 	mkdir -p "$(JS_TARGET_DIR)"
+	cp -R root/source-js/tiny_mce "$(JS_TARGET_DIR)"
 	@cd root/source-js/ && \
 	js_ext=".js"; \
 	$(JS_BUILD_METHOD)
