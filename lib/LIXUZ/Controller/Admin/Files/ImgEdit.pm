@@ -34,7 +34,6 @@ sub default : Path('/admin/files/imgedit') Local Args
 
     my $file = $self->_getFileFromUID($c,$uid);
     my $i18n = $c->stash->{i18n};
-    add_jsIncl($c,'yui.plugins.lib.js');
     add_jsIncl($c,'files.js');
     add_jsOnLoad($c,'initCrop');
     add_CDNload($c,'YUI');
