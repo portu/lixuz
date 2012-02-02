@@ -41,16 +41,9 @@ sub add_editor_incl
 {
     my $c = shift;
 
-    # We need the YUI sam skin
-    add_cssIncl($c,'yui/sam-skin.css');
-    # Required javascript files
-    add_jsIncl($c,'utils.js','yui.plugins.lib.js');
-    # (YUI from CDN)
-    add_CDNload($c,'YUI');
-    # A global JS array that we can use to track editors in
-    add_globalJSVar($c,'editors','new Array()');
-    # Body class
-    add_bodyClass($c,'yui-skin-sam');
+    # For now the editor is loaded statically by the footer as long as
+    # the loadRTE boolean in the stash is true
+    $c->stash->{loadRTE} = 1;
 }
 
 # Summary: Create a editor widget
