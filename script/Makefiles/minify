@@ -25,7 +25,7 @@ minifyPrep: minifyCheckCommit forceMinifyPrep
 minifyCheckCommit:
 	if [ -e "./.git" ] && ! LC_ALL=C git status ./root/live-js |grep -v modified | grep -i 'nothing to commit' > /dev/null; then echo "You have uncommitted changes in your git repo, refusing to minify";exit 1;fi;true
 minify_js: minifyPrep buildjs
-	for file in root/js/*.js root/js/i18n/*.js; do if [ -e "$$file" ]; then echo "Minifying $$file" ; $(YUI_MINIFY) $(YUI_MINIFY_JS_OPTS) "$$file" -o "$$file.minified" || exit 1; mv -f "$$file.minified" "$$file";fi;done
+	for file in root/js/*.js root/js/i18n/*.js $$(find ./root/js/tiny_mce/ -name '*.js' 2>/dev/null); do if [ -e "$$file" ]; then echo "Minifying $$file" ; $(YUI_MINIFY) $(YUI_MINIFY_JS_OPTS) "$$file" -o "$$file.minified" || exit 1; mv -f "$$file.minified" "$$file";fi;done
 quickMinifySanity: forceMinifyPrep
 	for file in `ls -t $$(find -iname '*.js') 2>/dev/null |head`; do  echo "$$file"; $(YUI_MINIFY) $(YUI_MINIFY_JS_OPTS) "$$file" -o /dev/null || exit 1;done
 	@echo "All good"
