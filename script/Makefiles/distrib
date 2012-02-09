@@ -8,6 +8,7 @@ DIST_TARGET?=$(shell pwd)/packages/$(DIST_MAINTARGET)
 DIST_FILES = $(shell ls -A "$(DIST_SOURCE)" |grep -v "packages")
 DIST_SETSNAPSHOT=
 GIT_VERSION=$(shell git log --format="%h" | head -n1)
+GIT_BRANCH=$(shell git branch|egrep '^\*'|perl -pi -e 's/^\S+\s+//')
 
 # Prepare for distrib
 distrib_prep: distrib_preclean sanitycheck distrib_prepdata build
@@ -45,13 +46,13 @@ dist_addgitver: distrib_prep
 fulldistrib: distrib_src distrib_use distrib_deploy distrib_clean
 
 # Git snapshot
-gitprep: DIST_VERSION=$(VERSION)-$(GIT_VERSION)
+gitprep: DIST_VERSION=$(VERSION)-$(GIT_VERSION)-$(GIT_BRANCH)
 gitprep: distrib_prep dist_setSnapshot
 #gitsnapshot: gitprep distrib_minify
-gitdistrib: DIST_VERSION=$(VERSION)-$(GIT_VERSION)
+gitdistrib: DIST_VERSION=$(VERSION)-$(GIT_VERSION)-$(GIT_BRANCH)
 gitdistrib: DIST_SETSNAPSHOT=dist_setSnapshot
 gitdistrib: gitprep distrib
-fullgitdistrib: DIST_VERSION=$(VERSION)-$(GIT_VERSION)
+fullgitdistrib: DIST_VERSION=$(VERSION)-$(GIT_VERSION)-$(GIT_BRANCH)
 fullgitdistrib: DIST_SETSNAPSHOT=dist_setSnapshot
 fullgitdistrib: gitprep fulldistrib
 dist_setSnapshot:
