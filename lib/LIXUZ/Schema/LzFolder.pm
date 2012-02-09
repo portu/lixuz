@@ -182,7 +182,8 @@ sub recursive_delete
         $file->update();
     }
     $c->model('LIXUZDB::LzFieldModule')->search({
-            folder_id => $self->folder_id
+            module    => 'folders',
+            object_id => $self->folder_id,
         })->delete();
 
     $self->delete();
