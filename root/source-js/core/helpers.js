@@ -498,9 +498,11 @@ function getFieldData (fname)
                 else if(field.tagName.match(/^textarea$/i))
                 {
                     var editor;
-                    // Fetch the editor, this will work even if this page has no editors at all
-                    // (and thus no editors hash).
-                    try { editor = editors[fname]; } catch(e){}
+                    // Fetch the editor
+                    try
+                    {
+                        editor = tinyMCE.get(fname);
+                    } catch(e) { }
 
                     // Perform editor processing
                     if (editor != null)
@@ -508,11 +510,11 @@ function getFieldData (fname)
                         // We might get called before the editor has had a chance
                         // to settle (ie. get any data). When that happens, pretend it
                         // contained an empty string.
-                        if(editor._getDoc() != null && editor._getDoc().body != null)
+                        try
                         {
-                            fvalue = editor._getDoc().body.innerHTML;
+                            fvalue = editor.getContent();
                         }
-                        else
+                        catch(e)
                         {
                             fvalue = '';
                         }

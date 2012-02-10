@@ -5,7 +5,7 @@ REPO_ROOT?=$(shell pwd)
 JS_TARGET_DIR=$(REPO_ROOT)/root/js/
 JS_BUILD_METHOD= \
 	for dir in *; do \
-		if [ -d "$$dir" ] && [ "`basename $$dir`" != "3rdparty-libs" ]; then \
+		if [ -d "$$dir" ] && [ "`basename $$dir`" != "3rdparty-libs" ] && [ "`basename $$dir`" != 'tiny_mce' ]; then \
 			$(JS_BUILD_INFO) "`pwd |perl -pi -e "s/.+root/root/"`/js/$$dir" "root/js/$$dir$$js_ext"; \
 			if [ -e "$$dir/Makefile" ]; then \
 				make --silent -C "$$dir/" OUTFILE="$$dir$$js_ext" buildjs_sub; \
@@ -17,6 +17,7 @@ JS_BUILD_METHOD= \
 
 buildjs:
 	mkdir -p "$(JS_TARGET_DIR)"
+	cp -R root/source-js/3rdparty-libs/tiny_mce "$(JS_TARGET_DIR)"
 	@cd root/source-js/ && \
 	js_ext=".js"; \
 	$(JS_BUILD_METHOD)
