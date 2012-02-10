@@ -494,8 +494,9 @@ sub _getSearchResult
     my $result = $self->_getResultObject(
         mode => $self->mode,
         c => $self->c,
-        pager => $pager,
+        entriesPerPage => $options->{entriesPerPage},
         _result => \@result,
+        _currentPage => $options->{page},
     );
 
     return $result;

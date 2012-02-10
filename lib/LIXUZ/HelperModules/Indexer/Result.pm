@@ -20,10 +20,25 @@ use 5.010;
 
 with 'LIXUZ::Role::IndexerData';
 
-has 'pager' => (
+has 'entriesPerPage' => (
+    is => 'rw',
+    isa => 'Num',
+    required => 1
+);
+has '_dirtyPager' => (
+    is => 'rw',
+    isa => 'Num',
+    default => 1,
+);
+has '_currentPage' => (
+    is => 'rw',
+    isa => 'Num',
+    default => 1,
+);
+has '_pager' => (
     is => 'rw',
     isa => 'Object',
-    required => 1,
+    required => 0,
 );
 has '_result' => (
     is => 'ro',
@@ -41,6 +56,27 @@ has '_currInt' => (
     isa => 'Int',
     default => -1,
 );
+has '_rawDBEntries' => (
+    is => 'rw',
+    isa => 'ArrayRef',
+    default => sub { [] },
+    lazy => 1
+);
+
+sub pager
+{
+    my $self = shift;
+    if ($self->_dirtyPager)
+    {
+        my $pager = Data::Page->new();
+        $pager->total_entries(scalar @{$self->_result});
+        $pager->entries_per_page($self->entriesPerPage);
+        $pager->current_page($self->_currentPage);
+        $self->_pager($pager);
+        $self->_dirtyPager(0);
+    }
+    return $self->_pager;
+}
 
 sub next
 {
@@ -61,6 +97,7 @@ sub page
 {
     my $self = shift;
     my $page = shift;
+    $self->_currentPage($page);
     $self->pager->current_page($page);
     $self->_constructCache();
     return $self;
@@ -93,6 +130,11 @@ sub _constructCache
     my @searches_files;
     foreach my $part (@results)
     {
+        # If $part is an object, just skip over it
+        if (ref($part) ne 'HASH')
+        {
+            next;
+        }
         if(not defined $part->{id})
         {
             $self->c->log->warn('Got undef $part->{id} in search result');
@@ -159,12 +201,22 @@ sub _constructCache
     my @result;
     foreach my $part (@results)
     {
-        if(not defined $part->{id})
+        my $dbEntry;
+        # If $part is an object then we don't need to retrieve it from the idIndex
+        if (ref($part) ne 'HASH')
         {
-            $self->c->log->warn('Search result provided an undefined part id. Skipping entry.');
-            next;
+            $dbEntry = $part;
         }
-        my $dbEntry = $idIndex{ $part->{id} };
+        else
+        {
+            if(not defined $part->{id})
+            {
+                $self->c->log->warn('Search result provided an undefined part id. Skipping entry.');
+                next;
+            }
+            $dbEntry = $idIndex{ $part->{id} };
+        }
+
         if(not $dbEntry)
         {
             $self->c->log->warn('Search result wanted "'.$part->{id}.'" - but database search failed to find it.');
@@ -175,6 +227,27 @@ sub _constructCache
         }
     }
     $self->_currEntries(\@result);
+}
+
+sub _pushFromDB
+{
+    my $self = shift;
+    my $object = shift;
+    if ($object->can('next'))
+    {
+        while(my $o = $object->next)
+        {
+            $self->_pushFromDB($o);
+        }
+    }
+    else
+    {
+        push(@{$self->_result},$object);
+        # Mark the pager as 'dirty' - it will be regenerated
+        $self->_dirtyPager(1);
+        $self->reset;
+    }
+    return $self;
 }
 
 1;

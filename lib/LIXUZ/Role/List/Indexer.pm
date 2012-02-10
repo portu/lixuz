@@ -45,14 +45,24 @@ around 'listGetResultObject' => sub
     }
 };
 
-around 'list_search' => sub
+sub _indexer_select_resolve_method
 {
     my $orig = shift;
     my $self = shift;
 
+    # Allow "sub-roles" to override our resolve method if needed
+    if ($self->can('_select_resolve_method'))
+    {
+        return $self->_select_resolve_method($orig,@_);
+    }
+
     my $resolveWith = 'database';
 
-    if (@_)
+    # Use the indexer if we have a search query and we *DON'T* have an
+    # existing indexer result object. If we already have an indexer result
+    # object then it could be a subclass of us attempting to force a database
+    # search.
+    if (@_ && !$self->_indexerResultObject)
     {
         my $q = $_[0];
         if(defined($q) && length($q))
@@ -72,7 +82,17 @@ around 'list_search' => sub
         {
             return $self->_list_search_indexer(@_);
         }
+
+        default
+        {
+            die('_indexerResultObject ended up with unknown resolveWith: '.$resolveWith);
+        }
     }
+}
+
+around 'list_search' => sub
+{
+    return _indexer_select_resolve_method(@_);
 };
 
 sub _list_search_indexer
