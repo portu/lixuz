@@ -20,7 +20,7 @@ use Moose;
 use MooseX::NonMoose;
 use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller::FormBuilder' };
-with 'LIXUZ::Role::List::Indexer';
+with 'LIXUZ::Role::List::Dual';
 
 use LIXUZ::HelperModules::Lists qw(reply_json_list);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl add_jsOnLoad);
