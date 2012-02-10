@@ -641,13 +641,13 @@ function LZ_FileSpotOK ()
             else if (e.value == 'addToLead')
             {
                 destroy();
-                LZ_addToRTE(currFileType, currFileUID, 'inline_lead');
+                LZ_addToRTE(currFileType, currFileUID, 'lead');
                 return;
             }
             else if (e.value == 'addToBody')
             {
                 destroy();
-                LZ_addToRTE(currFileType, currFileUID, 'inline_body');
+                LZ_addToRTE(currFileType, currFileUID, 'body');
                 return;
             }
             else if (e.value == 'setCaption')
