@@ -34,7 +34,7 @@ sub filter_string
 	my $string = shift;
     # Scrub
 	my $scrubber = HTML::Scrubber->new(
-		allow => [ 'b', 'i', 'u', 'a', 'p','hr','br', 'h1', 'h2', 'h3', 'h4', 'h5', 'div', 'img', 'object', 'embed', 'span', 'param', 'video', 'audio', 'iframe', 'li', 'ul', 'ol', 'section', 'nav', 'footer', 'table','tbody','tr','td','th','strong' ],
+		allow => [ 'b', 'i', 'u', 'a', 'p','hr','br', 'h1', 'h2', 'h3', 'h4', 'h5', 'div', 'img', 'object', 'embed', 'span', 'param', 'video', 'audio', 'iframe', 'li', 'ul', 'ol', 'section', 'nav', 'footer', 'table','tbody','tr','td','th','strong', 'em' ],
 		comment => 0,
 		process => 0,
 		script => 0,
@@ -72,6 +72,9 @@ sub filter_string
             id => 1,
             style => 1,
             class => 1,
+        },
+        span => {
+            style => 1,
         },
         object => {
             width => 1,
