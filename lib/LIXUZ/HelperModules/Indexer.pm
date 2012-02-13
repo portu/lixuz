@@ -496,7 +496,7 @@ sub _getSearchResult
         c => $self->c,
         entriesPerPage => $options->{entriesPerPage},
         _result => \@result,
-        _currentPage => $options->{page},
+        _currentPage => $options->{page} // 1,
     );
 
     return $result;

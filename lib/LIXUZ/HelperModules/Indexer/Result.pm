@@ -70,8 +70,14 @@ sub pager
     {
         if ($self->_pager)
         {
-            $self->entriesPerPage($self->_pager->entries_per_page);
-            $self->_currentPage($self->_pager->current_page);
+            if (defined $self->_pager->entries_per_page)
+            {
+                $self->entriesPerPage($self->_pager->entries_per_page);
+            }
+            if(defined $self->_pager->current_page)
+            {
+                $self->_currentPage($self->_pager->current_page);
+            }
         }
         my $pager = Data::Page->new();
         $pager->total_entries(scalar @{$self->_result});
