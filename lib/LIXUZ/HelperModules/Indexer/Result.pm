@@ -222,7 +222,7 @@ sub _constructCache
             $dbEntry = $idIndex{ $part->{id} };
         }
 
-        if(not $dbEntry)
+        if(not defined $dbEntry)
         {
             $self->c->log->warn('Search result wanted "'.$part->{id}.'" - but database search failed to find it.');
         }
