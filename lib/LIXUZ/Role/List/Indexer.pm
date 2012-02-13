@@ -127,7 +127,10 @@ sub _list_search_indexer
         searchType => $searchType,
         mode => 'internal',
     );
-    my $result = $indexer->search($filter, { page => $page });
+    my $result = $indexer->search($filter, {
+            page => $page,
+            entriesPerPage => $self->_lSearchData->{settings}->{'rows'} // 30,
+        });
     $self->_indexerResultObject($result);
 
     if ($self->_loptions->{objectName})
