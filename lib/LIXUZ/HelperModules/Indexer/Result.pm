@@ -68,6 +68,11 @@ sub pager
     my $self = shift;
     if ($self->_dirtyPager)
     {
+        if ($self->_pager)
+        {
+            $self->entriesPerPage($self->_pager->entries_per_page);
+            $self->_currentPage($self->_pager->current_page);
+        }
         my $pager = Data::Page->new();
         $pager->total_entries(scalar @{$self->_result});
         $pager->entries_per_page($self->entriesPerPage);
