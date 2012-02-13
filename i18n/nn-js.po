@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-09 16:08+0100\n"
-"PO-Revision-Date: 2011-12-09 16:13+0100\n"
+"POT-Creation-Date: 2012-02-13 10:20+0100\n"
+"PO-Revision-Date: 2012-02-13 10:25+0100\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
 "Language: nn\n"
@@ -501,7 +501,6 @@ msgstr "Ok"
 #: root/source-js/core/objPermEditor.js:274
 #: root/source-js/rssimport/rssimport.js:117
 #: root/source-js/utils/arrangableList.js:263
-#: root/source-js/utils/editorHelper.js:336
 #: root/source-js/utils/elementEditor.js:67
 msgid "Cancel"
 msgstr "Avbryt"
@@ -1429,22 +1428,9 @@ msgstr ""
 msgid "Enabled?"
 msgstr "Slått på?"
 
-#: root/source-js/utils/editorHelper.js:275
-#: root/source-js/utils/editorHelper.js:334
-msgid "Insert text or HTML code"
-msgstr "Sett inn tekst eller HTML-kode"
-
-#: root/source-js/utils/editorHelper.js:316
-msgid "Table"
-msgstr "Tabell"
-
-#: root/source-js/utils/editorHelper.js:318
-msgid "Insert Table"
-msgstr "Set inn ein tabell"
-
-#: root/source-js/utils/editorHelper.js:336
-msgid "Insert"
-msgstr "Set inn"
+#: root/source-js/utils/editorHelper.js:252
+msgid "TINYMCE_LANGUAGE"
+msgstr "nn"
 
 #: root/source-js/utils/elementEditor.js:27
 msgid "Loading element data..."
@@ -1525,3 +1511,15 @@ msgstr "Nekter å leggja til eit tomt emneord."
 #: root/source-js/utils/tags.js:141
 msgid "Creating tag..."
 msgstr "Opprettar emneord …"
+
+#~ msgid "Insert"
+#~ msgstr "Set inn"
+
+#~ msgid "Insert Table"
+#~ msgstr "Set inn ein tabell"
+
+#~ msgid "Table"
+#~ msgstr "Tabell"
+
+#~ msgid "Insert text or HTML code"
+#~ msgstr "Sett inn tekst eller HTML-kode"

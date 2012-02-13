@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-09 16:08+0100\n"
+"POT-Creation-Date: 2012-02-13 10:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -402,11 +402,11 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-#: ./root/source-js/utils/elementEditor.js:67 ./root/source-js/utils/editorHelper.js:336 ./root/source-js/utils/arrangableList.js:263
-#: ./root/source-js/core/createArticle.js:76 ./root/source-js/core/dialogHelpers.js:275 ./root/source-js/core/dialogHelpers.js:309
-#: ./root/source-js/core/folders.js:53 ./root/source-js/core/folders.js:103 ./root/source-js/articles/relationships.js:192
-#: ./root/source-js/core/objPermEditor.js:174 ./root/source-js/core/objPermEditor.js:274 ./root/source-js/rssimport/rssimport.js:117
-#: ./root/source-js/articles/viewArticleRevisions.js:106 ./root/source-js/articles/files.js:577
+#: ./root/source-js/utils/elementEditor.js:67 ./root/source-js/utils/arrangableList.js:263 ./root/source-js/core/createArticle.js:76
+#: ./root/source-js/core/dialogHelpers.js:275 ./root/source-js/core/dialogHelpers.js:309 ./root/source-js/core/folders.js:53
+#: ./root/source-js/core/folders.js:103 ./root/source-js/articles/relationships.js:192 ./root/source-js/core/objPermEditor.js:174
+#: ./root/source-js/core/objPermEditor.js:274 ./root/source-js/rssimport/rssimport.js:117 ./root/source-js/articles/viewArticleRevisions.js:106
+#: ./root/source-js/articles/files.js:577
 msgid "Cancel"
 msgstr ""
 
@@ -602,20 +602,8 @@ msgstr ""
 msgid "(none)"
 msgstr ""
 
-#: ./root/source-js/utils/editorHelper.js:275 ./root/source-js/utils/editorHelper.js:334
-msgid "Insert text or HTML code"
-msgstr ""
-
-#: ./root/source-js/utils/editorHelper.js:316
-msgid "Table"
-msgstr ""
-
-#: ./root/source-js/utils/editorHelper.js:318
-msgid "Insert Table"
-msgstr ""
-
-#: ./root/source-js/utils/editorHelper.js:336
-msgid "Insert"
+#: ./root/source-js/utils/editorHelper.js:252
+msgid "TINYMCE_LANGUAGE"
 msgstr ""
 
 #: ./root/source-js/articles/trash.js:23
