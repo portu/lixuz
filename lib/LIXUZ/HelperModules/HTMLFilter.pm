@@ -41,6 +41,9 @@ sub filter_string
 		style => 0,
 	);
     $scrubber->rules(
+        p => {
+            style => 1,
+        },
         table => {
             border => 1,
             style => 1,
