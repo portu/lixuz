@@ -450,10 +450,12 @@ sub _getHits
     my $search = shift;
 
     my($query,$filter) = $self->_buildQuery($search);
-    return $self->_searcher->search(
+    my $hits = $self->_searcher->search(
         query => $query,
         filter => $filter,
     );
+    $hits->seek(0,999999);
+    return $hits;
 }
 
 sub _getSearchResult
