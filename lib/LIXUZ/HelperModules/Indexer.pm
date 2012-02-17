@@ -244,6 +244,7 @@ sub add_file
         my $date_modifier = ( $months_since_2k * 0.01 ) +1;
         $doc->set_boost($date_modifier);
     }
+    $self->_set_value_on_doc($doc,'date', datetime_from_SQL_to_unix($object->get_column('upload_time')) );
     $self->_addDocToIndexer($doc);
     return 1;
 }
