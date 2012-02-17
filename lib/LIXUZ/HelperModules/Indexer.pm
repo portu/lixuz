@@ -70,6 +70,11 @@ has 'storeBasicMeta' => (
     default => 0,
     is => 'ro',
 );
+has 'resultBias' => (
+    isa => 'Str',
+    default => 'score',
+    is => 'ro',
+);
 has '_indexer' => (
     isa => 'Maybe[Object]',
     is => 'rw',
@@ -107,6 +112,10 @@ sub BUILD
     if ($self->mode !~ /^(internal|external)$/)
     {
         croak('Invalid mode: '.$self->mode);
+    }
+    if ($self->resultBias !~ /^(score|timestamp)$/)
+    {
+        croak('Invalid result bias: '.$self->resultBias);
     }
 }
 
@@ -543,6 +552,12 @@ sub _runSearch
     while(my $hit = $hits->fetch_hit_hashref)
     {
         push(@hitList,$hit);
+    }
+    # If we're biasing towards timestamp on our result then we need to perform some
+    # manual sorting of it.
+    if ($self->resultBias eq 'timestamp')
+    {
+        @hitList = sort { $b->{date} <=> $a->{date} } @hitList;
     }
     return @hitList;
 }
