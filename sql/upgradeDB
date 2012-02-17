@@ -185,6 +185,12 @@ fatalRestore
 
 dualPrint("Database successfully upgraded.\n");
 print "You may remove the data dump in $dumpTargets{full}\n" if not $chained;
+
+if ($flags{reIndex})
+{
+    reIndexDB();
+}
+
 dExit(0);
 
 # Load the config file
@@ -636,6 +642,16 @@ sub fileIdentifierUpgrade
     logAction('File identifier upgrade done');
 }
 
+# Re-index database
+sub reIndexDB
+{
+    print "\nWill now re-index the data in the database. This is required due to\n";
+    print "structure changes in the indexer. It is safe to start the site and\n";
+    print "have it running while this process is running.\n";
+    my $pathToData = dirname(realpath($file));
+    logSystem('./cronjobs/lixuz_cron_daily.pl','--strict','--verbose','--reindex','--onlyindex');
+}
+
 # Detect upgrade flags
 sub detectFlags
 {
@@ -726,6 +742,13 @@ sub detectFlags
     if ($currentDBRevision < 4)
     {
         $flags{fileClassPerms} = 1;
+    }
+    print '.';
+    # Upgrade indexing engine if db rev is < 5, since a field in the
+    # engine was changed
+    if ($currentDBRevision < 5)
+    {
+        $flags{reIndex} = 1;
     }
 }
 
