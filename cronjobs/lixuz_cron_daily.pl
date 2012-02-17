@@ -15,59 +15,22 @@ use constant {
     true => 1,
     false => 0
 };
+
 use lib $FindBin::RealBin.'/../lib/';
-
-my $return = 0;
-my $currTitle;
-my $verbosity = 0;
-my $runAll = 0;
-my $skipIndex = 0;
-foreach (@ARGV)
-{
-	given($_)
-	{
-		when('--noindex')
-		{
-			$skipIndex = 1;
-		}
-
-		when('--verbose')
-		{
-			$verbosity++;
-		}
-
-		when('--runall')
-		{
-			$runAll++;
-		}
-
-		default
-		{
-			warn("Unknown parameter: $_\n");
-		}
-	}
-}
-
 # Lixuz doesn't like not being in its own dir when initializing
 chdir($FindBin::RealBin.'/..');
 my $title = 'LIXUZ_Daily_Cron ['.getcwd.']';
-title('init');
-require LIXUZ;
-use LIXUZ::HelperModules::Scripts qw(fakeC);
-use LIXUZ::HelperModules::Indexer;
 
-my $fakeC  = fakeC();
-
-if(ref($fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}) eq 'ARRAY')
-{
-    die("Old-style config. Unable to continue.\n");
-}
-my $DBSTR  = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{dsn};
-my $DBUser = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{user};
-my $DBPwd  = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{password};
-my $dbh = DBI->connect($DBSTR,$DBUser,$DBPwd);
-
-my (undef,undef,undef,$mday,undef,undef,$wday,undef,undef) = localtime;
+my $currTitle;
+my $return       = false;
+my $verbosity    = 0;
+my $runAll       = false;
+my $skipIndex    = false;
+my $onlyIndex    = true;
+my $reIndex      = false;
+my $paramErrors  = 0;
+my $strictParams = 0;
+my %options;
 
 sub title
 {
@@ -87,15 +50,118 @@ sub tryRun (&)
     }
     catch
     {
+        if (/SUB_SKIPPED/)
+        {
+            return;
+        }
         warn($_);
         warn("The above error occurred during the step \"$currTitle\"\nWill attempt to continue anyway.\n");
         $return = 1;
     };
 }
+# Run a piece of code in silence
+sub silent(&)
+{
+    my $cref = shift;
+    my $err;
+    no warnings;
+    open(STDOUT_SAVED,'>&STDOUT');
+    open(STDERR_SAVED,'>&STDERR');
+    open(STDOUT,'>','/dev/null');
+    open(STDERR,'>','/dev/null');
+    try
+    {
+        $cref->();
+    }
+    catch
+    {
+        $err = $_;
+    };
+    open(STDOUT,'>&STDOUT_SAVED');
+    open(STDERR,'>&STDERR_SAVED');
+    use warnings;
+    die($err) if $err;
+}
+
+foreach (@ARGV)
+{
+	given($_)
+	{
+		when('--noindex')
+		{
+			$skipIndex = true;
+		}
+
+		when('--verbose')
+		{
+			$verbosity++;
+		}
+
+		when('--runall')
+		{
+			$runAll++;
+		}
+
+        when('--onlyindex')
+        {
+            $onlyIndex = true;
+            $title = 'Lixuz indexer';
+        }
+
+        when('--reindex')
+        {
+            $reIndex = true;
+        }
+
+        when(/^--indexer[-_]skip(files|articles)$/)
+        {
+            s/^--//;
+            s/^-/_/g;
+            $options{$_} = 1;
+        }
+
+        when('--strict')
+        {
+            $strictParams = 1;
+        }
+
+		default
+		{
+            $paramErrors++;
+			warn("Unknown parameter: $_\n");
+		}
+	}
+}
+
+die("Dying because of unknown parameters (with --strict enabled)\n") if($strictParams && $paramErrors);
+
+title('init');
+
+silent
+{
+    require LIXUZ;
+};
+use LIXUZ::HelperModules::Scripts qw(fakeC);
+use LIXUZ::HelperModules::Indexer;
+
+my $fakeC  = fakeC();
+
+if(ref($fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}) eq 'ARRAY')
+{
+    die("Old-style config. Unable to continue.\n");
+}
+my $DBSTR  = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{dsn};
+my $DBUser = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{user};
+my $DBPwd  = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{password};
+my $dbh = DBI->connect($DBSTR,$DBUser,$DBPwd);
+
+my (undef,undef,undef,$mday,undef,undef,$wday,undef,undef) = localtime;
 
 # Clean up captchas
 tryRun
 {
+    die('SUB_SKIPPED') if $onlyIndex;
+
     title('captcha cleaning');
     $dbh->do('DELETE FROM lz_live_captcha WHERE UNIX_TIMESTAMP() > (UNIX_TIMESTAMP(created_date)+7400);');
 };
@@ -103,6 +169,8 @@ tryRun
 # Clean up old cached files
 tryRun
 {
+    die('SUB_SKIPPED') if $onlyIndex;
+
     title('imgcache cleaning');
     my $path = $fakeC->config->{LIXUZ}->{file_path};
     while(my $f = glob($path.'/*.imgcache'))
@@ -126,6 +194,8 @@ tryRun
 # Self-referencing relationships
 tryRun
 {
+    die('SUB_SKIPPED') if $onlyIndex;
+
     title('self-ref relationship cleaning');
     $dbh->do('DELETE FROM lz_article_relations WHERE article_id=related_article_id;');
 };
@@ -133,6 +203,8 @@ tryRun
 # Missing statuses
 tryRun
 {
+    die('SUB_SKIPPED') if $onlyIndex;
+
     title('missing statuses');
     $dbh->do('UPDATE lz_article SET status_id=4 WHERE status_id IS NULL;');
 };
@@ -140,6 +212,8 @@ tryRun
 # Folders without a single field
 tryRun
 {
+    die('SUB_SKIPPED') if $onlyIndex;
+
     title('missing fields');
     my $rootFolders = $dbh->selectall_arrayref('SELECT folder_id FROM lz_folder WHERE parent IS NULL');
     foreach my $folder (@{$rootFolders})
@@ -167,6 +241,8 @@ tryRun
 # Missing STATUSCHANGE_*
 tryRun
 {
+    die('SUB_SKIPPED') if $onlyIndex;
+
     title('missing statuschange entries');
     my $statuses = $dbh->selectall_arrayref('SELECT status_id FROM lz_status');
     foreach my $status (@{$statuses})
@@ -183,6 +259,8 @@ tryRun
 # Missing WORKFLOW_REASSIGN_TO_ROLE_*
 tryRun
 {
+    die('SUB_SKIPPED') if $onlyIndex;
+
     title('missing workflow-reassign ACL entries');
     my $roles = $dbh->selectall_arrayref('SELECT role_id FROM lz_role');
     foreach my $role (@{$roles})
@@ -199,6 +277,8 @@ tryRun
 # Missing lz_action entries
 tryRun
 {
+    die('SUB_SKIPPED') if $onlyIndex;
+
 	title('missing lz_action entries');
 	my $i18n = LIXUZ::HelperModules::I18N->new('lixuz','en_US',$fakeC->path_to('i18n','locale')->stringify);
 	my %actionPaths = LIXUZ::Schema::LzAction->getPathsHash($i18n);
@@ -210,6 +290,8 @@ tryRun
 # Article issues
 tryRun
 {
+    die('SUB_SKIPPED') if $onlyIndex;
+
     title('article issues');
     my %seen;
     my $folders = $fakeC->model('LIXUZDB::LzArticleFolder')->search({ primary_folder => 1});
@@ -223,7 +305,7 @@ tryRun
         }
         else
         {
-            $seen{$id} = 1;
+            $seen{$id} = true;
         }
     }
 };
@@ -237,11 +319,13 @@ tryRun
 	{
 		title('indexing (init)');
 
-		my $internalIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'internal', c => $fakeC);
-		my $liveIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'external', c => $fakeC);
+		my $internalIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'internal', c => $fakeC, reindex => $reIndex);
+		my $liveIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'external', c => $fakeC, reindex => $reIndex);
 
         tryRun
         {
+            die('SUB_SKIPPED') if $options{indexer_skiparticles};
+
             title('indexing (articles)');
             my $allArts = $fakeC->model('LIXUZDB::LzArticle')->page(1);
             my $pager = $allArts->pager;
@@ -267,6 +351,8 @@ tryRun
 
         tryRun
         {
+            die('SUB_SKIPPED') if $options{indexer_skipfiles};
+
             title('indexing (files)');
             my $allFiles = $fakeC->model('LIXUZDB::LzFile')->page(1);
             my $pager = $allFiles->pager;
@@ -300,6 +386,9 @@ tryRun
 	}
 };
 
+exit($return) if $onlyIndex;
+
+
 # ===
 # Weekly chunk
 # ===
@@ -326,7 +415,7 @@ if ($wday == 1 || $runAll)
 			# Articles without revision control metadata will not be editable
 			if(not $art->revisionMeta)
 			{
-				my $isLatest = 0;
+				my $isLatest = false;
 				try
 				{
 					my $latest = $fakeC->model('LIXUZDB::LzArticle')->search({ article_id => $art->article_id }, { order_by => 'publish_time DESC' });
@@ -413,7 +502,7 @@ if ($wday == 1 || $runAll)
 			my $objects = $fakeC->model('LIXUZDB::'.$type);
 			while(my $f = $objects->next)
 			{
-                my $foundRoot = 0;
+                my $foundRoot = false;
                 my $loopC;
 				next if not $f->parent;
 				my $p = $f;
@@ -421,7 +510,7 @@ if ($wday == 1 || $runAll)
 				{
                     if(not $p->parent)
                     {
-                        $foundRoot = 1;
+                        $foundRoot = true;
                         last;
                     }
                     $loopC++;
