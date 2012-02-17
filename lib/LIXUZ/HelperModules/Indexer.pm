@@ -75,6 +75,11 @@ has 'resultBias' => (
     default => 'score',
     is => 'ro',
 );
+has 'recreate' => (
+    isa => 'Bool',
+    default => 0,
+    is => 'ro',
+);
 has '_indexer' => (
     isa => 'Maybe[Object]',
     is => 'rw',
@@ -576,7 +581,7 @@ sub _getConfig
 sub _getIndexer
 {
     my $self = shift;
-    my $create = 0;
+    my $create = $self->recreate;
     if(not -e $self->_indexFile)
     {
         $create = 1;
