@@ -27,13 +27,6 @@ my $c;
 my $lfile = './db-upgrade.log';
 my $restore = 0;
 
-$SIG{INT} = \&sigintTerm;
-$SIG{TERM} = sub
-{
-    print "SIGTERM ignored for safety\n";
-    print "Send SIGINT for emergency console (kill -2 $$)\n";
-};
-
 my %flags = (
     standard => 1,
 );
@@ -44,8 +37,39 @@ GetOptions(
     'chained' => \$chained,
     'logfile=s' => \$lfile,
     'fromversion=s' => \$fromVersion,
-    'restore' => \$restore
+    'restore' => \$restore,
+    'force' => sub
+    {
+        $ENV{'DBUPGRADE_FORCE'} = 1;
+    },
+    'flag=s' => sub
+    {
+        shift;
+        my $flag = shift;
+        my $o = $|;
+        $| = 1;
+        print "Using --flag can be dangerous and CAN break your data by performing\n";
+        print "actions that are not needed. Be careful.\n";
+        print "Press ^C now to abort.\n\n";
+        print "Continuing in ";
+        my $n = 6;
+        while($n)
+        {
+            print "$n... ";
+            sleep(1);
+            $n--;
+        }
+        print "continuing\n";
+        $flags{$flag} = 1;
+    },
 ) or die();
+
+$SIG{INT} = \&sigintTerm;
+$SIG{TERM} = sub
+{
+    print "SIGTERM ignored for safety\n";
+    print "Send SIGINT for emergency console (kill -2 $$)\n";
+};
 
 my ($user,$pwd,$dbnam,$rawDBH);
 sub mysql_exec
@@ -101,12 +125,12 @@ if ($currentDBRevision == $DBRevision)
     print "An upgrade is probably not required.";
     if ($ENV{DBUPGRADE_FORCE})
     {
-        print " But running anyway due to DBUPGRADE_FORCE\n";
+        print " But running anyway due to --force\n";
     }
     else
     {
         print " Exiting\n";
-        print "Set the env var DBUPGRADE_FORCE to 1 to force an upgrade anyway.\n";
+        print "Run with --force to force an upgrade anyway.\n";
         exit(0);
     }
 }
