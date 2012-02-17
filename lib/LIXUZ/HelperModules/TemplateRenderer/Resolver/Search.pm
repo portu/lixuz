@@ -53,6 +53,7 @@ sub get_results
     my $return = {};
 
     my $saveAs = $searchContent->{as};
+    my $indexerBias = $searchContent->{defaultBias} // 'score';
     if(not $saveAs)
     {
         $self->log('Resolver search results: No as= parameter for data, ignoring request. Template might crash.');
@@ -63,20 +64,36 @@ sub get_results
         return;
     }
 
-    my $query = $self->c->req->param('query');
-    my $page = $self->c->req->param('page');
-    my $category = $self->c->req->param('category');
+    #              Short hand version           Long version
+    my $query    = $self->c->req->param('q') // $self->c->req->param('query');
+    my $page     = $self->c->req->param('p') // $self->c->req->param('page');
+    my $category = $self->c->req->param('c') // $self->c->req->param('category');
+    my $bias     = $self->c->req->param('b') // $self->c->req->param('bias');
+
     if (not $page or $page =~ /\D/ or $page < 1)
     {
         $page = 1;
+    }
+
+    if ($bias eq 'dt')
+    {
+        $indexerBias = 'timestamp';
+    }
+    elsif($bias eq 'sc')
+    {
+        $indexerBias = 'score';
+    }
+    else
+    {
+        $bias = $indexerBias eq 'timestamp' ? 'dt' : 'sc';
     }
 
     my $result;
     my $pager;
     if (defined $query and length $query)
     {
-        my $indexer = LIXUZ::HelperModules::Indexer->new(c => $self->c, mode => 'external');
-        $result = $indexer->search({ query => $query }); # perform_search($self->c->model('LIXUZDB::LzArticle'), $query, [ qw(lead body title) ], undef,$self->c);
+        my $indexer = LIXUZ::HelperModules::Indexer->new(c => $self->c, mode => 'external', resultBias => $indexerBias);
+        $result = $indexer->search({ query => $query });
         $result = $result->page($page);
         $pager = $indexer->searchPager;
     }
@@ -110,9 +127,12 @@ sub get_results
             }
         }
     }
-    $return->{$saveAs.'_pager'} = $result->pager;
-    $return->{$saveAs.'_query'} = $query;
-    $return->{$saveAs} = $result;
+    $return->{$saveAs.'_pager'}            = $result->pager;
+    $return->{$saveAs.'_query'}            = $query;
+    $return->{$saveAs.'_bias'}             = $bias;
+    $self->c->req->params->{b}             = $bias;
+    delete($self->c->req->params->{bias});
+    $return->{$saveAs}                     = $result;
 
     return $return;
 }

@@ -5,6 +5,7 @@
 - Added a fallback message template
 - Improved HTML filtering to handle tables correctly
 - Improved handling of live URLs with parameters
+- Added support for selecting which ordering method the indexer should use
 
 0.1.12
 - Fixed a crash that would occur when deleting articles from the trash

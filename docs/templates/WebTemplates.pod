@@ -523,6 +523,33 @@ other statuses and wish to filter out those that are already considered live.
 Unlike extraLiveStatus this does not take more than one status, though you can
 combine them for the same effect.
 
+=item B<defaultBias>
+
+This sets the defualt 'indexer bias'. It determines how searching is done.
+By default Lixuz will order the results by index, with a tiny bias towards
+newer articles (meaning that if two articles have a similar score, the newer
+one will in most cases come first). It also has a mode where it uses a strict
+date ordering, newest first.
+
+Permitted values:
+
+=over
+
+=item score (default), order by score
+
+=item timestamp, order by timestamp
+
+=back
+
+A specific mode can also be requested using the url parameter 'b', which permits
+the following values:
+
+=over
+
+=item dt = timestamp mode
+
+=item sc = score mode
+
 =back
 
 =head2 Utils
