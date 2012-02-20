@@ -28,6 +28,7 @@ use List::MoreUtils qw(any);
 use LIXUZ::HelperModules::RevisionControl::Article;
 use LIXUZ::HelperModules::RevisionHelpers qw(article_latest_revisions get_latest_article);
 use LIXUZ::HelperModules::HTMLFilter qw(filter_string);
+use LIXUZ::HelperModules::EMail qw(send_email_to);
 
 has 'RCS' => (
     is => 'rw',
@@ -499,7 +500,7 @@ sub savedata_workflow
     elsif(not $reassign->{role} eq 'null')
     {
         my $wasAssignedToRole = $workflow->assigned_to_role;
-        if ($wasAssignedToRole && $wasAssignedToRole != $reassign->{role})
+        if (!$wasAssignedToRole || $wasAssignedToRole != $reassign->{role})
         {
             $sendRoleNotifications = 1;
         }
@@ -537,6 +538,15 @@ sub savedata_workflow
         $watched->update();
     }
 
+    if ($sendRoleNotifications)
+    {
+        $c->forward(qw(LIXUZ::Controller::Admin::Articles::Workflow notifyRoleMembers), [ $workflow, $c->model('LIXUZDB::LzRole')->find({ role_id => $reassign->{role} }) ]);
+    }
+    elsif($sendUserNotification)
+    {
+        $self->notifyNewAssignee($c,$workflow);
+    }
+
 #    if ($workflowDiff->has_changed() || $c->flash->{articleAutoDiff})
 #    {
 #        $workflow->update() if ($workflowDiff->has_changed());
@@ -544,15 +554,6 @@ sub savedata_workflow
 #        $self->createChangeLog($c,$workflow,$workflowDiff);
 #
 #        $self->notifyWatchers($c,$workflowDiff,$article->article_id);
-#        if ($sendRoleNotifications)
-#        {
-#            # FIXME
-#            #$self->notifyRoleMembers($c,$workflow,undef);
-#        }
-#        elsif($sendUserNotification)
-#        {
-#            $self->notifyNewAssignee($c,$workflow,$workflowDiff);
-#        }
 #    }
 
     $jsonReply->{assigned_to} = $c->stash->{w_assigned_to};
@@ -564,12 +565,12 @@ sub savedata_workflow
 # Usage: self->notifyNewAssignee($c,$article,$diff);
 sub notifyNewAssignee
 {
-    my($self,$c,$workflow,$diff) = @_;
+    my($self,$c,$workflow) = @_;
 
     my $article = $workflow->article;
     my $i18n = $c->stash->{i18n};
     my $assignedBy = $c->user;
-    my $assignedTo = $c->model('LIXUZDB::LzUser')->find({ user_id => $diff->get_column('assigned_to_user')});
+    my $assignedTo = $c->model('LIXUZDB::LzUser')->find({ user_id => $workflow->get_column('assigned_to_user')});
 
     if ($assignedBy->user_id == $assignedTo->user_id)
     {
