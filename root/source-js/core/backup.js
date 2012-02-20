@@ -216,7 +216,7 @@ function backup_restore_reply (reply)
         $.each(inBackup, function (e_key, e_value)
         {
             var obj;
-            if (l_value && l_value[e_key])
+            if (l_value && l_value[e_key] !== undefined)
             {
                 // If the value is the boolean 'false', then we ignore this one
                 var val = l_value[e_key];
@@ -225,10 +225,22 @@ function backup_restore_reply (reply)
                     return;
                 }
                 obj = $('#'+val).first();
+                if (!obj.lenght)
+                {
+                    obj = LZ_ADF_getInlineField(val);
+                }
             }
             else
             {
                 obj = $('#'+e_key).first();
+            }
+            if(obj)
+            {
+                obj = obj[0];
+            }
+            else
+            {
+                obj = LZ_ADF_getInlineField(e_key);
             }
             if (!obj)
             {
@@ -275,26 +287,11 @@ function backup_restore_valueToObj (value, obj)
     {
         if(obj.tagName.match(/^textarea$/i))
         {
-            var editor;
-            // Fetch the editor, this will work even if this page has no editors at all
-            // (and thus no editors hash).
-            try { editor = editors[obj.id]; } catch(e){}
-
+            var editor = tinymce.get(obj.getAttribute('id'));
             // Perform editor processing
             if (editor != null)
             {
-                var doc = editor._getDoc();
-                if (!doc)
-                {
-                    throw('Document inside editor is missing');
-                }
-                var body = doc.body;
-                if (!body)
-                {
-                    // No body? Create it
-                    body = doc.createElement('body');
-                }
-                body.innerHTML = value;
+                editor.setContent(value);
             }
             obj.value = value;
         }
