@@ -224,6 +224,11 @@ function backup_restore_reply (reply)
                 {
                     return;
                 }
+                if($.isFunction(val))
+                {
+                    val(e_value);
+                    return;
+                }
                 obj = $('#'+val).first();
                 if (!obj.lenght)
                 {

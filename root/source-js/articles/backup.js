@@ -63,7 +63,14 @@ function restore_articleBackup ()
     var myMap = {
                 'article': { 
                     'uid' : false,
-                    'type' : false
+                    'type' : false,
+                    'secondaryFolders': function (value)
+                        {
+                            if(value != 'null')
+                            {
+                                window.hilightedFoldersSeed = value.split(',');
+                            }
+                        }
                     },
                 'workflow' :  { 
                     'artid' :false 
