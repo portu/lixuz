@@ -544,7 +544,7 @@ sub savedata_workflow
     }
     elsif($sendUserNotification)
     {
-        $self->notifyNewAssignee($c,$workflow);
+        $self->notifyNewAssignee($c,$workflow,$article);
     }
 
 #    if ($workflowDiff->has_changed() || $c->flash->{articleAutoDiff})
@@ -565,9 +565,8 @@ sub savedata_workflow
 # Usage: self->notifyNewAssignee($c,$article,$diff);
 sub notifyNewAssignee
 {
-    my($self,$c,$workflow) = @_;
+    my($self,$c,$workflow,$article) = @_;
 
-    my $article = $workflow->article;
     my $i18n = $c->stash->{i18n};
     my $assignedBy = $c->user;
     my $assignedTo = $c->model('LIXUZDB::LzUser')->find({ user_id => $workflow->get_column('assigned_to_user')});
@@ -576,9 +575,29 @@ sub notifyNewAssignee
     {
         return;
     }
+    if ( !$workflow)
+    {
+        $self->c->log->error('notifyNewAssignee called without $workflow');
+        return;
+    }
+    elsif ( !$article)
+    {
+        $self->c->log->error('notifyNewAssignee called without $article');
+        return;
+    }
 
-    my $subject = $i18n->get_advanced('%(USER) has assigned article %(ARTICLE_ID) (%(ARTICLE_NAME)) to you',{ ARTICLE_NAME => $article->title, ARTICLE_ID => $article->article_id, USER => $assignedBy->name});
-    my $message = $i18n->get_advanced('The article "%(ARTICLE_NAME)" (%(ARTICLE_ID)) has been'."\n".'assigned to you by %(USER). You may now edit'."\n".'and manage this article in Lixuz at %(PAGE).', { PAGE => $c->uri_for('/admin/edit/'.$article->article_id), ARTICLE_NAME => $article->title, ARTICLE_ID => $article->article_id, USER => $assignedBy->verboseName});
+    my $subject = $i18n->get_advanced('%(USER) has assigned article %(ARTICLE_ID) (%(ARTICLE_NAME)) to you',
+        {
+            ARTICLE_NAME => $article->title,
+            ARTICLE_ID   => $article->article_id,
+            USER         => $assignedBy->name
+        });
+    my $message = $i18n->get_advanced('The article "%(ARTICLE_NAME)" (%(ARTICLE_ID)) has been'."\n".'assigned to you by %(USER). You may now edit'."\n".'and manage this article in Lixuz at %(PAGE).', {
+            PAGE         => $c->uri_for('/admin/edit/'.$article->article_id),
+            ARTICLE_NAME => $article->title,
+            ARTICLE_ID   => $article->article_id,
+            USER         => $assignedBy->verboseName
+        });
 
     send_email_to($c,undef, $subject, $message, $assignedTo->verboseEmail);
 }
