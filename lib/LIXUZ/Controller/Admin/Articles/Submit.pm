@@ -95,8 +95,11 @@ sub index_POST
     {
         return json_error($c,$jsonReply->{error},$jsonReply->{verboseError});
     }
+
     # FIXME: The problem here is that we're returning an error, but it's only a partial failure
-    if (!$self->savedata_workflow($c,$article,$workflow,$type,$jsonReply))
+    my($result,$sendRoleNotifications,$sendUserNotification) = $self->savedata_workflow($c,$article,$workflow,$type,$jsonReply);
+
+    if (!$result)
     {
         return json_error($c,$jsonReply->{error},$jsonReply->{verboseError});
     }
@@ -110,6 +113,15 @@ sub index_POST
 
     $jsonReply->{uid} = $article->article_id;
     $jsonReply->{revision} = $self->RCS->revision;
+
+    if ($sendRoleNotifications)
+    {
+        $c->forward(qw(LIXUZ::Controller::Admin::Articles::Workflow notifyRoleMembers), [ $workflow, $c->model('LIXUZDB::LzRole')->find({ role_id => $workflow->get_column('assigned_to_role') }) ]);
+    }
+    elsif($sendUserNotification)
+    {
+        $self->notifyNewAssignee($c,$workflow,$article);
+    }
 
     return json_response($c,$jsonReply);
 }
@@ -538,15 +550,6 @@ sub savedata_workflow
         $watched->update();
     }
 
-    if ($sendRoleNotifications)
-    {
-        $c->forward(qw(LIXUZ::Controller::Admin::Articles::Workflow notifyRoleMembers), [ $workflow, $c->model('LIXUZDB::LzRole')->find({ role_id => $reassign->{role} }) ]);
-    }
-    elsif($sendUserNotification)
-    {
-        $self->notifyNewAssignee($c,$workflow,$article);
-    }
-
 #    if ($workflowDiff->has_changed() || $c->flash->{articleAutoDiff})
 #    {
 #        $workflow->update() if ($workflowDiff->has_changed());
@@ -558,7 +561,7 @@ sub savedata_workflow
 
     $jsonReply->{assigned_to} = $c->stash->{w_assigned_to};
     $jsonReply->{assigned_by} = $c->stash->{w_assigned_by};
-    return true;
+    return (true,$sendRoleNotifications,$sendUserNotification);
 }
 
 # Summary: Generate and send an e-mail to the person that recieves an assignment
