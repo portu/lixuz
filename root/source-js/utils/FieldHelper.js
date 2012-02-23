@@ -127,6 +127,7 @@ function LZ_ADF_fieldName (field)
  */
 function LZ_ADF_getInlineField (field)
 {
+    // FIXME: This does a lot more than it needs to, jQuery can already query by attribute value.
     var fieldList = LZ_ADF_getFieldList(),
         ret;
     try
