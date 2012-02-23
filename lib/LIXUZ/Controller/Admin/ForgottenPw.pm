@@ -33,7 +33,8 @@ sub forgottenpw : Path('/admin/forgottenpw') Form('/forgottenpw')
     $c->stash->{template} = 'adm/core/forgottenpw.html';
     if ($msg_type eq 1)
     {
-        $c->stash->{message} = $i18n->get('An e-mail with a link where you may change your password has been sent. Please check your e-mail.');
+        $c->flash->{userRedirErr} = $i18n->get('An e-mail with a link where you may change your password has been sent. Please check your e-mail.');
+        $c->res->redirect('/admin/login');
     }
     elsif($msg_type eq 2)
     {
@@ -111,7 +112,8 @@ sub change_password : Local Form('change_password')
     }
     elsif( $msg_type eq 2)
     {
-	    $c->stash->{message} = $i18n->get('Your password has been changed. You may now log in with your new password');
+        $c->flash->{userRedirErr} = $i18n->get('Your password has been changed. You may now log in with your new password');
+        $c->res->redirect('/admin/login');
     }
     elsif( $msg_type eq 3)
     {
