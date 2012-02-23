@@ -64,10 +64,12 @@ sub pstpwd : Path('/admin/pstpwd')
 	        my $db_user_name = $user_email->get_column('user_name');
     	    my $db_user_id = $user_email->get_column('user_id');
             my $db_email = $user_email->get_column('email');            
-    	    my $unique_code = md5_base64($db_user_id.'-'.time.'-'.rand(9999999));
+            my $unique_code = md5_base64($db_user_id.'-'.time.'-'.rand(9999999));
+            $unique_code =~ s/\//L/g;
     	    while($c->model('LIXUZDB::LzUser')->find({reset_code => $unique_code}))
 	        {
-		        $unique_code = md5_base64($db_user_id.'-'.time.'-'.rand(9999999));   
+		        $unique_code = md5_base64($db_user_id.'-'.time.'-'.rand(9999999));
+                $unique_code =~ s/\//L/g;
     	    }    
     	    my $link = $c->uri_for('/admin/forget/change_password/'.$unique_code);	    
             my $subject = $i18n->get_advanced('Forgotten password');
