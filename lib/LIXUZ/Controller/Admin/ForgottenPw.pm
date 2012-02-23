@@ -30,7 +30,6 @@ sub forgottenpw : Path('/admin/forgottenpw') Form('/forgottenpw')
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Forgotten password');
     my $i18n = $c->stash->{i18n};
     my $form = $self->formbuilder;
-    $c->stash->{template} = 'adm/core/forgottenpw.html';
     if ($msg_type eq 1)
     {
         $c->flash->{userRedirErr} = $i18n->get('An e-mail with a link where you may change your password has been sent. Please check your e-mail.');
@@ -44,6 +43,7 @@ sub forgottenpw : Path('/admin/forgottenpw') Form('/forgottenpw')
     {
 	    $c->stash->{message} = $i18n->get('Please enter a vaild e-mail address.');
     }
+    $c->stash->{template} = 'adm/core/forgottenpw.html';
 }    
     
 sub pstpwd : Path('/admin/pstpwd')
@@ -76,7 +76,6 @@ sub pstpwd : Path('/admin/pstpwd')
             my $subject = $i18n->get_advanced('Forgotten password');
             my $message = $i18n->get_advanced("Please click on following link to change your Lixuz password:\n %(LINK)",{ USERNAME => $db_user_name, LINK => $link});
     	    my $to =$db_email;
-    	    my $from = $c->config->{LIXUZ}->{from_email};
     	    send_email_to($c,undef,$subject,$message,$to);
     	    $user_email->set_column('reset_code',$unique_code);
     	    $user_email->update();
