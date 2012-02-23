@@ -22,11 +22,15 @@ package LIXUZ::Schema::LzUser;
 use strict;
 use warnings;
 
+
 use Moose;
 use MooseX::NonMoose;
 use namespace::autoclean;
-extends 'DBIx::Class::Core';
 
+
+use base 'DBIx::Class::Core';
+
+__PACKAGE__->load_components("InflateColumn::DateTime");
 
 =head1 NAME
 
@@ -104,6 +108,12 @@ __PACKAGE__->table("lz_user");
   is_nullable: 1
   size: 6
 
+=head2 reset_code
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 50
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -142,12 +152,15 @@ __PACKAGE__->add_columns(
   },
   "lang",
   { data_type => "varchar", is_nullable => 1, size => 6 },
+  "reset_code",
+  { data_type => "varchar", is_nullable => 1, size => 50 },
 );
 __PACKAGE__->set_primary_key("user_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-02-17 12:23:54
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:DC+6Ks29Py6oAUY+BPgcrA
+# Created by DBIx::Class::Schema::Loader v0.07000 @ 2012-02-14 17:41:36
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:QCp/edNH0Y5DVdYrTMN21w
+
 
 __PACKAGE__->belongs_to('role' => 'LIXUZ::Schema::LzRole', 'role_id');
 
