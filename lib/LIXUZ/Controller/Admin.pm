@@ -73,14 +73,14 @@ sub auto : Private
         $c->response->redirect('/admin/login');
         $c->detach();
     }
-    elsif(not $c->user_exists and not ( $c->controller eq $c->controller('Admin::Login') or $c->controller eq $c->controller('Admin::Forget')))
+    elsif(not $c->user_exists and not ( $c->controller eq $c->controller('Admin::Login') or $c->controller eq $c->controller('Admin::ForgottenPw')))
     {
         if ($c->req->param('_JSON_Submit'))
         {
             return json_error($c,'NEEDSLOGIN');
         }
         $c->flash->{userRedirErr} = '<b>'.$c->stash->{i18n}->get('Permission denied').'.</b> '.$c->stash->{i18n}->get('You need to log in to access that resource.');
-        if(not($c->req->uri eq $c->uri_for('/admin/login') or $c->req->uri eq $c->uri_for('/admin/forget')))
+        if(not($c->req->uri eq $c->uri_for('/admin/login') or $c->req->uri eq $c->uri_for('/admin/forgottenpw')))
         {
             $c->flash->{userRedirTo} = $c->req->uri;
         }

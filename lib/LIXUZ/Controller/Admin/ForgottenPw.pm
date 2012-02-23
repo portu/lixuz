@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package LIXUZ::Controller::Admin::Forget;
+package LIXUZ::Controller::Admin::ForgottenPw;
 use Moose;
 use MooseX::NonMoose;
 use namespace::autoclean;
@@ -22,14 +22,15 @@ use Digest::MD5 'md5_base64';
 BEGIN { extends 'Catalyst::Controller::FormBuilder' };
 use LIXUZ::HelperModules::EMail qw(send_raw_email_to);
 
-# Summary: Forget handler, creates the form and other goodies
-sub forget : Path('/admin/forget') Form('/forget')
+# Summary: ForgottenPw handler, creates the form and other goodies
+sub forgottenpw : Path('/admin/forgottenpw') Form('/forgottenpw')
 {
     my ( $self, $c, @args ) = @_;
     my $msg_type = $args[0] || 'no';
-    $c->stash->{pageTitle} = $c->stash->{i18n}->get('Forget');
+    $c->stash->{pageTitle} = $c->stash->{i18n}->get('Forgotten password');
     my $i18n = $c->stash->{i18n};
     my $form = $self->formbuilder;
+    $c->stash->{template} = 'adm/core/forgottenpw.html';
     if ($msg_type eq 1)
     {
         $c->stash->{message} = $i18n->get('An e-mail with a link where you may change your password has been sent. Please check your e-mail.');
@@ -42,7 +43,6 @@ sub forget : Path('/admin/forget') Form('/forget')
     {
 	    $c->stash->{message} = $i18n->get('Please enter a vaild e-mail address.');
     }
-    $c->stash->{template} = 'adm/core/forget.html';
 }    
     
 sub pstpwd : Path('/admin/pstpwd')
@@ -71,7 +71,7 @@ sub pstpwd : Path('/admin/pstpwd')
 		        $unique_code = md5_base64($db_user_id.'-'.time.'-'.rand(9999999));
                 $unique_code =~ s/\//L/g;
     	    }    
-    	    my $link = $c->uri_for('/admin/forget/change_password/'.$unique_code);	    
+    	    my $link = $c->uri_for('/admin/forgottenpw/change_password/'.$unique_code);	    
             my $subject = $i18n->get_advanced('Forgotten password');
             my $message = $i18n->get_advanced("Dear %(USERNAME),\n\n Please click on following link to change your Lixuz password.\n %(LINK)\n\n--\n Lixuz",{ USERNAME => $db_user_name, LINK => $link});
     	    my $to =$db_email;
@@ -87,7 +87,7 @@ sub pstpwd : Path('/admin/pstpwd')
     {
 	    $msg_typ = 3;
     } 
-    $c->forward(qw(LIXUZ::Controller::Admin::Forget forget) , [ $msg_typ ]);
+    $c->forward(qw(LIXUZ::Controller::Admin::ForgottenPw forgottenpw) , [ $msg_typ ]);
 }
     
 # For change password form
@@ -157,7 +157,7 @@ sub chngpwd :  Path('/admin/chngpwd')
     {
         $msg_type = 1;
     }
-    $c->forward(qw(LIXUZ::Controller::Admin::Forget change_password) , [ $pst_reset_code,$msg_type ]);
+    $self->change_password($c,$pst_reset_code,$msg_type);
 }
 
 1;
