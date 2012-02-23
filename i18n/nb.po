@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
 "POT-Creation-Date: 2012-02-23 13:47+0100\n"
-"PO-Revision-Date: 2011-12-09 16:11+0100\n"
+"PO-Revision-Date: 2012-02-23 13:52+0100\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
 "Language: \n"
@@ -385,51 +385,45 @@ msgstr "Brukernavn"
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:30
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:76 root/adm/core/login.html:43
-#, fuzzy
 msgid "Forgotten password"
-msgstr "Bekreft passord"
+msgstr "Glemt passord"
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:36
 msgid ""
 "An e-mail with a link where you may change your password has been sent. "
 "Please check your e-mail."
-msgstr ""
+msgstr "En e-post med en lenke hvor du kan endre passordet ditt har blitt sendt til din e-postadresse."
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:41
-#, fuzzy
 msgid "Error: Failed to locate a user with the this email address."
-msgstr "Feil: Kunne ikke finne en bruker med IDen %(UID)."
+msgstr "Feil: Kunne ikke finne en bruker med denne e-postadressa."
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:45
 msgid "Please enter a vaild e-mail address."
-msgstr ""
+msgstr "Skriv inn en gyldig e-postadresse."
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:77
 msgid ""
 "Please click on following link to change your Lixuz password:\n"
 " %(LINK)"
-msgstr ""
+msgstr "Trykk på denne lenka for å endre Lixuz-passordet ditt:\n%(LINK)"
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:97
-#, fuzzy
 msgid "Change Password"
-msgstr "Endre passordet til"
+msgstr "Endre passord"
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:107
-#, fuzzy
 msgid "The password token was invalid."
-msgstr "Passordet er for kort"
+msgstr "Ugyldig passordstreng."
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:111
-#, fuzzy
 msgid "You need to enter a password."
-msgstr "Du må logge inn for å få tilgang til denne ressursen"
+msgstr "Du må skrive inn et nytt passord."
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:115
-#, fuzzy
 msgid ""
 "Your password has been changed. You may now log in with your new password"
-msgstr "Ditt gamle passord er det samme som ditt nye passord"
+msgstr "Passordet ditt har blitt endret. Du kan nå logge inn med det nye passordet."
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:120
 #: root/adm/users/edit/index.html:44
@@ -1281,13 +1275,12 @@ msgid "Confirm password"
 msgstr "Bekreft passord"
 
 #: root/adm/core/change_password.html:22 root/adm/core/forgottenpw.html:37
-#, fuzzy
 msgid "Submit"
-msgstr "Lagre endringene"
+msgstr "Send inn"
 
 #: root/adm/core/forgottenpw.html:31
 msgid "Enter Your Email Address"
-msgstr ""
+msgstr "Skriv inn e-postadressa di"
 
 #: root/adm/core/menu.html:34
 msgid "New article"
