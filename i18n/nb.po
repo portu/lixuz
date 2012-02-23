@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2011-12-09 16:08+0100\n"
+"POT-Creation-Date: 2012-02-23 13:47+0100\n"
 "PO-Revision-Date: 2011-12-09 16:11+0100\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
@@ -202,7 +202,8 @@ msgstr "Redigerer bruker %(USER_ID)"
 msgid "Save changes"
 msgstr "Lagre endringer"
 
-#: lib/LIXUZ/Controller/Admin/Users.pm:167 root/adm/users/edit/index.html:110
+#: lib/LIXUZ/Controller/Admin/Users.pm:167
+#: root/adm/core/change_password.html:12 root/adm/users/edit/index.html:110
 msgid "Change password to"
 msgstr "Endre passordet til"
 
@@ -381,6 +382,59 @@ msgstr "Logg inn"
 #: root/adm/users/list.html:28
 msgid "Username"
 msgstr "Brukernavn"
+
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:30
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:76 root/adm/core/login.html:43
+#, fuzzy
+msgid "Forgotten password"
+msgstr "Bekreft passord"
+
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:36
+msgid ""
+"An e-mail with a link where you may change your password has been sent. "
+"Please check your e-mail."
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:41
+#, fuzzy
+msgid "Error: Failed to locate a user with the this email address."
+msgstr "Feil: Kunne ikke finne en bruker med IDen %(UID)."
+
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:45
+msgid "Please enter a vaild e-mail address."
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:77
+msgid ""
+"Please click on following link to change your Lixuz password:\n"
+" %(LINK)"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:97
+#, fuzzy
+msgid "Change Password"
+msgstr "Endre passordet til"
+
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:107
+#, fuzzy
+msgid "The password token was invalid."
+msgstr "Passordet er for kort"
+
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:111
+#, fuzzy
+msgid "You need to enter a password."
+msgstr "Du må logge inn for å få tilgang til denne ressursen"
+
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:115
+#, fuzzy
+msgid ""
+"Your password has been changed. You may now log in with your new password"
+msgstr "Ditt gamle passord er det samme som ditt nye passord"
+
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:120
+#: root/adm/users/edit/index.html:44
+msgid "The new passwords do not match"
+msgstr "Passordene du skrev inn er ikke like"
 
 #: lib/LIXUZ/Controller/Admin/Newsletter.pm:52
 msgid "Newsletter subscriptions"
@@ -743,11 +797,11 @@ msgstr "Håndter roller"
 msgid "Manage templates"
 msgstr "Håndter maler"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:579
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:592
 msgid "%(USER) has assigned article %(ARTICLE_ID) (%(ARTICLE_NAME)) to you"
 msgstr "%(USER) har tildelt artikkelen %(ARTICLE_ID) (%(ARTICLE_NAME)) til deg"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:580
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:598
 msgid ""
 "The article \"%(ARTICLE_NAME)\" (%(ARTICLE_ID)) has been\n"
 "assigned to you by %(USER). You may now edit\n"
@@ -757,7 +811,7 @@ msgstr ""
 "tildelt deg av %(USER). Du kan nå redigere\n"
 "og håndtere denne artikkelen på %(PAGE)."
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:605
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:628
 msgid ""
 "Some changes has been made by %(FIRSTNAME) %(LASTNAME) (%(USERNAME))\n"
 "to an article (ID %(ARTICLE_ID)) you are watching:"
@@ -765,40 +819,40 @@ msgstr ""
 "Noen endringer har blitt gjort av %(FIRSTNAME) %(LASTNAME) (%(USERNAME))\n"
 "på en artikkel (ID %(ARTICLE_ID)) du følger:"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:639
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:662
 msgid "Title change: \"%(old)\" => \"%(new).\""
 msgstr "Tittel endret: «%(old)» => «%(new)»."
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:643
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:666
 msgid "The lead has been changed."
 msgstr "Inngressen har blitt endret."
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:647
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:670
 msgid "The body has been changed."
 msgstr "Brødteksten har blitt endret."
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:651
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:674
 msgid "Author change: \"%(old)\" => \"%(new).\""
 msgstr "Forfatter har blitt endret: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:657
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:680
 msgid "Publish time has changed: \"%(old)\" => \"%(new).\""
 msgstr "Publiseringstid har blitt endret: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:661
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:684
 msgid "Expiry time has changed: \"%(old)\" => \"%(new)\"."
 msgstr "«Gyldig til» har blitt endret: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:675
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:698
 msgid "(default)"
 msgstr "(standard)"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:679
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:702
 msgid "Template change: \"%(old)\" => \"%(new)\"."
 msgstr "Mal har blitt endret: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:697
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:759
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:720
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:782
 #: root/adm/articles/list.html:116
 #: root/adm/dashboard/widgetHelper_articleList.html:93
 #: root/adm/dashboard/widgetHelper_articleList.html:112
@@ -806,38 +860,38 @@ msgstr "Mal har blitt endret: «%(old)» => «%(new)»"
 msgid "(none)"
 msgstr "(ingen)"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:700
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:723
 msgid "Status change: \"%(old)\" => \"%(new)\"."
 msgstr "Status har blitt endret: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:746
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:769
 #: root/adm/articles/workflow.html:163
 msgid "Low"
 msgstr "Lav"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:747
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:770
 #: root/adm/articles/workflow.html:168
 msgid "Medium"
 msgstr "Middels"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:748
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:771
 #: root/adm/articles/workflow.html:173
 msgid "High"
 msgstr "Høy"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:762
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:785
 msgid "Priority change: \"%(old)\" => \"%(new)\"."
 msgstr "Prioriteten har blitt endret: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:766
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:789
 msgid "The start date changed: \"%(old)\" => \"%(new)\"."
 msgstr "Startdatoen har blitt endret: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:770
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:793
 msgid "The deadline changed: \"%(old)\" => \"%(new)\"."
 msgstr "Tidsfristen har blitt endret: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:822
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:845
 msgid ""
 "This message has been automatically generated by Lixuz because you\n"
 "are watching this article. You can stop watching this article\n"
@@ -847,7 +901,7 @@ msgstr ""
 "følger denne artikkelen. Du kan slutte å følge artikkelen\n"
 "ved å gå til redigeringssida til den."
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:822
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:845
 msgid "An article you are watching (%(ARTID)) has been edited"
 msgstr "En artikkel du følger (%(ARTID)) har blitt redigert"
 
@@ -1221,6 +1275,19 @@ msgstr "Rediger"
 #: root/adm/categories/list.html:61
 msgid "Are you sure you want to delete the category \"%(CATEGORYNAME)\"?"
 msgstr "Er du sikker på at du vil slette kategorien «%(CATEGORYNAME)»?"
+
+#: root/adm/core/change_password.html:16 root/adm/users/edit/index.html:114
+msgid "Confirm password"
+msgstr "Bekreft passord"
+
+#: root/adm/core/change_password.html:22 root/adm/core/forgottenpw.html:37
+#, fuzzy
+msgid "Submit"
+msgstr "Lagre endringene"
+
+#: root/adm/core/forgottenpw.html:31
+msgid "Enter Your Email Address"
+msgstr ""
 
 #: root/adm/core/menu.html:34
 msgid "New article"
@@ -1969,10 +2036,6 @@ msgstr ""
 "Du er en superbruker, du kan %(HTML_LINK_START_TAG)få tilgang til hele "
 "redigeringsskjemaet"
 
-#: root/adm/users/edit/index.html:44
-msgid "The new passwords do not match"
-msgstr "Passordene du skrev inn er ikke like"
-
 #: root/adm/users/edit/index.html:51
 msgid ""
 "You must enter your old password for confirmation to be able to change it"
@@ -1990,10 +2053,6 @@ msgstr "Ditt nye passord er for kort, det må være minst 5 tegn langt"
 #: root/adm/users/edit/index.html:105
 msgid "Your old password (only required when changing your password)"
 msgstr "Ditt gamle passord (bare påkrevd når du endrer passordet ditt)"
-
-#: root/adm/users/edit/index.html:114
-msgid "Confirm password"
-msgstr "Bekreft passord"
 
 #: root/adm/users/edit/index.html:124
 msgid "(autodetect)"

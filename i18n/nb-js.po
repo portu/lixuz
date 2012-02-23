@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-13 10:20+0100\n"
+"POT-Creation-Date: 2012-02-23 13:47+0100\n"
 "PO-Revision-Date: 2012-02-13 10:26+0100\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
@@ -198,8 +198,8 @@ msgid "You must enter a comment"
 msgstr "Du må skrive inn en kommentar"
 
 #: root/source-js/articles-previewUI/previewUI.js:268
-#: root/source-js/articles/files.js:516 root/source-js/articles/files.js:793
-#: root/source-js/articles/files.js:807
+#: root/source-js/articles/files.js:492 root/source-js/articles/files.js:769
+#: root/source-js/articles/files.js:783
 msgid "(none)"
 msgstr "(ingen)"
 
@@ -408,7 +408,7 @@ msgstr "Du må lagre artikkelen før du kan kommentere på den"
 msgid "Failed to submit comment: "
 msgstr "Klarte ikke sende inn kommentar: "
 
-#: root/source-js/articles/files.js:340
+#: root/source-js/articles/files.js:334
 msgid ""
 "The video file with file_id %(FILEID) has not been converted to the FLV "
 "format used to serve video through Lixuz yet, the process is still running, "
@@ -420,7 +420,7 @@ msgstr ""
 "Last sida på nytt og prøv igjen om noen minutter.\\n\\nHvis konverteringa "
 "tar mer enn en time, ta kontakt med din systemadministrator."
 
-#: root/source-js/articles/files.js:344
+#: root/source-js/articles/files.js:338
 msgid ""
 "The conversion of this file (%(FILEID)) to the FLV format failed. Please "
 "contact your system administrator."
@@ -428,15 +428,15 @@ msgstr ""
 "Konverteringa av denne fila (%(FILEID)) til FLV-formatet mislyktes. Kontakt "
 "din systemadministrator."
 
-#: root/source-js/articles/files.js:492
+#: root/source-js/articles/files.js:468
 msgid "Reassign file"
 msgstr "Tildel fil"
 
-#: root/source-js/articles/files.js:496
+#: root/source-js/articles/files.js:472
 msgid "Assign file"
 msgstr "Tildel fil"
 
-#: root/source-js/articles/files.js:502
+#: root/source-js/articles/files.js:478
 msgid ""
 "Note: This file is already assigned to a spot. Reassigning it to another "
 "will remove it from its current spot and move it to the new one."
@@ -444,27 +444,27 @@ msgstr ""
 "Merk: Denne fila er allerede tildelt et område. Om du tildeler den et annet "
 "område vil den bli fjerna fra det gjeldende området og flyttet til det nye."
 
-#: root/source-js/articles/files.js:507
+#: root/source-js/articles/files.js:483
 msgid "(can not assign to spots - this template has none)"
 msgstr "(kan ikke tildele til områder - denne malen har ingen)"
 
-#: root/source-js/articles/files.js:512
+#: root/source-js/articles/files.js:488
 msgid "Assign to spot: "
 msgstr "Tildel til område: "
 
-#: root/source-js/articles/files.js:532
+#: root/source-js/articles/files.js:508
 msgid "current spot"
 msgstr "gjeldende område"
 
-#: root/source-js/articles/files.js:544
+#: root/source-js/articles/files.js:520
 msgid "Change the caption to:"
 msgstr "Endre bildeteksten til: "
 
-#: root/source-js/articles/files.js:550
+#: root/source-js/articles/files.js:526
 msgid "Show advanced options"
 msgstr "Vis avanserte valg"
 
-#: root/source-js/articles/files.js:560
+#: root/source-js/articles/files.js:536
 msgid ""
 "Above you may choose to assign this file to a spot, these options allow you "
 "to add it directly to the body or lead of an article. Adding it to the body "
@@ -478,21 +478,21 @@ msgstr ""
 "tilgjengelig (ettersom filområder vil skaleres og vises i lister automatisk, "
 "mens bilder i inngress eller brødtekst ofte ikke vil)."
 
-#: root/source-js/articles/files.js:562
+#: root/source-js/articles/files.js:538
 msgid "Add to the lead"
 msgstr "Legg til i inngressen"
 
-#: root/source-js/articles/files.js:563 root/source-js/articles/files.js:567
+#: root/source-js/articles/files.js:539 root/source-js/articles/files.js:543
 msgid "Add to the body"
 msgstr "Legg til i brødteksten"
 
-#: root/source-js/articles/files.js:576
+#: root/source-js/articles/files.js:552
 #: root/source-js/core/dialogHelpers.js:267
 #: root/source-js/core/dialogHelpers.js:293
 msgid "Ok"
 msgstr "Ok"
 
-#: root/source-js/articles/files.js:577
+#: root/source-js/articles/files.js:553
 #: root/source-js/articles/relationships.js:192
 #: root/source-js/articles/viewArticleRevisions.js:106
 #: root/source-js/core/createArticle.js:76
@@ -506,7 +506,7 @@ msgstr "Ok"
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: root/source-js/articles/files.js:603
+#: root/source-js/articles/files.js:579
 msgid ""
 "A file named \"%(NAME)\" (id %(ID)) is already assigned to this spot. Do you "
 "want to replace it with the file \"%(NEWNAME)\"?"
@@ -514,15 +514,15 @@ msgstr ""
 "En fil med navnet «%(NAME)» (id %(ID)) er allerede tildelt dette området. "
 "Vil du bytte den ut med fila «%(NEWNAME)»?"
 
-#: root/source-js/articles/files.js:698
+#: root/source-js/articles/files.js:674
 msgid "Fetching list of file spots..."
 msgstr "Henter liste over filområder …"
 
-#: root/source-js/articles/files.js:746
+#: root/source-js/articles/files.js:722
 msgid "Fetching file information..."
 msgstr "Henter filinformasjon …"
 
-#: root/source-js/articles/files.js:759
+#: root/source-js/articles/files.js:735
 msgid ""
 "Are you sure you wish to remove that file from this article? The file will "
 "not be deleted."
@@ -530,19 +530,19 @@ msgstr ""
 "Er du sikker på at du vil fjerne den fila fra denne artikkelen? Fila vil "
 "ikke bli slettet."
 
-#: root/source-js/articles/files.js:767
+#: root/source-js/articles/files.js:743
 msgid "Retrieving file spots"
 msgstr "Henter liste over filområder …"
 
-#: root/source-js/articles/files.js:791
+#: root/source-js/articles/files.js:767
 msgid "File ID:"
 msgstr "Fil ID:"
 
-#: root/source-js/articles/files.js:792
+#: root/source-js/articles/files.js:768
 msgid "Size:"
 msgstr "Størrelse:"
 
-#: root/source-js/articles/files.js:812
+#: root/source-js/articles/files.js:788
 msgid "Spot:"
 msgstr "Område:"
 
@@ -861,7 +861,7 @@ msgstr "En feil oppstod med forespørselen som ble sendt inn."
 msgid "Last backed up at %(date)"
 msgstr "Sist sikkerhetskopiert %(date)"
 
-#: root/source-js/core/backup.js:265
+#: root/source-js/core/backup.js:282
 msgid ""
 "The backup has been fully restored. Note that any changes made by other "
 "users since this backup was created (other than comments) will be lost if "
@@ -871,12 +871,12 @@ msgstr ""
 "andre brukere siden denne sikkerhetskopien ble opprettet (utenom "
 "kommentarer) vil gå tapt hvis du lagrer den."
 
-#: root/source-js/core/backup.js:347
+#: root/source-js/core/backup.js:349
 msgid "No backup data was found on the server that matched this dataset."
 msgstr ""
 "Fant ikke noen sikkerhetskopier på tjeneren som passet til dette datasettet."
 
-#: root/source-js/core/backup.js:351
+#: root/source-js/core/backup.js:353
 msgid "Failed to retrieve backup data: "
 msgstr "Kunne ikke hente sikkerhetskopien: "
 
@@ -1368,15 +1368,15 @@ msgstr ""
 msgid "Setting as default..."
 msgstr "Setter som standard …"
 
-#: root/source-js/utils/FieldHelper.js:206
+#: root/source-js/utils/FieldHelper.js:207
 msgid "The field \"%(field)\" must be filled in."
 msgstr "Feltet «%(field)» må fylles inn."
 
-#: root/source-js/utils/FieldHelper.js:223
+#: root/source-js/utils/FieldHelper.js:224
 msgid "The field \"%(field)\" contains an invalid date."
 msgstr "Feltet «%(field)» inneholder en ugyldig dato."
 
-#: root/source-js/utils/FieldHelper.js:290
+#: root/source-js/utils/FieldHelper.js:291
 msgid ""
 "The value for the field \"%(FIELD)\" must be within the range %(MIN)-%(MAX)"
 msgstr "Verdien til feltet «%(FIELD)» må være innen intervallet %(MIN)-%(MAX)"
@@ -1431,7 +1431,7 @@ msgstr ""
 msgid "Enabled?"
 msgstr "Slått på?"
 
-#: root/source-js/utils/editorHelper.js:252
+#: root/source-js/utils/editorHelper.js:257
 msgid "TINYMCE_LANGUAGE"
 msgstr "nb"
 
@@ -1515,6 +1515,18 @@ msgstr "Nekter å legge til et tomt emneord."
 msgid "Creating tag..."
 msgstr "Oppretter emneord …"
 
+#~ msgid "Insert text or HTML code"
+#~ msgstr "Sett inn tekst eller HTML-kode"
+
+#~ msgid "Table"
+#~ msgstr "Tabell"
+
+#~ msgid "Insert Table"
+#~ msgstr "Sett inn en tabell"
+
+#~ msgid "Insert"
+#~ msgstr "Sett inn"
+
 #~ msgid ""
 #~ "This article is currently locked for editing by <i>%(USER)</i>. <br /"
 #~ "><br />You have been forwarded to a read-only preview of the article "
@@ -1522,15 +1534,3 @@ msgstr "Oppretter emneord …"
 #~ msgstr ""
 #~ "Denne artikkelen er låst av <i>%(USER)</i>.<br /><br />Du har blitt "
 #~ "videresendt til en skrivebeskyttet forhåndsvisning av artikkelen i stedet."
-
-#~ msgid "Insert"
-#~ msgstr "Sett inn"
-
-#~ msgid "Insert Table"
-#~ msgstr "Sett inn en tabell"
-
-#~ msgid "Table"
-#~ msgstr "Tabell"
-
-#~ msgid "Insert text or HTML code"
-#~ msgstr "Sett inn tekst eller HTML-kode"

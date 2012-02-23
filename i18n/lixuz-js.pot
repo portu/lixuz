@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-13 10:20+0100\n"
+"POT-Creation-Date: 2012-02-23 13:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -406,7 +406,7 @@ msgstr ""
 #: ./root/source-js/core/dialogHelpers.js:275 ./root/source-js/core/dialogHelpers.js:309 ./root/source-js/core/folders.js:53
 #: ./root/source-js/core/folders.js:103 ./root/source-js/articles/relationships.js:192 ./root/source-js/core/objPermEditor.js:174
 #: ./root/source-js/core/objPermEditor.js:274 ./root/source-js/rssimport/rssimport.js:117 ./root/source-js/articles/viewArticleRevisions.js:106
-#: ./root/source-js/articles/files.js:577
+#: ./root/source-js/articles/files.js:553
 msgid "Cancel"
 msgstr ""
 
@@ -597,12 +597,12 @@ msgstr ""
 msgid "You must enter a comment"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:268 ./root/source-js/articles/files.js:516 ./root/source-js/articles/files.js:793
-#: ./root/source-js/articles/files.js:807
+#: ./root/source-js/articles-previewUI/previewUI.js:268 ./root/source-js/articles/files.js:492 ./root/source-js/articles/files.js:769
+#: ./root/source-js/articles/files.js:783
 msgid "(none)"
 msgstr ""
 
-#: ./root/source-js/utils/editorHelper.js:252
+#: ./root/source-js/utils/editorHelper.js:257
 msgid "TINYMCE_LANGUAGE"
 msgstr ""
 
@@ -724,7 +724,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: ./root/source-js/core/dialogHelpers.js:267 ./root/source-js/core/dialogHelpers.js:293 ./root/source-js/articles/files.js:576
+#: ./root/source-js/core/dialogHelpers.js:267 ./root/source-js/core/dialogHelpers.js:293 ./root/source-js/articles/files.js:552
 msgid "Ok"
 msgstr ""
 
@@ -970,18 +970,18 @@ msgstr ""
 msgid "Last backed up at %(date)"
 msgstr ""
 
-#: ./root/source-js/core/backup.js:265
+#: ./root/source-js/core/backup.js:282
 msgid ""
 "The backup has been fully restored. Note that any changes made by other "
 "users since this backup was created (other than comments) will be lost if "
 "you save it."
 msgstr ""
 
-#: ./root/source-js/core/backup.js:347
+#: ./root/source-js/core/backup.js:349
 msgid "No backup data was found on the server that matched this dataset."
 msgstr ""
 
-#: ./root/source-js/core/backup.js:351
+#: ./root/source-js/core/backup.js:353
 msgid "Failed to retrieve backup data: "
 msgstr ""
 
@@ -1048,7 +1048,7 @@ msgstr ""
 msgid "Revisions of %(ARTID)"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:340
+#: ./root/source-js/articles/files.js:334
 msgid ""
 "The video file with file_id %(FILEID) has not been converted to the FLV "
 "format used to serve video through Lixuz yet, the process is still running, "
@@ -1056,47 +1056,47 @@ msgid ""
 "more than an hour, please contact your system administrator"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:344
+#: ./root/source-js/articles/files.js:338
 msgid ""
 "The conversion of this file (%(FILEID)) to the FLV format failed. Please "
 "contact your system administrator."
 msgstr ""
 
-#: ./root/source-js/articles/files.js:492
+#: ./root/source-js/articles/files.js:468
 msgid "Reassign file"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:496
+#: ./root/source-js/articles/files.js:472
 msgid "Assign file"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:502
+#: ./root/source-js/articles/files.js:478
 msgid ""
 "Note: This file is already assigned to a spot. Reassigning it to another "
 "will remove it from its current spot and move it to the new one."
 msgstr ""
 
-#: ./root/source-js/articles/files.js:507
+#: ./root/source-js/articles/files.js:483
 msgid "(can not assign to spots - this template has none)"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:512
+#: ./root/source-js/articles/files.js:488
 msgid "Assign to spot: "
 msgstr ""
 
-#: ./root/source-js/articles/files.js:532
+#: ./root/source-js/articles/files.js:508
 msgid "current spot"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:544
+#: ./root/source-js/articles/files.js:520
 msgid "Change the caption to:"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:550
+#: ./root/source-js/articles/files.js:526
 msgid "Show advanced options"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:560
+#: ./root/source-js/articles/files.js:536
 msgid ""
 "Above you may choose to assign this file to a spot, these options allow you "
 "to add it directly to the body or lead of an article. Adding it to the body "
@@ -1105,47 +1105,47 @@ msgid ""
 "will in most cases not)."
 msgstr ""
 
-#: ./root/source-js/articles/files.js:562
+#: ./root/source-js/articles/files.js:538
 msgid "Add to the lead"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:563 ./root/source-js/articles/files.js:567
+#: ./root/source-js/articles/files.js:539 ./root/source-js/articles/files.js:543
 msgid "Add to the body"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:603
+#: ./root/source-js/articles/files.js:579
 msgid ""
 "A file named \"%(NAME)\" (id %(ID)) is already assigned to this spot. Do you "
 "want to replace it with the file \"%(NEWNAME)\"?"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:698
+#: ./root/source-js/articles/files.js:674
 msgid "Fetching list of file spots..."
 msgstr ""
 
-#: ./root/source-js/articles/files.js:746
+#: ./root/source-js/articles/files.js:722
 msgid "Fetching file information..."
 msgstr ""
 
-#: ./root/source-js/articles/files.js:759
+#: ./root/source-js/articles/files.js:735
 msgid ""
 "Are you sure you wish to remove that file from this article? The file will "
 "not be deleted."
 msgstr ""
 
-#: ./root/source-js/articles/files.js:767
+#: ./root/source-js/articles/files.js:743
 msgid "Retrieving file spots"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:791
+#: ./root/source-js/articles/files.js:767
 msgid "File ID:"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:792
+#: ./root/source-js/articles/files.js:768
 msgid "Size:"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:812
+#: ./root/source-js/articles/files.js:788
 msgid "Spot:"
 msgstr ""
 
@@ -1214,15 +1214,15 @@ msgstr ""
 msgid "An error occurred with the request that was submitted."
 msgstr ""
 
-#: ./root/source-js/utils/FieldHelper.js:206
+#: ./root/source-js/utils/FieldHelper.js:207
 msgid "The field \"%(field)\" must be filled in."
 msgstr ""
 
-#: ./root/source-js/utils/FieldHelper.js:223
+#: ./root/source-js/utils/FieldHelper.js:224
 msgid "The field \"%(field)\" contains an invalid date."
 msgstr ""
 
-#: ./root/source-js/utils/FieldHelper.js:290
+#: ./root/source-js/utils/FieldHelper.js:291
 msgid ""
 "The value for the field \"%(FIELD)\" must be within the range %(MIN)-%(MAX)"
 msgstr ""
