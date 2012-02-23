@@ -1,0 +1,8 @@
+name: forget_password
+method:post
+fields:
+		user_email:
+				required: 1
+				type: text
+				size: 45
+submit: Submit 
