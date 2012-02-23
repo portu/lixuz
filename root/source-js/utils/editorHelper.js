@@ -17,8 +17,8 @@
  */
 function createLixuzRTE (id)
 {
-    deprecated('Superseded by initRTE()');
-    return window.initRTE(id);
+    deprecated('Superseded by RTE.init()');
+    return lixuzRTE.init(id);
 }
 
 function editorHelper_removeFormat ()
@@ -242,35 +242,99 @@ function image_get_new_aspect (oldWidth, oldHeight, newWidth, newHeight)
 
 (function($)
 {
+
+    window.lixuzRTE = {
+        inlineMap: {},
+
+        init: function(id,inline)
+        {
+            dbglog('Initializing editor '+id);
+            var copyPaste = '';
+            if(tinymce.isGecko)
+            {
+                copyPaste = 'cut,copy,paste,';
+            }
+            var language = i18n.get('TINYMCE_LANGUAGE');
+            if(language == 'TINYMCE_LANGUAGE')
+            {
+                language = 'en';
+            }
+            tinyMCE.init({
+                    // General options
+                    mode : "exact",
+                    elements : id,
+                    language: language,
+                    theme : "advanced",
+                    plugins : "autolink,lists,pagebreak,style,layer,table,advhr,advlink,iespell,insertdatetime,preview,media,searchreplace,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,inlinepopups",
+
+                    // Theme options
+                    theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect,fontselect,fontsizeselect,|,forecolor,backcolor",
+                    theme_advanced_buttons2 : copyPaste+"pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,cleanup,|,insertdate,inserttime",
+                    theme_advanced_buttons3 : "hr,removeformat,visualaid,|,sub,sup,|,charmap,iespell,media,advhr,|,ltr,rtl,|,fullscreen,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,restoredraft",
+                    theme_advanced_buttons4 : "tablecontrols",
+                    theme_advanced_toolbar_location : "top",
+                    theme_advanced_toolbar_align : "left",
+                    theme_advanced_statusbar_location : "bottom",
+                    theme_advanced_resizing : true,
+            });
+            if(inline)
+            {
+                this.inlineMap[inline] = id;
+            }
+        },
+
+        get: function(RTE)
+        {
+            try
+            {
+                return tinyMCE.get(this._resolveName(RTE));
+            } catch(e) { }
+        },
+
+        _get: function(RTE)
+        {
+            var editor = this.get(RTE);
+            if (!editor)
+            {
+                lzError('Editor "'+RTE+'" was not found',null,true);
+            }
+            return editor;
+        },
+
+        _resolveName: function(RTE)
+        {
+            if(this.inlineMap[RTE])
+            {
+                return this.inlineMap[RTE];
+            }
+            return RTE;
+        },
+
+        getContent: function(RTE)
+        {
+            return this._get(RTE).getContent();
+        },
+
+        exists: function(RTE)
+        {
+            if(this.get(RTE) != null)
+            {
+                return true;
+            }
+            return false;
+        },
+
+        pushContent: function(RTE,HTML)
+        {
+            var editor = this._get(RTE);
+            var content = this.getContent(RTE);
+            editor.setContent(content+HTML);
+            return true;
+        }
+    };
     window.initRTE = function(id,inline)
     {
-        var copyPaste = '';
-        if(tinymce.isGecko)
-        {
-            copyPaste = 'cut,copy,paste,';
-        }
-        var language = i18n.get('TINYMCE_LANGUAGE');
-        if(language == 'TINYMCE_LANGUAGE')
-        {
-            language = 'en';
-        }
-        tinyMCE.init({
-                // General options
-                mode : "exact",
-                elements : id,
-                language: language,
-                theme : "advanced",
-                plugins : "autolink,lists,pagebreak,style,layer,table,advhr,advlink,iespell,insertdatetime,preview,media,searchreplace,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,inlinepopups",
-
-                // Theme options
-                theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect,fontselect,fontsizeselect,|,forecolor,backcolor",
-                theme_advanced_buttons2 : copyPaste+"pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,cleanup,|,insertdate,inserttime",
-                theme_advanced_buttons3 : "hr,removeformat,visualaid,|,sub,sup,|,charmap,iespell,media,advhr,|,ltr,rtl,|,fullscreen,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,restoredraft",
-                theme_advanced_buttons4 : "tablecontrols",
-                theme_advanced_toolbar_location : "top",
-                theme_advanced_toolbar_align : "left",
-                theme_advanced_statusbar_location : "bottom",
-                theme_advanced_resizing : true,
-        });
+        deprecated();
+        lixuzRTE.init(id,inline);
     };
 })(jQuery);

@@ -312,18 +312,12 @@ $(articleFiles.initBuild);
 function LZ_AddImageToRTE(imageId, RTE)
 {
     deprecated();
-    var editor = editors[RTE];
-    if (!editor)
-    {
-        lzError('Editor "'+RTE+'" was not found');
-        return;
-    }
     try
     {
         var d = new Date();
         var identifier = articleFiles.getIdentifierByID(imageId);
         var image = '<img align="right" alt="" title="" src="/files/get/'+identifier+'?width=210" imgId="'+identifier+'" id="image_'+RTE+identifier+d.getTime()+'" /> ';
-        editor.execCommand('inserthtml',image);
+        lixuzRTE.pushContent(RTE,image);
     }
     catch(e)
     {
@@ -354,17 +348,11 @@ function LZ_AddAudioToArticle (audioId)
 function LZ_AddAudioToRTE(audioId, RTE)
 {
     deprecated();
-    var editor = editors[RTE];
-    if (!editor)
-    {
-        lzError('Editor "'+RTE+'" was not found');
-        return;
-    }
     try
     {
         var d = new Date();
         var audio = '<div name="lixuz_audio" uid="'+audioId+'" style="display:block;width:400px;height:50" id="player_'+RTE+audioId+d.getTime()+'"><img src="/static/images/icons/audio.png" alt="" /></div>';
-        editor.execCommand('inserthtml',audio);
+        lixuzRTE.pushContent(RTE,audio);
     }
     catch(e)
     {
@@ -381,18 +369,12 @@ function LZ_AddVideoToArticle (videoId)
 function LZ_AddVideoToRTE(videoId, RTE)
 {
     deprecated();
-    var editor = editors[RTE];
-    if (!editor)
-    {
-        lzError('Editor "'+RTE+'" was not found');
-        return;
-    }
     try
     {
         var d = new Date();
         var identifier = articleFiles.getIdentifierByID(videoId);
         var video = '<div name="lixuz_video" uid="'+identifier+'" style="display:block;width:400px;height:300px" id="player_'+RTE+identifier+d.getTime()+'"><img src="/files/get/'+identifier+'?flvpreview=1" style="border:0;" /></div>';
-        editor.execCommand('inserthtml',video);
+        lixuzRTE.pushContent(RTE,video);
     }
     catch(e)
     {
@@ -409,12 +391,6 @@ function LZ_AddFileToArticle (fileId)
 function LZ_AddFileToRTE(fileId, RTE)
 {
     deprecated();
-    var editor = editors[RTE];
-    if (!editor)
-    {
-        lzError('Editor "'+RTE+'" was not found');
-        return;
-    }
     try
     {
         var d = new Date();
@@ -433,7 +409,7 @@ function LZ_AddFileToRTE(fileId, RTE)
         title = title.replace(/<imageId/g,'&gt;').replace(/>/g,'&lt;');
         var identifier = articleFiles.getIdentifierByID(fileId);
         var entry = '<a href="/files/get/'+identifier+'/'+fileName+'">'+title+'</a>';
-        editor.execCommand('inserthtml',entry);
+        lixuzRTE.pushContent(RTE,entry);
     }
     catch(e)
     {

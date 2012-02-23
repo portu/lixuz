@@ -497,22 +497,15 @@ function getFieldData (fname)
                 }
                 else if(field.tagName.match(/^textarea$/i))
                 {
-                    var editor;
-                    // Fetch the editor
-                    try
-                    {
-                        editor = tinyMCE.get(fname);
-                    } catch(e) { }
-
                     // Perform editor processing
-                    if (editor != null)
+                    if(lixuzRTE.exists(fname))
                     {
                         // We might get called before the editor has had a chance
                         // to settle (ie. get any data). When that happens, pretend it
                         // contained an empty string.
                         try
                         {
-                            fvalue = editor.getContent();
+                            fvalue = lixuzRTE.getContent(fname);
                         }
                         catch(e)
                         {
