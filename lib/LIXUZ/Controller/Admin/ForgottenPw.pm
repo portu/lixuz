@@ -103,7 +103,8 @@ sub change_password : Local Form('change_password')
     
     if(not $obj_reset_code)
     {
-        $c->stash->{message} = $i18n->get('The password token was invalid.');
+        $c->flash->{userRedirErr} = $i18n->get('The password token was invalid.');
+        $c->res->redirect('/admin/login');
     }
     if($msg_type eq 1)
     {
