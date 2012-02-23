@@ -20,7 +20,7 @@ use MooseX::NonMoose;
 use namespace::autoclean;
 use Digest::MD5 'md5_base64';
 BEGIN { extends 'Catalyst::Controller::FormBuilder' };
-use LIXUZ::HelperModules::EMail qw(send_raw_email_to);
+use LIXUZ::HelperModules::EMail qw(send_email_to);
 
 # Summary: ForgottenPw handler, creates the form and other goodies
 sub forgottenpw : Path('/admin/forgottenpw') Form('/forgottenpw')
@@ -73,11 +73,10 @@ sub pstpwd : Path('/admin/pstpwd')
     	    }    
     	    my $link = $c->uri_for('/admin/forgottenpw/change_password/'.$unique_code);	    
             my $subject = $i18n->get_advanced('Forgotten password');
-            my $message = $i18n->get_advanced("Dear %(USERNAME),\n\n Please click on following link to change your Lixuz password.\n %(LINK)\n\n--\n Lixuz",{ USERNAME => $db_user_name, LINK => $link});
+            my $message = $i18n->get_advanced("Please click on following link to change your Lixuz password:\n %(LINK)",{ USERNAME => $db_user_name, LINK => $link});
     	    my $to =$db_email;
     	    my $from = $c->config->{LIXUZ}->{from_email};
-    	    my $type = "TEXT";
-    	    send_raw_email_to($c,$subject,$message,$to,$from,$type); 
+    	    send_email_to($c,undef,$subject,$message,$to);
     	    $user_email->set_column('reset_code',$unique_code);
     	    $user_email->update();
     	    $msg_typ = 1;
