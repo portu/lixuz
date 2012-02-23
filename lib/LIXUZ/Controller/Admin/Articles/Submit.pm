@@ -258,7 +258,6 @@ sub savedata_article
     # Live comment settings
     if($c->user->can_access('TOGGLE_LIVECOMMENTS') and defined($c->req->data->{'article_liveComments_enable'}))
     {
-        $c->log->debug('Request DATA article_liveComments_enable='.$c->req->data->{'article_liveComments_enable'});
         if ($c->req->data->{'article_liveComments_enable'} =~ /^(false|0)$/)
         {
             $article->set_column('live_comments',0);
