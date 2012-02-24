@@ -82,8 +82,8 @@ while(my $file = $files->next)
 %if($file->is_video) {
 <br /><% $i18n->get('FLV size')%>: <% $file->flv_size($c) %>
 %}
-%if(length($file->folder->get_path.'/'.$file->file_name )> 12){
-<br /><% $i18n->get('Folders:') %><a href="#" title="<% $file->folder->get_path.'/'.$file->file_name %>"><% substr($file->folder->get_path.'/'.$file->file_name,1,10)  %>...</a>
+%if(length($file->folder->get_path) > 12){
+<br /><% $i18n->get('Folders:') %><span class="useTipsy" original-title="<% $file->folder->get_path %>"><% substr($file->folder->get_path,1,10) %>...</span>
 %}else{
 <br /><% $i18n->get('Folders:') %> <% $file->folder->get_path %>
 %}
