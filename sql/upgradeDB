@@ -37,6 +37,12 @@ GetOptions(
     'chained' => \$chained,
     'logfile=s' => \$lfile,
     'fromversion=s' => \$fromVersion,
+	'force-revision|forcerevision=i' => sub
+	{
+		shift;
+		$currentDBRevision = shift;
+		warn("Warning: ignoring value from database and forcing database upgrade from revision $currentDBRevision\n");
+	},
     'restore' => \$restore,
     'force' => sub
     {
@@ -108,7 +114,10 @@ print 'Preparing...' if not $chained;
 print 'Preparing for database upgrade...' if $chained;
 loadConfig();
 $DBRevision = readDBRevision();
-$currentDBRevision = getCurrentDBRevision();
+if(not defined $currentDBRevision or not length $currentDBRevision)
+{
+	$currentDBRevision = getCurrentDBRevision();
+}
 detectFlags();
 print "done\n";
 if ($currentDBRevision > $DBRevision)
