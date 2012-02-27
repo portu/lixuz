@@ -72,6 +72,10 @@ LIXUZ:
     # Note that "%" must be escaped as "\%"
     category_url: [DEFAULT_URL_CATEGORY]
     article_url: [DEFAULT_URL_ARTICLE]
+    # If you want Lixuz to log to a file instead of outputting to STDERR (ie. to
+    # get Lixuz logs separate from Apache/Nginx logs), set this option to
+    # the path to the logfile you want to output to.
+    logToFile: [LOG_TO_FILE]
     # Indexer configuration
     indexer:
         language: [INDEXER_LANGUAGE]

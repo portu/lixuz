@@ -79,6 +79,7 @@ sub loadConf
     $settings{DEFAULT_URL_CATEGORY} = $lc->{category_url};
     $settings{DEFAULT_URL_ARTICLE} = $lc->{article_url};
     $settings{FILES_COMPAT} = $lc->{files_compat};
+    $settings{LOG_TO_FILE} = $lc->{logToFile};
     if(not defined $settings{FILES_COMPAT} or not length $settings{FILES_COMPAT})
     {
         # This defaults to true, simply because if it's not set, we're upgrading from
@@ -89,6 +90,10 @@ sub loadConf
     if(not $settings{EMAIL_TO_OVERRIDE})
     {
         $settings{EMAIL_TO_OVERRIDE} = 'false';
+    }
+    if(not $settings{LOG_TO_FILE})
+    {
+        $settings{LOG_TO_FILE} = 'false';
     }
     $settings{RSS_SOURCES} = $lc->{rss_sources};
 
@@ -110,7 +115,7 @@ sub writeConfigFile
     undef $/;
     my $template = <$templateFile>;
     close($templateFile);
-    my @baseSources = qw(DBNAME DBUSER DB_PASSWD SESSION_STORAGE MEMCACHED_SERVER MEMCACHED_NAMESPACE MASON_DATADIR LIXUZ_ROOT TEMPLATE_PATH TMP_PATH FILE_PATH FROM_EMAIL EMAIL_TO_OVERRIDE DEFAULT_URL_CATEGORY DEFAULT_URL_ARTICLE RSS_IMPORT_ACTIVE_DEFAULT INDEXER_LANGUAGE INDEXER_STORAGE_PATH FILES_COMPAT);
+    my @baseSources = qw(DBNAME DBUSER DB_PASSWD SESSION_STORAGE MEMCACHED_SERVER MEMCACHED_NAMESPACE MASON_DATADIR LIXUZ_ROOT TEMPLATE_PATH TMP_PATH FILE_PATH FROM_EMAIL EMAIL_TO_OVERRIDE DEFAULT_URL_CATEGORY DEFAULT_URL_ARTICLE RSS_IMPORT_ACTIVE_DEFAULT INDEXER_LANGUAGE INDEXER_STORAGE_PATH FILES_COMPAT LOG_TO_FILE);
     foreach my $s (@baseSources)
     {
         my $setting;

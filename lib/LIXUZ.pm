@@ -46,6 +46,7 @@ use Catalyst 	qw/
 				/; # Newline separated so it's easy to read
 use LIXUZ::HelperModules::I18N;
 use LIXUZ::HelperModules::Log;
+use Config::Any;
 
 extends 'Catalyst';
 
@@ -87,16 +88,15 @@ else
 
 __PACKAGE__->config( name => 'LIXUZ', encoding => 'UTF-8' );
 
+my $confFile = '.';
 if(not -e $PATH.'/lib/LIXUZ.pm')
 {
     # This is a somewhat hacky solution to avoid having to load File::Basename here
     ($PATH = __FILE__) =~ s{/lib/LIXUZ\.pm$}{};
-    __PACKAGE__->config( 'Plugin::ConfigLoader' => { file => $PATH.'/lixuz.yml' } );
+    $confFile = $PATH;
 }
-else
-{
-    __PACKAGE__->config( 'Plugin::ConfigLoader' => { file => './lixuz.yml' } );
-}
+$confFile .= '/lixuz.yml';
+__PACKAGE__->config( 'Plugin::ConfigLoader' => { file => $confFile } );
 
 __PACKAGE__->config->{session} = 
 {
@@ -128,12 +128,37 @@ __PACKAGE__->config->{'Plugin::Cache'}{backend} = {
      class   => "Cache::Memcached::Fast",
      utf8 => 1,
 };
-__PACKAGE__->log( LIXUZ::HelperModules::Log->new );
 __PACKAGE__->config('View::JSON' => {
         expose_stash => 'json_response'
     });
 
+my @additionalPlugins;
+
+{
+    # Load the config file to check the logToFile parameter
+    my $conf = Config::Any->load_files( { files =>  [ $confFile ], use_ext =>1, flatten_to_hash => 1 } );
+    my $logToFile = $conf->{$confFile}->{'LIXUZ'}->{logToFile};
+    # If we have a true logToFile parameter, switch to using Log::Handler instead
+    # of our builtin log implementation. If we don't have one, use the normal
+    # log handler.
+    if ($logToFile && $logToFile ne 'false')
+    {
+        push(@additionalPlugins,'Log::Handler');
+        __PACKAGE__->config->{'Log::Handler'} = {
+                filename => $logToFile,
+                fileopen => 1,
+                mode => 'append',
+                newline => 1,
+        };
+    }
+    else
+    {
+        __PACKAGE__->log( LIXUZ::HelperModules::Log->new );
+    }
+}
+
+
 # Start LIXUZ
-__PACKAGE__->setup;
+__PACKAGE__->setup(@additionalPlugins);
 
 1;
