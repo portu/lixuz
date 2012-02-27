@@ -26,9 +26,7 @@ use warnings;
 use Moose;
 use MooseX::NonMoose;
 use namespace::autoclean;
-
-
-use base 'DBIx::Class::Core';
+extends 'DBIx::Class::Core';
 
 __PACKAGE__->load_components("InflateColumn::DateTime");
 
