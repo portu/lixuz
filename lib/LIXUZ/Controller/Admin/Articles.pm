@@ -34,6 +34,7 @@ use LIXUZ::HelperModules::Fields;
 use LIXUZ::HelperModules::HTMLFilter qw(filter_string);
 use LIXUZ::HelperModules::TemplateRenderer;
 use LIXUZ::HelperModules::RevisionHelpers qw(article_latest_revisions get_latest_article);
+use Hash::Merge qw(merge);
 use constant { true => 1, false => 0};
 
 # --------
@@ -69,6 +70,19 @@ sub index : Path Args(0) Form('/core/search')
         }
     }
 
+    # Set the search request as per role and user.
+    if (defined $c->req->param('filter_assigned_to'))
+    {
+        my $qstring = $c->req->param('filter_assigned_to');
+        if ($qstring =~ s/^user-//)
+        {
+            $c->req->params->{filter_assigned_to_user} = $qstring;
+        }
+        elsif($qstring =~ s/^role-//)
+        {
+            $c->req->params->{filter_assigned_to_role} = $qstring;
+        }
+    }        
     # Prepare the list
     my $list = $self->retrieveArticles($c,$article,$query);
 
@@ -179,9 +193,17 @@ sub init_searchFilters : Private
     while(my $user = $users->next)
     {
         push(@{$userOptions}, {
-                value => $user->user_id,
-                label => $user->user_name,
+                value =>  $i18n->get('user').'-'.$user->user_id,
+                label =>  $i18n->get('user').':'.$user->user_name,
             });
+    }
+    my $roles= $c->model('LIXUZDB::LzRole');
+    while(my $role = $roles->next)
+    {
+         push(@{$userOptions}, {
+                value =>  $i18n->get('role').'-'.$role->role_id,
+                label =>  $i18n->get('role').':'.$role->role_name,
+        });
     }
     my $statusOptions = [];
     my $statuses = $c->model('LIXUZDB::LzStatus');
@@ -194,11 +216,11 @@ sub init_searchFilters : Private
     }
     $c->stash->{searchFilters} = [
         {
-            name => $i18n->get('Assigned to user'),
-            realname => 'assigned_to_user',
+            name => $i18n->get('Assigned to'),
+            realname => 'assigned_to',
             options => $userOptions,
-            selected => defined $c->req->param('filter_assigned_to_user') ? $c->req->param('filter_assigned_to_user') : undef,
-            anyString => $i18n->get('(anyone)'),
+            selected => defined $c->req->param('filter_assigned_to') ? $c->req->param('filter_assigned_to') : undef,
+            anyString => $i18n->get('(any user or role)'),
         },
         {
             name => $i18n->get('In status'),
