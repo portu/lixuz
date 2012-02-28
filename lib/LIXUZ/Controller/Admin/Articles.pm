@@ -34,7 +34,6 @@ use LIXUZ::HelperModules::Fields;
 use LIXUZ::HelperModules::HTMLFilter qw(filter_string);
 use LIXUZ::HelperModules::TemplateRenderer;
 use LIXUZ::HelperModules::RevisionHelpers qw(article_latest_revisions get_latest_article);
-use Hash::Merge qw(merge);
 use constant { true => 1, false => 0};
 
 # --------
@@ -193,7 +192,7 @@ sub init_searchFilters : Private
     while(my $user = $users->next)
     {
         push(@{$userOptions}, {
-                value =>  $i18n->get('user').'-'.$user->user_id,
+                value =>  'user-'.$user->user_id,
                 label =>  $i18n->get('user').':'.$user->user_name,
             });
     }
@@ -201,7 +200,7 @@ sub init_searchFilters : Private
     while(my $role = $roles->next)
     {
          push(@{$userOptions}, {
-                value =>  $i18n->get('role').'-'.$role->role_id,
+                value =>  'role-'.$role->role_id,
                 label =>  $i18n->get('role').':'.$role->role_name,
         });
     }
