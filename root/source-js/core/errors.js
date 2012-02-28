@@ -81,8 +81,7 @@ function getLzErrInfo (add)
     var userAgent = '(unknown)',
         URL = '(unknown)',
         user = '(unknown)',
-        lzVer = '',
-        OS = '(unknown)';
+        lzVer = '';
     // Get the current URL
     try {
         if(document.url)
@@ -93,71 +92,23 @@ function getLzErrInfo (add)
             URL = window.location;
         URL = URL.replace(/&/,'&amp;');
     } catch(e) { lzelog(e); }
-    // Get a cleaned version of the user agent string
-    try { 
-        userAgent = navigator.userAgent;
-        if(userAgent.match(/^Mozilla/))
-            userAgent = userAgent.replace(/^[^\(]+/,'');
-        if($.browser.msie)
-        {
-            userAgent = userAgent.replace(/^\(\s*(compatible)?\s*;?/,'')
-                                 .replace(/\)$/,'')
-                                 .replace(/Win[^;]+;/,'')
-                                 .replace(/\s*\.NET[^;]+;?\s*/g,'');
-        }
-        else
-        {
-            userAgent = userAgent.replace(/^\([^\)]+\)/,'');
-        }
-        userAgent = userAgent.replace(/;/g,'')
-                             .replace(/[^)]+\)/,'')
-                             .replace(/\s+/g,' ')
-                             .replace(/^\s*/,'');
-    } catch(e){ }
-    // Try to extract the OS from the user agent string
-    try {
-        OS = navigator.userAgent;
-        if($.browser.msie)
-        {
-            OS = OS.replace(/.*(Win[^;]+).*/,'$1');
-        }
-        else
-        {
-            OS = OS.replace(/^[^\(]+\s*\(/,'');
-            var info = OS.split('; ');
-            if(info[0] != info[2] && info[2].indexOf(info[0]) == -1)
-                OS = info[0]+'/'+info[2];
-            else
-                OS = info[2];
-        }
-    } catch(e) { }
+    // Get the user agent
+    try { userAgent = navigator.userAgent; } catch(e) { }
     // Get the current Lixuz version
     try { lzVer = $('#lixuz_version').val(); } catch(e) { }
     // Get the current username+user id
     try { user = $('#currentUsername').val(); user = user +'/'+$('#currentUserId').val(); } catch(e) { }
-    // Repair userAgent+OS if something went wrong in the earlier functions
-    try
-    {
-        // Reset userAgent if it's empty
-        if(userAgent == null || userAgent == '' || !/\S/.match(userAgent))
-        {
-            userAgent = navigator.userAgent;
-        }
-        // Set OS to null (supresses output) if it's not a useful value
-        if(OS == userAgent || !/\S/.match(OS))
-        {
-            OS = null;
-        }
-    } catch(e) { }
     // Generate the actual message string
-    var message = '<code>';
+    var message = '<code class="errorInformation">';
     message = message+add;
     message = message+'User&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '+user+'<br />';
     message = message+'On page&nbsp;&nbsp;&nbsp;: '+URL+'<br />';
     message = message+'User agent: '+userAgent+'<br />';
-    if(OS != null)
-        message = message+'OS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '+OS+'<br />';
     message = message+'Lixuz&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '+lzVer;
+    try
+    {
+        message = message+'<br />At&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '+(new Date).toString();
+    } catch(e) { }
     message = message+'</code>';
     return message;
 }
@@ -215,6 +166,7 @@ function lzException(exception,error)
         }
     }
 
+    message = '<span onselectstart="return false;" unselectable="on">'+message+'</span>';
     message = message+'<br /><br /><small>';
 
     if(error)
@@ -322,6 +274,28 @@ function lzException(exception,error)
     try
     {
         displayErrorBox('Fatal error',message);
+        try
+        {
+            $('.errorInformation').click(function()
+            {
+                var $ei = $('.errorInformation');
+                var message = $ei.html().replace(/<br[^>]*>/g,"\n").replace(/&nbsp;/g,' ');
+                var $ta = $('<textarea/>').css({
+                    height:$ei.height(),
+                    width:$ei.width(),
+                    'font-size':$ei.css('font-size')
+                }).text(message);
+                $ei.hide();
+                $ta.appendTo($ei.parent());
+                $ta[0].focus();
+                $ta[0].select();
+                $ta.focusout(function()
+                {
+                    $ta.remove();
+                    $ei.show();
+                });
+            });
+        } catch(ign) { }
     }
     catch(e)
     {
