@@ -68,6 +68,7 @@ sub filter_string
             class => 1,
             width => 1,
             height => 1,
+            align => 1,
         },
         div => {
             name => 1,
