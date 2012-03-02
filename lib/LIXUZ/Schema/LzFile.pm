@@ -736,12 +736,9 @@ sub get_icon
     my $self = shift;
     my $c = shift;
     my $icon;
-    if ($self->is_image)
+    if ($self->is_image && $c)
     {
-        if ($c)
-        {
-            $icon = $self->get_url_aspect($c,150,150);
-        }
+        $icon = $self->get_url_aspect($c,150,150);
     }
     elsif($self->is_video)
     {
