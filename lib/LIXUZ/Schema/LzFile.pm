@@ -740,7 +740,7 @@ sub get_icon
     {
         if ($c)
         {
-            $icon = $self->get_thumbnail($c,150,150);
+            $icon = $self->get_url_aspect($c,150,150);
         }
     }
     elsif($self->is_video)
@@ -946,42 +946,84 @@ sub get_url
     }
 }
 
-# Summary: Get a thumbnail as close to the specified size as possible
-# Usage: url = obj->get_thumbnail($c, height,width);
-sub get_thumbnail
+# Summary: Get a resized version of the file with dimensions as close to the
+#           specified size as possible
+# Usage: url = obj->get_url_aspect($c, height,width);
+sub get_url_aspect
 {
     my($self, $c, $height, $width) = @_;
+
+    # If we only got either height or width, then hand control to get_url,
+    # as we don't need to do any calculation
+    if (!defined($height) || !defined($width) )
+    {
+        return $self->get_url($c,$height,$width);
+    }
+
+    # Detect height/width if needed
     if (not $self->height or not $self->width)
     {
         $self->detectImageFields($c);
         if (not $self->height or not $self->width)
         {
-            $c->log->warn('Failed to detect height/width for '.$self->file_id.' - unable to create proper thumbnail. Returning dummy width 80 and hoping for the best.');
-            return $self->get_url($c,undef,$width);
+            $c->log->warn('Failed to detect height/width for '.$self->file_id.' - unable to generate url with aspect ratio. Returning original image size instead.');
+            return $self->get_url($c);
         }
     }
+    # If both the height and the width exceed the original height/width, then
+    # return the original size instead of the resized size
+    if ($width >= $self->width && $height >= $height)
+    {
+        return $self->get_url($c);
+    }
+
+    my $final = {
+        height => undef,
+        width => undef,
+    };
+    # Landscape format
     if ($self->width > $self->height)
     {
-        if ($self->width <= $width)
+        # Okay, it's landscape, thus if the height supplied is larger than the
+        # width, we use that as our base, otherwise, we use the width
+        if ($height > $width)
         {
-            return($self->get_url($c));
+            $final->{height} = $height;
         }
         else
         {
-            return $self->get_url($c,undef,$width);
+            $final->{width} = $width;
         }
     }
+    # Portrait
     else
     {
-        if ($self->height <= $height)
+        # Okay, it's portrait, thus if the width supplied is larger than the
+        # height, we use that as our base, otherwise, we use the height
+        if ($width > $height)
         {
-            return($self->get_url($c));
+            $final->{width} = $width;
         }
         else
         {
-            return $self->get_url($c,$height);
+            $final->{height} = $height;
         }
     }
+
+    # Switch from width->height or height->width if the value we've
+    # decided to resize to exceeds the original image dimensions.
+    if(defined $final->{width} && $final->{width} > $self->width)
+    {
+        $final->{height} = $height;
+        $final->{width} = undef;
+    }
+    elsif(defined $final->{height} && $final->{height} > $self->height)
+    {
+        $final->{width} = $width;
+        $final->{height} = undef;
+    }
+
+    return $self->get_url($c, $final->{height}, $final->{width});
 }
 
 # Summary: Get a resized version of this file
@@ -1370,6 +1412,18 @@ sub _sizeStringForPath
 
     my($s, $t) = fsize($bytes);
     return $s.' '.$t;
+}
+
+# ---
+# Deprecated methods
+# ---
+
+sub get_thumbnail
+{
+    my $self = shift;
+    my($c) = @_;
+    $c->log->debug('Deprecated method "get_thumbnail" on LzFile called. Use get_url_aspect instead. This will be removed in a later version.');
+    return $self->get_url_aspect(@_);
 }
 
 1;
