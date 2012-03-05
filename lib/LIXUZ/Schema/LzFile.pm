@@ -946,6 +946,8 @@ sub get_url
 # Summary: Get a resized version of the file with dimensions as close to the
 #           specified size as possible
 # Usage: url = obj->get_url_aspect($c, height,width);
+#          OR
+#        (url,height,width) = obj->get_url_aspect($c, height,width);
 sub get_url_aspect
 {
     my($self, $c, $height, $width) = @_;
@@ -1017,20 +1019,21 @@ sub get_url_aspect
         }
     }
 
-    # Switch from width->height or height->width if the value we've
-    # decided to resize to exceeds the original image dimensions.
-    if(defined $final->{width} && $final->{width} > $self->width)
-    {
-        $final->{height} = $height;
-        $final->{width} = undef;
-    }
-    elsif(defined $final->{height} && $final->{height} > $self->height)
-    {
-        $final->{width} = $width;
-        $final->{height} = undef;
-    }
+    my $URL = $self->get_url($c, $final->{height}, $final->{width});
 
-    return $self->get_url($c, $final->{height}, $final->{width});
+    if(wantarray())
+    {
+        my $height = $final->{height};
+        my $width = $final->{width};
+
+        $height //= get_new_aspect($self->width,$self->height,$width);
+        $width  //= get_new_aspect($self->width,$self->height,undef,$height);
+        return ($URL,$height,$width);
+    }
+    else
+    {
+        return $URL;
+    }
 }
 
 # Summary: Get a resized version of this file
