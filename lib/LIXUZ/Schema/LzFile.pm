@@ -969,9 +969,19 @@ sub get_url_aspect
     }
     # If both the height and the width exceed the original height/width, then
     # return the original size instead of the resized size
-    if ($width >= $self->width && $height >= $height)
+    if ($width >= $self->width && $height >= $self->height)
     {
         return $self->get_url($c);
+    }
+
+    # If either the height or width exceed the original, then use the original
+    if ($height > $self->height)
+    {
+        $height = $self->height;
+    }
+    if ($width > $self->width)
+    {
+        $width = $self->width;
     }
 
     my $final = {
