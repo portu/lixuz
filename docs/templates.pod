@@ -85,3 +85,30 @@ the infoblock then you will have to empty memcached. It's not recommended
 that you do that on a live server so you ought to have a debugging server.
 Emptying memcached can be done either from within the Lixuz web UI on
 the templates page, or by restarting memcached.
+
+=head1 MORE INFORMATION
+
+You can get more information on the various template formats by
+reading the associated documentation:
+
+=over
+
+=item B<docs/templates/EmailTemplates.pod>
+
+Contains documentation on the format for templates used to render
+e-mails sent by Lixuz.
+
+=item B<docs/templates/WebTemplates.pod>
+
+Contains documentation on the format for templates that are used
+to render the live website that is running under Lixuz.
+
+=item B<docs/templates/MediaTemplates.pod>
+
+Contains documentation on the special templates that are used to
+render certain media content to the live website that is running
+under Lixuz. These are similar to the web templates, but as they
+are used to render specific components, they have some special
+limitations (and functions).
+
+=back

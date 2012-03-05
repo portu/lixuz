@@ -24,9 +24,9 @@ use warnings;
 
 use Moose;
 use MooseX::NonMoose;
+use LIXUZ::HelperModules::HTMLRenderer;
 use namespace::autoclean;
 extends 'DBIx::Class::Core';
-
 
 =head1 NAME
 
@@ -393,15 +393,17 @@ sub get_fileSpot
 }
 
 # Summary: Get thew body with dynamically placed content
-# Usage: body = article->filteredBody($c,IMGOPTS)
+# Usage: body = article->filteredBody($c,IMGOPTS,RENDEROPTS)
 #
 # IMGOPTS is the same hash as you would supply to get_imghtmlWithCaption in LzFile.
+# RENDEROPTS is the same hash as you would supply to renderedBody.
 sub filteredBody
 {
     my $self = shift;
     my $c = shift;
     my $imgOpts = shift;
     $imgOpts //= {};
+    my $renderOpts = shift;
 
     my $ckey = get_ckey('article','filteredBody',$self->article_id);
 
@@ -413,8 +415,8 @@ sub filteredBody
     }
 
 	# TODO: Once strings are properly cleaned on save, and older strings are cleaned
-	#       cleaned on upgrade, remove this.
-	my $body = filter_string($self->body);
+	#       cleaned on upgrade, remove the call to filter_string()
+	my $body = filter_string($self->renderBody($c,$renderOpts));
 
     my $infolist = $c->stash->{infolist};
     if(not $infolist->{spots_parsed})
@@ -470,6 +472,49 @@ sub filteredBody
     $c->cache->set($ckey,$filtered,CT_DEFAULT);
 
     return $filtered;
+}
+
+# Summary: Retrieve the body of an article, rendered with Lixuz image
+#       components via a template
+# Usage: body = article->renderedBody($c, OPTIONS);
+#
+# OPTIONS is a hashref with the following settings:
+#
+# - template -
+# A string, the template to use to render the images. this can be omitted in
+# which case Lixuz will do a best case guess from the data defined in the
+# current article template, or, if there is none, pick the default image
+# renderer from the database.
+#
+# - height - || - width -
+# An int, force the size of the image. Optional, if omitted the size already
+# defined will be used.
+#
+# - maxHeight - || - maxWidth -
+# An int, the maximum width/height an image can have. If omitted, the max is
+# the size of the original image.
+sub renderBody
+{
+    my ($self,$c,$options) = @_;
+    my $ckey = get_ckey('article','renderedBody',$self->id.'_'.$self->revision);
+    if ($options->{template})
+    {
+        $ckey .= '-'.$options->{template};
+    }
+
+    if (my $cached = $c->cache->get($ckey))
+    {
+        return $cached;
+    }
+
+    my $HTMLR = LIXUZ::HelperModules::HTMLRenderer->new(
+        processString => $self->body,
+        c => $c,
+    );
+    my $rendered = $HTMLR->render;
+
+	$c->cache->set($ckey,$rendered);
+	return $rendered;
 }
 
 # Summary: Check if the current user can edit this article

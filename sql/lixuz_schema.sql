@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.49, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: sa_lixuz
+-- Host: localhost    Database: lixuz
 -- ------------------------------------------------------
 -- Server version	5.1.49-3
 
@@ -336,7 +336,7 @@ CREATE TABLE `lz_file_class` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(254) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -383,7 +383,7 @@ CREATE TABLE `lz_key_value` (
   `value` text,
   `type` enum('dictionary','url') NOT NULL,
   PRIMARY KEY (`keyvalue_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -398,7 +398,7 @@ CREATE TABLE `lz_live_captcha` (
   `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `captcha` char(10) NOT NULL,
   PRIMARY KEY (`captcha_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -417,7 +417,7 @@ CREATE TABLE `lz_live_comment` (
   `body` text,
   `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`comment_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -447,7 +447,7 @@ CREATE TABLE `lz_newsletter_group` (
   `group_name` varchar(254) NOT NULL,
   `internal` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`group_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -466,7 +466,7 @@ CREATE TABLE `lz_newsletter_saved` (
   `format` enum('text','html') DEFAULT NULL,
   `sent_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`saved_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -486,7 +486,7 @@ CREATE TABLE `lz_newsletter_subscription` (
   `validation_hash` varchar(100) DEFAULT NULL,
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`subscription_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -533,7 +533,7 @@ CREATE TABLE `lz_perms` (
   `permission` tinyint(1) NOT NULL,
   `added_by_user_id` int(11) NOT NULL,
   PRIMARY KEY (`perm_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -637,7 +637,7 @@ CREATE TABLE `lz_tag` (
   `created_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`tag_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -651,7 +651,7 @@ CREATE TABLE `lz_template` (
   `template_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(254) DEFAULT NULL,
   `file` varchar(254) NOT NULL,
-  `type` enum('list','search','article','include','message','rssimport','email_text','email_html') DEFAULT NULL,
+  `type` enum('list','search','article','include','message','rssimport','email_text','email_html','media') DEFAULT NULL,
   `apiversion` int(4) NOT NULL,
   `uniqueid` varchar(254) NOT NULL,
   `is_default` tinyint(1) NOT NULL DEFAULT '0',
@@ -744,7 +744,7 @@ CREATE TABLE `lz_widget_config` (
   `config_value` char(255) DEFAULT NULL,
   `global` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`widget_config_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -797,4 +797,4 @@ CREATE TABLE `lz_workflow_comments` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-02-15  9:04:13
+-- Dump completed on 2012-03-05 13:01:20
