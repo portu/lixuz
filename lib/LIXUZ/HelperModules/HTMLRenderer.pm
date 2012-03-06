@@ -117,7 +117,7 @@ sub renderImg
     # If we still can't find a file, give up.
     if (!defined($image))
     {
-        $self->c->log->warn('HTMLRenderer: Failed to locate file with the identifier '.$fileIdentifier' - skipping');
+        $self->c->log->warn('HTMLRenderer: Failed to locate file with the identifier '.$fileIdentifier.' - skipping');
         return $img->to_xml;
     }
 
