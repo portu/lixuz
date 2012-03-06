@@ -106,6 +106,21 @@ sub renderImg
     my $image = $self->c->model('LIXUZDB::LzFile')->find({
             identifier => $fileIdentifier,
         });
+
+    # Try to fetch by file_id if fetching by identifier failed
+    if (! defined($image) && $fileIdentifier =~ /^\d+$/)
+    {
+        $image = $self->c->model('LIXUZDB::LzFile')->find({
+                file_id => $fileIdentifier,
+            });
+    }
+    # If we still can't find a file, give up.
+    if (!defined($image))
+    {
+        $self->c->log->warn('Failed to locate file with the identifier '.$fileIdentifier' - skipping');
+        return $img->to_xml;
+    }
+
     my $attrs       = $img->attrs;
     my $size = $self->_metaSizeExtractor($img,$img->attrs('src'));
 
