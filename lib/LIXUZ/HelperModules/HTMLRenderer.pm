@@ -98,7 +98,7 @@ sub renderImg
     if (! ($fileIdentifier =~ s{.+/files/get/([^\?/]+).*}{$1}))
     {
         # If we can't figure out what the ID is - give up
-        $self->c->log->warn('Failed to extract file identifier for entry in body with src="'.$fileIdentifier.'" - skipping');
+        $self->c->log->warn('HTMLRenderer: Failed to extract file identifier for entry in body with src="'.$fileIdentifier.'" - skipping');
         return $img->to_xml;
     }
 
@@ -117,7 +117,7 @@ sub renderImg
     # If we still can't find a file, give up.
     if (!defined($image))
     {
-        $self->c->log->warn('Failed to locate file with the identifier '.$fileIdentifier' - skipping');
+        $self->c->log->warn('HTMLRenderer: Failed to locate file with the identifier '.$fileIdentifier' - skipping');
         return $img->to_xml;
     }
 
@@ -209,7 +209,7 @@ sub templateString
     }
     else
     {
-        $self->c->log->warn('Failed to detect a media template. Will return a basic dummy-template');
+        $self->c->log->warn('HTMLRenderer: Failed to detect a media template. Will return a basic dummy-template');
         return $fallback;
     }
 
@@ -247,7 +247,7 @@ sub templateString
 
     if(ref($content))
     {
-        $self->c->log->error('Exception during rendering of media template '.$templateFile.': '.$content->as_brief.' - will return basic dummy-template');
+        $self->c->log->error('HTMLRenderer: Exception during rendering of media template '.$templateFile.': '.$content->as_brief.' - will return basic dummy-template');
         return $fallback;
     }
 
