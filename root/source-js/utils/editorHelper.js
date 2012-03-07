@@ -202,7 +202,11 @@ function insertImage_resizeObj(editorName,obj,width,height)
                     elements : id,
                     language: language,
                     theme : "advanced",
-                    plugins : "autolink,lists,pagebreak,style,layer,table,advhr,advlink,iespell,insertdatetime,preview,media,searchreplace,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,inlinepopups,wordcount",
+                    plugins : "autolink,lists,pagebreak,style,layer,table,advhr,advlink,iespell,insertdatetime,preview,media,searchreplace,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,inlinepopups,wordcount,advimagescale",
+
+                    advimagescale_append_to_url: true,
+                    advimagescale_url_width_key: 'width',
+                    advimagescale_url_height_key: 'height',
 
                     // Theme options
                     theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect,fontselect,fontsizeselect,|,forecolor,backcolor",
