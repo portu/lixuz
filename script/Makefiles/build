@@ -24,6 +24,11 @@ buildjs:
 	@cd root/source-js/3rdparty-libs && \
 	js_ext=".lib.js"; \
 	$(JS_BUILD_METHOD)
+	$(JS_BUILDER) root/source-js/utils/imageAspect.js \
+		root/source-js/3rdparty-libs/tiny_mce/themes/advanced/js/image.js \
+		root/source-js/custom/tinymce.image.js \
+		> $(JS_TARGET_DIR)/tinymce-image.lib.js
+	perl -pi -e 's#js/image.js#http://code.jquery.com/jquery-1.7.1.min.js"></script>\n<script type="text/javascript" src="/js/tinymce-image.lib.js#; s#\r\n#\n#g;' root/js/tiny_mce/themes/advanced/image.htm
 	
 buildcss:
 	@make --no-print-directory -C root/css
