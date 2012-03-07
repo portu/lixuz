@@ -510,6 +510,8 @@ sub renderBody
     my $HTMLR = LIXUZ::HelperModules::HTMLRenderer->new(
         processString => $self->body,
         c => $c,
+        article_id => $self->article_id,
+        article_rev => $self->revision
     );
     my $rendered = $HTMLR->render;
 
