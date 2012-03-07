@@ -265,7 +265,7 @@ function image_get_new_aspect (oldWidth, oldHeight, newWidth, newHeight)
                     elements : id,
                     language: language,
                     theme : "advanced",
-                    plugins : "autolink,lists,pagebreak,style,layer,table,advhr,advlink,iespell,insertdatetime,preview,media,searchreplace,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,inlinepopups",
+                    plugins : "autolink,lists,pagebreak,style,layer,table,advhr,advlink,iespell,insertdatetime,preview,media,searchreplace,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,inlinepopups,wordcount",
 
                     // Theme options
                     theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect,fontselect,fontsizeselect,|,forecolor,backcolor",
