@@ -954,9 +954,10 @@ sub get_url_aspect
 
     # If we only got either height or width, then hand control to get_url,
     # as we don't need to do any calculation
-    if (!defined($height) || !defined($width) )
+    if ( !defined($height) || !defined($width) )
     {
-        return $self->get_url($c,$height,$width);
+        my $URL = $self->get_url($c,$height,$width);
+        return $self->_returnStringAndAspect(wantarray,$URL,$height,$width);
     }
 
     # Detect height/width if needed
@@ -966,7 +967,8 @@ sub get_url_aspect
         if (not $self->height or not $self->width)
         {
             $c->log->warn('Failed to detect height/width for '.$self->file_id.' - unable to generate url with aspect ratio. Returning original image size instead.');
-            return $self->get_url($c);
+            my $URL = $self->get_url($c);
+            return $self->_returnStringAndAspect(wantarray,$URL);
         }
     }
     # If both the height and the width exceed the original height/width, then
@@ -1021,19 +1023,7 @@ sub get_url_aspect
 
     my $URL = $self->get_url($c, $final->{height}, $final->{width});
 
-    if(wantarray())
-    {
-        my $height = $final->{height};
-        my $width = $final->{width};
-
-        $height //= get_new_aspect($self->width,$self->height,$width);
-        $width  //= get_new_aspect($self->width,$self->height,undef,$height);
-        return ($URL,$height,$width);
-    }
-    else
-    {
-        return $URL;
-    }
+    return $self->_returnStringAndAspect(wantarray,$URL,$final->{height},$final->{width});
 }
 
 # Summary: Get a resized version of this file
@@ -1422,6 +1412,26 @@ sub _sizeStringForPath
 
     my($s, $t) = fsize($bytes);
     return $s.' '.$t;
+}
+
+# Summary: Return the height+width of this image along with a string
+# Usage: (string,height,width) = self->_returnStringAndAspect(wantarray,STRING,HEIGHT?,WIDTH?);
+sub _returnStringAndAspect
+{
+    my($self,$wantArray,$string,$height,$width) = @_;
+
+    if (!$wantArray)
+    {
+        return $string;
+    }
+
+    if (!defined($height) && !defined($width))
+    {
+        return ($string,$self->height,$self->width);
+    }
+    $height //= get_new_aspect($self->width,$self->height,$width);
+    $width  //= get_new_aspect($self->width,$self->height,undef,$height);
+    return ($string,$height,$width);
 }
 
 # ---
