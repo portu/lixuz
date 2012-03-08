@@ -442,6 +442,13 @@ function LZ_deleteFileFromArticle (fileId)
 // Toggle the files section closed/open
 function LZ_toggleFilesSection ()
 {
+    var toggler = function()
+    {
+        $("#files_slider_inner").slideToggle(null,function()
+        {
+            $.publish('/article/files/sectionToggled');
+        });
+    };
     if(articleFiles.imageSpots.length == 0)
     {
         showPI(i18n.get('Retrieving file spots'));
@@ -450,12 +457,12 @@ function LZ_toggleFilesSection ()
             articleFiles.imageSpots = data['/admin/services/templateInfo'].spots;
             articleFiles.buildFileList();
             destroyPI();
-            $("#files_slider_inner").slideToggle();
+            toggler();
         });
     }
     else
     {
-        $("#files_slider_inner").slideToggle();
+        toggler();
     }
 }
 

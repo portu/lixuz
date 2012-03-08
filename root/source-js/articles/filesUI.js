@@ -48,8 +48,16 @@ var filesUI = {
                 'margin-right':'2px',
                 'border-right':'1px solid #DDD',
                 'text-align':'center',
-                'color':'#999'
+                'color':'#999',
+                'min-height':$('.list_inner').height()+'px'
             }).attr('id','spotDDArea');
+
+            // We subscribe to sectionToggled so that we can ensure
+            // that we're the proper size whenever it changes.
+            $.subscribe('/article/files/sectionToggled',function()
+            {
+                filesUI._spotArea.css('min-height',$('.list_inner').height()+'px');
+            });
         }
         return filesUI._spotArea;
     },
