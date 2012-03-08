@@ -15,6 +15,10 @@ JS_BUILD_METHOD= \
 		fi;\
 	done \
 
+buildloop:
+	@echo "Watching root/ for changes and rebuilding files whenever a change is detected"
+	@while :;do inotifywait -r root &>/dev/null; echo -n "[$$(date +%H:%M:%S)] Rebuilding..."; make build &>/dev/null;echo "done";done
+
 buildjs:
 	mkdir -p "$(JS_TARGET_DIR)"
 	cp -R root/source-js/3rdparty-libs/tiny_mce "$(JS_TARGET_DIR)"
