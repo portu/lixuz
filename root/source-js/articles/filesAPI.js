@@ -133,8 +133,8 @@ var articleFiles = {
         }
         html = html+'<br />';
         html = html +'<b>'+articleFiles.shortSTR(file.file_name)+'</b><br />';
-        html = html+'File ID <span class="file_id">'+file.file_id+'</span><br />';
-        html = html+'Folder '+articleFiles.shortSTR(file.folder,8,true)+'<br />';
+        html = html+i18n.get('File ID')+': <span class="file_id">'+file.file_id+'</span><br />';
+        html = html+i18n.get('Folder')+': '+articleFiles.shortSTR(file.folder,8,true)+'<br />';
         var spotName;
         if(entry.spot_no)
         {
