@@ -1,0 +1,14 @@
+#!/bin/bash
+VERSION="$1"
+if [ "$VERSION" == "" ]; then
+    echo "USAGE: ./UPDATE [VERSION]"
+    exit 1
+fi
+CSSDIR="$PWD"
+BASE_URL="http://ajax.googleapis.com/ajax/libs/jqueryui/$VERSION/themes/smoothness"
+rm -f jquery-ui.css
+wget "$BASE_URL/jquery-ui.css"
+cd "../../static/images/jqueryui/"
+wget -N $(\grep 'url(' "$CSSDIR/jquery-ui.css" |perl -pi -e "s#.*url\(\S*images/#$BASE_URL/images/#g;s#png.*#png#g")
+cd "$CSSDIR"
+perl -pi -e 's#url\(\S*images/#url(/static/images/jqueryui/#g' jquery-ui.css
