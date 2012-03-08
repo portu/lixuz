@@ -185,7 +185,6 @@ function insertImage_resizeObj(editorName,obj,width,height)
 
         init: function(id,inline)
         {
-            dbglog('Initializing editor '+id);
             var copyPaste = '';
             if(tinymce.isGecko)
             {
@@ -268,8 +267,7 @@ function insertImage_resizeObj(editorName,obj,width,height)
         pushContent: function(RTE,HTML)
         {
             var editor = this._get(RTE);
-            var content = this.getContent(RTE);
-            editor.setContent(content+HTML);
+            editor.execCommand('mceInsertContent', false, HTML);
             return true;
         }
     };
