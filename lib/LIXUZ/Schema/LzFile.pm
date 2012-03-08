@@ -269,7 +269,16 @@ sub _serializeExtra
     return [ 'is_image','is_flash','is_video', 'is_audio',
     { saveAs => 'format', source => 'get_format'},
     { saveAs => 'icon', source => 'get_icon'},
+    { saveAs => 'folder', source => 'get_folder_path'}
     ];
+}
+
+# Summary: Get the folder path for this file
+# Usage: folder = file->get_folder_path
+sub get_folder_path
+{
+    my($self) = @_;
+    return $self->folder->get_path;
 }
 
 # Summary: Check if the current user can edit this file
