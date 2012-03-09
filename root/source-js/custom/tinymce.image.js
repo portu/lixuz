@@ -41,6 +41,12 @@
 
         $('#width').focusout( changeWidth );
         $('#height').focusout( changeHeight );
+
+        if($('#width').val() == "" && $('#height').val() == "")
+        {
+            $('#width').val($image.width());
+            $('#height').val($image.height());
+        }
     };
     $(function ()
     {
