@@ -278,7 +278,11 @@ sub _serializeExtra
 sub get_folder_path
 {
     my($self) = @_;
-    return $self->folder->get_path;
+    if ($self->folder)
+    {
+        return $self->folder->get_path;
+    }
+    return '';
 }
 
 # Summary: Check if the current user can edit this file
