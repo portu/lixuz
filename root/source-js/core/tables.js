@@ -117,7 +117,7 @@ function createTableFromData (headers,data_array)
  */
 function createTableFromHashData (headers, data_hash, source_ids, target_links)
 {
-    var final_data = {};
+    var final_data = [];
     if(target_links == null || target_links == undefined)
     {
         target_links = {};
