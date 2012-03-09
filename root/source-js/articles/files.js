@@ -137,18 +137,16 @@ var templateSpots,
 
 function LZ_AddImageToArticle (imageId)
 {
-    deprecated();
     currFileType = 'image';
     currFileUID = imageId;
-    LZ_RetrieveSpots('image');
+    LZ_ArtFilePrompt(imageId,'image')
 }
 
 function LZ_AddFlashToArticle (flashId)
 {
-    deprecated();
     currFileType = 'flash';
     currFileUID = flashId;
-    LZ_RetrieveSpots('flash');
+    LZ_ArtFilePrompt(flashId,'flash')
 }
 
 function LZ_ArtAddVideo (videoId)
@@ -157,107 +155,32 @@ function LZ_ArtAddVideo (videoId)
     stub();
 }
 
-function LZ_ArtFilePrompt (fileId, fileType,spots,taken)
+function LZ_ArtFilePrompt (fileId, fileType)
 {
     deprecated();
-    var filesAssigned = {};
-    $.each(taken, function (key,value) {
-            filesAssigned[value] = key;
-        });
-
-    spotList = spots;
-    
-    var includeAdvanced = true;
-    if(currFileType == 'flash')
-    {
-        includeAdvanced = false;
-    }
-
-    var title;
-    if(filesAssigned[fileId] != null)
-    {
-        title = i18n.get('Reassign file');
-    }
-    else
-    {
-        title = i18n.get('Assign file');
-    }
+    var title = i18n.get('File');
     var html =  '';
-    if(filesAssigned[fileId] != null)
+    var leadSel = true;
+    if(currFileType != 'flash')
     {
-        // TODO: Which spot?
-        html = html + '<b>'+i18n.get('Note: This file is already assigned to a spot. Reassigning it to another will remove it from its current spot and move it to the new one.')+'</b><br /><br />';
-    }
-    var leadSel = false;
-    if(spots.length == 0)
-    {
-        html = html+'&nbsp;<i>'+i18n.get('(can not assign to spots - this template has none)')+'</i><br />';
-        leadSel = true;
-    }
-    else
-    {
-        html = html + htmlCheckbox('fileActionAssignSpot',i18n.get('Assign to spot: '),'assignSpot','radio',true,'fileAction');
-        html = html +'<select id="spotSelector">';
-        var selected = false;
-        var file = articleFiles.getFileByID(fileId);
-        spots.unshift({id: 'null',name: i18n.get('(none)')});
-        for(var i = 0; i < spots.length; i++)
-        {
-            var spot = spots[i];
-            if ( file.spot_no == spot.id)
-            {
-                selected = true;
-                html = html + '<option SELECTED="SELECTED"';
-            }
-            else
-            {
-                html = html + '<option';
-            }
-            html = html + ' value="'+spot.id+'">'+spot.name;
-            if ( file.spot_no == spot.id)
-            {
-                html = html+' ('+i18n.get('current spot')+')';
-            }
-            html = html + '</option>';
-        }
-        html = html + '</select><br />';
         var currentCaption = articleFiles.getFileCaption(fileId);
         if(currentCaption == null)
         {
             currentCaption = '';
         }
-        if(currFileType != 'flash')
-        {
-            html = html + htmlCheckbox('fileActionChangeCaption',i18n.get('Change the caption to:'),'setCaption','radio',false,'fileAction')+'<br />';
-            html = html + '<textarea onfocus="$(\'#fileActionChangeCaption\').attr(\'checked\',\'true\');" id="fileSetCaptionEntry" rows="5" style="width:96%">'+currentCaption+'</textarea><br />';
-        }
-
-        if(includeAdvanced)
-        {
-            html = html + '<a href="#" onclick="$(\'#advancedSection\').css({visibility: \'visible\', display:\'block\'}); $(this).css({display: \'none\', visibility: \'hidden\'});return false;">'+i18n.get('Show advanced options')+'</a>';
-            html = html + '<div id="advancedSection" style="visibility:hidden; display:none;">';
-        }
+        leadSel = false;
+        html = html + htmlCheckbox('fileActionChangeCaption',i18n.get('Change the caption to:'),'setCaption','radio',true,'fileAction')+'<br />';
+        html = html + '<textarea onfocus="$(\'#fileActionChangeCaption\').attr(\'checked\',\'true\');" id="fileSetCaptionEntry" rows="5" style="width:96%">'+currentCaption+'</textarea><br />';
     }
 
-    if(includeAdvanced)
+    if (fileType != 'video')
     {
-        if (fileType != 'video')
-        {
-            html = html + '<br /><br />';
-            html = html + i18n.get('Above you may choose to assign this file to a spot, these options allow you to add it directly to the body or lead of an article. Adding it to the body or lead is discouraged unless there are no suitable spots available (as the spots will properly scale and appear in lists properly, images in bodies will in most cases not).');
-            html = html + '<br /><br />';
-            html = html + htmlCheckbox('fileActionAddToLead',i18n.get('Add to the lead'),'addToLead','radio',leadSel,'fileAction')+'<br />';
-            html = html + htmlCheckbox('fileActionAddToBody',i18n.get('Add to the body'),'addToBody','radio',false,'fileAction')+'<br />';
-        }
-        else
-        {
-            html = html + htmlCheckbox('fileActionAddToBody',i18n.get('Add to the body'),'addToBody','radio',leadSel,'fileAction')+'<br />';
-        }
-        html = html + '</div>';
+        html = html + htmlCheckbox('fileActionAddToLead',i18n.get('Add to the lead'),'addToLead','radio',leadSel,'fileAction')+'<br />';
+        html = html + htmlCheckbox('fileActionAddToBody',i18n.get('Add to the body'),'addToBody','radio',false,'fileAction')+'<br />';
     }
-    if(spots.length == 0)
+    else
     {
-        html = html + '</div>';
+        html = html + htmlCheckbox('fileActionAddToBody',i18n.get('Add to the body'),'addToBody','radio',leadSel,'fileAction')+'<br />';
     }
     var buttons = {};
     buttons[i18n.get('Ok')] = LZ_FileSpotOK;
@@ -320,12 +243,7 @@ function LZ_FileSpotOK ()
         var e = fileActions[i];
         if(e.checked)
         {
-            if(e.value == 'assignSpot')
-            {
-                LZ_assignFileToSpot(destroy, $('#spotSelector').val(), currFileUID);
-                return;
-            }
-            else if (e.value == 'addToLead')
+            if (e.value == 'addToLead')
             {
                 destroy();
                 LZ_addToRTE(currFileType, currFileUID, 'lead');
