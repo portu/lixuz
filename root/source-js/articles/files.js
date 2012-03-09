@@ -27,8 +27,10 @@ function LZ_AddImageToRTE(imageId, RTE)
     {
         var d = new Date();
         var identifier = articleFiles.getIdentifierByID(imageId);
-        var image = '<img align="right" alt="" title="" src="/files/get/'+identifier+'?width=210" imgId="'+identifier+'" id="image_'+RTE+identifier+d.getTime()+'" /> ';
+        articleFiles.removeFromSpot(imageId);
+        var image = '<img alt="" title="" src="/files/get/'+identifier+'?width=210" imgId="'+identifier+'" id="image_'+RTE+identifier+d.getTime()+'" /> ';
         lixuzRTE.pushContent(RTE,image);
+        articleFiles.buildFileList();
     }
     catch(e)
     {
