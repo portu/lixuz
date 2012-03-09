@@ -133,7 +133,23 @@ body a:visited, .listView a:visited, .buttonHolder a:hover, .pageBox a:hover {
 	   	margin-bottom: 0px;
 }
 
-.expandable_holder{
+#files_slider_inner
+{
+    padding-left:0px;
+    padding-bottom:0px;
+}
+
+#files_slider_inner .list_inner #spotDDArea
+{
+    padding-bottom:12px;
+}
+#files_buttons
+{
+    padding-left:12px;
+}
+
+.expandable_holder
+{
 		background-color: #F4F4F4;
 		padding: 12px;
 }

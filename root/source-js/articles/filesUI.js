@@ -46,17 +46,19 @@ var filesUI = {
             filesUI._spotArea = $('<div />').prependTo('#article_file_list').css({
                 'float': 'left',
                 'margin-right':'2px',
-                'border-right':'1px solid #DDD',
+                'background-color':'#DDD',
                 'text-align':'center',
                 'color':'#999',
-                'min-height':$('.list_inner').height()+'px'
+                'min-height':$('#files_slider_inner .list_inner').height()+'px'
             }).attr('id','spotDDArea');
 
             // We subscribe to sectionToggled so that we can ensure
             // that we're the proper size whenever it changes.
             $.subscribe('/article/files/sectionToggled',function()
             {
-                filesUI._spotArea.css('min-height',$('.list_inner').height()+'px');
+                filesUI._spotArea.css({
+                    'min-height':$('#files_slider_inner .list_inner').height()+'px'
+                });
             });
         }
         return filesUI._spotArea;
