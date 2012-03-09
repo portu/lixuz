@@ -42,6 +42,7 @@ sub index : Path Args(0) Form('/core/search')
             orderParams => [qw(subscription_id name file status)],
             searchColumns => [qw(email name)],
             advancedSearch =>[ qw(groups.group_id) ],
+            paginate => 1,
         });
     if ($c->req->param('_JSON_Submit'))
     {
