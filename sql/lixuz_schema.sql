@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.49, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.1.61, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: lixuz
 -- ------------------------------------------------------
--- Server version	5.1.49-3
+-- Server version	5.1.61-0+squeeze1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -51,7 +51,7 @@ CREATE TABLE `lz_article` (
   `publish_time` timestamp NULL DEFAULT NULL,
   `expiry_time` timestamp NULL DEFAULT NULL,
   `trashed` tinyint(1) DEFAULT '0',
-  `live_comments` tinyint(1) DEFAULT '1',
+  `live_comments` tinyint(1) DEFAULT '0',
   `revision` int(6) NOT NULL DEFAULT '1',
   PRIMARY KEY (`article_id`,`revision`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
@@ -336,6 +336,21 @@ CREATE TABLE `lz_file_class` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(254) NOT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `lz_file_folder`
+--
+
+DROP TABLE IF EXISTS `lz_file_folder`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lz_file_folder` (
+  `file_id` int(11) NOT NULL,
+  `folder_id` int(11) NOT NULL,
+  `primary_folder` tinyint(1) NOT NULL,
+  PRIMARY KEY (`file_id`,`folder_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -447,7 +462,7 @@ CREATE TABLE `lz_newsletter_group` (
   `group_name` varchar(254) NOT NULL,
   `internal` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`group_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -466,7 +481,7 @@ CREATE TABLE `lz_newsletter_saved` (
   `format` enum('text','html') DEFAULT NULL,
   `sent_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`saved_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -533,7 +548,7 @@ CREATE TABLE `lz_perms` (
   `permission` tinyint(1) NOT NULL,
   `added_by_user_id` int(11) NOT NULL,
   PRIMARY KEY (`perm_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -637,7 +652,7 @@ CREATE TABLE `lz_tag` (
   `created_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`tag_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -744,7 +759,7 @@ CREATE TABLE `lz_widget_config` (
   `config_value` char(255) DEFAULT NULL,
   `global` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`widget_config_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -797,4 +812,4 @@ CREATE TABLE `lz_workflow_comments` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-03-05 13:01:20
+-- Dump completed on 2012-03-12 12:57:20
