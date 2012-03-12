@@ -43,11 +43,17 @@ sub logout : Path('/admin/logout')
             $lock->delete;
         }
     };
+
+    my $redirFlash = $c->flash->{userRedirTo};
+    my $redirFlashErr = $c->flash->{userRedirErr};
+
     $c->delete_session('Logging out');
     $c->logout();
     $c->stash->{username} = undef;	# Set by an auto action
     $c->stash->{user_id} = undef;
     $c->stash->{message} = $i18n->get('You have been logged out.');
+    $c->flash->{userRedirTo} = $redirFlash;
+    $c->flash->{userRedirErr} = $redirFlashErr;
     $c->forward('login');
 }
 
@@ -65,6 +71,8 @@ sub login : Path('/admin/login') Form('/login')
     {
         $c->stash->{message} = $c->flash->{userRedirErr};
     }
+    # We want to keep this for now, no matter how the request goes
+    $c->keep_flash('userRedirTo');
     # If the form is submitted and validated
     if ($form->submitted && $form->validate)
     {
@@ -104,8 +112,6 @@ sub login : Path('/admin/login') Form('/login')
             $c->stash->{message} = $i18n->get('Invalid username or password');
         }
     }
-    # We want to keep this for the next request aswell
-    $c->keep_flash('userRedirTo');
     # Finalize the login form
     finalize_form($form,undef,{
             submit => $i18n->get('Log in'),
