@@ -1,13 +1,22 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-# Remove the line containing accessor => in LzStatus.pm so that the lixuz_create accepts it.
-system('perl','-pi','-e','s/^\s+accessor.*=>.*\n$//;','./lib/LIXUZ/Schema/LzStatus.pm');
+use FindBin;
+use Config::Any;
+chdir($FindBin::RealBin.'/../');
+
+my $file = 'lixuz.yml';
+
+$ENV{SCHEMA_LOADER_BACKCOMPAT} = 1;
+
+my $conf = Config::Any->load_files( { files =>  [ $file ], use_ext => 1} ) or die("Failed to load config: $file: $!\n");
+if(ref($conf) eq 'ARRAY')
+{
+    $conf = $conf->[0]->{$file};
+}
+
 # Update all DB modules
-system('perl','script/lixuz_create.pl','model','DBIC','DBIC::Schema','LIXUZ::Schema','create=static','dbi:mysql:dbname=lixuz','lixuz','li09uz31');
-# Add accessor back into LzStatus.pm
-system('perl','-pi','-e','s/{ data_type => "varchar", is_nullable => 1, size => 56 },/{ data_type => "varchar", is_nullable => 1, size => 56, accessor => "_hidden_orig_status_name" },/g','./lib/LIXUZ/Schema/LzStatus.pm');
-system('perl','-pi','-e','s/size => (20|56),/size => $1,\n    accessor => \'_hidden_orig_status_name\',/;','./lib/LIXUZ/Schema/LzStatus.pm');
+system('perl','script/lixuz_create.pl','model','DBIC','DBIC::Schema','LIXUZ::Schema','create=static',$conf->{'Model::LIXUZDB'}->{'connect_info'}->{'dsn'},$conf->{'Model::LIXUZDB'}->{'connect_info'}->{'user'},$conf->{'Model::LIXUZDB'}->{'connect_info'}->{'password'});
 unlink('./t/model_DBIC.t','./lib/LIXUZ/Model/DBIC.pm','lib/LIXUZ/Schema/LzDmMap.pm');
 
 # (also supports svn and svk)
