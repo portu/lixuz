@@ -771,6 +771,16 @@ sub detectFlags
         $flags{fileClasses} = 1;
     };
     print '.';
+    # Check if we need to change folder_id into object_id on lz_field_module
+    silent
+    {
+        $rawDBH->do('SELECT object_id FROM lz_field_module LIMIT 1');
+        if ($DBI::errstr)
+        {
+            $flags{preStructModule} = 1;
+        }
+    };
+    print '.';
     # Force an upgrade of file class perms if db rev is < 4
     if ($currentDBRevision < 4)
     {
@@ -890,7 +900,7 @@ sub articleLatestStatusUpgrade
 
 sub performPreStructureChanges
 {
-    if ($currentDBRevision < 3)
+    if ($flags{preStructModule})
     {
         try
         {
