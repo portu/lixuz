@@ -1,19 +1,3 @@
-# LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package LIXUZ::Schema::LzNewsletterSubscription;
 
 # Created by DBIx::Class::Schema::Loader
@@ -122,6 +106,22 @@ __PACKAGE__->set_primary_key("subscription_id");
 
 # Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-01-17 10:17:20
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Q7F9kH5k8kZcXDHR5Par0w
+
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2012
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 use Digest::SHA qw(sha1_hex);
 use LIXUZ::HelperModules::EMail qw(send_raw_email_to);
 use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL datetime_from_unix datetime_to_SQL);
