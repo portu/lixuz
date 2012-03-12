@@ -43,7 +43,7 @@ __PACKAGE__->table("lz_template");
 =head2 type
 
   data_type: 'enum'
-  extra: {list => ["list","search","article","include","message","rssimport","email_text","email_html"]}
+  extra: {list => ["list","search","article","include","message","rssimport","email_text","email_html","media"]}
   is_nullable: 1
 
 =head2 apiversion
@@ -76,17 +76,18 @@ __PACKAGE__->add_columns(
   {
     data_type => "enum",
     extra => {
-          list => [
-                "list",
-                "search",
-                "article",
-                "include",
-                "message",
-                "rssimport",
-                "email_text",
-                "email_html",
-              ],
-        },
+      list => [
+        "list",
+        "search",
+        "article",
+        "include",
+        "message",
+        "rssimport",
+        "email_text",
+        "email_html",
+        "media",
+      ],
+    },
     is_nullable => 1,
   },
   "apiversion",
@@ -99,8 +100,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("template_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-01-17 10:17:20
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:vkPyTQPjyTd7g8C+uMXbGw
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-12 12:51:49
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:TdvoNG2cPGvWdRVDRoB52w
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012

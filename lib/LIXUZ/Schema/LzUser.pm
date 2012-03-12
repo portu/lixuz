@@ -6,13 +6,11 @@ package LIXUZ::Schema::LzUser;
 use strict;
 use warnings;
 
-
 use Moose;
 use MooseX::NonMoose;
 use namespace::autoclean;
 extends 'DBIx::Class::Core';
 
-__PACKAGE__->load_components("InflateColumn::DateTime");
 
 =head1 NAME
 
@@ -140,8 +138,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("user_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07000 @ 2012-02-14 17:41:36
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:QCp/edNH0Y5DVdYrTMN21w
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-12 12:51:58
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Vnn3F+yuAP+zxXqAWYy/OA
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012
@@ -311,9 +309,6 @@ sub _accessWrapRun
         return $self->{ACL}->can_access_path(@_);
     }
 }
-
-1;
-
 
 # You can replace this text with custom content, and it will be preserved on regeneration
 __PACKAGE__->meta->make_immutable;

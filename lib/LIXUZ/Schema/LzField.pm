@@ -37,7 +37,7 @@ __PACKAGE__->table("lz_field");
 =head2 field_type
 
   data_type: 'enum'
-  extra: {list => ["singleline","multiline","user-pulldown","predefined-pulldown","checkbox","range","meta-int","meta-date","meta-other","datetime","date"]}
+  extra: {list => ["singleline","multiline","user-pulldown","predefined-pulldown","multi-select","checkbox","range","meta-int","meta-date","meta-other","datetime","date"]}
   is_nullable: 1
 
 =head2 field_height
@@ -86,20 +86,21 @@ __PACKAGE__->add_columns(
   {
     data_type => "enum",
     extra => {
-          list => [
-                "singleline",
-                "multiline",
-                "user-pulldown",
-                "predefined-pulldown",
-                "checkbox",
-                "range",
-                "meta-int",
-                "meta-date",
-                "meta-other",
-                "datetime",
-                "date",
-              ],
-        },
+      list => [
+        "singleline",
+        "multiline",
+        "user-pulldown",
+        "predefined-pulldown",
+        "multi-select",
+        "checkbox",
+        "range",
+        "meta-int",
+        "meta-date",
+        "meta-other",
+        "datetime",
+        "date",
+      ],
+    },
     is_nullable => 1,
   },
   "field_height",
@@ -114,16 +115,16 @@ __PACKAGE__->add_columns(
   {
     data_type => "enum",
     extra => {
-          list => [
-                "articles",
-                "workflow",
-                "users",
-                "roles",
-                "folders",
-                "templates",
-                "files",
-              ],
-        },
+      list => [
+        "articles",
+        "workflow",
+        "users",
+        "roles",
+        "folders",
+        "templates",
+        "files",
+      ],
+    },
     is_nullable => 1,
   },
   "obligatory",
@@ -132,8 +133,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("field_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-03-24 10:57:57
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:VxIimwxtSKRzw21sbYVACA
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-12 12:51:38
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Hcrp8Z9gh+G6i477jYUaOA
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012

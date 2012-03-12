@@ -66,16 +66,16 @@ __PACKAGE__->add_columns(
   {
     data_type => "enum",
     extra => {
-          list => [
-                "articles",
-                "workflow",
-                "users",
-                "roles",
-                "folders",
-                "templates",
-                "files",
-              ],
-        },
+      list => [
+        "articles",
+        "workflow",
+        "users",
+        "roles",
+        "folders",
+        "templates",
+        "files",
+      ],
+    },
     is_nullable => 0,
   },
   "object_id",
@@ -88,8 +88,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("field_module_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-03-24 10:57:57
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1+/4BajmcZ/D0Bry11ccaQ
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-12 12:51:38
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:fsoAA/MeNczxtzOttldLuQ
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012

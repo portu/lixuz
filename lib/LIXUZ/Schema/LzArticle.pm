@@ -8,9 +8,9 @@ use warnings;
 
 use Moose;
 use MooseX::NonMoose;
-use LIXUZ::HelperModules::HTMLRenderer;
 use namespace::autoclean;
 extends 'DBIx::Class::Core';
+
 
 =head1 NAME
 
@@ -157,8 +157,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("article_id", "revision");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-03-24 10:57:57
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:YFY4c5M3522vgKpB+Uq2+w
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-12 12:51:38
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ynrNGV2QwGeUqJzDOYeiQA
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012
@@ -176,6 +176,7 @@ __PACKAGE__->set_primary_key("article_id", "revision");
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+use LIXUZ::HelperModules::HTMLRenderer;
 use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL datetime_from_SQL_to_unix);
 use LIXUZ::HelperModules::Cache qw(get_ckey CT_DEFAULT CT_24H CT_1H);
 use LIXUZ::HelperModules::StringInsertFilter;
@@ -1217,8 +1218,6 @@ sub lockTimeoutSoon
     }
     return false;
 }
-1;
-
 
 # You can replace this text with custom content, and it will be preserved on regeneration
 __PACKAGE__->meta->make_immutable;

@@ -47,7 +47,7 @@ __PACKAGE__->add_columns(
   "status_id",
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
   "status_name",
-  { data_type => "varchar", is_nullable => 1, size => 56, accessor => "_hidden_orig_status_name" },
+  { data_type => "varchar", is_nullable => 1, size => 56 },
   "system_status",
   {
     data_type => "enum",
@@ -59,8 +59,9 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("status_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-01-17 10:17:20
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:qyTU5KaIqNnDb/qgkQI7Tg
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-12 12:51:49
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Z4981K1tziubatl1ge6iAg
+
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012
@@ -125,10 +126,6 @@ sub status_realname
         return $name;
     }
 }
-
-# You can replace this text with custom content, and it will be preserved on regeneration
-1;
-
 
 # You can replace this text with custom content, and it will be preserved on regeneration
 __PACKAGE__->meta->make_immutable;
