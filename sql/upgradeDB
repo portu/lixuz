@@ -798,22 +798,25 @@ sub detectFlags
 sub getCurrentDBRevision
 {
     my $rev;
+    my $e;
     silent
     {
         $rev = $rawDBH->selectall_arrayref('SELECT value FROM lz_lixuz_meta WHERE entry="dbrevision"');
+        $e = $DBI::errstr;
     };
-    if ($rev)
+    if (defined $rev)
     {
         $rev = $rev->[0]->[0];
     }
-    if (defined $rev)
+    if ($e)
     {
-        return $rev;
+        $rev = -1;
     }
-    else
+    elsif (!defined($rev) || !length($rev))
     {
-        return -1;
+        $rev = 0;
     }
+    return $rev;
 }
 
 sub setDBRevision
