@@ -51,7 +51,7 @@ CREATE TABLE `lz_article` (
   `publish_time` timestamp NULL DEFAULT NULL,
   `expiry_time` timestamp NULL DEFAULT NULL,
   `trashed` tinyint(1) DEFAULT '0',
-  `live_comments` tinyint(1) DEFAULT '0',
+  `live_comments` tinyint(1) DEFAULT '1',
   `revision` int(6) NOT NULL DEFAULT '1',
   PRIMARY KEY (`article_id`,`revision`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
