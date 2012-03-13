@@ -107,11 +107,9 @@ sub upload : Path Args(1) Form('/files/edit')
                 }
             }
         }
-        $c->stash->{folder_list} = $c->forward(qw(LIXUZ::Controller::Admin::Services buildtree), [ $defaultFolder, undef, 'write' ]);
-        if(not $defaultFolder)
-        {
-            $c->stash->{folder_list} = '<option value="">'.$i18n->get('-select-').'</option>'.$c->stash->{folder_list};
-        }
+        my $folders = $c->forward(qw(LIXUZ::Controller::Admin::Services buildtree), [ $defaultFolder, undef, 'write' ]);
+        $folders = '<option value=""></option>'.$folders;
+        $c->stash->{folder_list} = [ $folders ];
         return;
     }
     my $files = $c->req->param('totalFileEntries');

@@ -21,6 +21,7 @@ use warnings;
 use base qw(Catalyst::Controller::FormBuilder);
 use LIXUZ::HelperModules::Forms qw(finalize_form);
 use LIXUZ::HelperModules::Fields;
+use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 
 use constant {
     TYPE_FILE => 1,
@@ -32,6 +33,7 @@ sub default : Path('/admin/files/edit') Local Args
     my ( $self, $c, $uid ) = @_;
     my $i18n = $c->stash->{i18n};
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Files');
+    add_jsIncl($c,'files.js');
     # If we don't have an UID then just give up
     if (not defined $uid or $uid =~ /\D/)
     {
@@ -56,7 +58,15 @@ sub default : Path('/admin/files/edit') Local Args
     }
     $c->stash->{fileObj} = $file;
     $c->stash->{tags} = $file->tags;
-    $c->stash->{folder_list} = $c->forward(qw(LIXUZ::Controller::Admin::Services buildtree), [ $file->folder_id, undef, 'write' ]);
+    my $folders = $file->folders;
+    my @folderList;
+    while(my $f = $folders->next)
+    {
+        my $folders = $c->forward(qw(LIXUZ::Controller::Admin::Services buildtree), [ $f->folder_id, undef, 'write' ]);
+        $folders = '<option value=""></option>'.$folders;
+        push(@folderList,$folders);
+    }
+    $c->stash->{folder_list} = \@folderList;
     if ($file->is_image())
     {
         return $c->forward('image_edit',[$file]);
@@ -117,15 +127,21 @@ sub get_forminfo : Private
     );
     $c->stash->{classes} = $c->model('LIXUZDB::LzFileClass');
 
-    if ($file)
+    # XXX: At this point we should already have one
+    if ($file && (!$c->stash->{folder_list} || !scalar(@{$c->stash->{folder_list}})))
     {
-        my $defaultFolder = $file->folder_id;
+        my $defaultFolder;
+        if ($file->primary_folder)
+        {
+            $defaultFolder = $file->primary_folder->folder_id;
+        }
 
-        $c->stash->{folder_list} = $c->forward(qw(LIXUZ::Controller::Admin::Services buildtree), [ $defaultFolder, undef, 'write' ]);
+        my $folders = $c->forward(qw(LIXUZ::Controller::Admin::Services buildtree), [ $defaultFolder, undef, 'write' ]);
         if(not $defaultFolder)
         {
-            $c->stash->{folder_list} = '<option value="">'.$i18n->get('-select-').'</option>'.$c->stash->{folder_list};
+            $folders = '<option value=""></option>'.$folders;
         }
+        $c->stash->{folder_list} = [ $folders ];
     }
 
     if (defined $file && $file->is_flash)
@@ -200,11 +216,6 @@ sub get_input_settings : Private
             $data{$field} = $formFields->{$field};
         }
     }
-    my $fileFolder = $c->req->param('file_folder');
-    if(defined $fileFolder && $fileFolder =~ /^\d+$/)
-    {
-        $data{folder_id} = $fileFolder;
-    }
     # Handle status
     my $status;
     if ($formFields->{status} eq $i18n->get('Active') || $formFields->{status} eq 'Active')
@@ -243,6 +254,28 @@ sub savedata : Private
             object_id => $file->class_id,
         });
     $fields->saveData();
+
+    # Save folders
+    my $fileFolder = $c->req->param('file_folder');
+    my $primary = 1;
+    # Delete existing folders
+    $file->folders->delete();
+    # Loop through and fetch+save file_folders
+    foreach my $folder (sort keys %{$c->req->params})
+    {
+        next if not $folder =~ /^file_folder/;
+
+        my $fileFolder = $c->req->param($folder);
+
+        next if ( !defined($fileFolder) || !length($fileFolder) || $fileFolder =~ /\D/);
+
+        $c->model('LIXUZDB::LzFileFolder')->create({
+            file_id => $file->file_id,
+            folder_id => $fileFolder,
+            primary_folder => $primary
+        });
+        $primary = 0;
+    }
 
     # Sync tags with submitted data
     my $tags = $file->tags;

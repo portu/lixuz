@@ -321,6 +321,45 @@ sub can_read
     return $self->folder->can_read($c);
 }
 
+# This is an alias for ->primary_folder
+sub folder
+{
+    my($self) = @_;
+    if ($self->primary_folder)
+    {
+        return $self->primary_folder->folder;
+    }
+    return;
+}
+
+# This is in place of
+# __PACKAGE__->belongs_to('folder' => 'LIXUZ::Schema::LzArticleFolder','article_id');
+#
+# As that can't have additional conditionals in a belongs_to
+sub primary_folder
+{
+    my($self) = @_;
+    if(not defined $self->{lz_primary_folder})
+    {
+        $self->{lz_primary_folder} = $self->folders->find({primary_folder => 1});
+    }
+    return $self->{lz_primary_folder};
+}
+
+# This is in place of
+# __PACKAGE__->has_many('secondary_folders' => 'LIXUZ::Schema::LzArticleFolder','article_id');
+#
+# As that can't have additional conditionals in a has_many
+sub secondary_folders
+{
+    my($self) = @_;
+    if(not defined $self->{lz_secondary_folders})
+    {
+        $self->{lz_secondary_folders} = $self->folders->search({primary_folder => 0});
+    }
+    return $self->{lz_secondary_folders};
+}
+
 # ---
 # TEMPLATE METHODS
 # ---

@@ -58,7 +58,6 @@ sub index : Path Args(0) Form('/core/search')
             orderParams => [qw(file_id file_name template_id parent external_link display_type_id file_status)],
             searchColumns => [ qw/file_id file_name title caption/ ],
             advancedSearch =>[ qw(status owner) ],
-            folderType => 'builtin',
             paginate => 1,
         });
     if ($c->req->param('_JSON_Submit'))

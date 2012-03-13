@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </%perl>
-<table width="100%"><tr><td>
+<table id="fileEditArea" width="100%"><tr><td>
 %if(not $multiMode) {
 %if($c->req->param('hasBeenSaved')) {
 <b><font color="#e33000"><% $i18n->get('Saved') %></font></b>
@@ -35,6 +35,8 @@
 %     $formfield->{$field}=$field;
 %}
 %}
+%# FIXME: Drop the whole formbuilder mess
+<script>function validate_lixuz_userEdit() { return true }</script>
 
 %if(not $multiMode) {
 <form action="/admin/files/edit" id="lixuz_userEdit" method="post" name="lixuz_userEdit">
@@ -43,11 +45,15 @@
 <input type="hidden" value="true" name="asyncUpload" />
 %}
 <div>
-%if($folder_list) {
-<div class="label folder"><span><% $i18n->get('Folder')%></span></div>
-<div>
-<select name="file_folder" id="file_folder"><% $folder_list |n %></select><br />
+% my $entry = 0;
+%foreach my $f (@{$folder_list}) {
+<div class="file_folder_area">
+    <div class="label folder"><span><% $entry == 0 ? $i18n->get('Folder') : $i18n->get('Additional folder') %></span></div>
+    <div>
+        <select class="file_folder" name="file_folder<%$entry%>" id="file_folder<%$entry%>"><% $f |n %></select><br />
+    </div>
 </div>
+% $entry++;
 %}
 
 <& /adm/core/fields/tags.html, %ARGS &>
@@ -223,7 +229,7 @@ $fileObj => undef
 $i18n
 $ADF_CanEdit
 $multiMode => 0
-$folder_list => undef
+$folder_list => []
 $classes => undef
 </%args>
 <%init>
