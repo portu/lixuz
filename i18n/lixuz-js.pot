@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-23 13:47+0100\n"
+"POT-Creation-Date: 2012-03-13 14:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,57 +25,9 @@ msgstr ""
 msgid "Add files"
 msgstr ""
 
-#: ./root/source-js/files/asyncUpload.js:35 ./root/source-js/newsletter/newsletter.js:410 ./root/source-js/articles/viewArticleRevisions.js:132
-msgid "Close"
-msgstr ""
-
-#: ./root/source-js/files/asyncUpload.js:37
-msgid "Upload file"
-msgstr ""
-
-#: ./root/source-js/files/asyncUpload.js:43
-msgid "Loading form..."
-msgstr ""
-
-#: ./root/source-js/dragdrop/lixuzdd.js:73
-msgid "Refreshing..."
-msgstr ""
-
-#: ./root/source-js/dragdrop/lixuzdd.js:285 ./root/source-js/core/folders.js:69 ./root/source-js/core/objPermEditor.js:246
-msgid "Loading folder data ..."
-msgstr ""
-
-#: ./root/source-js/dragdrop/lixuzdd.js:305
-msgid "Parent folder"
-msgstr ""
-
-#: ./root/source-js/dragdrop/lixuzdd.js:308
-msgid "Folder name"
-msgstr ""
-
-#: ./root/source-js/dragdrop/lixuzdd.js:310 ./root/source-js/core/createArticle.js:65
-msgid "Create"
-msgstr ""
-
-#: ./root/source-js/dragdrop/lixuzdd.js:321
-msgid "New folder"
-msgstr ""
-
-#: ./root/source-js/dragdrop/lixuzdd.js:340
-msgid "You have to enter a name for the folder"
-msgstr ""
-
-#: ./root/source-js/dragdrop/lixuzdd.js:351
-msgid "Creating folder..."
-msgstr ""
-
-#: ./root/source-js/dragdrop/lixuzdd.js:367
-msgid "Failed to create a new folder"
-msgstr ""
-
-#: ./root/source-js/roles/roles.js:131 ./root/source-js/newsletter/newsletter.js:131 ./root/source-js/newsletter/newsletter.js:470
-#: ./root/source-js/utils/elementEditor.js:78 ./root/source-js/utils/ModuleFieldEditor.js:98 ./root/source-js/rssimport/rssimport.js:50
-#: ./root/source-js/rssimport/rssimport.js:135 ./root/source-js/admin/ADFieldsEdit.js:82
+#: ./root/source-js/roles/roles.js:131 ./root/source-js/utils/elementEditor.js:78 ./root/source-js/utils/ModuleFieldEditor.js:98
+#: ./root/source-js/admin/ADFieldsEdit.js:82 ./root/source-js/newsletter/newsletter.js:131 ./root/source-js/newsletter/newsletter.js:470
+#: ./root/source-js/rssimport/rssimport.js:50 ./root/source-js/rssimport/rssimport.js:135
 msgid "Saving..."
 msgstr ""
 
@@ -83,158 +35,16 @@ msgstr ""
 msgid "A name for the role is required. Please enter one."
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:42
-msgid "Are you sure you wish to cancel this users subscription?"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:50 ./root/source-js/newsletter/newsletter.js:461 ./root/source-js/templates/templates.js:70
-#: ./root/source-js/articles/articles.js:77 ./root/source-js/tags/ui.js:96 ./root/source-js/articles/trash.js:32
-#: ./root/source-js/rssimport/rssimport.js:183
-msgid "Deleting..."
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:88
-msgid "Loading group data..."
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:112 ./root/source-js/newsletter/newsletter.js:438 ./root/source-js/utils/arrangableList.js:101
-#: ./root/source-js/core/objPermEditor.js:175 ./root/source-js/rssimport/rssimport.js:111
-msgid "Save and close"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:153
-msgid "From"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:154 ./root/source-js/newsletter/newsletter.js:183 ./root/source-js/articles-previewUI/previewUI.js:171
-msgid "Subject"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:164
-msgid "Message"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:170
-msgid "Loading list..."
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:179
-msgid "There are no saved newsletters."
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:183
-msgid "Sent at"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:184
-msgid "Select newsletter"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:191
-msgid "Loading message..."
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:212
-msgid "You need to add some recipients first"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:217
-msgid "You need to enter a subject"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:222
-msgid "The message can not be empty"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:227
-msgid "The from e-mail can not be empty"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:244
-msgid "Sending..."
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:274 ./root/source-js/newsletter/newsletter.js:275
-msgid "Add recipients"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:289
-msgid "Enter e-mail addresses here, separated by commas."
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:289 ./root/source-js/tags/ui.js:21
-msgid "Add"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:330
-msgid "Group:"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:332
-msgid "remove"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:354 ./root/source-js/newsletter/newsletter.js:391
-msgid "Loading group list..."
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:374
-msgid "Select the group(s) to add"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:410
-msgid "Select the group to edit"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:417
-msgid "Loading group information..."
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:435
-msgid "Group name"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:436
-msgid "Internal only"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:441
-msgid "Delete group"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:445
-msgid "Newsletter group editor"
-msgstr ""
-
-#: ./root/source-js/newsletter/newsletter.js:453
-msgid "Are you sure you wish to delete this group?"
-msgstr ""
-
-#: ./root/source-js/files/multiUpload.js:30
-msgid "File"
-msgstr ""
-
-#: ./root/source-js/files/multiUpload.js:30 ./root/source-js/articles/articles.js:277 ./root/source-js/articles/files.js:63
-msgid "Remove"
-msgstr ""
-
-#: ./root/source-js/files/multiUpload.js:82
-msgid "You haven't selected any file(s) to upload"
-msgstr ""
-
-#: ./root/source-js/files/multiUpload.js:87
-msgid "You haven't selected any folder"
-msgstr ""
-
-#: ./root/source-js/files/multiUpload.js:92 ./root/source-js/files/multiUpload.js:96
-msgid "Uploading..."
-msgstr ""
-
 #: ./root/source-js/templates/templates.js:62
 msgid ""
 "Are you sure you wish to delete this template? If there are no other "
 "templates of the same type the website might crash when rendering pages that "
 "used to use this template."
+msgstr ""
+
+#: ./root/source-js/templates/templates.js:70 ./root/source-js/tags/ui.js:96 ./root/source-js/articles/trash.js:32 ./root/source-js/newsletter/newsletter.js:50
+#: ./root/source-js/newsletter/newsletter.js:461 ./root/source-js/articles/articles.js:77 ./root/source-js/rssimport/rssimport.js:183
+msgid "Deleting..."
 msgstr ""
 
 #: ./root/source-js/templates/templates.js:79
@@ -245,91 +55,12 @@ msgstr ""
 msgid "Setting as default..."
 msgstr ""
 
-#: ./root/source-js/articles/articles.js:43
-msgid ""
-"Are you sure that you want to move the article \"%(NAME)\" to trash? This "
-"will permanently change the status of the article from \"Live\" to \"Inactive"
-"\" (if you restore it, you will need to manually set the article Live again)."
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:47
-msgid "Are you sure that you want to move the article \"%(NAME)\" to trash?"
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:57
-msgid "Moving to trash..."
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:86
-msgid "Failed to delete: "
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:98
-msgid "Backup deleted."
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:105
-msgid "Backups found on server, loading information..."
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:114
-msgid ""
-"An error occurred, we recieved a message from the server saying that there "
-"was backups available for restoration. Now it says there aren't any. "
-"Something is not quite right somewhere"
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:117 ./root/source-js/articles/relationships.js:76
-msgid "Article ID"
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:117 ./root/source-js/articles/relationships.js:76 ./root/source-js/rssimport/rssimport.js:105
-#: ./root/source-js/articles/viewArticleRevisions.js:119
-msgid "Title"
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:138
-msgid "Delete backup"
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:141
-msgid ""
-"Backups of some of your articles was found. You may choose to restore these "
-"now, delete them, or postpone any action until later. Click on the title of "
-"an article to restore it"
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:144
-msgid "Backups found"
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:147
-msgid "Later"
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:222
-msgid ""
-"If you do not save this article within ten minutes, you will lose the edit "
-"lock on it."
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:231
-msgid "Edit lock lost"
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:234
-msgid ""
-"You have lost the edit lock for this article, it is now locked by <i>%(USER)"
-"</i>. Your data has been backed up, but you will not be able to save or "
-"restore the backup until the article has been unlocked."
-msgstr ""
-
-#: ./root/source-js/articles/articles.js:277 ./root/source-js/articles/files.js:63
-msgid "Download"
-msgstr ""
-
 #: ./root/source-js/tags/ui.js:21
 msgid "Enter the name of the tag you wish to add"
+msgstr ""
+
+#: ./root/source-js/tags/ui.js:21 ./root/source-js/newsletter/newsletter.js:289
+msgid "Add"
 msgstr ""
 
 #: ./root/source-js/tags/ui.js:28
@@ -402,11 +133,11 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-#: ./root/source-js/utils/elementEditor.js:67 ./root/source-js/utils/arrangableList.js:263 ./root/source-js/core/createArticle.js:76
-#: ./root/source-js/core/dialogHelpers.js:275 ./root/source-js/core/dialogHelpers.js:309 ./root/source-js/core/folders.js:53
-#: ./root/source-js/core/folders.js:103 ./root/source-js/articles/relationships.js:192 ./root/source-js/core/objPermEditor.js:174
-#: ./root/source-js/core/objPermEditor.js:274 ./root/source-js/rssimport/rssimport.js:117 ./root/source-js/articles/viewArticleRevisions.js:106
-#: ./root/source-js/articles/files.js:553
+#: ./root/source-js/utils/elementEditor.js:67 ./root/source-js/utils/arrangableList.js:263 ./root/source-js/articles/relationships.js:192
+#: ./root/source-js/core/objPermEditor.js:174 ./root/source-js/core/objPermEditor.js:274 ./root/source-js/articles/files.js:189
+#: ./root/source-js/core/createArticle.js:76 ./root/source-js/core/dialogHelpers.js:275 ./root/source-js/core/dialogHelpers.js:309
+#: ./root/source-js/core/folders.js:53 ./root/source-js/core/folders.js:103 ./root/source-js/rssimport/rssimport.js:117
+#: ./root/source-js/articles/viewArticleRevisions.js:106
 msgid "Cancel"
 msgstr ""
 
@@ -463,6 +194,675 @@ msgstr ""
 
 #: ./root/source-js/utils/tags.js:141
 msgid "Creating tag..."
+msgstr ""
+
+#: ./root/source-js/articles/trash.js:23
+msgid ""
+"Are you sure that you want to permanently delete the article \"%(NAME)\"? "
+"This operation can not be reversed."
+msgstr ""
+
+#: ./root/source-js/articles/trash.js:44
+msgid "Are you sure that you want to restore the article \"%(NAME)\"?"
+msgstr ""
+
+#: ./root/source-js/articles/trash.js:53
+msgid "Restoring..."
+msgstr ""
+
+#: ./root/source-js/utils/arrangableList.js:100
+msgid "Enabled?"
+msgstr ""
+
+#: ./root/source-js/utils/arrangableList.js:101 ./root/source-js/core/objPermEditor.js:175 ./root/source-js/newsletter/newsletter.js:112
+#: ./root/source-js/newsletter/newsletter.js:438 ./root/source-js/rssimport/rssimport.js:111
+msgid "Save and close"
+msgstr ""
+
+#: ./root/source-js/articles/articleSubmit.js:81
+msgid "Saving article..."
+msgstr ""
+
+#: ./root/source-js/articles/articleSubmit.js:136
+msgid "<b><i>Changes saved at %(date)<b></i>"
+msgstr ""
+
+#: ./root/source-js/articles/articleSubmit.js:170
+msgid "You don't have permission to set the article to the attempted status"
+msgstr ""
+
+#: ./root/source-js/articles/articleSubmit.js:174
+msgid ""
+"Failed to save the article, it is currently locked for editing by <i>%(USER)"
+"</i>."
+msgstr ""
+
+#: ./root/source-js/articles/articleSubmit.js:178
+msgid ""
+"You are neither the assigner nor the assignee of this article, so you can "
+"not change any of the data."
+msgstr ""
+
+#: ./root/source-js/articles/articleSubmit.js:220
+msgid ""
+"There are files that live in the same directory as this article, do you want "
+"to move them to the new folder as well?"
+msgstr ""
+
+#: ./root/source-js/articles/articleSubmit.js:241
+msgid ""
+"You have an unsaved comment. Do you want to save it now? If you choose not "
+"to save it, the comment will be lost."
+msgstr ""
+
+#: ./root/source-js/articles/articleSubmit.js:243
+msgid "You have an unsaved comment. Do you want to save it too?"
+msgstr ""
+
+#: ./root/source-js/articles/articleSubmit.js:295
+msgid ""
+"You have reassigned this article. This will result in the article being "
+"automatically closed after saving. Do you want to save it now?"
+msgstr ""
+
+#: ./root/source-js/articles/additionalElements.js:58
+msgid "Loading list of additional elements..."
+msgstr ""
+
+#: ./root/source-js/articles/additionalElements.js:60
+msgid "Add selected elements"
+msgstr ""
+
+#: ./root/source-js/articles/additionalElements.js:61
+msgid "Add additional elements"
+msgstr ""
+
+#: ./root/source-js/articles/backup.js:30 ./root/source-js/core/backup.js:193
+msgid "Restoring backup..."
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:60 ./root/source-js/articles/relationships.js:187
+msgid "Add relationships"
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:62
+msgid "Add article relationships"
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:76 ./root/source-js/articles/articles.js:117
+msgid "Article ID"
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:76 ./root/source-js/articles/articles.js:117 ./root/source-js/rssimport/rssimport.js:105
+#: ./root/source-js/articles/viewArticleRevisions.js:119
+msgid "Title"
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:76 ./root/source-js/articles/viewArticleRevisions.js:119
+msgid "Status"
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:158
+msgid ""
+"The following articles already has relationships with this article: "
+"%(ARTICLES)\n"
+"\n"
+"You will have to remove the existing relationship(s) first."
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:174
+msgid ""
+"Which type of relationship does the article \"%(ARTICLE_TITLE)\" have with "
+"this article?"
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:178
+msgid "Which type of relationship does these articles have with this article?"
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:184
+msgid "Related"
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:185
+msgid "Previous article"
+msgstr ""
+
+#: ./root/source-js/articles/relationships.js:193
+msgid "Select relationship type"
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:83
+msgid "Editing permissions for "
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:87
+msgid "the folder "
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:98
+msgid "user"
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:98
+msgid "role"
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:129
+msgid "Override existing permissions on subfolders"
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:177
+msgid "Permissions editor"
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:185
+msgid "Retrieving permissions data..."
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:206
+msgid "Applying permissions..."
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:212
+msgid "You have to select which permission you want to grant."
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:246 ./root/source-js/dragdrop/lixuzdd.js:285 ./root/source-js/core/folders.js:69
+msgid "Loading folder data ..."
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:256
+msgid "Select the folder that you want to edit permissions for."
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:262
+msgid "Select"
+msgstr ""
+
+#: ./root/source-js/core/objPermEditor.js:269
+msgid "Select folder"
+msgstr ""
+
+#: ./root/source-js/core/backup.js:103
+msgid "Last backed up at %(date)"
+msgstr ""
+
+#: ./root/source-js/core/backup.js:282
+msgid ""
+"The backup has been fully restored. Note that any changes made by other "
+"users since this backup was created (other than comments) will be lost if "
+"you save it."
+msgstr ""
+
+#: ./root/source-js/core/backup.js:349
+msgid "No backup data was found on the server that matched this dataset."
+msgstr ""
+
+#: ./root/source-js/core/backup.js:353
+msgid "Failed to retrieve backup data: "
+msgstr ""
+
+#: ./root/source-js/articles/files.js:47
+msgid ""
+"The video file with file_id %(FILEID) has not been converted to the FLV "
+"format used to serve video through Lixuz yet, the process is still running, "
+"please reload and try again in a few minutes.\\n\\nIf the conversion takes "
+"more than an hour, please contact your system administrator"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:51
+msgid ""
+"The conversion of this file (%(FILEID)) to the FLV format failed. Please "
+"contact your system administrator."
+msgstr ""
+
+#: ./root/source-js/articles/files.js:163 ./root/source-js/files/multiUpload.js:30
+msgid "File"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:174
+msgid "Change the caption to:"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:180
+msgid "Add to the lead"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:181 ./root/source-js/articles/files.js:185
+msgid "Add to the body"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:188 ./root/source-js/core/dialogHelpers.js:267 ./root/source-js/core/dialogHelpers.js:293
+msgid "Ok"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:215
+msgid ""
+"A file named \"%(NAME)\" (id %(ID)) is already assigned to this spot. Do you "
+"want to replace it with the file \"%(NEWNAME)\"?"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:346
+msgid "Fetching file information..."
+msgstr ""
+
+#: ./root/source-js/articles/files.js:359
+msgid ""
+"Are you sure you wish to remove that file from this article? The file will "
+"not be deleted."
+msgstr ""
+
+#: ./root/source-js/articles/files.js:374
+msgid "Retrieving file spots"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:398
+msgid "File ID:"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:399
+msgid "Size:"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:400 ./root/source-js/articles/files.js:414 ./root/source-js/articles-previewUI/previewUI.js:268
+msgid "(none)"
+msgstr ""
+
+#: ./root/source-js/articles/files.js:419 ./root/source-js/articles/filesAPI.js:147
+msgid "Spot:"
+msgstr ""
+
+#: ./root/source-js/core/asyncHelper.js:380
+msgid ""
+"If the problem persists please contact your system administrator and include "
+"the information at the bottom of this message."
+msgstr ""
+
+#: ./root/source-js/core/asyncHelper.js:385
+msgid ""
+"Failed to submit data, you have been logged out of Lixuz. Please open the "
+"Dashboard page in another tab or window and log in there, and then try to "
+"save your data again"
+msgstr ""
+
+#: ./root/source-js/core/asyncHelper.js:389
+msgid "You do not have access to save or access this data"
+msgstr ""
+
+#: ./root/source-js/core/asyncHelper.js:393
+msgid ""
+"The data returned from the server was not safe, this is a bug. Your data may "
+"not have been saved."
+msgstr ""
+
+#: ./root/source-js/core/asyncHelper.js:397
+msgid ""
+"The data returned from the server was missing essential fields, this is a "
+"bug. Your data may not have been saved."
+msgstr ""
+
+#: ./root/source-js/core/asyncHelper.js:401
+msgid ""
+"The server did not reply with any data, this is a bug. Your data may not "
+"have been saved."
+msgstr ""
+
+#: ./root/source-js/core/asyncHelper.js:405
+msgid ""
+"A failure occurred while talking to the database server, this is most likely "
+"a bug. Your data has probably not been saved."
+msgstr ""
+
+#: ./root/source-js/core/asyncHelper.js:409
+msgid ""
+"An internal server error occurred while the server was processing your "
+"request. Please try again soon."
+msgstr ""
+
+#: ./root/source-js/core/asyncHelper.js:413
+msgid ""
+"The server misunderstood our request and attempted to return invalid data. "
+"Please try again soon."
+msgstr ""
+
+#: ./root/source-js/core/asyncHelper.js:419
+msgid "An error occurred with the request that was submitted."
+msgstr ""
+
+#: ./root/source-js/utils/FieldHelper.js:207
+msgid "The field \"%(field)\" must be filled in."
+msgstr ""
+
+#: ./root/source-js/utils/FieldHelper.js:224
+msgid "The field \"%(field)\" contains an invalid date."
+msgstr ""
+
+#: ./root/source-js/utils/FieldHelper.js:291
+msgid ""
+"The value for the field \"%(FIELD)\" must be within the range %(MIN)-%(MAX)"
+msgstr ""
+
+#: ./root/source-js/files/fileFormLogic.js:7
+msgid "No results matched"
+msgstr ""
+
+#: ./root/source-js/files/fileFormLogic.js:10 ./root/source-js/files/fileFormLogic.js:65
+msgid "-select-"
+msgstr ""
+
+#: ./root/source-js/files/fileFormLogic.js:60
+msgid "Additional folder"
+msgstr ""
+
+#: ./root/source-js/files/fileFormLogic.js:75
+msgid "You must select at least one folder"
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:140
+msgid "Loading filtering rules..."
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:173
+msgid "(any)"
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:208
+msgid "Search"
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:225
+msgid "Loading data..."
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:350
+msgid "Filtering..."
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:381
+msgid "No files found matching the current filters"
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:385
+msgid "No articles found matching the current filters"
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:389
+msgid "No entries found matching the current filters"
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:491
+msgid "Previous"
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:496
+msgid "of"
+msgstr ""
+
+#: ./root/source-js/utils/objectSelector.js:502
+msgid "Next"
+msgstr ""
+
+#: ./root/source-js/admin/ADFieldsEdit.js:37
+msgid "The range is invalid. It must be in the form: FROM-TO (ie. 20-40)"
+msgstr ""
+
+#: ./root/source-js/admin/ADFieldsEdit.js:44
+msgid "The minimum range can not be higher than the maximum range"
+msgstr ""
+
+#: ./root/source-js/admin/ADFieldsEdit.js:113
+msgid "All fields must be filled in."
+msgstr ""
+
+#: ./root/source-js/admin/ADFieldsEdit.js:148
+msgid "Failed to submit field data: "
+msgstr ""
+
+#: ./root/source-js/dragdrop/lixuzdd.js:73
+msgid "Refreshing..."
+msgstr ""
+
+#: ./root/source-js/dragdrop/lixuzdd.js:305
+msgid "Parent folder"
+msgstr ""
+
+#: ./root/source-js/dragdrop/lixuzdd.js:308
+msgid "Folder name"
+msgstr ""
+
+#: ./root/source-js/dragdrop/lixuzdd.js:310 ./root/source-js/core/createArticle.js:65
+msgid "Create"
+msgstr ""
+
+#: ./root/source-js/dragdrop/lixuzdd.js:321
+msgid "New folder"
+msgstr ""
+
+#: ./root/source-js/dragdrop/lixuzdd.js:340
+msgid "You have to enter a name for the folder"
+msgstr ""
+
+#: ./root/source-js/dragdrop/lixuzdd.js:351
+msgid "Creating folder..."
+msgstr ""
+
+#: ./root/source-js/dragdrop/lixuzdd.js:367
+msgid "Failed to create a new folder"
+msgstr ""
+
+#: ./root/source-js/files/asyncUpload.js:35 ./root/source-js/newsletter/newsletter.js:410 ./root/source-js/articles/viewArticleRevisions.js:132
+msgid "Close"
+msgstr ""
+
+#: ./root/source-js/files/asyncUpload.js:37
+msgid "Upload file"
+msgstr ""
+
+#: ./root/source-js/files/asyncUpload.js:43
+msgid "Loading form..."
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:42
+msgid "Are you sure you wish to cancel this users subscription?"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:88
+msgid "Loading group data..."
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:153
+msgid "From"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:154 ./root/source-js/newsletter/newsletter.js:183 ./root/source-js/articles-previewUI/previewUI.js:171
+msgid "Subject"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:164
+msgid "Message"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:170
+msgid "Loading list..."
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:179
+msgid "There are no saved newsletters."
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:183
+msgid "Sent at"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:184
+msgid "Select newsletter"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:191
+msgid "Loading message..."
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:212
+msgid "You need to add some recipients first"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:217
+msgid "You need to enter a subject"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:222
+msgid "The message can not be empty"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:227
+msgid "The from e-mail can not be empty"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:244
+msgid "Sending..."
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:274 ./root/source-js/newsletter/newsletter.js:275
+msgid "Add recipients"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:289
+msgid "Enter e-mail addresses here, separated by commas."
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:330
+msgid "Group:"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:332
+msgid "remove"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:354 ./root/source-js/newsletter/newsletter.js:391
+msgid "Loading group list..."
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:374
+msgid "Select the group(s) to add"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:410
+msgid "Select the group to edit"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:417
+msgid "Loading group information..."
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:435
+msgid "Group name"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:436
+msgid "Internal only"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:441
+msgid "Delete group"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:445
+msgid "Newsletter group editor"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:453
+msgid "Are you sure you wish to delete this group?"
+msgstr ""
+
+#: ./root/source-js/files/multiUpload.js:30 ./root/source-js/articles/articles.js:277 ./root/source-js/articles/filesAPI.js:66
+msgid "Remove"
+msgstr ""
+
+#: ./root/source-js/files/multiUpload.js:82
+msgid "You haven't selected any file(s) to upload"
+msgstr ""
+
+#: ./root/source-js/files/multiUpload.js:87
+msgid "You haven't selected any folder"
+msgstr ""
+
+#: ./root/source-js/files/multiUpload.js:92 ./root/source-js/files/multiUpload.js:96
+msgid "Uploading..."
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:43
+msgid ""
+"Are you sure that you want to move the article \"%(NAME)\" to trash? This "
+"will permanently change the status of the article from \"Live\" to \"Inactive"
+"\" (if you restore it, you will need to manually set the article Live again)."
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:47
+msgid "Are you sure that you want to move the article \"%(NAME)\" to trash?"
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:57
+msgid "Moving to trash..."
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:86
+msgid "Failed to delete: "
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:98
+msgid "Backup deleted."
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:105
+msgid "Backups found on server, loading information..."
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:114
+msgid ""
+"An error occurred, we recieved a message from the server saying that there "
+"was backups available for restoration. Now it says there aren't any. "
+"Something is not quite right somewhere"
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:138
+msgid "Delete backup"
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:141
+msgid ""
+"Backups of some of your articles was found. You may choose to restore these "
+"now, delete them, or postpone any action until later. Click on the title of "
+"an article to restore it"
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:144
+msgid "Backups found"
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:147
+msgid "Later"
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:222
+msgid ""
+"If you do not save this article within ten minutes, you will lose the edit "
+"lock on it."
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:231
+msgid "Edit lock lost"
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:234
+msgid ""
+"You have lost the edit lock for this article, it is now locked by <i>%(USER)"
+"</i>. Your data has been backed up, but you will not be able to save or "
+"restore the backup until the article has been unlocked."
+msgstr ""
+
+#: ./root/source-js/articles/articles.js:277 ./root/source-js/articles/filesAPI.js:66
+msgid "Download"
 msgstr ""
 
 #: ./root/source-js/articles-previewUI/previewUI.js:50 ./root/source-js/articles-previewUI/previewUI.js:110
@@ -597,77 +997,8 @@ msgstr ""
 msgid "You must enter a comment"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:268 ./root/source-js/articles/files.js:492 ./root/source-js/articles/files.js:769
-#: ./root/source-js/articles/files.js:783
-msgid "(none)"
-msgstr ""
-
-#: ./root/source-js/utils/editorHelper.js:257
+#: ./root/source-js/utils/editorHelper.js:193
 msgid "TINYMCE_LANGUAGE"
-msgstr ""
-
-#: ./root/source-js/articles/trash.js:23
-msgid ""
-"Are you sure that you want to permanently delete the article \"%(NAME)\"? "
-"This operation can not be reversed."
-msgstr ""
-
-#: ./root/source-js/articles/trash.js:44
-msgid "Are you sure that you want to restore the article \"%(NAME)\"?"
-msgstr ""
-
-#: ./root/source-js/articles/trash.js:53
-msgid "Restoring..."
-msgstr ""
-
-#: ./root/source-js/utils/arrangableList.js:100
-msgid "Enabled?"
-msgstr ""
-
-#: ./root/source-js/articles/articleSubmit.js:81
-msgid "Saving article..."
-msgstr ""
-
-#: ./root/source-js/articles/articleSubmit.js:136
-msgid "<b><i>Changes saved at %(date)<b></i>"
-msgstr ""
-
-#: ./root/source-js/articles/articleSubmit.js:170
-msgid "You don't have permission to set the article to the attempted status"
-msgstr ""
-
-#: ./root/source-js/articles/articleSubmit.js:174
-msgid ""
-"Failed to save the article, it is currently locked for editing by <i>%(USER)"
-"</i>."
-msgstr ""
-
-#: ./root/source-js/articles/articleSubmit.js:178
-msgid ""
-"You are neither the assigner nor the assignee of this article, so you can "
-"not change any of the data."
-msgstr ""
-
-#: ./root/source-js/articles/articleSubmit.js:220
-msgid ""
-"There are files that live in the same directory as this article, do you want "
-"to move them to the new folder as well?"
-msgstr ""
-
-#: ./root/source-js/articles/articleSubmit.js:241
-msgid ""
-"You have an unsaved comment. Do you want to save it now? If you choose not "
-"to save it, the comment will be lost."
-msgstr ""
-
-#: ./root/source-js/articles/articleSubmit.js:243
-msgid "You have an unsaved comment. Do you want to save it too?"
-msgstr ""
-
-#: ./root/source-js/articles/articleSubmit.js:295
-msgid ""
-"You have reassigned this article. This will result in the article being "
-"automatically closed after saving. Do you want to save it now?"
 msgstr ""
 
 #: ./root/source-js/core/createArticle.js:27
@@ -722,22 +1053,6 @@ msgstr ""
 
 #: ./root/source-js/core/dialogHelpers.js:211 ./root/source-js/core/dialogHelpers.js:231
 msgid "Yes"
-msgstr ""
-
-#: ./root/source-js/core/dialogHelpers.js:267 ./root/source-js/core/dialogHelpers.js:293 ./root/source-js/articles/files.js:552
-msgid "Ok"
-msgstr ""
-
-#: ./root/source-js/articles/additionalElements.js:58
-msgid "Loading list of additional elements..."
-msgstr ""
-
-#: ./root/source-js/articles/additionalElements.js:60
-msgid "Add selected elements"
-msgstr ""
-
-#: ./root/source-js/articles/additionalElements.js:61
-msgid "Add additional elements"
 msgstr ""
 
 #: ./root/source-js/core/folders.js:29
@@ -797,98 +1112,16 @@ msgstr ""
 msgid "Deleting...<br />This is a heavy operation and may take a while"
 msgstr ""
 
-#: ./root/source-js/articles/backup.js:30 ./root/source-js/core/backup.js:193
-msgid "Restoring backup..."
+#: ./root/source-js/articles/filesAPI.js:136
+msgid "File ID"
 msgstr ""
 
-#: ./root/source-js/articles/relationships.js:60 ./root/source-js/articles/relationships.js:187
-msgid "Add relationships"
+#: ./root/source-js/articles/filesAPI.js:137
+msgid "Folder"
 msgstr ""
 
-#: ./root/source-js/articles/relationships.js:62
-msgid "Add article relationships"
-msgstr ""
-
-#: ./root/source-js/articles/relationships.js:76 ./root/source-js/articles/viewArticleRevisions.js:119
-msgid "Status"
-msgstr ""
-
-#: ./root/source-js/articles/relationships.js:158
-msgid ""
-"The following articles already has relationships with this article: "
-"%(ARTICLES)\n"
-"\n"
-"You will have to remove the existing relationship(s) first."
-msgstr ""
-
-#: ./root/source-js/articles/relationships.js:174
-msgid ""
-"Which type of relationship does the article \"%(ARTICLE_TITLE)\" have with "
-"this article?"
-msgstr ""
-
-#: ./root/source-js/articles/relationships.js:178
-msgid "Which type of relationship does these articles have with this article?"
-msgstr ""
-
-#: ./root/source-js/articles/relationships.js:184
-msgid "Related"
-msgstr ""
-
-#: ./root/source-js/articles/relationships.js:185
-msgid "Previous article"
-msgstr ""
-
-#: ./root/source-js/articles/relationships.js:193
-msgid "Select relationship type"
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:83
-msgid "Editing permissions for "
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:87
-msgid "the folder "
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:98
-msgid "user"
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:98
-msgid "role"
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:129
-msgid "Override existing permissions on subfolders"
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:177
-msgid "Permissions editor"
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:185
-msgid "Retrieving permissions data..."
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:206
-msgid "Applying permissions..."
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:212
-msgid "You have to select which permission you want to grant."
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:256
-msgid "Select the folder that you want to edit permissions for."
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:262
-msgid "Select"
-msgstr ""
-
-#: ./root/source-js/core/objPermEditor.js:269
-msgid "Select folder"
+#: ./root/source-js/articles/filesAPI.js:355
+msgid "Fetching list of file spots..."
 msgstr ""
 
 #: ./root/source-js/core/XHR.js:104
@@ -966,23 +1199,12 @@ msgstr ""
 msgid "Acceptance failed"
 msgstr ""
 
-#: ./root/source-js/core/backup.js:103
-msgid "Last backed up at %(date)"
+#: ./root/source-js/articles/secondaryFolders.js:38
+msgid "You must first save the article."
 msgstr ""
 
-#: ./root/source-js/core/backup.js:282
-msgid ""
-"The backup has been fully restored. Note that any changes made by other "
-"users since this backup was created (other than comments) will be lost if "
-"you save it."
-msgstr ""
-
-#: ./root/source-js/core/backup.js:349
-msgid "No backup data was found on the server that matched this dataset."
-msgstr ""
-
-#: ./root/source-js/core/backup.js:353
-msgid "Failed to retrieve backup data: "
+#: ./root/source-js/articles/secondaryFolders.js:42
+msgid "Loading folders..."
 msgstr ""
 
 #: ./root/source-js/articles/viewArticleRevisions.js:35
@@ -1048,185 +1270,6 @@ msgstr ""
 msgid "Revisions of %(ARTID)"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:334
-msgid ""
-"The video file with file_id %(FILEID) has not been converted to the FLV "
-"format used to serve video through Lixuz yet, the process is still running, "
-"please reload and try again in a few minutes.\\n\\nIf the conversion takes "
-"more than an hour, please contact your system administrator"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:338
-msgid ""
-"The conversion of this file (%(FILEID)) to the FLV format failed. Please "
-"contact your system administrator."
-msgstr ""
-
-#: ./root/source-js/articles/files.js:468
-msgid "Reassign file"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:472
-msgid "Assign file"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:478
-msgid ""
-"Note: This file is already assigned to a spot. Reassigning it to another "
-"will remove it from its current spot and move it to the new one."
-msgstr ""
-
-#: ./root/source-js/articles/files.js:483
-msgid "(can not assign to spots - this template has none)"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:488
-msgid "Assign to spot: "
-msgstr ""
-
-#: ./root/source-js/articles/files.js:508
-msgid "current spot"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:520
-msgid "Change the caption to:"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:526
-msgid "Show advanced options"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:536
-msgid ""
-"Above you may choose to assign this file to a spot, these options allow you "
-"to add it directly to the body or lead of an article. Adding it to the body "
-"or lead is discouraged unless there are no suitable spots available (as the "
-"spots will properly scale and appear in lists properly, images in bodies "
-"will in most cases not)."
-msgstr ""
-
-#: ./root/source-js/articles/files.js:538
-msgid "Add to the lead"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:539 ./root/source-js/articles/files.js:543
-msgid "Add to the body"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:579
-msgid ""
-"A file named \"%(NAME)\" (id %(ID)) is already assigned to this spot. Do you "
-"want to replace it with the file \"%(NEWNAME)\"?"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:674
-msgid "Fetching list of file spots..."
-msgstr ""
-
-#: ./root/source-js/articles/files.js:722
-msgid "Fetching file information..."
-msgstr ""
-
-#: ./root/source-js/articles/files.js:735
-msgid ""
-"Are you sure you wish to remove that file from this article? The file will "
-"not be deleted."
-msgstr ""
-
-#: ./root/source-js/articles/files.js:743
-msgid "Retrieving file spots"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:767
-msgid "File ID:"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:768
-msgid "Size:"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:788
-msgid "Spot:"
-msgstr ""
-
-#: ./root/source-js/articles/secondaryFolders.js:38
-msgid "You must first save the article."
-msgstr ""
-
-#: ./root/source-js/articles/secondaryFolders.js:42
-msgid "Loading folders..."
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:380
-msgid ""
-"If the problem persists please contact your system administrator and include "
-"the information at the bottom of this message."
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:385
-msgid ""
-"Failed to submit data, you have been logged out of Lixuz. Please open the "
-"Dashboard page in another tab or window and log in there, and then try to "
-"save your data again"
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:389
-msgid "You do not have access to save or access this data"
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:393
-msgid ""
-"The data returned from the server was not safe, this is a bug. Your data may "
-"not have been saved."
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:397
-msgid ""
-"The data returned from the server was missing essential fields, this is a "
-"bug. Your data may not have been saved."
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:401
-msgid ""
-"The server did not reply with any data, this is a bug. Your data may not "
-"have been saved."
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:405
-msgid ""
-"A failure occurred while talking to the database server, this is most likely "
-"a bug. Your data has probably not been saved."
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:409
-msgid ""
-"An internal server error occurred while the server was processing your "
-"request. Please try again soon."
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:413
-msgid ""
-"The server misunderstood our request and attempted to return invalid data. "
-"Please try again soon."
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:419
-msgid "An error occurred with the request that was submitted."
-msgstr ""
-
-#: ./root/source-js/utils/FieldHelper.js:207
-msgid "The field \"%(field)\" must be filled in."
-msgstr ""
-
-#: ./root/source-js/utils/FieldHelper.js:224
-msgid "The field \"%(field)\" contains an invalid date."
-msgstr ""
-
-#: ./root/source-js/utils/FieldHelper.js:291
-msgid ""
-"The value for the field \"%(FIELD)\" must be within the range %(MIN)-%(MAX)"
-msgstr ""
-
 #: ./root/source-js/files/cropping.js:65
 msgid "Saving cropped image..."
 msgstr ""
@@ -1272,66 +1315,6 @@ msgstr ""
 
 #: ./root/source-js/articles/liveComments.js:132
 msgid "Failed to retrieve the live comment list"
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:140
-msgid "Loading filtering rules..."
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:173
-msgid "(any)"
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:208
-msgid "Search"
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:225
-msgid "Loading data..."
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:350
-msgid "Filtering..."
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:381
-msgid "No files found matching the current filters"
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:385
-msgid "No articles found matching the current filters"
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:389
-msgid "No entries found matching the current filters"
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:491
-msgid "Previous"
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:496
-msgid "of"
-msgstr ""
-
-#: ./root/source-js/utils/objectSelector.js:502
-msgid "Next"
-msgstr ""
-
-#: ./root/source-js/admin/ADFieldsEdit.js:37
-msgid "The range is invalid. It must be in the form: FROM-TO (ie. 20-40)"
-msgstr ""
-
-#: ./root/source-js/admin/ADFieldsEdit.js:44
-msgid "The minimum range can not be higher than the maximum range"
-msgstr ""
-
-#: ./root/source-js/admin/ADFieldsEdit.js:113
-msgid "All fields must be filled in."
-msgstr ""
-
-#: ./root/source-js/admin/ADFieldsEdit.js:148
-msgid "Failed to submit field data: "
 msgstr ""
 
 #: ./root/source-js/articles/commentSubmit.js:82

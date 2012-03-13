@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-23 13:47+0100\n"
-"PO-Revision-Date: 2012-02-13 10:25+0100\n"
+"POT-Creation-Date: 2012-03-13 14:16+0100\n"
+"PO-Revision-Date: 2012-03-13 14:20+0100\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
 "Language: nn\n"
@@ -198,8 +198,7 @@ msgid "You must enter a comment"
 msgstr "Du må skriva inn ein kommentar"
 
 #: root/source-js/articles-previewUI/previewUI.js:268
-#: root/source-js/articles/files.js:492 root/source-js/articles/files.js:769
-#: root/source-js/articles/files.js:783
+#: root/source-js/articles/files.js:400 root/source-js/articles/files.js:414
 msgid "(none)"
 msgstr "(inga)"
 
@@ -376,11 +375,13 @@ msgstr ""
 "lagra artikkelen eller gjenopprette sikkerhetskopien før artikkelen har "
 "blitt låst opp."
 
-#: root/source-js/articles/articles.js:277 root/source-js/articles/files.js:63
+#: root/source-js/articles/articles.js:277
+#: root/source-js/articles/filesAPI.js:66
 msgid "Download"
 msgstr "Last ned"
 
-#: root/source-js/articles/articles.js:277 root/source-js/articles/files.js:63
+#: root/source-js/articles/articles.js:277
+#: root/source-js/articles/filesAPI.js:66
 #: root/source-js/files/multiUpload.js:30
 msgid "Remove"
 msgstr "Fjern"
@@ -407,7 +408,7 @@ msgstr "Du må lagra artikkelen før du kan kommentera på den"
 msgid "Failed to submit comment: "
 msgstr "Klarte ikkje sende inn kommentar: "
 
-#: root/source-js/articles/files.js:334
+#: root/source-js/articles/files.js:47
 msgid ""
 "The video file with file_id %(FILEID) has not been converted to the FLV "
 "format used to serve video through Lixuz yet, the process is still running, "
@@ -419,7 +420,7 @@ msgstr ""
 "Last sida på nytt og prøv att om nokon minutt.\\n\\nViss konverteringa tek "
 "meir enn ein time, ta kontakt med din systemadministrator."
 
-#: root/source-js/articles/files.js:338
+#: root/source-js/articles/files.js:51
 msgid ""
 "The conversion of this file (%(FILEID)) to the FLV format failed. Please "
 "contact your system administrator."
@@ -427,71 +428,29 @@ msgstr ""
 "Konverteringa av denne fila (%(FILEID)) til FLV-formatet mislyktes. Kontakt "
 "din systemadministrator."
 
-#: root/source-js/articles/files.js:468
-msgid "Reassign file"
-msgstr "Tildel fil"
+#: root/source-js/articles/files.js:163 root/source-js/files/multiUpload.js:30
+msgid "File"
+msgstr "Fil"
 
-#: root/source-js/articles/files.js:472
-msgid "Assign file"
-msgstr "Tildel fil"
-
-#: root/source-js/articles/files.js:478
-msgid ""
-"Note: This file is already assigned to a spot. Reassigning it to another "
-"will remove it from its current spot and move it to the new one."
-msgstr ""
-"Merk: Denne fila er allereie tildelt eit område. Om du tildeler den eit anna "
-"område vil den verta fjerna frå det gjeldande området og flytta til det nye."
-
-#: root/source-js/articles/files.js:483
-msgid "(can not assign to spots - this template has none)"
-msgstr "(kan ikkje tildela til område - denne malen har inga)"
-
-#: root/source-js/articles/files.js:488
-msgid "Assign to spot: "
-msgstr "Tildel til område: "
-
-#: root/source-js/articles/files.js:508
-msgid "current spot"
-msgstr "gjeldande område"
-
-#: root/source-js/articles/files.js:520
+#: root/source-js/articles/files.js:174
 msgid "Change the caption to:"
 msgstr "Endra biletteksten til: "
 
-#: root/source-js/articles/files.js:526
-msgid "Show advanced options"
-msgstr "Vis avanserte val"
-
-#: root/source-js/articles/files.js:536
-msgid ""
-"Above you may choose to assign this file to a spot, these options allow you "
-"to add it directly to the body or lead of an article. Adding it to the body "
-"or lead is discouraged unless there are no suitable spots available (as the "
-"spots will properly scale and appear in lists properly, images in bodies "
-"will in most cases not)."
-msgstr ""
-"Over kan du velja å leggja denne fila til eit filområde, desse vala lèt deg "
-"leggja den direkte til inngressen eller brødteksten til ein artikkel. Det "
-"anbefales at du ikkje brukar denne funksjonen så lenge det er filområde "
-"tilgjengeleg (ettersom filområde vil skalerast og vert viste i listar "
-"automatisk, medan bileta i inngress eller brødtekst ofte ikkje vil)."
-
-#: root/source-js/articles/files.js:538
+#: root/source-js/articles/files.js:180
 msgid "Add to the lead"
 msgstr "Legg til i inngressen"
 
-#: root/source-js/articles/files.js:539 root/source-js/articles/files.js:543
+#: root/source-js/articles/files.js:181 root/source-js/articles/files.js:185
 msgid "Add to the body"
 msgstr "Legg til i brødteksten"
 
-#: root/source-js/articles/files.js:552
+#: root/source-js/articles/files.js:188
 #: root/source-js/core/dialogHelpers.js:267
 #: root/source-js/core/dialogHelpers.js:293
 msgid "Ok"
 msgstr "Ok"
 
-#: root/source-js/articles/files.js:553
+#: root/source-js/articles/files.js:189
 #: root/source-js/articles/relationships.js:192
 #: root/source-js/articles/viewArticleRevisions.js:106
 #: root/source-js/core/createArticle.js:76
@@ -505,7 +464,7 @@ msgstr "Ok"
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: root/source-js/articles/files.js:579
+#: root/source-js/articles/files.js:215
 msgid ""
 "A file named \"%(NAME)\" (id %(ID)) is already assigned to this spot. Do you "
 "want to replace it with the file \"%(NEWNAME)\"?"
@@ -513,15 +472,11 @@ msgstr ""
 "Ei fil med namnet «%(NAME)» (id %(ID)) er allereie tildelt dette området. "
 "Vil du byta den ut med fila «%(NEWNAME)»?"
 
-#: root/source-js/articles/files.js:674
-msgid "Fetching list of file spots..."
-msgstr "Hentar lista over filområde …"
-
-#: root/source-js/articles/files.js:722
+#: root/source-js/articles/files.js:346
 msgid "Fetching file information..."
 msgstr "Hentar filinformasjon …"
 
-#: root/source-js/articles/files.js:735
+#: root/source-js/articles/files.js:359
 msgid ""
 "Are you sure you wish to remove that file from this article? The file will "
 "not be deleted."
@@ -529,21 +484,34 @@ msgstr ""
 "Er du viss på at du vil fjerna den fila frå denne artikkelen? Fila vil ikkje "
 "verta sletta."
 
-#: root/source-js/articles/files.js:743
+#: root/source-js/articles/files.js:374
 msgid "Retrieving file spots"
 msgstr "Hentar lista over filområde …"
 
-#: root/source-js/articles/files.js:767
+#: root/source-js/articles/files.js:398
 msgid "File ID:"
 msgstr "Fil ID:"
 
-#: root/source-js/articles/files.js:768
+#: root/source-js/articles/files.js:399
 msgid "Size:"
 msgstr "Storleik:"
 
-#: root/source-js/articles/files.js:788
+#: root/source-js/articles/files.js:419
+#: root/source-js/articles/filesAPI.js:147
 msgid "Spot:"
 msgstr "Område:"
+
+#: root/source-js/articles/filesAPI.js:136
+msgid "File ID"
+msgstr "Fil ID"
+
+#: root/source-js/articles/filesAPI.js:137
+msgid "Folder"
+msgstr "Mappe"
+
+#: root/source-js/articles/filesAPI.js:355
+msgid "Fetching list of file spots..."
+msgstr "Hentar lista over filområde …"
 
 #: root/source-js/articles/liveComments.js:39
 msgid ""
@@ -1137,6 +1105,23 @@ msgstr "Gøym original"
 msgid "Show original"
 msgstr "Vis original"
 
+#: root/source-js/files/fileFormLogic.js:7
+msgid "No results matched"
+msgstr "Ingen treff på"
+
+#: root/source-js/files/fileFormLogic.js:10
+#: root/source-js/files/fileFormLogic.js:65
+msgid "-select-"
+msgstr "-vel-"
+
+#: root/source-js/files/fileFormLogic.js:60
+msgid "Additional folder"
+msgstr "Tilleggsmappe"
+
+#: root/source-js/files/fileFormLogic.js:75
+msgid "You must select at least one folder"
+msgstr "Du må velje minst èi mappe"
+
 #: root/source-js/files/fileSelector.js:33
 #: root/source-js/files/fileSelector.js:46
 msgid "File selector"
@@ -1145,10 +1130,6 @@ msgstr "Filvelger"
 #: root/source-js/files/fileSelector.js:45
 msgid "Add files"
 msgstr "Legg til filer"
-
-#: root/source-js/files/multiUpload.js:30
-msgid "File"
-msgstr "Fil"
 
 #: root/source-js/files/multiUpload.js:82
 msgid "You haven't selected any file(s) to upload"
@@ -1428,7 +1409,7 @@ msgstr ""
 msgid "Enabled?"
 msgstr "Slått på?"
 
-#: root/source-js/utils/editorHelper.js:257
+#: root/source-js/utils/editorHelper.js:193
 msgid "TINYMCE_LANGUAGE"
 msgstr "nn"
 
@@ -1512,14 +1493,54 @@ msgstr "Nekter å leggja til eit tomt emneord."
 msgid "Creating tag..."
 msgstr "Opprettar emneord …"
 
-#~ msgid "Insert text or HTML code"
-#~ msgstr "Sett inn tekst eller HTML-kode"
-
-#~ msgid "Table"
-#~ msgstr "Tabell"
+#~ msgid "Insert"
+#~ msgstr "Set inn"
 
 #~ msgid "Insert Table"
 #~ msgstr "Set inn ein tabell"
 
-#~ msgid "Insert"
-#~ msgstr "Set inn"
+#~ msgid "Table"
+#~ msgstr "Tabell"
+
+#~ msgid "Insert text or HTML code"
+#~ msgstr "Sett inn tekst eller HTML-kode"
+
+#~ msgid ""
+#~ "Above you may choose to assign this file to a spot, these options allow "
+#~ "you to add it directly to the body or lead of an article. Adding it to "
+#~ "the body or lead is discouraged unless there are no suitable spots "
+#~ "available (as the spots will properly scale and appear in lists properly, "
+#~ "images in bodies will in most cases not)."
+#~ msgstr ""
+#~ "Over kan du velja å leggja denne fila til eit filområde, desse vala lèt "
+#~ "deg leggja den direkte til inngressen eller brødteksten til ein artikkel. "
+#~ "Det anbefales at du ikkje brukar denne funksjonen så lenge det er "
+#~ "filområde tilgjengeleg (ettersom filområde vil skalerast og vert viste i "
+#~ "listar automatisk, medan bileta i inngress eller brødtekst ofte ikkje "
+#~ "vil)."
+
+#~ msgid "Show advanced options"
+#~ msgstr "Vis avanserte val"
+
+#~ msgid "current spot"
+#~ msgstr "gjeldande område"
+
+#~ msgid "Assign to spot: "
+#~ msgstr "Tildel til område: "
+
+#~ msgid "(can not assign to spots - this template has none)"
+#~ msgstr "(kan ikkje tildela til område - denne malen har inga)"
+
+#~ msgid ""
+#~ "Note: This file is already assigned to a spot. Reassigning it to another "
+#~ "will remove it from its current spot and move it to the new one."
+#~ msgstr ""
+#~ "Merk: Denne fila er allereie tildelt eit område. Om du tildeler den eit "
+#~ "anna område vil den verta fjerna frå det gjeldande området og flytta til "
+#~ "det nye."
+
+#~ msgid "Assign file"
+#~ msgstr "Tildel fil"
+
+#~ msgid "Reassign file"
+#~ msgstr "Tildel fil"

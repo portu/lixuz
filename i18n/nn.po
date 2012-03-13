@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2012-02-23 13:47+0100\n"
-"PO-Revision-Date: 2012-02-23 13:54+0100\n"
+"POT-Creation-Date: 2012-03-13 14:16+0100\n"
+"PO-Revision-Date: 2012-03-13 14:19+0100\n"
 "Last-Translator: Eskild Hustvedt <eskild@portu.no>\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
 "Language: nn\n"
@@ -41,8 +41,8 @@ msgid "This account has been deactivated."
 msgstr "Denne kontoen er deaktivert."
 
 #: lib/LIXUZ/Controller/Admin.pm:72 lib/LIXUZ/Controller/Admin.pm:82
-#: lib/LIXUZ/Controller/Admin/Articles.pm:251
-#: lib/LIXUZ/Controller/Admin/Articles.pm:255
+#: lib/LIXUZ/Controller/Admin/Articles.pm:272
+#: lib/LIXUZ/Controller/Admin/Articles.pm:276
 msgid "Permission denied"
 msgstr "Tilgang nekta"
 
@@ -68,82 +68,81 @@ msgstr ""
 "programfeil<br />rapporter den til din administrator eller utviklingslaget "
 "for Lixuz.<br /><br />Feilinformasjon:<br />"
 
-#: lib/LIXUZ/Controller/Admin/Files.pm:93
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:34
+#: lib/LIXUZ/Controller/Admin/Files.pm:92
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:35
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:368 root/adm/core/menu.html:67
 #: root/adm/articles/rightside.html:30
 msgid "Files"
 msgstr "Filer"
 
-#: lib/LIXUZ/Controller/Admin/Files.pm:115
+#: lib/LIXUZ/Controller/Admin/Files.pm:114
 #: lib/LIXUZ/Controller/Admin/Users.pm:66
 #: lib/LIXUZ/Controller/Admin/Users.pm:142
 #: lib/LIXUZ/Controller/Admin/Users.pm:206
 #: lib/LIXUZ/Controller/Admin/Categories.pm:183
 #: lib/LIXUZ/Controller/Admin/Categories.pm:223
 #: lib/LIXUZ/Controller/Admin/RSSImport.pm:344
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:115
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:210
-#: root/adm/rssimport/list.html:23 root/adm/files/edit.html:96
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:125
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:221
+#: root/adm/rssimport/list.html:23 root/adm/files/edit.html:100
 #: root/adm/files/list.html:56 root/adm/users/roles/edit/index.html:40
 msgid "Active"
 msgstr "Aktiv"
 
-#: lib/LIXUZ/Controller/Admin/Files.pm:119
+#: lib/LIXUZ/Controller/Admin/Files.pm:118
 #: lib/LIXUZ/Controller/Admin/Users.pm:70
 #: lib/LIXUZ/Controller/Admin/Users.pm:143
 #: lib/LIXUZ/Controller/Admin/Users.pm:309
 #: lib/LIXUZ/Controller/Admin/Categories.pm:184
 #: lib/LIXUZ/Controller/Admin/Categories.pm:354
 #: lib/LIXUZ/Controller/Admin/RSSImport.pm:348
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:115
-#: lib/LIXUZ/Schema/LzStatus.pm:117 root/adm/files/edit.html:97
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:125
+#: lib/LIXUZ/Schema/LzStatus.pm:118 root/adm/files/edit.html:101
 #: root/adm/files/list.html:58 root/adm/users/roles/edit/index.html:41
 msgid "Inactive"
 msgstr "Inaktiv"
 
-#: lib/LIXUZ/Controller/Admin/Files.pm:124
+#: lib/LIXUZ/Controller/Admin/Files.pm:123
 msgid "Uploaded by"
 msgstr "Lasta opp av"
 
-#: lib/LIXUZ/Controller/Admin/Files.pm:128
-#: lib/LIXUZ/Controller/Admin/Articles.pm:201
+#: lib/LIXUZ/Controller/Admin/Files.pm:127
 msgid "(anyone)"
 msgstr "(kven som helst)"
 
-#: lib/LIXUZ/Controller/Admin/Files.pm:131
+#: lib/LIXUZ/Controller/Admin/Files.pm:130
 #: lib/LIXUZ/Controller/Admin/Users.pm:81
 #: lib/LIXUZ/Controller/Admin/Users.pm:140
 #: lib/LIXUZ/Controller/Admin/Categories.pm:181
 #: lib/LIXUZ/Controller/Admin/RSSImport.pm:353
-#: lib/LIXUZ/Controller/Admin/Articles.pm:588
-#: lib/LIXUZ/Controller/Admin/Articles.pm:659
+#: lib/LIXUZ/Controller/Admin/Articles.pm:609
+#: lib/LIXUZ/Controller/Admin/Articles.pm:680
 #: root/adm/categories/editform.html:70 root/adm/categories/list.html:33
 #: root/adm/articles/relationships_right.html:34
-#: root/adm/articles/list.html:33 root/adm/files/edit.html:86
+#: root/adm/articles/list.html:33 root/adm/files/edit.html:90
 #: root/adm/users/list.html:32 root/adm/users/roles/list.html:26
 #: root/adm/users/roles/edit/index.html:36 root/adm/users/edit/index.html:133
 #: root/adm/dashboard/widgetHelper_articleList.html:25
 msgid "Status"
 msgstr "Status"
 
-#: lib/LIXUZ/Controller/Admin/Files.pm:179
+#: lib/LIXUZ/Controller/Admin/Files.pm:178
 #: lib/LIXUZ/Controller/Admin/Users.pm:414
 #: lib/LIXUZ/Controller/Admin/Users.pm:444
 #: lib/LIXUZ/Controller/Admin/Categories.pm:107
 #: lib/LIXUZ/Controller/Admin/Categories.pm:142
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:56
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:118
-#: lib/LIXUZ/Controller/Admin/Articles.pm:422
-#: lib/LIXUZ/Controller/Admin/Articles.pm:476
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:38
+#: lib/LIXUZ/Controller/Admin/Articles.pm:443
+#: lib/LIXUZ/Controller/Admin/Articles.pm:497
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:40
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:156
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:213
 #: lib/LIXUZ/Controller/Admin/Settings/Admin/Additionalfields.pm:57
 msgid "Error: Failed to locate UID. The path specified is invalid."
 msgstr "Feil: Kunna ikkje finne UIDen. Stigen som er spesifisert er ugyldig."
 
-#: lib/LIXUZ/Controller/Admin/Files.pm:190
+#: lib/LIXUZ/Controller/Admin/Files.pm:189
 msgid "File deleted"
 msgstr "Fila er sletta"
 
@@ -174,7 +173,7 @@ msgid "User name"
 msgstr "Brukarnamn"
 
 #: lib/LIXUZ/Controller/Admin/Users.pm:128
-#: lib/LIXUZ/Controller/Admin/Login.pm:115 root/adm/core/login.html:33
+#: lib/LIXUZ/Controller/Admin/Login.pm:121 root/adm/core/login.html:33
 msgid "Password"
 msgstr "Passord"
 
@@ -283,8 +282,8 @@ msgid "Folders"
 msgstr "Mapper"
 
 #: lib/LIXUZ/Controller/Admin/Categories.pm:189
-#: lib/LIXUZ/Controller/Admin/Articles.pm:587
-#: lib/LIXUZ/Controller/Admin/Articles.pm:667
+#: lib/LIXUZ/Controller/Admin/Articles.pm:608
+#: lib/LIXUZ/Controller/Admin/Articles.pm:688
 #: root/adm/categories/editform.html:53 root/adm/categories/list.html:29
 #: root/adm/articles/list.html:31
 msgid "Template"
@@ -357,28 +356,28 @@ msgstr "Redigerer definisjonen av ordet %(DICTIONARY_ID)"
 msgid "Definition saved"
 msgstr "Definisjon lagra"
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:50
+#: lib/LIXUZ/Controller/Admin/Login.pm:54
 msgid "You have been logged out."
 msgstr "Du har blitt logga ut."
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:58
+#: lib/LIXUZ/Controller/Admin/Login.pm:64
 msgid "Login"
 msgstr "Logg inn"
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:83
+#: lib/LIXUZ/Controller/Admin/Login.pm:91
 msgid "<b>Login refused</b>: %(REASON)"
 msgstr "<b>Innlogging nekta</b>: %(REASON)"
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:104
+#: lib/LIXUZ/Controller/Admin/Login.pm:112
 msgid "Invalid username or password"
 msgstr "Uglydig brukarnamn eller passord"
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:111 root/adm/core/header.html:154
+#: lib/LIXUZ/Controller/Admin/Login.pm:117 root/adm/core/header.html:154
 #: root/adm/core/login.html:37
 msgid "Log in"
 msgstr "Logg inn"
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:114 root/adm/core/login.html:29
+#: lib/LIXUZ/Controller/Admin/Login.pm:120 root/adm/core/login.html:29
 #: root/adm/users/list.html:28
 msgid "Username"
 msgstr "Brukarnamn"
@@ -388,17 +387,19 @@ msgstr "Brukarnamn"
 msgid "Forgotten password"
 msgstr "Gløymd passord"
 
-#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:36
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:35
 msgid ""
 "An e-mail with a link where you may change your password has been sent. "
 "Please check your e-mail."
-msgstr "Ein e-post med ei lenkje kvar du kan endre passordet ditt har blitt sendt til e-postadressa di."
+msgstr ""
+"Ein e-post med ei lenkje kvar du kan endre passordet ditt har blitt sendt "
+"til e-postadressa di."
 
-#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:41
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:40
 msgid "Error: Failed to locate a user with the this email address."
 msgstr "Feil: Kunna ikkje finna ein brukar med denne e-postadressa."
 
-#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:45
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:44
 msgid "Please enter a vaild e-mail address."
 msgstr "Skriv inn ei gyldig e-postadresse."
 
@@ -406,13 +407,15 @@ msgstr "Skriv inn ei gyldig e-postadresse."
 msgid ""
 "Please click on following link to change your Lixuz password:\n"
 " %(LINK)"
-msgstr "Trykk på denne lenkja for å endre Lixuz-passordet ditt:\n%(LINK)"
+msgstr ""
+"Trykk på denne lenkja for å endre Lixuz-passordet ditt:\n"
+"%(LINK)"
 
-#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:97
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:96
 msgid "Change Password"
 msgstr "Endre passord"
 
-#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:107
+#: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:106
 msgid "The password token was invalid."
 msgstr "Ugyldig passordstreng."
 
@@ -423,22 +426,23 @@ msgstr "Du må skrive inn eit passord."
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:115
 msgid ""
 "Your password has been changed. You may now log in with your new password"
-msgstr "Passordet ditt har blitt endra. Du kan no logge inn med ditt nye passord."
+msgstr ""
+"Passordet ditt har blitt endra. Du kan no logge inn med ditt nye passord."
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:120
 #: root/adm/users/edit/index.html:44
 msgid "The new passwords do not match"
 msgstr "Passorda du skreiv inn er ikkje like"
 
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:52
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:53
 msgid "Newsletter subscriptions"
 msgstr "Abonnenter på nyheitsbrev"
 
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:78
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:79
 msgid "Manual newsletter"
 msgstr "Manuelt nyheitsbrev"
 
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:347
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:348
 msgid "Group"
 msgstr "Gruppe"
 
@@ -459,98 +463,110 @@ msgstr "Malar"
 msgid "Articles"
 msgstr "Artiklar"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:91
+#: lib/LIXUZ/Controller/Admin/Articles.pm:104
 #: root/adm/dashboard/widgetHelper_articleList.html:90
 msgid "(unknown)"
 msgstr "(ukjend)"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:197
-msgid "Assigned to user"
-msgstr "Tildelt brukar"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:196
+msgid "user"
+msgstr "brukar"
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:204
+msgid "role"
+msgstr "rolle"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:218
+#: root/adm/articles/workflow.html:43 root/adm/articles/list.html:35
+#: root/adm/dashboard/widgetHelper_articleList.html:37
+msgid "Assigned to"
+msgstr "Tildelt"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:222
+msgid "(any user or role)"
+msgstr "(alle brukarar og roller)"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:225
 msgid "In status"
 msgstr "I status"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:241
+#: lib/LIXUZ/Controller/Admin/Articles.pm:262
 msgid "Error: Failed to locate revision %(REVISION) of the article %(UID)"
 msgstr "Feil: Kunna ikkje finna revisjonen %(REVISION) av artikkelen %(UID)"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:243
-#: lib/LIXUZ/Controller/Admin/Articles.pm:431
+#: lib/LIXUZ/Controller/Admin/Articles.pm:264
+#: lib/LIXUZ/Controller/Admin/Articles.pm:452
 msgid "Error: Failed to locate a article with the UID %(UID)."
 msgstr "Feil: Kunna ikkje finna ein artikkel med IDen %(UID)."
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:443
+#: lib/LIXUZ/Controller/Admin/Articles.pm:464
 msgid "You have stolen the edit lock for this article."
 msgstr "Du har stjålet redigeringslåsen for denne artikkelen."
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:496
+#: lib/LIXUZ/Controller/Admin/Articles.pm:517
 msgid "Article deleted"
 msgstr "Artikkelen er sletta"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:560
-#: lib/LIXUZ/Controller/Admin/Articles.pm:564
+#: lib/LIXUZ/Controller/Admin/Articles.pm:581
+#: lib/LIXUZ/Controller/Admin/Articles.pm:585
 msgid "Editing article %(ARTICLE_ID)"
 msgstr "Redigerer artikkel %(ARTICLE_ID)"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:568
+#: lib/LIXUZ/Controller/Admin/Articles.pm:589
 msgid "Creating article"
 msgstr "Opprettar artikkel"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:580
-#: lib/LIXUZ/Controller/Admin/Articles.pm:660
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:111 root/adm/files/edit.html:68
+#: lib/LIXUZ/Controller/Admin/Articles.pm:601
+#: lib/LIXUZ/Controller/Admin/Articles.pm:681
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:121 root/adm/files/edit.html:72
 #: root/adm/dashboard/widgetHelper_articleList.html:22
 msgid "Title"
 msgstr "Tittel"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:581
-#: lib/LIXUZ/Controller/Admin/Articles.pm:662
+#: lib/LIXUZ/Controller/Admin/Articles.pm:602
+#: lib/LIXUZ/Controller/Admin/Articles.pm:683
 msgid "Lead"
 msgstr "Inngress"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:582
-#: lib/LIXUZ/Controller/Admin/Articles.pm:663 root/adm/articles/list.html:34
+#: lib/LIXUZ/Controller/Admin/Articles.pm:603
+#: lib/LIXUZ/Controller/Admin/Articles.pm:684 root/adm/articles/list.html:34
 msgid "Author"
 msgstr "Forfattar"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:583
-#: lib/LIXUZ/Controller/Admin/Articles.pm:661
+#: lib/LIXUZ/Controller/Admin/Articles.pm:604
+#: lib/LIXUZ/Controller/Admin/Articles.pm:682
 msgid "Body"
 msgstr "Brødtekst"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:584
-#: lib/LIXUZ/Controller/Admin/Articles.pm:664
+#: lib/LIXUZ/Controller/Admin/Articles.pm:605
+#: lib/LIXUZ/Controller/Admin/Articles.pm:685
 msgid "Publish time"
 msgstr "Publiseringstid"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:585
+#: lib/LIXUZ/Controller/Admin/Articles.pm:606
 msgid "Expires at"
 msgstr "Gyldig til"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:586
+#: lib/LIXUZ/Controller/Admin/Articles.pm:607
 msgid "Order"
 msgstr "Rekkjefølgja"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:665
+#: lib/LIXUZ/Controller/Admin/Articles.pm:686
 msgid "Expiry time"
 msgstr "Gyldig til"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:666
+#: lib/LIXUZ/Controller/Admin/Articles.pm:687
 msgid "Primary folder"
 msgstr "Hovudmappe"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:762
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:113
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:127
+#: lib/LIXUZ/Controller/Admin/Articles.pm:783
 #: lib/LIXUZ/HelperModules/Forms.pm:159
 #: root/adm/core/fields/rangepulldown.html:21
 #: root/adm/core/fields/userpulldown.html:55
 msgid "-select-"
 msgstr "-vel-"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:769
+#: lib/LIXUZ/Controller/Admin/Articles.pm:790
 msgid "(Default template)"
 msgstr "(standardmal)"
 
@@ -584,11 +600,11 @@ msgstr "Verdi"
 msgid "In folder"
 msgstr "I mappe"
 
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:146
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:144
 msgid "File(s) successfully uploaded"
 msgstr "Fil(er) lasta opp"
 
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:235
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:233
 msgid ""
 "The target directory for files was not found or was not writable. Contact "
 "the system administrator."
@@ -596,46 +612,46 @@ msgstr ""
 "Målmappa for filer kunna ikkje verta funne eller vart ikkje skrivbar. "
 "Kontakt systemadministratoren."
 
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:240
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:238
 msgid "An error occurred while writing data to disk: %(PERLIO_ERROR)"
 msgstr "Ein feil oppstod under skriving av data til disken: %(PERLIO_ERROR)"
 
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:245
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:243
 msgid "Templates must be of htm, html or xml type"
 msgstr "Malar må vera i html eller xml format"
 
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:250
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:248
 msgid "An internal unknown fatal error (ID %(ERRID)) occurred"
 msgstr "Ein ukjend og fatal intern feil oppstod (ID %(ERRID))"
 
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:253
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:251
 msgid "<b>Fatal error:</b><br />%(ERROR_MESSAGE)"
 msgstr "<b>Fatal feil:</b><br />%(ERROR_MESSAGE)"
 
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:43
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:45
 msgid "Error: That file does not exist."
 msgstr "Feil: Den fila finst ikkje."
 
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:110
-#: root/adm/templates/list.html:28 root/adm/files/edit.html:59
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:120
+#: root/adm/templates/list.html:28 root/adm/files/edit.html:63
 #: root/adm/files/classes/edit.html:22 root/adm/files/classes/list.html:28
 #: root/adm/newsletter/list.html:29 root/adm/users/roles/list.html:25
 msgid "Name"
 msgstr "Namn"
 
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:112 root/adm/files/edit.html:76
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:122 root/adm/files/edit.html:80
 msgid "Caption"
 msgstr "Bilettekst"
 
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:133 root/adm/files/edit.html:114
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:149 root/adm/files/edit.html:118
 msgid "Height (pixels)"
 msgstr "Høgd (pikslar)"
 
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:134 root/adm/files/edit.html:121
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:150 root/adm/files/edit.html:125
 msgid "Width (pixels)"
 msgstr "Breidd (pikslar)"
 
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:261
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:294
 msgid "File saved."
 msgstr "Fil lagra."
 
@@ -791,11 +807,11 @@ msgstr "Handter roller"
 msgid "Manage templates"
 msgstr "Handter malar"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:592
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:599
 msgid "%(USER) has assigned article %(ARTICLE_ID) (%(ARTICLE_NAME)) to you"
 msgstr "%(USER) har tildelt artikkelen %(ARTICLE_ID) (%(ARTICLE_NAME)) til deg"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:598
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:605
 msgid ""
 "The article \"%(ARTICLE_NAME)\" (%(ARTICLE_ID)) has been\n"
 "assigned to you by %(USER). You may now edit\n"
@@ -805,7 +821,7 @@ msgstr ""
 "tildelt deg av %(USER). Du kan no redigera\n"
 "og handtera denne artikkelen på %(PAGE)."
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:628
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:650
 msgid ""
 "Some changes has been made by %(FIRSTNAME) %(LASTNAME) (%(USERNAME))\n"
 "to an article (ID %(ARTICLE_ID)) you are watching:"
@@ -813,79 +829,79 @@ msgstr ""
 "Nokon endringar har blitt gjort av %(FIRSTNAME) %(LASTNAME) (%(USERNAME))\n"
 "på ein artikkel (ID %(ARTICLE_ID)) du følger:"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:662
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:684
 msgid "Title change: \"%(old)\" => \"%(new).\""
 msgstr "Tittel endra: «%(old)» => «%(new)»."
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:666
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:688
 msgid "The lead has been changed."
 msgstr "Inngressen har blitt endra."
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:670
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:692
 msgid "The body has been changed."
 msgstr "Brødteksten har blitt endra."
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:674
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:696
 msgid "Author change: \"%(old)\" => \"%(new).\""
 msgstr "Forfattar har blitt endra: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:680
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:702
 msgid "Publish time has changed: \"%(old)\" => \"%(new).\""
 msgstr "Publiseringstid har blitt endra: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:684
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:706
 msgid "Expiry time has changed: \"%(old)\" => \"%(new)\"."
 msgstr "«Gyldig til» har blitt endra: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:698
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:720
 msgid "(default)"
 msgstr "(standard)"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:702
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:724
 msgid "Template change: \"%(old)\" => \"%(new)\"."
 msgstr "Mal har blitt endra: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:720
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:782
-#: root/adm/articles/list.html:116
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:742
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:804
+#: root/adm/articles/list.html:116 root/adm/files/list.html:87
 #: root/adm/dashboard/widgetHelper_articleList.html:93
 #: root/adm/dashboard/widgetHelper_articleList.html:112
 #: root/adm/dashboard/widget_recentComments.html:54
 msgid "(none)"
 msgstr "(inga)"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:723
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:745
 msgid "Status change: \"%(old)\" => \"%(new)\"."
 msgstr "Status har blitt endra: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:769
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:791
 #: root/adm/articles/workflow.html:163
 msgid "Low"
 msgstr "Låg"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:770
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:792
 #: root/adm/articles/workflow.html:168
 msgid "Medium"
 msgstr "Middels"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:771
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:793
 #: root/adm/articles/workflow.html:173
 msgid "High"
 msgstr "Høg"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:785
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:807
 msgid "Priority change: \"%(old)\" => \"%(new)\"."
 msgstr "Prioriteten har blitt endra: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:789
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:811
 msgid "The start date changed: \"%(old)\" => \"%(new)\"."
 msgstr "Startdatoen har blitt endra: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:793
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:815
 msgid "The deadline changed: \"%(old)\" => \"%(new)\"."
 msgstr "Tidsfristen har blitt endra: «%(old)» => «%(new)»"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:845
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:867
 msgid ""
 "This message has been automatically generated by Lixuz because you\n"
 "are watching this article. You can stop watching this article\n"
@@ -895,7 +911,7 @@ msgstr ""
 "følger denne artikkelen. Du kan slutte å følgja artikkelen\n"
 "ved å gå til redigeringssida til den."
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:845
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:867
 msgid "An article you are watching (%(ARTID)) has been edited"
 msgstr "Ein artikkel du følger (%(ARTID)) har blitt redigert"
 
@@ -1052,7 +1068,7 @@ msgstr "Alle"
 msgid "Maximum depth of nodes reached"
 msgstr "Maksnivå på noder er nådd"
 
-#: lib/LIXUZ/HelperModules/Forms.pm:135 root/adm/files/edit.html:139
+#: lib/LIXUZ/HelperModules/Forms.pm:135 root/adm/files/edit.html:143
 msgid "Reset"
 msgstr "Nullstill"
 
@@ -1060,60 +1076,60 @@ msgstr "Nullstill"
 msgid "This message has been automatically generated by Lixuz"
 msgstr "Denne meldinga er sendt automatisk av Lixuz"
 
-#: lib/LIXUZ/Schema/LzField.pm:160
+#: lib/LIXUZ/Schema/LzField.pm:161
 msgid "Single line"
 msgstr "Ei linje"
 
-#: lib/LIXUZ/Schema/LzField.pm:161
+#: lib/LIXUZ/Schema/LzField.pm:162
 msgid "Multi-line"
 msgstr "Fleire linjer"
 
-#: lib/LIXUZ/Schema/LzField.pm:162
+#: lib/LIXUZ/Schema/LzField.pm:163
 #: root/adm/settings/admin/adfields/adfieldedit.html:111
 msgid "Custom pulldown"
 msgstr "Tilpassa nedtrekksmeny"
 
-#: lib/LIXUZ/Schema/LzField.pm:163
+#: lib/LIXUZ/Schema/LzField.pm:164
 #: root/adm/settings/admin/adfields/adfieldedit.html:116
 msgid "Range-defined pulldown"
 msgstr "Intervall-definert nedtrekksmeny"
 
-#: lib/LIXUZ/Schema/LzField.pm:164
+#: lib/LIXUZ/Schema/LzField.pm:165
 msgid "Multiple select"
 msgstr "Fleire val"
 
-#: lib/LIXUZ/Schema/LzField.pm:165
+#: lib/LIXUZ/Schema/LzField.pm:166
 msgid "Date/time"
 msgstr "Dato/tid"
 
-#: lib/LIXUZ/Schema/LzField.pm:166
+#: lib/LIXUZ/Schema/LzField.pm:167
 msgid "Pulldown"
 msgstr "Nedtrekksmeny"
 
-#: lib/LIXUZ/Schema/LzField.pm:167
+#: lib/LIXUZ/Schema/LzField.pm:168
 #: root/adm/settings/admin/adfields/adfieldedit.html:101
 msgid "Checkbox"
 msgstr "Avkryssingsboks"
 
-#: lib/LIXUZ/Schema/LzField.pm:168
+#: lib/LIXUZ/Schema/LzField.pm:169
 #: root/adm/settings/admin/adfields/adfieldedit.html:41
 #: root/adm/settings/admin/adfields/adfieldedit.html:126
 msgid "Range"
 msgstr "Intervall"
 
-#: lib/LIXUZ/Schema/LzField.pm:169
+#: lib/LIXUZ/Schema/LzField.pm:170
 msgid "Metadata (date)"
 msgstr "Metadata (dato)"
 
-#: lib/LIXUZ/Schema/LzField.pm:170
+#: lib/LIXUZ/Schema/LzField.pm:171
 msgid "Metadata (integer)"
 msgstr "Metadata (heiltal)"
 
-#: lib/LIXUZ/Schema/LzField.pm:175
+#: lib/LIXUZ/Schema/LzField.pm:176
 msgid "(unknown - not set in database)"
 msgstr "(ukjend - ikkje sett i databasen)"
 
-#: lib/LIXUZ/Schema/LzField.pm:188
+#: lib/LIXUZ/Schema/LzField.pm:189
 msgid "(unknown - \"%(FIELDNAME)\")"
 msgstr "(ukjend - «%(FIELDNAME»)"
 
@@ -1125,11 +1141,11 @@ msgstr "(brukar ikkje funne)"
 msgid "%(ROLE_NAME) (role)"
 msgstr "%(ROLE_NAME) (rolle)"
 
-#: lib/LIXUZ/Schema/LzFile.pm:786 lib/LIXUZ/Schema/LzFile.pm:807
+#: lib/LIXUZ/Schema/LzFile.pm:828 lib/LIXUZ/Schema/LzFile.pm:849
 msgid "File ID:"
 msgstr "Fil ID:"
 
-#: lib/LIXUZ/Schema/LzFile.pm:813 root/adm/files/list.html:73
+#: lib/LIXUZ/Schema/LzFile.pm:855 root/adm/files/list.html:73
 msgid "View other versions"
 msgstr "Sjå andre versjonar"
 
@@ -1149,15 +1165,15 @@ msgstr "Tildel artiklar til brukarar"
 msgid "Default/generic"
 msgstr "Standard/generell"
 
-#: lib/LIXUZ/Schema/LzStatus.pm:114
+#: lib/LIXUZ/Schema/LzStatus.pm:115
 msgid "Draft"
 msgstr "Utkast"
 
-#: lib/LIXUZ/Schema/LzStatus.pm:115
+#: lib/LIXUZ/Schema/LzStatus.pm:116
 msgid "Live"
 msgstr "Live (på nett)"
 
-#: lib/LIXUZ/Schema/LzStatus.pm:116 root/adm/articles/editform.html:55
+#: lib/LIXUZ/Schema/LzStatus.pm:117 root/adm/articles/editform.html:55
 msgid "Revision"
 msgstr "Revisjon"
 
@@ -1397,12 +1413,12 @@ msgstr "Kommenter"
 msgid "Submit new comment"
 msgstr "Send inn kommentar"
 
-#: root/adm/articles/form_save.html:20 root/adm/files/edit.html:135
+#: root/adm/articles/form_save.html:20 root/adm/files/edit.html:139
 #: root/adm/settings/admin/adfields/adfieldedit.html:68
 msgid "Save"
 msgstr "Lagra"
 
-#: root/adm/articles/form_save.html:21 root/adm/files/edit.html:137
+#: root/adm/articles/form_save.html:21 root/adm/files/edit.html:141
 #: root/adm/files/classes/edit.html:39
 #: root/adm/settings/admin/adfields/adfieldedit.html:69
 msgid "Save and close"
@@ -1483,11 +1499,11 @@ msgstr ""
 "<span class=\"lite\"><i>%(AUTHOR)</i> %(DATETIME) på revisjon %(REVISION)</"
 "span>"
 
-#: root/adm/articles/files_right.html:18
+#: root/adm/articles/files_right.html:19
 msgid "Attach a file to this article"
 msgstr "Legg ei fil til denne artikkelen"
 
-#: root/adm/articles/files_right.html:19 root/adm/files/left.html:22
+#: root/adm/articles/files_right.html:20 root/adm/files/left.html:22
 #: root/adm/files/left.html:24
 msgid "Upload new files"
 msgstr "Last opp filer"
@@ -1521,11 +1537,6 @@ msgstr "Godta denne oppgaven"
 #: root/adm/articles/workflow.html:33
 msgid "Assigned by"
 msgstr "Tildelt av"
-
-#: root/adm/articles/workflow.html:43 root/adm/articles/list.html:35
-#: root/adm/dashboard/widgetHelper_articleList.html:37
-msgid "Assigned to"
-msgstr "Tildelt"
 
 #: root/adm/articles/workflow.html:85
 msgid "Priority"
@@ -1606,72 +1617,76 @@ msgstr "Gjer ferdig opplastning …"
 msgid "Saved"
 msgstr "Lagra"
 
-#: root/adm/files/edit.html:49
+#: root/adm/files/edit.html:51
 msgid "Folder"
 msgstr "Mappe"
 
-#: root/adm/files/edit.html:102 root/adm/files/selectClass.html:20
+#: root/adm/files/edit.html:51
+msgid "Additional folder"
+msgstr "Tilleggsmappe"
+
+#: root/adm/files/edit.html:106 root/adm/files/selectClass.html:20
 msgid "File class"
 msgstr "Filklasse"
 
-#: root/adm/files/edit.html:168
+#: root/adm/files/edit.html:172
 msgid "File metadata"
 msgstr "Fil metadata"
 
-#: root/adm/files/edit.html:171
+#: root/adm/files/edit.html:175
 msgid "File ID"
 msgstr "Fil ID"
 
-#: root/adm/files/edit.html:174
+#: root/adm/files/edit.html:178
 msgid "Path"
 msgstr "Stig"
 
-#: root/adm/files/edit.html:181
+#: root/adm/files/edit.html:185
 msgid "Original file size"
 msgstr "Original filstorleik"
 
-#: root/adm/files/edit.html:184
+#: root/adm/files/edit.html:188
 msgid "Owner"
 msgstr "Eigar"
 
-#: root/adm/files/edit.html:185
+#: root/adm/files/edit.html:189
 msgid "nobody"
 msgstr "inga"
 
-#: root/adm/files/edit.html:187
+#: root/adm/files/edit.html:191
 msgid "Uploaded on"
 msgstr "Lasta opp"
 
-#: root/adm/files/edit.html:190
+#: root/adm/files/edit.html:194
 msgid "Last edited on"
 msgstr "Sist redigert"
 
-#: root/adm/files/edit.html:193 root/adm/newsletter/send.html:33
+#: root/adm/files/edit.html:197 root/adm/newsletter/send.html:33
 msgid "Format"
 msgstr "Format"
 
-#: root/adm/files/edit.html:196
+#: root/adm/files/edit.html:200
 msgid "image"
 msgstr "bilete"
 
-#: root/adm/files/edit.html:198
+#: root/adm/files/edit.html:202
 msgid "flash"
 msgstr "flash"
 
-#: root/adm/files/edit.html:200
+#: root/adm/files/edit.html:204
 msgid "video - FLV will be used"
 msgstr "video - FLV vil verta brukt"
 
-#: root/adm/files/edit.html:205
+#: root/adm/files/edit.html:209
 msgid "Width"
 msgstr "Breidd"
 
-#: root/adm/files/edit.html:208
+#: root/adm/files/edit.html:212
 #: root/adm/settings/admin/adfields/adfieldedit.html:55
 msgid "Height"
 msgstr "Høgd"
 
-#: root/adm/files/edit.html:212
+#: root/adm/files/edit.html:216
 msgid "FLV file size"
 msgstr "FLV-storleik"
 
@@ -1743,7 +1758,11 @@ msgstr "Dimen.:"
 msgid "FLV size"
 msgstr "FLV-storleik"
 
-#: root/adm/files/list.html:92
+#: root/adm/files/list.html:95 root/adm/files/list.html:97
+msgid "Folders:"
+msgstr "Mapper:"
+
+#: root/adm/files/list.html:106
 msgid "files"
 msgstr "filer"
 
@@ -2103,11 +2122,11 @@ msgstr "Ord ID"
 msgid "Are you sure you want to delete the definition of the word \"%(WORD)\"?"
 msgstr "Er du viss på at du vil sletta definisjonen av ordet «%(WORD)»?"
 
+#~ msgid "Assigned to user"
+#~ msgstr "Tildelt brukar"
+
 #~ msgid "Create tags"
 #~ msgstr "Opprett emneord"
-
-#~ msgid "Manage users and roles"
-#~ msgstr "Håndter brukere og roller"
 
 #~ msgid "View articles"
 #~ msgstr "Se på artiklar"
