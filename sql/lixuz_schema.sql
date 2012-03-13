@@ -26,7 +26,7 @@ CREATE TABLE `lz_action` (
   `action_id` int(11) NOT NULL AUTO_INCREMENT,
   `action_path` varchar(60) NOT NULL,
   PRIMARY KEY (`action_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -54,7 +54,7 @@ CREATE TABLE `lz_article` (
   `live_comments` tinyint(1) DEFAULT '0',
   `revision` int(6) NOT NULL DEFAULT '1',
   PRIMARY KEY (`article_id`,`revision`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,7 +183,7 @@ CREATE TABLE `lz_backup` (
   `backup_source_id` int(11) DEFAULT NULL,
   `backup_string` text,
   PRIMARY KEY (`backup_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +205,7 @@ CREATE TABLE `lz_category` (
   `external_link` text,
   `category_status` enum('Active','Inactive') DEFAULT 'Active',
   PRIMARY KEY (`category_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -240,7 +240,7 @@ CREATE TABLE `lz_field` (
   `exclusive_module` enum('articles','workflow','users','roles','folders','templates','files') DEFAULT NULL,
   `obligatory` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`field_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -258,7 +258,7 @@ CREATE TABLE `lz_field_module` (
   `position` smallint(6) DEFAULT NULL,
   `enabled` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`field_module_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -306,7 +306,6 @@ CREATE TABLE `lz_file` (
   `file_id` int(11) NOT NULL AUTO_INCREMENT,
   `file_name` varchar(100) DEFAULT NULL,
   `path` varchar(255) DEFAULT NULL,
-  `folder_id` int(11) DEFAULT NULL,
   `owner` int(11) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `caption` text,
@@ -322,7 +321,7 @@ CREATE TABLE `lz_file` (
   `identifier` varchar(10) DEFAULT NULL,
   `class_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`file_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -336,7 +335,7 @@ CREATE TABLE `lz_file_class` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(254) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -382,7 +381,7 @@ CREATE TABLE `lz_folder` (
   `parent` int(11) DEFAULT NULL,
   `folder_order` int(11) DEFAULT NULL,
   PRIMARY KEY (`folder_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -398,7 +397,7 @@ CREATE TABLE `lz_key_value` (
   `value` text,
   `type` enum('dictionary','url') NOT NULL,
   PRIMARY KEY (`keyvalue_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -413,7 +412,7 @@ CREATE TABLE `lz_live_captcha` (
   `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `captcha` char(10) NOT NULL,
   PRIMARY KEY (`captcha_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -432,7 +431,7 @@ CREATE TABLE `lz_live_comment` (
   `body` text,
   `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`comment_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -447,7 +446,7 @@ CREATE TABLE `lz_lixuz_meta` (
   `entry` varchar(20) DEFAULT NULL,
   `VALUE` varchar(254) DEFAULT NULL,
   PRIMARY KEY (`meta_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -501,7 +500,7 @@ CREATE TABLE `lz_newsletter_subscription` (
   `validation_hash` varchar(100) DEFAULT NULL,
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`subscription_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -569,7 +568,7 @@ CREATE TABLE `lz_revision` (
   `is_latest_in_status` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`revision_id`),
   KEY `revision_meta_standard` (`type_id`,`type_revision`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -584,7 +583,7 @@ CREATE TABLE `lz_role` (
   `role_name` varchar(100) DEFAULT NULL,
   `role_status` enum('Active','Inactive') DEFAULT 'Active',
   PRIMARY KEY (`role_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -621,7 +620,7 @@ CREATE TABLE `lz_rss_article` (
   `status` enum('Active','Inactive') DEFAULT 'Inactive',
   PRIMARY KEY (`rss_id`),
   UNIQUE KEY `guid` (`guid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -636,7 +635,7 @@ CREATE TABLE `lz_status` (
   `status_name` varchar(56) DEFAULT NULL,
   `system_status` enum('0','1') DEFAULT '0',
   PRIMARY KEY (`status_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -671,7 +670,7 @@ CREATE TABLE `lz_template` (
   `uniqueid` varchar(254) NOT NULL,
   `is_default` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`template_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -726,7 +725,7 @@ CREATE TABLE `lz_user` (
   `lang` varchar(6) DEFAULT NULL,
   `reset_code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -800,7 +799,7 @@ CREATE TABLE `lz_workflow_comments` (
   `comment_id` int(11) NOT NULL AUTO_INCREMENT,
   `on_revision` int(5) NOT NULL DEFAULT '1',
   PRIMARY KEY (`comment_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -812,4 +811,4 @@ CREATE TABLE `lz_workflow_comments` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-03-12 12:57:20
+-- Dump completed on 2012-03-13 13:48:27

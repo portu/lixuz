@@ -29,6 +29,7 @@ while($_ = <$out>)
         next;
     }
     s/AUTO_INCREMENT=\d+//g;
+    s/\s+DEFAULT/ DEFAULT/g;
     s/\s+CHARSET=latin1/ CHARSET=utf8/g;
     print {$outf} $_;
 }

@@ -52,6 +52,8 @@ __PACKAGE__->set_primary_key("file_id", "folder_id");
 
 # Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-12 12:51:38
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:wwYzMNc1UMV+oNgttCwqNw
+__PACKAGE__->belongs_to('folder' => 'LIXUZ::Schema::LzFolder', 'folder_id');
+__PACKAGE__->belongs_to('file' => 'LIXUZ::Schema::LzFile', 'file_id');
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

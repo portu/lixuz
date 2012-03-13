@@ -198,7 +198,7 @@ print "done\n";
 dualPrint('Dumping database contents...');
 # The table list can be generated with:
 # mysql -uUSER -pPWD DB -e 'SHOW TABLES;'|cat|perl -ni -e 'next if /(dm_map|Tables_in)/;chomp;print "$_ ";';echo
-dumpDB($dumpTargets{stripped},undef, qw(lz_action lz_article lz_article_elements lz_article_file lz_article_folder lz_article_lock lz_article_relations lz_article_tag lz_article_watch lz_backup lz_category lz_category_folder lz_field lz_field_module lz_field_options lz_field_value lz_file lz_file_class lz_file_tag lz_folder lz_key_value lz_live_captcha lz_live_comment lz_lixuz_meta lz_newsletter_group lz_newsletter_saved lz_newsletter_subscription lz_newsletter_subscription_category lz_newsletter_subscription_group lz_perms lz_revision lz_role lz_role_action lz_rss_article lz_status lz_tag lz_template lz_template_dependencies lz_template_includes lz_tp_map lz_user lz_user_config lz_widget_config lz_workflow lz_workflow_comments));
+dumpDB($dumpTargets{stripped},undef, qw(lz_action lz_article lz_article_elements lz_article_file lz_article_folder lz_article_lock lz_article_relations lz_article_tag lz_article_watch lz_backup lz_category lz_category_folder lz_field lz_field_module lz_field_options lz_field_value lz_file lz_file_class lz_file_folder lz_file_tag lz_folder lz_key_value lz_live_captcha lz_live_comment lz_lixuz_meta lz_newsletter_group lz_newsletter_saved lz_newsletter_subscription lz_newsletter_subscription_category lz_newsletter_subscription_group lz_perms lz_revision lz_role lz_role_action lz_rss_article lz_status lz_tag lz_template lz_template_dependencies lz_template_includes lz_user lz_user_config lz_widget_config lz_workflow lz_workflow_comments));
 print "done\n";
 
 fatalRestore
@@ -781,6 +781,22 @@ sub detectFlags
         }
     };
     print '.';
+    # Check if we need to migrate folder ID's to lz_file_folder
+    silent
+    {
+        $rawDBH->do('SELECT * FROM lz_file_folder LIMIT 1');
+        if ($DBI::errstr)
+        {
+            $flags{fileFolder} = 1;
+            $flags{fileFolderFresh} = 1;
+        }
+        $rawDBH->do('SELECT folder_id FROM lz_file LIMIT 1');
+        if (! $DBI::errstr)
+        {
+            $flags{fileFolder} = 1;
+        }
+    };
+    print '.';
     # Force an upgrade of file class perms if db rev is < 4
     if ($currentDBRevision < 4)
     {
@@ -907,15 +923,42 @@ sub performPreStructureChanges
     {
         try
         {
+            logAction('Performing structure changes to lz_field_module and dropping fields from lz_article and lz_file');
             $rawDBH->do('ALTER TABLE lz_field_module CHANGE folder_id object_id INT;') or die($DBI::errstr);
             $rawDBH->do('ALTER TABLE lz_article DROP article_order;') or die($DBI::errstr);
             $rawDBH->do('ALTER TABLE lz_article DROP hits;') or die($DBI::errstr);
             $rawDBH->do('ALTER TABLE lz_file DROP hits;') or die($DBI::errstr);
             $rawDBH->do('ALTER TABLE lz_file DROP dpi;') or die($DBI::errstr);
+            print '.';
         }
         catch
         {
-            die("Failed to perform structure upgrades: $_\n");
+            die("Failed to perform preStructModule structure upgrades: $_\n");
+        };
+    }
+    if ($flags{fileFolderFresh})
+    {
+        try
+        {
+            logAction('Pre-creating lz_file_folder');
+            mysql_exec(readCreateStatement('lz_file_folder'),true,true);
+            print '.';
+        }
+        catch
+        {
+            die("Failed to perform fileFolderFresh creation step during structure upgrades: $_\n");
+        };
+    }
+    if ($flags{fileFolder})
+    {
+        try
+        {
+            migrateFileFolders($c);
+            print '.';
+        }
+        catch
+        {
+            die("Failed to perform fileFolder structure upgrades: $_\n");
         };
     }
 }
@@ -938,6 +981,21 @@ sub convertFileFields
     };
     print '.';
 }
+sub migrateFileFolders
+{
+    logAction('Migrating folder_id on lz_file table to lz_file_folder');
+    my $files = $rawDBH->selectall_arrayref(
+        'SELECT file_id, folder_id FROM lz_file',
+        { Slice => {} }
+    );
+
+    foreach my $f (@{$files})
+    {
+        next if not defined $f->{folder_id};
+        $rawDBH->do('INSERT INTO lz_file_folder (file_id,folder_id,primary_folder) VALUES ('.$rawDBH->quote($f->{file_id}).','.$rawDBH->quote($f->{folder_id}).',1);') or warn($DBI::errstr);
+    }
+    $rawDBH->do('ALTER TABLE lz_file DROP folder_id;') or die($DBI::errstr);
+}
 sub upgradeFileClassPerms
 {
     my $c = shift;
@@ -950,6 +1008,36 @@ sub upgradeFileClassPerms
         $new->set_column('allowed',1);
         $new->update();
     }
+}
+
+sub readCreateStatement
+{
+    my $table = shift;
+    open(my $i,'<','./lixuz_schema.sql');
+    my $seen = 0;
+    my $statement = '';
+    while(my $l = <$i>)
+    {
+        if(not $seen)
+        {
+            if ($l =~ /^(DROP TABLE IF EXISTS|CREATE TABLE) \S$table\S/)
+            {
+                $seen = 1;
+            }
+            else
+            {
+                next;
+            }
+        }
+        next if $l =~ m{^(--|/\*)};
+        $statement .= $l;
+        if ($l =~ /^\).*ENGINE.*DEFAULT.*CHARSET/)
+        {
+            last;
+        }
+    }
+    close($i);
+    return $statement;
 }
 
 # Run a system() and log it as well
@@ -995,7 +1083,7 @@ sub logAction
     $lmon = "0$lmon" if not $lmon >= 10;
     $lmday = "0$lmday" if not $lmday >= 10;
     $lyear += 1900;
-    print {$logfile} "[$lmday/$lmon/$lyear $lhour:$lmin:$lsec ($$)] ".$msg."\n";
+    print {$logfile} "[$lyear-$lmon-$lmday $lhour:$lmin:$lsec ($$)] ".$msg."\n";
 }
 
 # Fetch a model, attempting two different methods
@@ -1014,7 +1102,6 @@ sub getModel
     };
     return $result;
 }
-
 
 # Exit
 sub dExit

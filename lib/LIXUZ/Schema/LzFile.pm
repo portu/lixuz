@@ -40,11 +40,6 @@ __PACKAGE__->table("lz_file");
   is_nullable: 1
   size: 255
 
-=head2 folder_id
-
-  data_type: 'integer'
-  is_nullable: 1
-
 =head2 owner
 
   data_type: 'integer'
@@ -132,8 +127,6 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 100 },
   "path",
   { data_type => "varchar", is_nullable => 1, size => 255 },
-  "folder_id",
-  { data_type => "integer", is_nullable => 1 },
   "owner",
   { data_type => "integer", is_nullable => 1 },
   "title",
@@ -179,8 +172,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("file_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-04-05 10:14:14
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:lyQ6L0oVIceyH2MtvxSFhw
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-12 13:16:25
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1UOKxXzwNJbkZrCEtHMjwA
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012
@@ -208,7 +201,7 @@ use Math::Int2Base qw( int2base );
 
 __PACKAGE__->belongs_to('ownerUser' => 'LIXUZ::Schema::LzUser', { 'foreign.user_id' => 'self.owner' });
 __PACKAGE__->has_many('clones' => 'LIXUZ::Schema::LzFile', { 'foreign.clone' => 'self.file_id' });
-__PACKAGE__->belongs_to('folder' => 'LIXUZ::Schema::LzFolder', 'folder_id');
+__PACKAGE__->has_many('folders' => 'LIXUZ::Schema::LzFileFolder', 'file_id');
 __PACKAGE__->has_many('articles' => 'LIXUZ::Schema::LzArticleFile', 'file_id');
 __PACKAGE__->has_many(tags => 'LIXUZ::Schema::LzFileTag',{
     'foreign.file_id' => 'self.file_id',
@@ -705,7 +698,7 @@ sub get_everything
 {
     my $self = shift;
     my %Return;
-    foreach my $col( qw(file_id file_name path folder_id owner title caption width height size format last_edited upload_time clone status) )
+    foreach my $col( qw(file_id file_name path owner title caption width height size format last_edited upload_time clone status) )
     {
         $Return{$col} = $self->get_column($col);
     }
