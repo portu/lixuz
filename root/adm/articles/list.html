@@ -21,10 +21,19 @@
 <b><% $message %></b>
 </div>
 %}
-
-<& ../core/listnavigation.html, %ARGS &>
-
-<table cellspacing="0" class="listView">
+<form name="quickedit" id="quickedit" method="post" action="/admin/articles">
+<div id="topdiv">
+<div id="submitbutton" style="float: left; text-align: left; display: none">
+       <input id="saveStatusChanges" name="_blankSaveStatusChanges" type="submit" value="<% $i18n->get('Save Changes')  |n %>" />
+           </div>
+<div id="rootpage"  style="float: right; text-align: right">
+    <& ../core/listnavigation.html, %ARGS &>
+</div>    
+    </div>        
+  <div style="clear: both;"></div>
+    <input type="hidden" name="articlestatuschange" id="articlestatuschange" value="yes">
+    <div id='listview'>
+<table cellspacing="0" class="listView"  border="1">
     <tr>
         <td class="rowHead aiHead"><a href="<% $c->request->uri_with({ orderby => 'article_id', ordertype => $ordertype}) %>"><% $i18n->get('Article ID') %></a></td>
         <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'title', ordertype => $ordertype}) %>"><% $i18n->get('Article title') %></a></td>
@@ -121,7 +130,36 @@ if($artAuthor eq $author)
     $artAuthor = '';
 }
 </%perl>
-    <td><% $stat_name %></td>
+<td id="unsavedTd_<% $article->article_id %>">
+%if($article->can_write($c)){  
+<div id="baseId">
+    <div id="unsavedstatus_<% $article->article_id %>"></div>
+<div class="select" id="statusdiv_<% $article->article_id %>" data="<%$article->article_id %>">
+        <input type="hidden" name="articlestatus_<%$article->article_id%>" id="articlestatus_<%$article->article_id%>" value="<%$article->status_id%>" disabled="disabled" data="<%$article->status_id%>">
+        <ul>
+            <li data = "<%$article->status_id%>" class="destination option small darr <% $i%2==0 ? 'dest' : 'loc' %>"><%$stat_name%></li>
+%foreach my $opt (@{$statusOptions})            
+%{
+%if($article->status_id != $opt->{value}){
+<li data = "<%$opt->{value}%>" class="destination option small <% $i%2==0 ? 'dest' : 'loc' %>"><% $opt->{label} |n %></li>
+%}
+%}
+  </ul>    
+
+ </div> 
+ <div style="clear: both;"></div>
+ </div>
+%}else{ 
+ <div id="writeaccesss_<% $article->article_id %>" class="dclass" data="<% $article->article_id %>">
+         <%$stat_name%>
+     </div>
+     <div id="writeaccessmsg_<% $article->article_id %>" style="display:none" data="<% $article->article_id %>">
+       <% $i18n->get("You don't have permission to change the status of this article")  %>
+     </div>
+     
+%}     
+
+</td>
     <td><span class="useTipsy" title="<% $artAuthor %>"><% $author %></span></td>
 %if($article->workflow) {
 %my $title = $article->workflow->assigned_to_string($c,0,1);
@@ -180,15 +218,24 @@ if($artAuthor eq $author)
 </td>
     </tr>
 %}
+<tr>
+  <td colspan="9" style="background-color: #FFFFFF">
+    <div id="submitbutton" style="display: none">
+        <input id="saveStatusChanges" name="_blankSaveStatusChanges" type="submit" value="<% $i18n->get('Save Changes')  |n %>" />
+    </div>
+  </td>
+</tr>
 <& ../core/suppressedInfo.html, %ARGS, suppressed => $suppressed, name => $i18n->get('articles') &>
 %}
 
 </table>
-
+</div>
+</form>
 <%args>
 $article=>undef
 $message => undef
 $trashMode => undef
 $i18n
 $ordertype
+$statusOptions => []
 </%args>
