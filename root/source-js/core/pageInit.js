@@ -86,7 +86,7 @@ $(function()
     setTimeout(function ()
     {
         // Style buttons that aren't already handled
-        $('input:button:not(ui-button), button:not(ui-button), input:submit:not(ui-button), input:reset:not(ui-button)').not('.native-button').not('#list_search_submit').button();
+        $('input:button:not(ui-button), button:not(ui-button), input:submit:not(ui-button), input:reset:not(ui-button)').not('.native-button').button();
         // Attach a live tipsy handler
         $('.useTipsy').tipsy({ gravity: 'ne', live: true });
         $('.useTipsyW').tipsy({ gravity: 'nw', live: true });
