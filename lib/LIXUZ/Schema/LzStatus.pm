@@ -81,8 +81,9 @@ __PACKAGE__->set_primary_key("status_id");
 
 __PACKAGE__->has_many(articles => 'LIXUZ::Schema::LzArticle', 'status_id');
 
-sub status_name
+around 'status_name' => sub
 {
+    my $orig = shift;
     my $self = shift;
     if ($self->{realStatusName})
     {
@@ -93,14 +94,14 @@ sub status_name
     {
         die('LzStatus->status_name called without required argument: i18n object. Use: object->status_name($c->stash->{i18n});'."\n");
     }
-    my $name = $self->get_column('status_name');
+    my $name = $self->$orig();
     if ($self->get_column('system_status') == 1)
     {
         $name = $i18n->get($name);
     }
     $self->{realStatusName} = $name;
     return $name;
-}
+};
 
 sub status_realname
 {
