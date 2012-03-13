@@ -4,10 +4,8 @@
     $(function ()
     {
         var chosenOptions = {
-            no_results_text: i18n.get("No results matched"),
             allow_single_deselect: true
         };
-        $('.file_folder_area').find('select').data('placeholder',i18n.get('-select-'));
         var $areaClone = $('.file_folder_area').first().clone().detach();
 
         var hasValues = function(returnTotal)
@@ -62,7 +60,7 @@
             var newName = $clone.find('select').attr('id');
             newName = newName+'_'+entry;
             $clone.find('select').attr('name',newName).attr('id',newName);
-            $clone.find('select').data('placeholder',i18n.get('-select-')).chosen(chosenOptions);
+            $clone.find('select').chosen(chosenOptions);
         };
 
         $('.file_folder').chosen(chosenOptions);
