@@ -188,20 +188,21 @@ sub init_searchFilters : Private
 
     my $i18n = $c->stash->{i18n};
     my $userOptions = [];
-    my $users = $c->model('LIXUZDB::LzUser');
+    my $users = $c->model('LIXUZDB::LzUser')->search(undef,{ order_by => 'user_name' });
     while(my $user = $users->next)
     {
+        next if !defined($user->user_name) || !length($user->user_name);
         push(@{$userOptions}, {
                 value =>  'user-'.$user->user_id,
-                label =>  $i18n->get('user').':'.$user->user_name,
+                label =>  $user->user_name.' '.$i18n->get('(user)'),
             });
     }
-    my $roles= $c->model('LIXUZDB::LzRole');
+    my $roles= $c->model('LIXUZDB::LzRole')->search(undef,{ order_by => 'role_name' });
     while(my $role = $roles->next)
     {
          push(@{$userOptions}, {
                 value =>  'role-'.$role->role_id,
-                label =>  $i18n->get('role').':'.$role->role_name,
+                label =>  $role->role_name.' '.$i18n->get('(role)'),
         });
     }
     my $statusOptions = [];

@@ -321,7 +321,7 @@ sub prepare : Private
         my @users = ({ value => 'null', name => $i18n->get('-select-'), selected => 1});
         my @roles = ({ value => 'null', name => $i18n->get('-select-'), selected => 1});
 
-        my $roleList = $c->model('LIXUZDB::LzRole');
+        my $roleList = $c->model('LIXUZDB::LzRole')->search(undef,{ order_by => 'role_name' });
         while(my $role = $roleList->next)
         {
             next if not $role->is_active or not $c->user->can_access('WORKFLOW_REASSIGN_TO_ROLE_'.$role->role_id);
@@ -334,7 +334,7 @@ sub prepare : Private
         {
             $c->stash->{w_roleOptions} = select_options_manually(\@roles);
 
-            my $userList = $c->model('LIXUZDB::LzUser');
+            my $userList = $c->model('LIXUZDB::LzUser')->search(undef,{ order_by => 'user_name' });
             while(my $user = $userList->next)
             {
                 next if not $user->is_active;
