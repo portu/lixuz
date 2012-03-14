@@ -66,14 +66,15 @@
         $('.file_folder').chosen(chosenOptions);
 
         $('#fileEditArea').on('change','.file_folder',addSecondAreaIfNeeded);
-        $('#fileEditArea form').submit(function()
+        window.fileFormLogic_submit = function()
         {
             if (hasValues(true) <= 0)
             {
                 userMessage(i18n.get('You must select at least one folder'));
                 return false;
             }
-        });
+        };
+        $('#fileEditArea form').submit( window.fileFormLogic_submit );
 
         setTimeout(addSecondAreaIfNeeded,1);
     });

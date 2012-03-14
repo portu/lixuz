@@ -82,9 +82,8 @@ function prepFormSubmission ()
             userMessage(i18n.get('You haven\'t selected any file(s) to upload'));
             return false;
         }
-        if ($('#file_folder').val() == null || $('#file_folder').val() == '')
+        if (window.fileFormLogic_submit() === false)
         {
-            userMessage(i18n.get('You haven\'t selected any folder'));
             return false;
         }
         if ($('#asyncUpload').val() == '1')
