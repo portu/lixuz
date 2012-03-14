@@ -95,7 +95,7 @@ sub renderImg
     # Fetch+parse the src of the original image in order to find the file id,
     # so that we can retrieve the URL directly from LzFile.
     my $fileIdentifier = $img->attrs('src');
-    if (! ($fileIdentifier =~ s{.+/files/get/([^\?/]+).*}{$1}))
+    if (! ($fileIdentifier =~ s{^.*/files/get/([^\?/]+).*$}{$1}))
     {
         # If we can't figure out what the ID is - give up
         $self->c->log->warn('HTMLRenderer: Failed to extract file identifier for entry in body with src="'.$fileIdentifier.'" - skipping');
