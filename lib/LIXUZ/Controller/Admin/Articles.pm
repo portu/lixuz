@@ -33,7 +33,7 @@ use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::Fields;
 use LIXUZ::HelperModules::HTMLFilter qw(filter_string);
 use LIXUZ::HelperModules::TemplateRenderer;
-use LIXUZ::HelperModules::RevisionHelpers qw(article_latest_revisions get_latest_article);
+use LIXUZ::HelperModules::RevisionHelpers qw(article_latest_revisions get_latest_article set_other_articles_inactive);
 use constant { true => 1, false => 0};
 
 # --------
@@ -57,6 +57,33 @@ sub index : Path Args(0) Form('/core/search')
 	add_jsIncl($c,'articles.js');
     my $article = $c->model('LIXUZDB::LzArticle');
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Articles');
+    my $i18n = $c->stash->{i18n};
+    if (defined $c->req->param('articlestatuschange')) 
+    {
+        foreach my $param (keys %{$c->req->params})
+        {
+            my $ID = $param;
+            next if not $ID =~ s/^articlestatus_//;
+
+            my $updatedstatus = $c->req->param($param);
+            my $articleobj = get_latest_article($c,$ID);
+            my $liverevision = $articleobj->get_column('revision');
+            if ($articleobj->can_write($c))
+            {
+                if ($c->user->can_access('STATUSCHANGE_'.$updatedstatus))
+                {
+                    $articleobj->set_column('status_id',$updatedstatus);
+                    $articleobj->update();
+                    if ($updatedstatus == 2)
+                    {
+                        set_other_articles_inactive($c,$ID,$liverevision);
+                    }
+                }
+                
+            }
+        }
+        $self->messageToList($c,$i18n->get('Article status changed'));
+    } 
 
     # Order the articles by default
     if(not $c->req->param('orderby'))
@@ -206,14 +233,24 @@ sub init_searchFilters : Private
         });
     }
     my $statusOptions = [];
+    my $statusOptionAccess = [];
     my $statuses = $c->model('LIXUZDB::LzStatus');
     while(my $status = $statuses->next)
     {
+        if ($c->user->can_access('STATUSCHANGE_'.$status->status_id))        
+        {
+            push(@{$statusOptionAccess}, {
+                    value => $status->status_id,
+                    label => $status->status_name($i18n),
+            });        
+        }
         push(@{$statusOptions}, {
                 value => $status->status_id,
                 label => $status->status_name($i18n),
-            });
+        });
     }
+
+    $c->stash->{statusOptions} = $statusOptionAccess;
     $c->stash->{searchFilters} = [
         {
             name => $i18n->get('Assigned to'),
