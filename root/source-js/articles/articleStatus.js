@@ -1,4 +1,19 @@
 $(document).ready(function(){
+
+    // Dynamically enforce a minimum width
+    var $first = $('.select ul').first();
+    var width = 0;
+    $first.find('li.option').each(function()
+    {
+        var thisWidth = $(this).width();
+        if (thisWidth > width)
+        {
+            width = thisWidth;
+        }
+    });
+    width = width + 20;
+    $first.parents('td').css({ 'min-width':width+'px' });
+
     $('.select ul li.option').click(function(e) {
         e.stopPropagation();
         var $this = $(this);
