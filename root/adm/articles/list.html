@@ -132,7 +132,7 @@ if($artAuthor eq $author)
 </%perl>
 <td id="unsavedTd_<% $article->article_id %>">
 %if($article->can_write($c)){  
-<div id="baseId">
+<div class="statusChangeEntry">
     <div id="unsavedstatus_<% $article->article_id %>"></div>
 <div class="select" id="statusdiv_<% $article->article_id %>" data="<%$article->article_id %>">
         <input type="hidden" name="articlestatus_<%$article->article_id%>" id="articlestatus_<%$article->article_id%>" value="<%$article->status_id%>" disabled="disabled" data="<%$article->status_id%>">
