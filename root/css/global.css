@@ -412,12 +412,12 @@ input, select, textarea{
 
 .select {
     position:relative;
-    border:1px solid transparent;
 }
 .select ul {
     padding:0;
     position:absolute;
     width:100%;
+    border:1px solid transparent;
 }
 
 
