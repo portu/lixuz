@@ -26,7 +26,7 @@ $(document).ready(function(){
             $("#articlestatus_"+divData).attr('disabled','disabled');
             $('#'+theID).removeAttr("dt");
             $('#unsavedstatus_'+divData).html('');
-            $('#unsavedTd_'+divData).removeAttr("style");
+            $('#unsavedTd_'+divData).css('height','auto');
         }
         else
         {
