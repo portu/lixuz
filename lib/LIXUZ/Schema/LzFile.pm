@@ -321,7 +321,7 @@ sub can_read
     return $self->folder->can_read($c);
 }
 
-# This is an alias for ->primary_folder
+# This is an alias for ->primary_folder->folder
 sub folder
 {
     my($self) = @_;
@@ -330,6 +330,16 @@ sub folder
         return $self->primary_folder->folder;
     }
     return;
+}
+
+# This is an alias for ->primary_folder->folder_id
+sub folder_id
+{
+    my($self) = @_;
+    if ($self->primary_folder)
+    {
+        return $self->primary_folder->folder_id;
+    }
 }
 
 # This is in place of
