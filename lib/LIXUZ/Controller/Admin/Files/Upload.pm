@@ -149,7 +149,6 @@ sub handleData : Private
 {
     my($self,$c,$fileName,$upload) = @_;
     my $settings = {
-        file_folder => $c->req->param('file_folder'),
         asyncUpload => $c->req->param('asyncUpload'),
         artid => $c->req->param('artid'),
     };

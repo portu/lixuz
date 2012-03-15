@@ -51,22 +51,6 @@ sub upload
             class_id => $fileClass,
         }
     );
-    if (defined $settings->{'file_folder'})
-    {
-        my $folder = $self->c->model('LIXUZDB::LzFolder')->find({ folder_id => $settings->{file_folder} });
-        if ($folder)
-        {
-            $fileObj->set_column('folder_id', $folder->folder_id);
-        }
-        else
-        {
-            $self->c->log->warn('file_folder invalid in upload');
-        }
-    }
-    else
-    {
-        $self->c->log->warn('file_folder missing in upload');
-    }
     # Read in content from form and write the file
     if(not -d $self->c->config->{LIXUZ}->{file_path} or not -w $self->c->config->{LIXUZ}->{file_path})
     {
@@ -104,6 +88,8 @@ sub upload
     }
     $fileObj->set_column('size', -s $fileObj->get_path($self->c));
     $fileObj->update();
+
+    $self->c->forward(qw/LIXUZ::Controller::Admin::Files::Edit handleFolders/, [ $fileObj ]);
 
     # Ensure an identifier is generated
     $fileObj->identifier();

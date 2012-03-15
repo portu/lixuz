@@ -256,26 +256,7 @@ sub savedata : Private
     $fields->saveData();
 
     # Save folders
-    my $fileFolder = $c->req->param('file_folder');
-    my $primary = 1;
-    # Delete existing folders
-    $file->folders->delete();
-    # Loop through and fetch+save file_folders
-    foreach my $folder (sort keys %{$c->req->params})
-    {
-        next if not $folder =~ /^file_folder/;
-
-        my $fileFolder = $c->req->param($folder);
-
-        next if ( !defined($fileFolder) || !length($fileFolder) || $fileFolder =~ /\D/);
-
-        $c->model('LIXUZDB::LzFileFolder')->create({
-            file_id => $file->file_id,
-            folder_id => $fileFolder,
-            primary_folder => $primary
-        });
-        $primary = 0;
-    }
+    $self->handleFolders($c,$file);
 
     # Sync tags with submitted data
     my $tags = $file->tags;
@@ -292,6 +273,33 @@ sub savedata : Private
     else
     {
         return $c->forward('LIXUZ::Controller::Admin::Files','messageToList',[$i18n->get('File saved.')]);
+    }
+}
+
+sub handleFolders : Private
+{
+    my($self,$c,$file) = @_;
+    my $primary = 1;
+    # Delete existing folders
+    if ($file->folders)
+    {
+        $file->folders->delete();
+    }
+    # Loop through and fetch+save file_folders
+    foreach my $folder (sort keys %{$c->req->params})
+    {
+        next if not $folder =~ /^file_folder/;
+
+        my $fileFolder = $c->req->param($folder);
+
+        next if ( !defined($fileFolder) || !length($fileFolder) || $fileFolder =~ /\D/);
+
+        $c->model('LIXUZDB::LzFileFolder')->create({
+            file_id => $file->file_id,
+            folder_id => $fileFolder,
+            primary_folder => $primary
+        });
+        $primary = 0;
     }
 }
 
