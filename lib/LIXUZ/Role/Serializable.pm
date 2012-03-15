@@ -29,13 +29,6 @@ If you want the result to be saved as something other than the sub, you can
 make the entry a hashref, in the form:
 { saveAs => 'name to save value as in serialized verison', source => 'sub to get data from' }
 =cut
-has 'serializeExtra' => (
-    is => 'rw',
-    isa => 'ArrayRef',
-    lazy => 1,
-    builder => '_serializeExtra',
-);
-
 sub _serializeExtra
 {
     return [];
@@ -82,7 +75,7 @@ sub to_hash
 {
     my $self = shift;
     my $ignoreRels = shift;
-    my $rels = $self->serializeExtra;
+    my $rels = $self->_serializeExtra;
 
     my %hash = $self->get_columns();
 
