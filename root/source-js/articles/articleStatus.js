@@ -17,10 +17,10 @@ $(document).ready(function(){
     $('.select ul li.option').click(function(e) {
         e.stopPropagation();
         var $this = $(this);
-        var selectdOption= $this.attr('data');
+        var selectdOption= $this.data('value');
         var theID=$this.parents('div.select').attr('id');
-        var divData=$this.parents('div.select').attr('data');
-        var orgval = $("#articlestatus_"+divData).attr('data');
+        var divData=$this.parents('div.select').data('value');
+        var orgval = $("#articlestatus_"+divData).data('value');
         if(orgval == selectdOption)
         {
             $("#articlestatus_"+divData).attr('disabled','disabled');
@@ -77,12 +77,12 @@ $(document).ready(function(){
     $('div.dclass').click(function()
     {
         var cdivId=$(this).attr('id');
-        var cdivData=$(this).attr('data');
+        var cdivData=$(this).data('value');
         $("#writeaccesss_"+cdivData).hide();
         $("#writeaccessmsg_"+cdivData).show();
 
         $('div.showmsg').each(function(){
-            var cdivDt=$(this).attr('data');
+            var cdivDt=$(this).data('value');
 
             $(this).removeClass('showmsg');
             $(this).hide();

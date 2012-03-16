@@ -134,14 +134,14 @@ if($artAuthor eq $author)
 %if($article->can_write($c)){  
 <div class="statusChangeEntry">
     <div id="unsavedstatus_<% $article->article_id %>"></div>
-<div class="select" id="statusdiv_<% $article->article_id %>" data="<%$article->article_id %>">
-        <input type="hidden" name="articlestatus_<%$article->article_id%>" id="articlestatus_<%$article->article_id%>" value="<%$article->status_id%>" disabled="disabled" data="<%$article->status_id%>">
+<div class="select" id="statusdiv_<% $article->article_id %>" data-value="<%$article->article_id %>">
+        <input type="hidden" name="articlestatus_<%$article->article_id%>" id="articlestatus_<%$article->article_id%>" value="<%$article->status_id%>" disabled="disabled" data-value="<%$article->status_id%>">
         <ul>
-            <li data = "<%$article->status_id%>" class="destination option small darr <% $i%2==0 ? 'dest' : 'loc' %>"><%$stat_name%></li>
+            <li data-value="<%$article->status_id%>" class="destination option small darr <% $i%2==0 ? 'dest' : 'loc' %>"><%$stat_name%></li>
 %foreach my $opt (@{$statusOptions})            
 %{
 %if($article->status_id != $opt->{value}){
-<li data = "<%$opt->{value}%>" class="destination option small <% $i%2==0 ? 'dest' : 'loc' %>"><% $opt->{label} |n %></li>
+<li data-value="<%$opt->{value}%>" class="destination option small <% $i%2==0 ? 'dest' : 'loc' %>"><% $opt->{label} |n %></li>
 %}
 %}
   </ul>    
@@ -150,10 +150,10 @@ if($artAuthor eq $author)
  <div style="clear: both;"></div>
  </div>
 %}else{ 
- <div id="writeaccesss_<% $article->article_id %>" class="dclass" data="<% $article->article_id %>">
+ <div id="writeaccesss_<% $article->article_id %>" class="dclass" data-value="<% $article->article_id %>">
          <%$stat_name%>
      </div>
-     <div id="writeaccessmsg_<% $article->article_id %>" style="display:none" data="<% $article->article_id %>">
+     <div id="writeaccessmsg_<% $article->article_id %>" style="display:none" data-value="<% $article->article_id %>">
        <% $i18n->get("You don't have permission to change the status of this article")  %>
      </div>
      
