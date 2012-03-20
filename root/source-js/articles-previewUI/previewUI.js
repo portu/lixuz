@@ -278,7 +278,7 @@
                 css.push('<style type="text/css">');
                 css.push('#lzArtPreviewUIMenu a { color: #000; text-decoration: underline }');
                 css.push('#lzArtPreviewUIMenu {');
-                css.push('  font-size: 13;');
+                css.push('  font-size: 13px;');
                 css.push('  font-family: arial, verdana, sans-serif');
                 css.push('}');
                 css.push('#lzArtPreviewUIMenu th { background-color: #DEF }');
