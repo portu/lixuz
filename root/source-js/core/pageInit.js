@@ -18,77 +18,80 @@
 /*
  * Standard page initialization code.
  */
-$(function()
+(function($)
 {
-    // Initialize polling if available
-    try
+    $(function()
     {
-        if(pollServer_init !== undefined)
-            pollServer_init();
-    }
-    catch(e)
-    {
-        lzException(e);
-    };
-
-    // Activate chosen
-    $('.enableChosen').chosen();
-
-    // Set up resizable text areas
-    $('textarea:not(.yui-RTE)').resizable({handles: 'se'});
-    $('.ui-resizable-se').css({ bottom: '14px', right: '2px'});
-
-    // Set up hover menus
-    $('.hoverMenu').hoverIntent(function() {
-        $(this).children('.subMenu').stop(true,true);
-        $(this).children('.subMenu').attr('style','display:none;');
-        $(this).children('.subMenu').slideDown();
-    }, function () {
-        $(this).children('.subMenu').stop(true);
-        $(this).children('.subMenu').slideUp();
-    });
-
-    // Set up calendars (needs jscalendar loaded, so push to the end of the LAB stack)
-    $LAB.onLoaded(function ()
-    {
-        $('.jsCalendar').each(function ()
+        // Initialize polling if available
+        try
         {
-            var $this = $(this);
-            var settings = {
-                inputField : $this.attr('id'),
-                timeFormat : 24,
-                button: $this.attr('id')+'-triggerButton',
-                singleClick: true,
-                step: 1,
-            };
-            if($this.is('.dateOnly'))
-            {
-                settings.showsTime = false;
-                settings.ifFormat = '%d.%m.%Y';
-            }
-            else
-            {
-                settings.showsTime = true;
-                settings.ifFormat = '%d.%m.%Y %H:%M';
-            }
-            Calendar.setup(settings);
+            if(pollServer_init !== undefined)
+                pollServer_init();
+        }
+        catch(e)
+        {
+            lzException(e);
+        };
+
+        // Activate chosen
+        $('.enableChosen').chosen();
+
+        // Set up resizable text areas
+        $('textarea:not(.yui-RTE)').resizable({handles: 'se'});
+        $('.ui-resizable-se').css({ bottom: '14px', right: '2px'});
+
+        // Set up hover menus
+        $('.hoverMenu').hoverIntent(function() {
+            $(this).children('.subMenu').stop(true,true);
+            $(this).children('.subMenu').attr('style','display:none;');
+            $(this).children('.subMenu').slideDown();
+        }, function () {
+            $(this).children('.subMenu').stop(true);
+            $(this).children('.subMenu').slideUp();
         });
+
+        // Set up calendars (needs jscalendar loaded, so push to the end of the LAB stack)
+        $LAB.onLoaded(function ()
+        {
+            $('.jsCalendar').each(function ()
+            {
+                var $this = $(this);
+                var settings = {
+                    inputField : $this.attr('id'),
+                    timeFormat : 24,
+                    button: $this.attr('id')+'-triggerButton',
+                    singleClick: true,
+                    step: 1,
+                };
+                if($this.is('.dateOnly'))
+                {
+                    settings.showsTime = false;
+                    settings.ifFormat = '%d.%m.%Y';
+                }
+                else
+                {
+                    settings.showsTime = true;
+                    settings.ifFormat = '%d.%m.%Y %H:%M';
+                }
+                Calendar.setup(settings);
+            });
+        });
+
+        // Enable tipsy on existing elements, we attach a live handler in the
+        // final page initializer function call below (live appears to fail
+        // sometimes for certain elements)
+        $('.useTipsy').tipsy({ gravity: 'ne' });
+        $('.useTipsyW').tipsy({ gravity: 'nw' });
+
+        // Page initialization that should run after everything else
+        // (setTimeout pushes it to the end of the call stack)
+        setTimeout(function ()
+        {
+            // Style buttons that aren't already handled
+            $('input:button:not(ui-button), button:not(ui-button), input:submit:not(ui-button), input:reset:not(ui-button)').not('.native-button').button();
+            // Attach a live tipsy handler
+            $('.useTipsy').tipsy({ gravity: 'ne', live: true });
+            $('.useTipsyW').tipsy({ gravity: 'nw', live: true });
+        }, 1);
     });
-
-    // Enable tipsy on existing elements, we attach a live handler in the
-    // final page initializer function call below (live appears to fail
-    // sometimes for certain elements)
-    $('.useTipsy').tipsy({ gravity: 'ne' });
-    $('.useTipsyW').tipsy({ gravity: 'nw' });
-
-    // Page initialization that should run after everything else
-    // (setTimeout pushes it to the end of the call stack)
-    setTimeout(function ()
-    {
-        // Style buttons that aren't already handled
-        $('input:button:not(ui-button), button:not(ui-button), input:submit:not(ui-button), input:reset:not(ui-button)').not('.native-button').button();
-        // Attach a live tipsy handler
-        $('.useTipsy').tipsy({ gravity: 'ne', live: true });
-        $('.useTipsyW').tipsy({ gravity: 'nw', live: true });
-    }, 1);
-});
+})(jQuery);
