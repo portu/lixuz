@@ -1,0 +1,108 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="LZWorkflowContainer">
+    <input id="artid" type="hidden" value="<%$artid%>">
+    <input type="hidden" name="uid" id="lixuzArticleEdit_uid" value="<%$artid%>" />
+<table id="lzWorkflowContainerTable" class="spaceyTable">
+    <tr>
+        <td><%$i18n->get('Article Id')%></td>
+        <td><% $rarticle->article_id %></td>
+    </tr>
+     <tr>
+         <td><%$i18n->get('Revision')%></td>
+         <td><span id="lz_revision_value"><% $articleRevision eq 'null' ? $i18n->get('(not saved)') : $articleRevision  |n %></span></td>
+    </tr>
+    <tr>
+        <td><%$i18n->get('Publish time')%></td>
+        <td><% $artpubtime %></td>
+    </tr>
+    <tr>
+        <td><%$i18n->get('Expiry time')%></td>
+        <td><% $artexptime %></td>
+    </tr>
+    <tr>
+        <td><%$i18n->get('Assigned to')%></td>
+        <td><% $w_assigned_to %></td>
+    </tr>
+    <tr>
+        <td><%$i18n->get('Priority')%></td>
+        <td><%$w_priority %></td>
+    </tr>
+    <tr>
+        <td><%$i18n->get('Start date')%></td>
+        <td><%$starttime%></td>
+    </tr>
+    <tr>
+        <td><%$i18n->get('Deadline')%></td>
+        <td><%$deadline%></td>
+    </tr>
+    <tr><td colspan="2">&nbsp;</td></tr>
+<tr>
+<td colspan="2">
+    <img src="/static/images/icons/revisions.png" align="left" />&nbsp;<a href="#" id="RevisionsLabel" onclick="artRevUI.showDialog($('#artid').val());return false;"><% $i18n->get('List revisions')%></a><br />
+</td>
+</table>
+</form>
+</div>
+<%args>
+$i18n
+$w_priority => 1
+$w_watched => undef
+$w_assigned_to
+$w_assigned_by
+$w_can_reassign
+$w_can_reassign_toRole => undef
+$w_can_reassign_toUser => undef
+$w_can_accept => undef
+$w_assignUserString => undef
+$w_assignRoleString => undef
+$w_roleOptions => undef
+$w_userOptions => undef
+$rarticle=>undef
+$artfolder
+$artstatus
+$artpubtime
+$artexptime
+$deadline 
+$starttime
+$articleRevision
+$artid
+</%args>
+<%init>
+# NOTE: Most of the variables used in this template ($w_) are defined in the
+# Articles/Workflow.pm controller.
+
+use LIXUZ::HelperModules::Forms qw(select_options_manually);
+my $priorityOptions = select_options_manually([
+	{
+		value => 'low',
+		name => $i18n->get('Low'),
+		selected => (defined $w_priority and $w_priority == 1),
+	},
+	{
+		value => 'medium',
+		name => $i18n->get('Medium'),
+		selected => (not defined $w_priority or $w_priority == 2),
+	},
+	{
+		value => 'high',
+		name => $i18n->get('High'),
+		selected => (defined $w_priority and $w_priority == 3),
+	}
+	]);
+</%init>

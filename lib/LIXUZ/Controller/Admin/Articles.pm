@@ -273,6 +273,142 @@ sub init_searchFilters : Private
         $c->stash->{filter_folder} = $folder;
     }
 }
+#-----------
+# Read
+#-----------
+
+sub read : Local Args
+{
+    my ( $self, $c, $uid ) = @_;
+    my $article;
+    my $revision = $c->req->param('revision');
+    if ($revision)
+    {
+        $article = $c->model('LIXUZDB::LzArticle')->find({ article_id => $uid, revision => $revision});
+    }
+    else
+    {
+        $article = get_latest_article($c,$uid);
+    }
+    my $i18n = $c->stash->{i18n};
+
+    if(not $article)
+    {
+        if(get_latest_article($c,$uid))
+        {
+            return $self->messageToList($c,$i18n->get_advanced('Error: Failed to locate revision %(REVISION) of the article %(UID)', { UID => $uid, REVISION => $revision }));
+        }
+        return $self->messageToList($c,$i18n->get_advanced('Error: Failed to locate a article with the UID %(UID).', { UID => $uid }));
+    }
+    else
+    {  
+        if(not $c->user->can_access('PREVIEW_OTHER_ARTICLES'))
+        {
+            return $self->messageToList($c,$i18n->get('Permission denied'));
+        }
+        elsif(not $article->can_read($c))
+        {
+            return $self->messageToList($c,$i18n->get('Permission denied'));
+        }
+        else
+        {
+            my $folder_id;
+            my $artid;
+            my $revision =1;
+            $artid = $article->article_id;
+            if ($article && $article->folder)
+            {
+                $folder_id = $article->folder->folder_id;
+            }
+            $c->forward('LIXUZ::Controller::Admin::Articles::Workflow','writecheck',[undef, $article]) or $c->detach();
+            $c->stash->{artfolder} = $article->primary_folder->folder->get_path();
+            $c->stash->{artstatus} = $article->status->status_name($c->stash->{i18n});
+            $c->stash->{artpubtime}= $article->human_publish_time();
+            $c->stash->{artexptime} = $article->expiry_time;
+            $c->stash->{articleUid} = $uid;
+
+            my $files = [];
+            if ($article->files)
+            {
+                my $fil = $article->files;
+                while(my $f = $fil->next)
+                {
+                    my $caption = $f->caption;
+                    if(not defined $caption)
+                    {
+                        $caption = $f->file->caption;
+                    }
+                    my $info = {
+                        #iconItem => $f->file->get_iconItem($c),
+                        iconItem =>$f->file->get_icon($c),
+                        file_id => $f->file->file_id,
+                        file_name => $f->file->file_name,
+                        file_owner => $f->file->ownerUser->name,
+                        fsize => $f->file->sizeString($c),
+                        caption => $caption,
+                        identifier => $f->file->identifier
+                    };
+                   push(@{$files},$info);
+                }
+            }
+
+            $c->stash->{files} = $files;
+
+            my $fieldr = [];
+            my $fields = LIXUZ::HelperModules::Fields->new($c,'articles',$article->article_id,{
+                folder_id => $article->folder->folder_id,
+                revision => $article->revision,
+            });
+
+            my @fieldList = $fields->get_fields;
+            foreach my $field (@fieldList)
+            {
+                $field = $field->field;
+                next if $field->inline;
+                my $value = $c->model('LIXUZDB::LzFieldValue')->find({ field_id => $field->field_id, module_name => 'articles', module_id => $article->article_id });
+                next if not $value;
+                push(@{$fieldr},{
+                    fieldname =>  $field->field_name,
+                    fieldval =>  $value->human_value() 
+                     });
+            }
+
+            $c->stash->{fieldr} = $fieldr;
+
+            $c->stash->{filesInArticle} = $article->files->count();
+            $c->stash->{secondaryFoldersForArticle} = $article->secondary_folders->count();
+            $c->stash->{commentsForArticle} = $article->comments->count();
+            $c->stash->{additionalElementsForArticle} = $article->additionalElements->count();
+            $c->stash->{relationships} = $article->relationships;
+            $c->stash->{elements} = $article->additionalElements;
+
+            my $deadline = $i18n->get('(none)');
+            if ($article->workflow->deadline)
+            {
+                $deadline = datetime_from_SQL($article->workflow->deadline);
+            }
+            my $starttime = $i18n->get('(none)');
+            if ($article->workflow->start_date)
+            {
+                $starttime = datetime_from_SQL($article->workflow->start_date);
+            }
+            $c->stash->{deadline} = $deadline; 
+            $c->stash->{starttime} = $starttime;
+            $c->stash->{articleRevision} = $article->revision;
+            $c->stash->{artid} = $artid;
+            $c->forward('LIXUZ::Controller::Admin::Articles::Workflow','preparePage',[ $article ]);
+            $c->stash->{rarticle} = $article;
+            $c->stash->{template} = 'adm/articles/read/read.html';
+            add_jsIncl($c,
+                'articles.js',
+                'utils.js',
+                'files.js',
+            );
+        }
+    }
+}
+
+
 
 # --------
 # Preview

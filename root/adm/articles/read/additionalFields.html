@@ -1,0 +1,13 @@
+<table> 
+%foreach my $opt (@{$fieldr}){
+  <tr>
+     <td><%$opt->{fieldname} |n %></td>
+      <td><%$opt->{fieldval} |n %></td>
+   </tr>    
+%}
+</table>
+
+<%args>
+$i18n
+$fieldr => undef
+</%args>

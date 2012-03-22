@@ -1,0 +1,54 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="article_relationship_list">
+<br />
+<table cellspacing="0" class="listView" id="articleRelationshipList">
+<tr>
+    <td class="rowHead"><% $i18n->get('Article ID') |n %></td>
+    <td class="rowHead"><% $i18n->get('Article title') |n %></td>
+    <td class="rowHead"><% $i18n->get('Type') |n %></td>
+    <td class="rowHead"><% $i18n->get('Status') |n %></td>
+</tr>
+<tr class="dataRow" style="display:none;">
+<td class="uid"></td>
+<td class="title"></td>
+<td class="type"></td>
+<td class="status"></td>
+</tr>
+%my $hadRel = 0;
+%if($relationships) {
+%while(my $rel = $relationships->next) {
+% $hadRel = 1;
+% my $art = get_latest_article($c,$rel->related_article_id);
+<tr class="dataRow">
+<td class="uid"><% $art->article_id |n %></td>
+<td class="title"><% $art->title %></td>
+<td class="type"><% $rel->relation_type %></td>
+<td class="status"><% $art->status->status_name($i18n) %></td>
+</tr>
+%}
+%} 
+</table>
+&nbsp;</div>
+<%args>
+$i18n
+$relationships => undef
+</%args>
+<%once>
+use LIXUZ::HelperModules::RevisionHelpers qw(get_latest_article);
+</%once>
