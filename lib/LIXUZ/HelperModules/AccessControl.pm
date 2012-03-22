@@ -186,7 +186,7 @@ sub _recursiveCheck
 sub _testIgnore
 {
     my $test = shift;
-    if ( ($test eq '') or ($test eq 'index') or ($test eq 'default') or ($test eq 'login') or ($test eq 'forgottenpw')   or ($test eq 'admin/users/myaccount') )
+    if ( ($test eq '') or ($test eq 'index') or ($test eq 'default') or ($test eq 'logservice') or ($test eq 'login') or ($test eq 'forgottenpw')   or ($test eq 'admin/users/myaccount') )
     {
         return true;
     }

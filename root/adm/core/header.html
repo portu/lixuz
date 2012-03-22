@@ -131,6 +131,9 @@ $LAB.queue(function ()
 </head>
 
 <body<% $bodyAttributes |n %>>
+%if($c->config->{LIXUZ}->{clientErrorLog} || $c->debug) {
+<input type="hidden" id="lixuz_error_log" value="enable" />
+%}
 %if(not $onlySkeletonHTML) {
 <div id="progInd" style="display:none; visibility:hidden;">
 <img src="/static/images/progind.gif" width="24" height="25" />
