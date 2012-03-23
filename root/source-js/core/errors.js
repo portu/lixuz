@@ -355,6 +355,10 @@ function lzErrLog (error)
 {
     try
     {
+        if(error == null || error == '')
+        {
+            return;
+        }
         lzlog('Error: '+error);
         LIXUZ.errorLog.send(error);
     } catch(e) { }
