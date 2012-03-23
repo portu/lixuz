@@ -74,6 +74,20 @@ sub send : Local
 {
     my ( $self, $c, $query ) = @_;
     my $i18n = $c->stash->{'i18n'};
+    my $nid = $c->req->param('nid');
+    my $nsubject;
+    my $nformat;
+    my $nmessage;
+    if ($nid)
+    {
+        my $newsletter = $c->model('LIXUZDB::LzNewsletterSaved')->find({ saved_id => $nid});
+        $nsubject = $newsletter->subject;
+        $nformat = $newsletter->format;
+        $nmessage = $newsletter->body;
+    }    
+    $c->stash->{nsubject} =  $nsubject;
+    $c->stash->{nformat} =  $nformat;
+    $c->stash->{nmessage} =  $nmessage;    
     my $subscription = $c->model('LIXUZDB::LzNewsletterSubscription')->search();
     $c->stash->{template} = 'adm/newsletter/send.html';
     $c->stash->{pageTitle} = $i18n->get('Manual newsletter');
@@ -100,6 +114,7 @@ sub sentPreviously : Local
                     body => $s->body,
                     format => $s->format,
                     sent_at => $s->sent_at,
+                    action => '<span class="useTipsy" original-title="Copy text from this newsletter into a new message">Copy</span>',
                 });
         }
         return json_response($c, { content => \@content });
@@ -353,4 +368,69 @@ sub init_searchFilters : Private
     ];
 }
 
+sub subscriberSave : Local
+{
+     my ( $self, $c ) = @_;
+     my $subscriber;
+     if ($c->req->param('subsciber_id') eq 'new')
+     {
+         if(not defined $c->req->param('email'))
+         {
+             return json_error($c,'EMAIL_MISSING');
+         }
+
+         $subscriber = $c->model('LIXUZDB::LzNewsletterSubscription')->create({
+                 email => $c->req->param('email'),
+                 name => $c->req->param('name'),
+                 format => $c->req->param('format'),
+                 send_every => $c->req->param('interval'),
+             });
+
+     }
+     else
+     {
+         $subscriber = $c->model('LIXUZDB::LzNewsletterSubscription')->find({ subscription_id => $c->req->param('subsciber_id')});
+         if(not $subscriber)
+         {
+             return json_error($c,'INVALID_SUBSCRIPTION_ID');
+         }
+         if(defined $c->req->param('email'))
+         {
+             $subscriber->set_column('email',$c->req->param('email'));
+         }
+         if(defined $c->req->param('name'))
+         {
+             $subscriber->set_column('name',$c->req->param('name'));
+         }
+         if(defined $c->req->param('format'))
+         {
+             $subscriber->set_column('format',$c->req->param('format'));
+         }
+         if(defined $c->req->param('interval'))
+         {
+             $subscriber->set_column('send_every',$c->req->param('interval'));
+         }
+     }
+     $subscriber->update();
+     return json_response($c);
+
+}
+
+sub subscriberInfo : Local Param
+{
+     my ( $self, $c, $subscriber_id ) = @_;
+     my $subscriber = $c->model('LIXUZDB::LzNewsletterSubscription')->find({ subscription_id => $subscriber_id });
+     if(not $subscriber)
+     {
+         return(json_error($c,'INVALIDID'));
+     }
+     my $info = {
+         email => $subscriber->email,
+         subscriber_id => $subscriber->subscription_id,
+         name => $subscriber->name,
+         format => $subscriber->format,
+         interval => $subscriber->send_every,
+     };
+     return json_response($c,$info);
+}
 1;
