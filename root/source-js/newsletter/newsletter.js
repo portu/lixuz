@@ -544,3 +544,18 @@ function editSubscriber (subscriberid)
     showPI(i18n.get('Loading subscriber information...'));
     JSON_Request('/admin/newsletter/subscriberInfo/'+subscriberid,subscriberWindow);
 }
+
+//show window for import subscriber
+function importSubscriberWindow ()
+{
+    var html = '<form action="/admin/newsletter/importsubscriber" name="importSubscriber" id="importSubscriber" method="post" enctype="multipart/form-data">';
+    html = html + '<table><tr><td>'+i18n.get('Import CSV')+':</td><td><input type="file" id="impsub" name="impsub" /></td></tr>';
+    html = html + '</table></form>';
+    var buttons = {};
+    buttons[i18n.get('Upload and close')] = function () { $('form#importSubscriber').submit(); };
+
+    subscriberEditor = new dialogBox(html,{
+        buttons: buttons,
+        title: i18n.get('Import Subscribers')
+    });
+}

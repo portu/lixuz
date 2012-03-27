@@ -28,6 +28,8 @@ use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 use LIXUZ::HelperModules::Editor qw(add_editor_incl);
 use LIXUZ::HelperModules::EMail qw(send_raw_email_to);
 use LIXUZ::HelperModules::Search qw(perform_search perform_advanced_search);
+use Text::CSV_XS;
+use Regexp::Common qw[Email::Address];
 
 sub index : Path Args(0) Form('/core/search')
 {
@@ -68,6 +70,48 @@ sub delete : Local Param
     }
     $sub->delete();
     return json_response($c);
+}
+
+sub importsubscriber : Local
+{
+    my ( $self, $c ) = @_;
+    if ( my $upload = $c->req->upload('impsub') )
+    {
+        my $csv = Text::CSV_XS->new ({
+                binary    => 1,
+                auto_diag => 1,
+                sep_char  => ','    # not really needed as this is the default
+            });
+        my $subscriber;
+        open(my $data, '<:encoding(utf8)',$upload->tempname);
+        while (my $fields = $csv->getline( $data ))
+        {
+            if ($csv->parse($fields)) 
+            {
+                if(defined $fields->[0] and (Email::Address->parse($fields->[0])))
+                {
+                    my $email = $fields->[0];
+                    my $findduplicates = $c->model('LIXUZDB::LzNewsletterSubscription')->find({ email => $email });
+                    if (not $findduplicates)
+                    {
+                        my $name = $fields->[1] || 'No Name';
+                        my $interval = $fields->[2] || 'none';
+                        my $format = (defined $fields->[3] && $fields->[3] =~ /^(text|html)$/) ? $fields->[3] : 'text';
+                        $subscriber = $c->model('LIXUZDB::LzNewsletterSubscription')->create({
+                            email => $email,
+                            name => $name,
+                            format => $format,
+                            send_every => $interval,
+                        });
+                        $subscriber->update();
+                    }
+                }
+            }
+        }
+
+    }
+    $c->response->redirect('/admin/newsletter');
+    $c->detach();
 }
 
 sub send : Local
@@ -370,50 +414,60 @@ sub init_searchFilters : Private
 
 sub subscriberSave : Local
 {
-     my ( $self, $c ) = @_;
-     my $subscriber;
-     if ($c->req->param('subsciber_id') eq 'new')
-     {
-         if(not defined $c->req->param('email'))
-         {
-             return json_error($c,'EMAIL_MISSING');
+    my ( $self, $c ) = @_;
+    my $subscriber;
+    my $email = $c->req->param('email');
+    my $name = $c->req->param('name');
+    my $format = (defined $c->req->param('format') && $c->req->param('format') =~ /^(text|html)$/) ? $c->req->param('format') : 'text';
+    my $interval = $c->req->param('interval') || 'none' ;
+
+    if(defined $email and (Email::Address->parse($email)))
+    {
+        if ($c->req->param('subsciber_id') eq 'new')
+        {
+            my $findduplicates = $c->model('LIXUZDB::LzNewsletterSubscription')->find({ email => $email });
+            if (not $findduplicates)
+            {
+                $subscriber = $c->model('LIXUZDB::LzNewsletterSubscription')->create({
+                        email => $email,
+                        name => $name,
+                        format => $format,
+                        send_every => $interval,
+                 });
+             }
+        }
+        else
+        {
+            $subscriber = $c->model('LIXUZDB::LzNewsletterSubscription')->find({ subscription_id => $c->req->param('subsciber_id')});
+            if(not $subscriber)
+            {
+                return json_error($c,'INVALID_SUBSCRIPTION_ID');
+            }
+            else
+            {
+
+                $subscriber->set_column('email',$email);
+                if(defined $name)
+                {
+                    $subscriber->set_column('name',$name);
+                }
+                if(defined $format)
+                {
+                    $subscriber->set_column('format',$format);
+                }
+                if(defined $interval)
+                {
+                    $subscriber->set_column('send_every',$interval);
+                }
+            }
          }
-
-         $subscriber = $c->model('LIXUZDB::LzNewsletterSubscription')->create({
-                 email => $c->req->param('email'),
-                 name => $c->req->param('name'),
-                 format => $c->req->param('format'),
-                 send_every => $c->req->param('interval'),
-             });
-
+         $subscriber->update();
+         return json_response($c);
      }
      else
      {
-         $subscriber = $c->model('LIXUZDB::LzNewsletterSubscription')->find({ subscription_id => $c->req->param('subsciber_id')});
-         if(not $subscriber)
-         {
-             return json_error($c,'INVALID_SUBSCRIPTION_ID');
-         }
-         if(defined $c->req->param('email'))
-         {
-             $subscriber->set_column('email',$c->req->param('email'));
-         }
-         if(defined $c->req->param('name'))
-         {
-             $subscriber->set_column('name',$c->req->param('name'));
-         }
-         if(defined $c->req->param('format'))
-         {
-             $subscriber->set_column('format',$c->req->param('format'));
-         }
-         if(defined $c->req->param('interval'))
-         {
-             $subscriber->set_column('send_every',$c->req->param('interval'));
-         }
+         return json_error($c,'EMAIL_MISSING');
      }
-     $subscriber->update();
-     return json_response($c);
-
 }
 
 sub subscriberInfo : Local Param
