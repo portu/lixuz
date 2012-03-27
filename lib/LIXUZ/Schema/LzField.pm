@@ -218,6 +218,39 @@ sub can_render_for
     }
 }
 
+
+sub human_field_name
+{
+    my($self, $c) = @_;
+    my $i18n = $c->stash->{i18n};   
+    my %NameMap = (
+        status_id => $i18n->get('Status'),
+        title => $i18n->get('Title'),
+        body => $i18n->get('Body'),
+        lead => $i18n->get('Lead'),
+        author => $i18n->get('Author'),
+        publish_time => $i18n->get('Publish time'),
+        expiry_time => $i18n->get('Expiry time'),
+        folder => $i18n->get('Primary folder'),
+        template_id => $i18n->get('Template'),
+    );
+
+    my $fldname = $self->inline;
+    if(not $fldname)
+    {
+        return $self->field_name;
+    }
+    $fldname = $NameMap{$fldname};
+    if ($fldname)
+    {
+        return $fldname;
+    }
+    else
+    {
+        return $i18n->get('Unknown');
+    }    
+}
+
 __PACKAGE__->has_many('modules' => 'LIXUZ::Schema::LzFieldModule','field_id');
 __PACKAGE__->has_many('values' => 'LIXUZ::Schema::LzFieldValue','field_id');
 __PACKAGE__->has_many('options' => 'LIXUZ::Schema::LzFieldOptions','field_id');

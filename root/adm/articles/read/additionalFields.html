@@ -1,13 +1,20 @@
 <table> 
 %foreach my $opt (@{$fieldr}){
   <tr>
-     <td><%$opt->{fieldname} |n %></td>
-      <td><%$opt->{fieldval} |n %></td>
-   </tr>    
+      <td colspan="2"><b><% ucfirst($opt->{fieldname}) |n %></b></td>
+ </tr>   
+ <tr><td colspan="2" style="height:10px;"></td></tr>
+  <tr>
+      <td colspan="2">
+        <%$opt->{fieldval} |n %>
+      </td>
+  </tr>
+   <tr><td colspan="2" >&nbsp;</td></tr>
 %}
 </table>
 
 <%args>
 $i18n
 $fieldr => undef
+$opt => undef
 </%args>

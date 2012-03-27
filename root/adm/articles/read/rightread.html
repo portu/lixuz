@@ -44,13 +44,6 @@
     <& additionalElementsread.html, %ARGS &>
     <br>
 </div>
-%# --- Additional Fields ---
-<h2><a href="#" onclick="$('#additionalfields_slider_inner').slideToggle(); return false;" style="overflow: auto;"><img src="/static/images/icons/section-closed.png" border="0" align="left" /><% $i18n->get('Additional Fields')%></a></h2>
-<div id="additionalfields_slider_inner" class="expandable_holder">
-    <& additionalFields.html, %ARGS &>
-</div>
-
-
 %# --- Initialization JS ---
 <script type="text/javascript">
 $LAB.queue(function () {

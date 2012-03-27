@@ -28,30 +28,13 @@
                 </td>
             </tr>
             <tr><td colspan="2">&nbsp;</td></tr>
+
             <tr>
-                <td colspan="2"><% $i18n->get('Author :') |n %>&nbsp;<%$rarticle->author |n %> </td>
-            </tr>
-            <tr><td colspan="2">&nbsp;</td></tr>
-            <tr>
-                <td colspan="2"><% $i18n->get('Status :') |n %>&nbsp;<%$artstatus%></td>
-            </tr>
-            <tr><td colspan="2">&nbsp;</td></tr>
-            <tr>
-                <td colspan="2"><% $i18n->get('Folder Path :') |n %>&nbsp;<%$artfolder%></td>
-            </tr>
-            <tr><td colspan="2">&nbsp;</td></tr>
-            <tr>
-                <td colspan="2"><h3><% $rarticle->title %><h3></td>           
-            </tr>
-            <tr><td colspan="2">&nbsp;</td></tr>
-            <tr>
-                <td colspan="2"><% $rarticle->lead |n %></td>           
-            </tr>
-            <tr><td colspan="2">&nbsp;</td></tr>
-            <tr><td colspan="2">&nbsp;</td></tr>
-            <tr>
-                <td><% $rarticle->body |n %></td>           
-            </tr>
+                <td colspan="2">
+                    <& additionalFields.html, %ARGS &>
+                <td>
+            </tr>            
+
         </table>
 
     </td>

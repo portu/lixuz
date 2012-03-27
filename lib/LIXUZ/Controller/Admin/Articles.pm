@@ -339,7 +339,6 @@ sub read : Local Args
                         $caption = $f->file->caption;
                     }
                     my $info = {
-                        #iconItem => $f->file->get_iconItem($c),
                         iconItem =>$f->file->get_icon($c),
                         file_id => $f->file->file_id,
                         file_name => $f->file->file_name,
@@ -360,17 +359,53 @@ sub read : Local Args
                 revision => $article->revision,
             });
 
+
+            
             my @fieldList = $fields->get_fields;
             foreach my $field (@fieldList)
             {
                 $field = $field->field;
-                next if $field->inline;
-                my $value = $c->model('LIXUZDB::LzFieldValue')->find({ field_id => $field->field_id, module_name => 'articles', module_id => $article->article_id });
-                next if not $value;
+                my $fieldname;
+                my $value;
+                if ($field->inline)
+                {
+                    $fieldname = $field->inline;
+                    my $val = $c->model('LIXUZDB::LzArticle')->find({ article_id => $article->article_id, revision => $article->revision});
+                    if ($fieldname eq 'folder')
+                    {
+                        $value = $val->primary_folder->folder->get_path();
+                    }
+                    elsif($fieldname eq 'status_id')
+                    {
+                        $value = $val->status->status_name($c->stash->{i18n});
+                    }
+                    elsif($fieldname eq 'template_id')
+                    {
+                        my $temp_id = $val->template_id;
+                        if (defined $temp_id)
+                        {
+                            my $tmpl =  $c->model('LIXUZDB::LzTemplate')->find({ template_id => $temp_id, type => 'article' });
+                            $value = $tmpl->name;
+                        }
+                        else
+                        {
+                            $value = $i18n->get('Default Template');
+                        }
+                    }
+                    else
+                    {
+                        $value =$val->get_column($fieldname);
+                    }
+                }
+                else
+                {
+                    $fieldname = $field->field_name;
+                    $value = $article->getField($c, $field->field_id);
+                }
                 push(@{$fieldr},{
-                    fieldname =>  $field->field_name,
-                    fieldval =>  $value->human_value() 
-                     });
+                        fieldname => $field->human_field_name($c),
+                        fieldval => $value
+                    });
             }
 
             $c->stash->{fieldr} = $fieldr;
