@@ -185,6 +185,7 @@ use 5.010;
 use Carp;
 use Try::Tiny;
 use LIXUZ::HelperModules::HTMLFilter qw(filter_string);
+use HTML::Entities qw(decode_entities);
 
 __PACKAGE__->belongs_to('status' => 'LIXUZ::Schema::LzStatus', 'status_id');
 __PACKAGE__->belongs_to('lockTable' => 'LIXUZ::Schema::LzArticleLock', 'article_id');
@@ -393,7 +394,35 @@ sub get_fileSpot
     return;
 }
 
-# Summary: Get thew body with dynamically placed content
+# Summary: Get the body as plaintext (HTML stripped)
+# Usage: body = article->text_body();
+sub text_body
+{
+    my $self = shift;
+    return $self->_text_field($self->body);
+}
+
+# Summary: Get the lead as plaintext (HTML stripped)
+# Usage: lead = article->text_lead();
+sub text_lead
+{
+    my $self = shift;
+    return $self->_text_field($self->lead);
+}
+
+# Summary: Convert a HTML string to plaintext
+# Usage: plaintext = article->_text_field( html );
+sub _text_field
+{
+    my($self,$string) = @_;
+    $string = filter_string($string);
+    $string =~ s{<br\s*/?>}{\n}gi;
+    $string =~ s/<[^>]+>//g;
+    $string = decode_entities($string);
+    return $string;
+}
+
+# Summary: Get the body with dynamically placed content
 # Usage: body = article->filteredBody($c,IMGOPTS,RENDEROPTS)
 #
 # IMGOPTS is the same hash as you would supply to get_imghtmlWithCaption in LzFile.
