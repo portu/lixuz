@@ -1,0 +1,36 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="article_file_list">
+    <table border="0" width="100%">
+%my $i=0;        
+%foreach my $opt (@{$files}){
+%$i++;
+<% ($i==1 ||($i-1)%2==0) ? '<tr>' : ''|n %>
+    <td align="center">
+        <section class="sectionclass">
+        <a href="#" title="<%$opt->{caption}%>"><img class="sectionimgclass" style="border:0;" src="<%$opt->{iconItemBody} |n %>"><p><%$opt->{caption}%></p></a>
+        </section>
+</td><td>&nbsp;</td>
+    <% $i%4==0 ? '</tr>' : '' %>
+%}
+</table>    
+</div>
+<%args>
+$i18n
+$files => undef
+</%args>

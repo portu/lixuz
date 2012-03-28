@@ -340,6 +340,7 @@ sub read : Local Args
                     }
                     my $info = {
                         iconItem =>$f->file->get_icon($c),
+                        iconItemBody => $f->file->get_url_aspect($c,250,250),
                         file_id => $f->file->file_id,
                         file_name => $f->file->file_name,
                         file_owner => $f->file->ownerUser->name,

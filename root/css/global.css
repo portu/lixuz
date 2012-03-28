@@ -446,3 +446,17 @@ select ul li.subs {
     border:1px solid #7f9db9;
 
 }
+
+.sectionclass{
+    background: none repeat scroll 0 0 #C7E4FB;
+    border: 1px solid black;
+    border-radius: 10px 10px 10px 10px;
+    font-size: 0.7em;
+    padding: 10px;
+    max-width: 250px;
+}
+
+.sectionimgclass{
+    border-radius: 10px 10px 10px 10px;
+    max-width: 250px;    
+}
