@@ -10,6 +10,7 @@ my %defaults = (
     DEFAULT_URL_ARTICLE => '\%c/\%a',
     RSS_IMPORT_ACTIVE_DEFAULT => 'false',
     FILES_COMPAT => 'false',
+    CLIENT_ERROR_LOG => 'false',
 );
 my $file = shift;
 die("USAGE: $0 [FILE]\n") if not defined $file;
@@ -80,6 +81,7 @@ sub loadConf
     $settings{DEFAULT_URL_ARTICLE} = $lc->{article_url};
     $settings{FILES_COMPAT} = $lc->{files_compat};
     $settings{LOG_TO_FILE} = $lc->{logToFile};
+    $settings{CLIENT_ERROR_LOG} = $lc->{clientErrorLog};
     if(not defined $settings{FILES_COMPAT} or not length $settings{FILES_COMPAT})
     {
         # This defaults to true, simply because if it's not set, we're upgrading from
@@ -94,6 +96,10 @@ sub loadConf
     if(not $settings{LOG_TO_FILE})
     {
         $settings{LOG_TO_FILE} = 'false';
+    }
+    if(!($settings{CLIENT_ERROR_LOG}) || $settings{CLIENT_ERROR_LOG} ne '1')
+    {
+        $settings{CLIENT_ERROR_LOG} = 'false';
     }
     $settings{RSS_SOURCES} = $lc->{rss_sources};
 
@@ -115,7 +121,7 @@ sub writeConfigFile
     undef $/;
     my $template = <$templateFile>;
     close($templateFile);
-    my @baseSources = qw(DBNAME DBUSER DB_PASSWD SESSION_STORAGE MEMCACHED_SERVER MEMCACHED_NAMESPACE MASON_DATADIR LIXUZ_ROOT TEMPLATE_PATH TMP_PATH FILE_PATH FROM_EMAIL EMAIL_TO_OVERRIDE DEFAULT_URL_CATEGORY DEFAULT_URL_ARTICLE RSS_IMPORT_ACTIVE_DEFAULT INDEXER_LANGUAGE INDEXER_STORAGE_PATH FILES_COMPAT LOG_TO_FILE);
+    my @baseSources = qw(DBNAME DBUSER DB_PASSWD SESSION_STORAGE MEMCACHED_SERVER MEMCACHED_NAMESPACE MASON_DATADIR LIXUZ_ROOT TEMPLATE_PATH TMP_PATH FILE_PATH FROM_EMAIL EMAIL_TO_OVERRIDE DEFAULT_URL_CATEGORY DEFAULT_URL_ARTICLE RSS_IMPORT_ACTIVE_DEFAULT INDEXER_LANGUAGE INDEXER_STORAGE_PATH FILES_COMPAT LOG_TO_FILE CLIENT_ERROR_LOG);
     foreach my $s (@baseSources)
     {
         my $setting;

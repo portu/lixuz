@@ -22,7 +22,7 @@
 %}
 <div id="uploadForm">
     <form enctype="multipart/form-data" id="lixuz_multiFileUpload" method="post" action="/admin/files/upload/<% $fileClassID %>" onsubmit="return prepFormSubmission();">
-<div><a href="#" onclick="addFile();return false;"><img src="/static/images/icons/files-upload.png" border="0" align="left" />&nbsp;<% $i18n->get('Upload more') %></a></div><br /><br />
+<div id="uploadMore"><a href="#" onclick="addFile();return false;"><img src="/static/images/icons/files-upload.png" border="0" align="left" />&nbsp;<% $i18n->get('Upload more') %></a></div><br /><br />
 %if(defined $artid) {
 <input type="hidden" id="artid" name="artid" value="<%$artid%>" />
 %}

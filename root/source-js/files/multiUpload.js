@@ -22,12 +22,20 @@
 var totalFiles = 0;
 function addFile ()
 {
+    if(Modernizr.input.multiple)
+    {
+        // If the browser supports multiple files then we don't need to bother
+        // with adding a new input field after the first one
+        if (totalFiles > 0)
+            return;
+        $('#uploadMore').hide();
+    }
     var area = $('#fileUploadArea')[0];
     totalFiles++;
     // FIXME: i18n
     var newFileUP = document.createElement("div");
     newFileUP.id = 'fileEntry'+totalFiles;
-    newFileUP.innerHTML = i18n.get('File')+': <input id="upload_file_no_'+totalFiles+'"  onchange="conditionalAddFile('+totalFiles+');" name="upload_file_no_'+totalFiles+'" type="file" size="28"> &nbsp;&nbsp;<a href="#" onclick="removeEntry('+totalFiles+'); return false;">'+i18n.get('Remove')+'</a><br />';
+    newFileUP.innerHTML = i18n.get('File')+': <input multiple="MULTIPLE" id="upload_file_no_'+totalFiles+'"  onchange="conditionalAddFile('+totalFiles+');" name="upload_file_no_'+totalFiles+'" type="file" size="28"> &nbsp;&nbsp;<a href="#" onclick="removeEntry('+totalFiles+'); return false;">'+i18n.get('Remove')+'</a><br />';
     area.appendChild(newFileUP);
 }
 
@@ -82,9 +90,8 @@ function prepFormSubmission ()
             userMessage(i18n.get('You haven\'t selected any file(s) to upload'));
             return false;
         }
-        if ($('#file_folder').val() == null || $('#file_folder').val() == '')
+        if (window.fileFormLogic_submit() === false)
         {
-            userMessage(i18n.get('You haven\'t selected any folder'));
             return false;
         }
         if ($('#asyncUpload').val() == '1')

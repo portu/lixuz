@@ -82,7 +82,7 @@ var articleFiles = {
             {
                 var id = $(this).parent().parent().html().replace(/.*File\s*ID/,'').replace(/^\D+/,'').replace(/\D.*/g,'');
                 articleFiles.removeFile(id);
-            } catch(e) { lzError(e); }
+            } catch(e) { lzException(e); }
             return false;
         });
 

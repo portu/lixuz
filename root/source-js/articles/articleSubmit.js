@@ -27,7 +27,7 @@
 var articleDataManager = jClass({
     getArticleData: function (disableValidation)
     {
-        var fields = ['lixuzArticleEdit_uid','lixuzArticleEdit_type', 'LZ_ArticleMoveFilesFound'];
+        var fields = ['lixuzArticleEdit_uid','lixuzArticleEdit_type' ];
         if ($('#article_liveComments_enable')[0])
         {
             fields.push('article_liveComments_enable');
@@ -217,15 +217,18 @@ var articleSubmit = jClass.extend([articleDataManager,lzWrapperHelpers,lzProgres
         else
         {
             this.destroyPI();
-            AuserQuestion(i18n.get('There are files that live in the same directory as this article, do you want to move them to the new folder as well?'),this.globalSelfFunc('folderCheck_reply'));
+            var self = this;
+            XuserQuestion(i18n.get('There are files that live in the same directory as this article, do you want to move them to the new folder as well?'),null,
+            function()
+            {
+                self.moveArticlesFound = 1;
+                self.submit();
+            },
+            function()
+            {
+                self.submit();
+            });
         }
-    },
-
-    folderCheck_reply: function (response)
-    {
-        if(response)
-            this.moveArticlesFound = 1;
-        this.submit();
     },
 
     commentCheck: function ()

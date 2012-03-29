@@ -190,6 +190,7 @@ sub savedata_article
 	{
 		$origFolder = $article->folder->folder_id,
 	}
+    my $newPrimaryFolder = $c->stash->{newPrimaryFolder};
 
     # -- Secondary folders --
     if(defined($c->req->data->{'secondaryFolders'}))
@@ -202,7 +203,7 @@ sub savedata_article
             {
                 foreach my $folder (split(',',$c->req->data->{'secondaryFolders'}))
                 {
-                    if(not $folder == $article->primary_folder->folder_id)
+                    if(not $folder == $newPrimaryFolder)
                     {
                         $folders{$folder} = 1;
                     }
@@ -241,7 +242,7 @@ sub savedata_article
             $self->RCS->delete_object($f);
         }
     }
-    if ($c->req->data->{'LZ_ArticleMoveFilesFound'} and $origFolder != $article->folder->folder_id)
+    if ($c->req->data->{'LZ_ArticleMoveFilesFound'} and $origFolder != $newPrimaryFolder)
     {
         my $files = $article->files;
         while((defined $files) && (my $f = $files->next))
@@ -249,8 +250,13 @@ sub savedata_article
             my $file = $f->file;
             if ((not defined $file->folder_id) or ($file->folder_id eq $origFolder))
             {
-                $file->set_column('folder_id',$article->folder->folder_id);
-                $file->update();
+                if(my $secondary = $file->folders->search({ folder_id => $newPrimaryFolder }))
+                {
+                    $secondary->delete;
+                }
+                my $primary = $file->primary_folder;
+                $primary->set_column('folder_id',$newPrimaryFolder);
+                $primary->update;
             }
         }
     }
@@ -891,6 +897,7 @@ sub art_save_fielddata
             }
             $f = $c->model('LIXUZDB::LzArticleFolder')->new_result({ folder_id => $value, article_id => $obj->article_id, primary_folder => 1});
             $self->RCS->add_object($f);
+            $c->stash->{newPrimaryFolder} = $value;
         }
         elsif($fnam eq 'status_id')
         {

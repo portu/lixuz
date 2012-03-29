@@ -375,6 +375,10 @@ input, select, textarea{
 
 /* Article change status style*/
 
+.statusChangeEntry
+{
+    min-width:50px;
+}
 
 .select_displayed ul li.option {
     background-color:#FFFFFF;
@@ -408,12 +412,12 @@ input, select, textarea{
 
 .select {
     position:relative;
-    border:1px solid transparent;
 }
 .select ul {
     padding:0;
     position:absolute;
     width:100%;
+    border:1px solid transparent;
 }
 
 

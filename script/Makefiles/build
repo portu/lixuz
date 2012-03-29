@@ -17,7 +17,7 @@ JS_BUILD_METHOD= \
 
 buildloop:
 	@echo "Watching root/ for changes and rebuilding files whenever a change is detected"
-	@while :;do inotifywait -r root &>/dev/null; echo -n "[$$(date +%H:%M:%S)] Rebuilding..."; make build &>/dev/null;echo "done";done
+	@while :;do inotifywait -e modify -e create -e delete -e moved_to -r root &>/dev/null; echo -n "[$$(date +%H:%M:%S)] Rebuilding..."; make build &>/dev/null;echo "done";done
 
 buildjs:
 	mkdir -p "$(JS_TARGET_DIR)"

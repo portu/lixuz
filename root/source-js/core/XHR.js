@@ -145,6 +145,8 @@ var XHR = {
 
         var ret = { message: genericError, tech: errorCode };
 
+        LIXUZ.error.log(data.tech);
+
         return ret;
     },
 
@@ -244,6 +246,8 @@ var XHR = {
                 {
                     if($.isFunction(params.onFailure))
                     {
+                        // We do this so that the error gets logged
+                        XHR.getErrorInfo(data);
                         params.onFailure(data);
                     }
                     else

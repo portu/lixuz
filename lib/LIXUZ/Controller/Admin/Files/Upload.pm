@@ -121,11 +121,10 @@ sub upload : Path Args(1) Form('/files/edit')
     my $info = $c->forward(qw(LIXUZ::Controller::Admin::Files::Edit get_input_settings) ,[$form,'files']);
     for my $fno (1..$files)
     {
-        if ($c->req->param('upload_file_no_'.$fno))
+        foreach my $file ($c->req->upload('upload_file_no_'.$fno))
         {
-            my $fnam = $c->req->param('upload_file_no_'.$fno);
-            my $fdata = $c->req->upload('upload_file_no_'.$fno);
-            my $obj = $self->handleData($c,$fnam,$fdata);
+            my $fnam = $file->filename;
+            my $obj = $self->handleData($c,$fnam,$file);
             foreach my $i (keys %{$info})
             {
                 $obj->set_column($i,$info->{$i});
@@ -149,7 +148,6 @@ sub handleData : Private
 {
     my($self,$c,$fileName,$upload) = @_;
     my $settings = {
-        file_folder => $c->req->param('file_folder'),
         asyncUpload => $c->req->param('asyncUpload'),
         artid => $c->req->param('artid'),
     };

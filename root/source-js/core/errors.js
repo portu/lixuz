@@ -269,6 +269,7 @@ function lzException(exception,error)
     else
     {
         lzlog('Exception: "'+exceptMsg+'" caught by '+caller);
+        LIXUZ.errorLog.send('Exception: "'+exceptMsg+'" caught by '+caller);
     }
     // Display our message
     try
@@ -346,6 +347,20 @@ function lzelog (exception)
         {
             lzlog("Stack trace of above exception:\n"+backtrace.stack);
         }
+        LIXUZ.errorLog.send(output,backtrace.stack);
+    } catch(e) { }
+}
+
+function lzErrLog (error)
+{
+    try
+    {
+        if(error == null || error == '')
+        {
+            return;
+        }
+        lzlog('Error: '+error);
+        LIXUZ.errorLog.send(error);
     } catch(e) { }
 }
 
@@ -396,3 +411,17 @@ try
         return false;
     };
 } catch(e) {}
+
+LIXUZ.addNamespace('error',
+{
+    exception: lzelog,
+    log: lzErrLog,
+    message: lzError,
+    exception: lzException,
+    getInfo: getLzErrInfo,
+    getBacktrace: getBacktraceFromException
+});
+LIXUZ.extendNamespace('message',
+{
+    error: displayErrorBox
+});
