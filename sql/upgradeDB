@@ -1040,6 +1040,61 @@ sub readCreateStatement
     return $statement;
 }
 
+sub upgradeACL
+{
+    my $c = shift;
+
+    # This is a PATH => arrayref map
+    #  existing_path => [
+    #           new_path, # The new path that should be granted in addition to existing_path
+    #           new_path2
+    #    ]
+    # 
+    # If a role has access to existing_path then they will automatically be granted access
+    # to new_path
+    #
+    # (make sure you update the DBrevision used for the ACLupgrade flag in
+    #  detectFlags if you add something to this)
+    my %aclMap = (
+    );
+
+    foreach my $part (keys %aclMap)
+    {
+        my $action = $c->model('LIXUZDB::LzAction')->find({
+                action_path => $part
+            });
+        if(not $action)
+        {
+            logAction('Failed to locate object for action path '.$part);
+            next;
+        }
+        my $existing = $c->model('LIXUZDB::LzRoleAction')->search({
+                action_id => $action->id,
+                allowed => 1
+            });
+        while(my $e = $existing->next)
+        {
+            foreach my $grant ( @{$aclMap{$part}})
+            {
+                my $grantAction = $c->model('LIXUZDB::LzAction')->find({
+                        action_path => $grant
+                    });
+                if(not $action)
+                {
+                    logAction('Failed to locate object for action path '.$grant);
+                    next;
+                }
+                my $entry = $c->model('LIXUZDB::LzRoleAction')->find_or_create({
+                        action_id => $grantAction->id,
+                        role_id => $e->role_id
+                    });
+                $entry->set_column('allowed',1);
+                $entry->update;
+            }
+        }
+    }
+}
+
 # Run a system() and log it as well
 sub logSystem
 {
