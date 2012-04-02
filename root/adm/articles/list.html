@@ -130,12 +130,12 @@ if($artAuthor eq $author)
     $artAuthor = '';
 }
 </%perl>
-<td id="unsavedTd_<% $article->article_id %>">
+<td id="unsavedTd_Status_<% $article->article_id %>">
 %if($article->can_write($c)){  
 <div class="statusChangeEntry">
-    <div id="unsavedstatus_<% $article->article_id %>"></div>
-<div class="select" id="statusdiv_<% $article->article_id %>" data-value="<%$article->article_id %>">
-        <input type="hidden" name="articlestatus_<%$article->article_id%>" id="articlestatus_<%$article->article_id%>" value="<%$article->status_id%>" disabled="disabled" data-value="<%$article->status_id%>">
+    <div id="unsaved_Status_<% $article->article_id %>"></div>
+<div class="select" id="div_Status_<% $article->article_id %>" data-value="<%$article->article_id %>" divtype="Status">
+        <input type="hidden" name="article_Status_<%$article->article_id%>" id="article_Status_<%$article->article_id%>" value="<%$article->status_id%>" disabled="disabled" data-value="<%$article->status_id%>">
         <ul>
             <li data-value="<%$article->status_id%>" class="destination option small darr <% $i%2==0 ? 'dest' : 'loc' %>"><%$stat_name%></li>
 %foreach my $opt (@{$statusOptions})            
