@@ -28,17 +28,17 @@
 <div><input type="text" name="mail_from" id="mail_from" style="width: 600px" value="<% $c->config->{LIXUZ}->{from_email} |n %>" /></div>
 
 <div class="label"><% $i18n->get('Subject') %>:</div>
-<div><input type="text" name="mail_subject" id="mail_subject" style="width:600px"/></div>
+<div><input type="text" name="mail_subject" id="mail_subject" style="width:600px" value="<% $nsubject |n %>"/></div>
 
 <div class="label"><% $i18n->get('Format') %>:</div>
 
 <select id="mail_type" onchange="manualNewsletterFormatChange(); return false;">
-<option value="text"><% $i18n->get('Text') %></option>
-<option value="html"><% $i18n->get('HTML') %></option>
+    <option  <% $nformat eq 'text' ? 'selected="selected"' : '' %> value="text"><% $i18n->get('Text') %></option>
+    <option  <% $nformat eq 'html' ? 'selected="selected"' : '' %> value="html"><% $i18n->get('HTML') %></option>
 </select>
 
 <div class="label"><b><% $i18n->get('Message') %>:</b></div>
-<textarea rows="20" style="width: 600px" id="mail_editor"></textarea>
+<textarea rows="20" style="width: 600px" id="mail_editor"><% $nmessage |n %></textarea>
 
 <input type="button" name="saveRSSItemInfo" onclick="submitManualNewsletter(); return false;" value="<% $i18n->get('Send') %>" /> &nbsp;
 <input type="button" name="viewmailpreview" onclick="viewPreview(); return false;" value="<% $i18n->get('Preview') %>" />
@@ -46,4 +46,15 @@
 
 <%args>
 $i18n
+$nsubject
+$nformat
+$nmessage
 </%args>
+%if($nformat eq 'html'){
+<script type="text/javascript">
+$LAB.queue(function ()
+{
+    manualNewsletterFormatChange();
+})
+</script>
+%}

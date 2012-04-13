@@ -1,0 +1,52 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="bodyFrame">
+
+<table width="100%">
+<tr>
+    <td style="width: 50%">
+        <table border="0" width="100%">
+            <tr>
+                <td colspan="2">
+                    <div class="buttonHolder"><a href="/admin/articles/edit/<%$rarticle->article_id%>"><img src="/static/images/icons/fields-edit.png" border="0" alt="<% $i18n->get('Edit Article') |n %>" align="left"  />&nbsp;<% $i18n->get('Edit Article') |n %></a></div>
+                    <br clear="all" />
+                </td>
+            </tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+
+            <tr>
+                <td colspan="2">
+                    <& additionalFields.html, %ARGS &>
+                <td>
+            </tr>            
+
+        </table>
+
+    </td>
+    <td style="width: 50%" valign="top">
+        <& rightread.html, %ARGS &>
+    </td>
+</tr>
+</table>
+</div>
+<%args>
+$rarticle=>undef
+$artfolder
+$artstatus
+$i18n
+</%args>

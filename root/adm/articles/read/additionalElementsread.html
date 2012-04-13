@@ -1,0 +1,51 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="article_elements_list">
+<br />
+<table cellspacing="0" class="listView" id="articleAdditionalElementList">
+<tr>
+    <td class="rowHead"><% $i18n->get('ID') |n %></td>
+    <td class="rowHead"><% $i18n->get('Element') |n %></td>
+    <td class="rowHead"><% $i18n->get('Value') |n %></td>
+    <td class="rowHead"><% $i18n->get('Type') |n %></td>
+</tr>
+<tr class="dataRow" style="display:none;">
+<td class="uid"></td>
+<td class="key"></td>
+<td class="value"></td>
+<td class="type"></td>
+</tr>
+%my $hadRel = 0;
+%if($elements) {
+%while(my $keyvalue = $elements->next) {
+% $hadRel = 1;
+% $keyvalue = $keyvalue->element;
+<tr class="dataRow">
+<td class="uid"><% $keyvalue->keyvalue_id |n %></td>
+<td class="key"><% $keyvalue->thekey |n %></td>
+<td class="value"><% $keyvalue->value |n %></td>
+<td class="type"><% $keyvalue->type %></td>
+</tr>
+%}
+%} 
+</table>
+</div>
+<%args>
+$i18n
+$elements => undef
+</%args>

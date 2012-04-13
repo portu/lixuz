@@ -168,7 +168,11 @@ if($artAuthor eq $author)
 % $c->log->debug('Article '.$article->article_id.' is missing a workflow entry!');
     <td><% $i18n->get('(nobody)') |n %></td>
 %}
-<td>
+%if($article->can_write($c) or $c->user->can_access('PREVIEW_OTHER_ARTICLES')) {
+<td><a href="/admin/articles/read/<% $article->article_id %>"><img class="useTipsy" src="/static/images/icons/dictionary.png" border="0" title="<% $i18n->get('Read') %>" class="useTipsy" alt="<% $i18n->get('Read') %>"/></a> </td>
+%}else{
+<td>&nbsp;</td>
+%}
 %if($article->can_write($c) or $c->user->can_access('PREVIEW_OTHER_ARTICLES')) {
     <td><a href="/admin/articles/preview/<% $article->article_id %>" target="_blank"><img class="useTipsy" src="/static/images/icons/article-preview.png" border="0" title="<% $i18n->get('Preview') %>" class="useTipsy" alt="<% $i18n->get('Preview') %>"/></a></td>
 %} else {
@@ -218,13 +222,6 @@ if($artAuthor eq $author)
 </td>
     </tr>
 %}
-<tr>
-  <td colspan="9" style="background-color: #FFFFFF">
-    <div id="submitbutton" style="display: none">
-        <input id="saveStatusChanges" name="_blankSaveStatusChanges" type="submit" value="<% $i18n->get('Save Changes')  |n %>" />
-    </div>
-  </td>
-</tr>
 <& ../core/suppressedInfo.html, %ARGS, suppressed => $suppressed, name => $i18n->get('articles') &>
 %}
 

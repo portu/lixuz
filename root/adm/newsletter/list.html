@@ -19,9 +19,7 @@
 % # FIXME: drop the <b></b> tags and do that in CSS
 <div id="lzCategoryListMessage"><b><% $message %></b></div>
 %}
-
 <& ../core/listnavigation.html, %ARGS &>
-
 <table cellspacing="0" class="listView">
     <tr>
         <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'subscription_id', ordertype => $ordertype}) %>"><% $i18n->get('Subscription ID') %></a></td>
@@ -29,6 +27,8 @@
         <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'name', ordertype => $ordertype}) %>"><% $i18n->get('Name') %></a></td>
         <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'send_every', ordertype => $ordertype}) %>"><% $i18n->get('Interval') %></a></td>
         <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'format', ordertype => $ordertype}) %>"><% $i18n->get('Preferred format') %></a></td>
+        <td class="rowHead rowHeadIcon">&nbsp;</td>
+        <td class="rowHead rowHeadIcon">&nbsp;</td>
 		<td class="rowHead rowHeadIcon">&nbsp;</td>
     </tr>
 
@@ -47,28 +47,32 @@ given($send_every)
 {
     when('month')
     {
-        $send_every = $i18n->get('month');
+        $send_every = $i18n->get('Monthly');
     }
 
     when('week')
     {
-        $send_every = $i18n->get('week');
+        $send_every = $i18n->get('Weekly');
     }
 
     when('day')
     {
-        $send_every = $i18n->get('day');
+        $send_every = $i18n->get('Daily');
     }
+    
+    when('none')
+    {
+        $send_every = $i18n->get('None');
+    }        
 }
 </%perl>
         <td><% $send_every  |n %></td>
         <td><% $subscription->format%></td>
+        <td><a href="#" onclick="editSubscriber(<%$subscription->subscription_id%>);return false;"><img class="useTipsy" src="/static/images/icons/users-edit.png" border="0" title="<% $i18n->get('Edit') %>" alt="<% $i18n->get('Edit') %>" class="useTipsy" /></a> </td>
+        <td><a href="#" onclick="deleteNewsletterSubscription(<%$subscription->subscription_id%>);return false;"><img class="useTipsy" src="/static/images/icons/src/user_delete.png" border="0" title="<% $i18n->get('Delete') %>" alt="<% $i18n->get('Delete') %>" class="useTipsy" /></a> </td>
         <td>
-        <select id="subscription_action_<%$subscription->subscription_id%>" onchange="newsletterAction(<% $subscription->subscription_id %>);">
-        <option value="label" selected="selected">- <% $i18n->get('Action') %> -</option>
-        <option value="groupedit"><% $i18n->get('Edit groups') %></option>
-        <option value="delete"><% $i18n->get('Delete') %></option>
-        </select>
+            <a href="#" onclick="editSubscriptionGroups(<%$subscription->subscription_id%>);return false;"><img class="useTipsy" src="/static/images/icons/newsletter-edit-group.png" border="0" title="<% $i18n->get('Assign to Group') %>" alt="<% $i18n->get('Assign to Group') %>" class="useTipsy" /></a>
+
         </td>
     </tr>
 %}

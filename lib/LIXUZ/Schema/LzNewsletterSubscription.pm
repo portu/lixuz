@@ -51,7 +51,7 @@ __PACKAGE__->table("lz_newsletter_subscription");
 
   data_type: 'enum'
   default_value: 'week'
-  extra: {list => ["month","week","day"]}
+  extra: {list => ["month","week","day","none"]}
   is_nullable: 0
 
 =head2 last_sent
@@ -91,7 +91,7 @@ __PACKAGE__->add_columns(
   {
     data_type => "enum",
     default_value => "week",
-    extra => { list => ["month", "week", "day"] },
+    extra => { list => ["month", "week", "day", "none"] },
     is_nullable => 0,
   },
   "last_sent",
@@ -104,8 +104,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("subscription_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-01-17 10:17:20
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Q7F9kH5k8kZcXDHR5Par0w
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-26 14:04:42
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:pT/gHY3OiHOYzaGyBLKmsQ
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012

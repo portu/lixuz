@@ -1,0 +1,72 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="sliders_outer" style="float: left;">
+%# --- Workflow ---
+<h2><a href="#" onclick="$('#workflow_slider_inner').slideToggle(); return false;"><img src="/static/images/icons/section-closed.png" border="0" align="left" /><% $i18n->get('Workflow') %></a></h2>
+
+<div id="workflow_slider_inner" class="expandable_holder">
+    <& workflow_read.html, %ARGS &>
+<& workflowread_comments.html, %ARGS &>
+<br /><br />
+<& ../workflow_newcomments.html, %ARGS &>
+</div>
+
+%# --- Files ---
+<h2><a href="#" onclick="$('#files_slider_inner').slideToggle(); return false;" style="overflow: auto;"><img src="/static/images/icons/section-closed.png" border="0" align="left" /><% $i18n->get('Files')%> (<span id="filesInArticle"><%$filesInArticle%></span>)</a></h2>
+<div id="files_slider_inner" class="expandable_holder">
+<& filesread.html, %ARGS &>
+</div>
+
+%# --- Relationships---
+<h2><a href="#" onclick="$('#relationships_slider_inner').slideToggle(); return false;" style="overflow: auto;"><img src="/static/images/icons/section-closed.png" border="0" align="left" /><% $i18n->get('Relationships')%> (<span id="relationshipsWithArticle"><%$relationshipsWithArticle%></span>)</a></h2>
+<div id="relationships_slider_inner" class="expandable_holder">
+<& relationshipsread.html, %ARGS &>
+</div>
+
+%# --- Additional elements ---
+<h2><a href="#" onclick="additionalElements.toggle(); return false;" style="overflow: auto;"><img src="/static/images/icons/section-closed.png" border="0" align="left" /><% $i18n->get('Additional elements')%> (<span id="AdditionalElementsForArticle"><%$additionalElementsForArticle%></span>)</a></h2>
+<div id="additionalElements_slider_inner" class="expandable_holder">
+    <& additionalElementsread.html, %ARGS &>
+    <br>
+</div>
+%# --- Initialization JS ---
+<script type="text/javascript">
+$LAB.queue(function () {
+    $.each(['#files_slider_inner','#relationships_slider_inner','#liveComments_slider_inner','#secondaryFolders_slider_inner','#additionalElements_slider_inner'], function (index,value)
+    {
+        $(value).hide();
+    })
+});
+</script>
+
+</div> <!-- sliders_outer -->
+<%args>
+$filesInArticle => 0
+$commentsForArticle => 0
+$secondaryFoldersForArticle => 0
+$additionalElementsForArticle => 0
+$relationships => undef
+$i18n
+</%args>
+<%init>
+my $relationshipsWithArticle = 0;
+if($relationships)
+{
+    $relationshipsWithArticle = $relationships->count();
+}
+</%init>

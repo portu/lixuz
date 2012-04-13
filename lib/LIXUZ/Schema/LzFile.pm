@@ -851,6 +851,7 @@ sub get_iconItemTable
     my $self = shift;
     my $c = shift or die;
     my $includeObjChildJS = shift;
+    my $i18n = $c->stash->{i18n};
     my $iconItem = '<table><tr><td style="min-height: 84px;"><center><img class="filePreview" style="border:0;" src="'.$self->get_icon($c).'" /></center></td></tr><tr><td>';
     $iconItem .= '<span class="fileInfo">';
     my $name = $self->file_name;
@@ -859,6 +860,22 @@ sub get_iconItemTable
     $iconItem .= $c->stash->{i18n}->get('File ID:');
     $iconItem .= ' '.$self->file_id;
     $iconItem .= '<br />Size: '.$self->sizeString($c);
+    my $folderpath = $i18n->get('(none)');
+    if ($self->folder && $self->folder->get_path)
+    {
+       $folderpath = $self->folder->get_path;    
+    }    
+    if(length($folderpath) > 12)
+     {
+       $iconItem .= '<br />'.$i18n->get('Folder:');
+       $iconItem .= '<span class="useTipsy" original-title="'.$folderpath.'"> '.substr($folderpath,1,10).'...</span>';
+     }
+     else
+    {
+       $iconItem .= '<br />'.$i18n->get('Folder:');     
+       $iconItem .= '<span> '.$folderpath.'</span>';
+    }
+
     if ($includeObjChildJS && $self->clones->count)
     {
         $iconItem .= '<br /><a href="#" style="text-decoration:none;" onclick="currObjSelectorAddDestructiveFilter(\'childOf='.$self->file_id.'\');">';

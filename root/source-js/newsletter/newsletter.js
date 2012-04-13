@@ -180,10 +180,16 @@ function showSentNewsletterList (data)
         destroyPI();
         return;
     }
-    var table = createTableFromHashData([ i18n.get('Subject'), i18n.get('Sent at') ],data.content,['subject','sent_at'], { 'subject': { 'source':'saved_id','action':'viewSavedNewsletter' } });
+    var table = createTableFromHashData([ i18n.get('Subject'), i18n.get('Sent at'),i18n.get('Action') ],data.content,['subject','sent_at','action'], { 'subject': { 'source':'saved_id','action':'viewSavedNewsletter' },'action': { 'source':'saved_id','action':'sendSavedNewsletter' } });
     quickDialog(i18n.get('Select newsletter'),table);
     destroyPI();
 }
+
+//Retive and view the single newsletter in send window.
+function sendSavedNewsletter (id)
+{
+    location.href = '/admin/newsletter/send?nid='+id;
+}    
 
 // Retrieve a single newsletter from the server
 function viewSavedNewsletter (id)
@@ -192,7 +198,6 @@ function viewSavedNewsletter (id)
     destroyMessageBox();
     JSON_Request('/admin/newsletter/sentPreviously?wants='+id,viewThisSavedNewsletter);
 }
-
 // View the retrieved newsletter
 function viewThisSavedNewsletter (data)
 {
@@ -482,4 +487,80 @@ function groupEditorSaveSuccess ()
     groupEditor.destroy();
     JSON_Invalidate_Cache();
     destroyPI();
+}
+
+// Actually create the Subscriber editing window
+function subscriberWindow(data)
+{
+    if(data == null)
+    {
+        data =  { 'email': '','name': '','format': '','interval': '','subscriber_id':'new'};
+    }
+    destroyPI();
+    var html = '<input type="hidden" id="subsciber_id" value="'+data.subscriber_id+'" />';
+    html = html + '<table><tr><td>'+i18n.get('Email')+':</td><td><input type="text" id="email" value="'+data.email+'" /></td></tr>';
+    html = html + '<tr><td>'+i18n.get('Name')+':</td><td><input type="text" id="name" value="'+data.name+'" /></td></tr>';
+    html = html + '<tr><td>'+i18n.get('Format')+':</td><td><input type="radio" id="format" checked="checked" value="text" name="format">'+i18n.get('Text')+'<input type="radio" value="html" id="format" name="format">'+i18n.get('HTML')+'</td></tr>';
+    html = html + '<tr><td>'+i18n.get('Interval')+':</td><td><input type="radio" value="day" id="interval" name="interval">'+i18n.get('Daily')+' <input type="radio" checked="checked" value="week" id="interval"  name="interval">'+i18n.get('Weekley')+'<input type="radio" value="month" id="interval" name="interval">'+i18n.get('Monthly')+'<input type="radio" value="none" id="interval" name="interval">'+i18n.get('None')+' </td></tr></table>';
+
+    var buttons = {};
+    buttons[i18n.get('Save and close')] = function () { saveAndCloseSubscriberEditor() };
+
+    subscriberEditor = new dialogBox(html,{
+        buttons: buttons,
+        title: i18n.get('Add Subscriber')
+    });
+    
+    if (data.format != "")
+    {
+        $("[name=format]").filter("[value="+data.format+"]").prop("checked",true);
+    }
+
+    if (data.interval != "")
+    {
+        $("[name=interval]").filter("[value="+data.interval+"]").prop("checked",true);
+    }
+}
+
+// Submit Subscriber editor data to the server
+function saveAndCloseSubscriberEditor ()
+{
+  var getinterval = $('input[name=interval]:checked').val();
+  var getformat = $('input[name=format]:checked').val();
+
+    var submit = '/admin/newsletter/subscriberSave?subsciber_id='+encodeURIComponent(getFieldData('subsciber_id'))+'&email='+encodeURIComponent(getFieldData('email'))+'&name='+encodeURIComponent(getFieldData('name'))+'&format='+encodeURIComponent(getformat)+'&interval='+encodeURIComponent(getinterval);
+    showPI(i18n.get('Saving...'));
+    JSON_Request(submit,subscriberEditorSaveSuccess);
+}
+
+// Subscriber data successfully saved
+function subscriberEditorSaveSuccess ()
+{
+    subscriberEditor.destroy();
+    JSON_Invalidate_Cache();
+    destroyPI();
+    window.location.reload();
+}
+
+// Retrive subscriber data for edit using subscriber id
+function editSubscriber (subscriberid)
+{
+    destroyMessageBox();
+    showPI(i18n.get('Loading subscriber information...'));
+    JSON_Request('/admin/newsletter/subscriberInfo/'+subscriberid,subscriberWindow);
+}
+
+//show window for import subscriber
+function importSubscriberWindow ()
+{
+    var html = '<form action="/admin/newsletter/importsubscriber" name="importSubscriber" id="importSubscriber" method="post" enctype="multipart/form-data">';
+    html = html + '<table><tr><td>'+i18n.get('Import CSV')+':</td><td><input type="file" id="impsub" name="impsub" /></td></tr>';
+    html = html + '</table></form>';
+    var buttons = {};
+    buttons[i18n.get('Upload and close')] = function () { $('form#importSubscriber').submit(); };
+
+    subscriberEditor = new dialogBox(html,{
+        buttons: buttons,
+        title: i18n.get('Import Subscribers')
+    });
 }

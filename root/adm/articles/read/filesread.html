@@ -1,0 +1,46 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div id="article_file_list">
+    <table border="0" width="100%">
+%my $i=0;        
+%foreach my $opt (@{$files}){
+%$i++;
+<% ($i==1 ||($i-1)%2==0) ? '<tr>' : ''|n %>
+<td align="center">
+    <div style="border:1px solid #5F94BF;background-color: #E0E8EF;padding-top:5px;width:160px;height:auto"> 
+
+<a href="#" title="<%$opt->{caption}%>"><img class="filePreview" style="border:0;" src="<%$opt->{iconItem} |n %>"></a>
+%if($opt->{caption}){
+<div style="font-size: 8pt;margin-left:3px;margin-right:3px;margin-top:3px;text-align:left;"><%$opt->{caption}%></div>
+%} else {
+<span><%$i18n->get('(no caption set)')%><span>
+%}
+<div style="font-size: 9pt;margin-left:3px;margin-right:3px;margin-top:3px;text-align:left;"><%$i18n->get('File Id: ')%><%$opt->{file_id}%></div>
+<div style="font-size: 9pt;margin-left:3px;margin-right:3px;margin-top:3px;text-align:left;"><%$i18n->get('File Name: ')%><%$opt->{file_name}%></div>
+<div style="font-size: 9pt;margin-left:3px;margin-right:3px;margin-top:3px;text-align:left;"><%$i18n->get('Owner: ')%><%$opt->{file_owner}%></div>
+<div style="font-size: 9pt;margin-left:3px;margin-right:3px;margin-top:3px;text-align:left;"><%$i18n->get('File Size: ')%><%$opt->{fsize}%></div>
+</div>
+</td><td>&nbsp;</td>
+    <% $i%4==0 ? '</tr>' : '' %>
+%}
+</table>    
+</div>
+<%args>
+$i18n
+$files => undef
+</%args>
