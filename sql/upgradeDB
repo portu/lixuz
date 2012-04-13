@@ -429,6 +429,10 @@ sub upgradeData
         {
             upgradeFileClassPerms($c);
         }
+        if ($flags{upgradeACL})
+        {
+            upgradeACL($c);
+        }
         silent
         {
             mysql_exec('DROP TABLE lz_workflow_change');
@@ -809,6 +813,11 @@ sub detectFlags
     {
         $flags{reIndex} = 1;
     }
+    # Trigger ACL upgrades if needed
+    if ($currentDBRevision < 8)
+    {
+        $flags{'upgradeACL'} = 1;
+    }
 }
 
 sub getCurrentDBRevision
@@ -1056,7 +1065,15 @@ sub upgradeACL
     # (make sure you update the DBrevision used for the ACLupgrade flag in
     #  detectFlags if you add something to this)
     my %aclMap = (
+        '/articles/preview' => [
+            '/articles/read'
+        ],
+        '/newsletter' => [
+            '/newsletter/subscriberInfo',
+        ]
     );
+
+    slog('Upgrading ACL entries');
 
     foreach my $part (keys %aclMap)
     {
@@ -1065,13 +1082,17 @@ sub upgradeACL
             });
         if(not $action)
         {
-            logAction('Failed to locate object for action path '.$part);
+            slog('Failed to locate (old) object for action path '.$part);
             next;
         }
         my $existing = $c->model('LIXUZDB::LzRoleAction')->search({
                 action_id => $action->id,
                 allowed => 1
             });
+        if ($existing->count == 0)
+        {
+            slog('No roles appear to have access to '.$part);
+        }
         while(my $e = $existing->next)
         {
             foreach my $grant ( @{$aclMap{$part}})
@@ -1079,9 +1100,9 @@ sub upgradeACL
                 my $grantAction = $c->model('LIXUZDB::LzAction')->find({
                         action_path => $grant
                     });
-                if(not $action)
+                if(not $grantAction)
                 {
-                    logAction('Failed to locate object for action path '.$grant);
+                    slog('Failed to locate (new) object for action path '.$grant);
                     next;
                 }
                 my $entry = $c->model('LIXUZDB::LzRoleAction')->find_or_create({
@@ -1090,6 +1111,7 @@ sub upgradeACL
                     });
                 $entry->set_column('allowed',1);
                 $entry->update;
+                slog('Updated permission for role '.$e->role_id.' to include '.$grant.' due to existance of '.$part);
             }
         }
     }

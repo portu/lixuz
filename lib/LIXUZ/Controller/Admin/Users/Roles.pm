@@ -286,9 +286,10 @@ sub get_groups : Private
                     'EDIT_OTHER_ARTICLES',
                 ],
             },
-            $i18n->get('Preview own articles') => {
+            $i18n->get('Preview and read own articles') => {
                 paths => [ 
-                    '/articles/preview'
+                    '/articles/preview',
+                    '/articles/read'
                 ],
             },
             $i18n->get('Preview others articles') => {
@@ -422,6 +423,7 @@ sub get_groups : Private
                     '/newsletter/submitManual',
                     '/newsletter/subscriptionGroupEdit',
                     '/newsletter/sentPreviously',
+                    '/newsletter/subscriberInfo',
                 ],
             },
         },
