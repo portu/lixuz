@@ -258,12 +258,17 @@ function manualNewsletterFormatChange ()
     var t = $('#mail_type').val();
     if(t == 'text')
     {
-        try { editors['mail_editor'].hide(); editors['mail_editor'].destroy(); editors['mail_editor'] = null; } catch (e) { }
+        try
+        {
+            var editor = lixuzRTE.get('mail_editor');
+            editor.hide();
+            editor.destroy();
+            editor = null;
+        } catch (e) { }
     }
     else
     {
-        editorFormEditor = createLixuzRTE('mail_editor');
-        editors['mail_editor'] = editorFormEditor;
+        lixuzRTE.init('mail_editor');
     }
 }
 
