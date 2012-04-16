@@ -788,7 +788,14 @@ sub getField
                     field_id => $field_id,
                     option_id => $v,
                 });
-            push(@resolved,$val->option_name);
+            if(not defined $val)
+            {
+                $c->log->warn('Failed to locate value for option_id='.$v.' for field_id='.$field_id);
+            }
+            else
+            {
+                push(@resolved,$val->option_name);
+            }
         }
         return(join(', ',@resolved));
     }
