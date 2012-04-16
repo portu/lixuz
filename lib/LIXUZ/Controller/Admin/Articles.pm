@@ -344,11 +344,13 @@ sub read : Local Args
                     {
                         $caption = $fileObj->caption;
                     }
+                    my $fileNameSplit = $fileObj->file_name;
+                    $fileNameSplit =~ s/(.{17})/$1<br \/>/g;
                     my $info = {
                         iconItem =>$fileObj->get_icon($c),
                         iconItemBody => $fileObj->get_url_aspect($c,250,250),
                         file_id => $fileObj->file_id,
-                        file_name => $fileObj->file_name,
+                        file_name => $fileNameSplit,
                         fsize => $fileObj->sizeString($c),
                         caption => $caption,
                         identifier => $fileObj->identifier
