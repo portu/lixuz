@@ -330,24 +330,37 @@ sub read : Local Args
             my $files = [];
             if ($article->files)
             {
-                my $fil = $article->files;
-                while(my $f = $fil->next)
+                my $file = $article->files;
+                while(my $f = $file->next)
                 {
                     my $caption = $f->caption;
+                    my $fileObj = $f->file;
+                    if(not defined $fileObj)
+                    {
+                        $c->log->warn('Failed to locate LzFile entry for file '.$f->file_id.' attached to object '.$f->article_id);
+                        next;
+                    }
                     if(not defined $caption)
                     {
-                        $caption = $f->file->caption;
+                        $caption = $fileObj->caption;
                     }
                     my $info = {
-                        iconItem =>$f->file->get_icon($c),
-                        iconItemBody => $f->file->get_url_aspect($c,250,250),
-                        file_id => $f->file->file_id,
-                        file_name => $f->file->file_name,
-                        file_owner => $f->file->ownerUser->name,
-                        fsize => $f->file->sizeString($c),
+                        iconItem =>$fileObj->get_icon($c),
+                        iconItemBody => $fileObj->get_url_aspect($c,250,250),
+                        file_id => $fileObj->file_id,
+                        file_name => $fileObj->file_name,
+                        fsize => $fileObj->sizeString($c),
                         caption => $caption,
-                        identifier => $f->file->identifier
+                        identifier => $fileObj->identifier
                     };
+                    if ($fileObj->ownerUser)
+                    {
+                        $info->{file_owner} = $fileObj->ownerUser->name;
+                    }
+                    else
+                    {
+                        $info->{file_owner} = $fileObj->owner;
+                    }
                    push(@{$files},$info);
                 }
             }
