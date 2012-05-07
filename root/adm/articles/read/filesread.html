@@ -22,9 +22,8 @@
 %$i++;
 <% ($i==1 ||($i-1)%2==0) ? '<tr>' : ''|n %>
 <td align="center">
-    <div style="border:1px solid #5F94BF;background-color: #E0E8EF;padding-top:5px;width:160px;height:auto"> 
-
-<a href="#" title="<%$opt->{caption}%>"><img class="filePreview" style="border:0;" src="<%$opt->{iconItem} |n %>"></a>
+    <div style="border:1px solid #5F94BF;background-color: #E0E8EF;padding-top:5px;width:160px;height:auto">
+        <a href="/files/get/<%$opt->{identifier}%>/<% $opt->{file_name}%> " title="<%$opt->{caption}%>" target="_blank"><img class="filePreview" style="border:0;" src="<%$opt->{iconItem} |n %>"></a>
 %if($opt->{caption}){
 <div style="font-size: 8pt;margin-left:3px;margin-right:3px;margin-top:3px;text-align:left;"><%$opt->{caption}%></div>
 %} else {
@@ -35,10 +34,12 @@
 <div style="font-size: 9pt;margin-left:3px;margin-right:3px;margin-top:3px;text-align:left;"><%$i18n->get('Foto: ')%><%$opt->{file_owner}%></div>
 <div style="font-size: 9pt;margin-left:3px;margin-right:3px;margin-top:3px;text-align:left;"><%$i18n->get('File Size: ')%><%$opt->{fsize}%></div>
 </div>
+<br>
+<div> <a href="/files/get/<%$opt->{identifier}%>/<% $opt->{file_name}%>" target="_blank">Download</a> </div>
 </td><td>&nbsp;</td>
-    <% $i%4==0 ? '</tr>' : '' %>
+<% $i%4==0 ? '</tr>' : '' %>
 %}
-</table>    
+</table>   
 </div>
 <%args>
 $i18n
