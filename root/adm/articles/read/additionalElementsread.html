@@ -17,29 +17,15 @@
 </%perl>
 <div id="article_elements_list">
 <br />
-<table cellspacing="0" class="listView" id="articleAdditionalElementList">
-<tr>
-    <td class="rowHead"><% $i18n->get('ID') |n %></td>
-    <td class="rowHead"><% $i18n->get('Element') |n %></td>
-    <td class="rowHead"><% $i18n->get('Value') |n %></td>
-    <td class="rowHead"><% $i18n->get('Type') |n %></td>
-</tr>
-<tr class="dataRow" style="display:none;">
-<td class="uid"></td>
-<td class="key"></td>
-<td class="value"></td>
-<td class="type"></td>
-</tr>
+<table cellspacing="0" id="articleAdditionalElementList">
 %my $hadRel = 0;
 %if($elements) {
 %while(my $keyvalue = $elements->next) {
 % $hadRel = 1;
 % $keyvalue = $keyvalue->element;
-<tr class="dataRow">
-<td class="uid"><% $keyvalue->keyvalue_id |n %></td>
-<td class="key"><% $keyvalue->thekey |n %></td>
-<td class="value"><% $keyvalue->value |n %></td>
-<td class="type"><% $keyvalue->type %></td>
+<tr>
+<td><% $keyvalue->thekey |n %> : </td>
+<td><% $keyvalue->value |n %></td>
 </tr>
 %}
 %} 
