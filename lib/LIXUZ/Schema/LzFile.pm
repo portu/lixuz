@@ -1024,6 +1024,12 @@ sub get_url_aspect
 {
     my($self, $c, $height, $width) = @_;
 
+    # Die if this isn't an image file
+    if (!$self->is_image)
+    {
+        carp('get_url_aspect called on non-image file '.$self->file_id);
+    }
+
     # If we only got either height or width, then hand control to get_url,
     # as we don't need to do any calculation
     if ( !defined($height) || !defined($width) )
