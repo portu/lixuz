@@ -56,6 +56,7 @@ use Exporter qw(import);
 use File::stat;
 use IO::File ();
 use LIXUZ::HelperModules::Cache qw(get_ckey CT_24H);
+use Carp qw(croak);
 
 our @EXPORT_OK = qw(lixuz_serve_static_file lixuz_serve_scalar_file get_new_aspect fsize);
 
@@ -146,12 +147,12 @@ sub get_new_aspect
     }
     if ((not defined $oldVal or $oldVal == 0) || (not defined $newVal or $newVal == 0))
     {
-        die("oldVal or newVal is zero");
+        croak("oldVal or newVal is zero");
     }
     $percentage_change = $oldVal/$newVal;
     if ($changeVal == 0 || $percentage_change == 0)
     {
-        die("changeVal or percentage_change is zero");
+        croak("changeVal or percentage_change is zero");
     }
     return sprintf('%d',$changeVal / $percentage_change );
 }
