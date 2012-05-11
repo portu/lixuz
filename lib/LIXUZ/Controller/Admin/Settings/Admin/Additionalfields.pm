@@ -266,7 +266,7 @@ sub submit : Local
     if(defined $r->param('type') && $created)
     {
         my $type = $r->param('type');
-        if(not grep( { $_ eq $type } qw(singleline multiline user-pulldown checkbox predefined-pulldown range range-pulldown datetime date multi-select)))
+        if(not grep( { $_ eq $type } qw(singleline multiline user-pulldown checkbox predefined-pulldown range range-pulldown datetime date multi-select datetimerange)))
         {
             $field->delete() if $created;
             return json_error($c,'UNKNOWNTYPE','The type "'.$r->param('type').'" is unknown');

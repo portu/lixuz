@@ -1,0 +1,53 @@
+<input type="text" size="65" style="width:566px;" id="<%$field->{fieldname}%>" name="<%$field->{fieldname}%>" value="<%$field->{value}%>"/> <a href="#" onclick="return false;" id="<%$field->{fieldname}%>-triggerButton"><img src="/static/images/calendar.png" style="border:0;" /></a>
+<script type='text/javascript'>
+    $LAB.queue(function () {
+        var SELECTED_RANGE = null;
+        function getselectionHandler()
+        {
+            var startDate = null;
+            var ignoreEvent = false;
+
+            return function(cal)
+            {
+                var selectionObject = cal.params;
+                selectionObject.inputField.value = cal.date.print(selectionObject.ifFormat);
+                var selectedDate = selectionObject.inputField.value;
+
+                if (startDate == null) 
+                {
+                    startDate = selectedDate;
+                    SELECTED_RANGE = null;
+                    cal.refresh();
+                }
+                else
+                {
+                    ignoreEvent = true;
+                    selectionObject.inputField.value = "";
+                    selectionObject.inputField.value =startDate+"-"+selectedDate;   
+                    ignoreEvent = false;
+                    startDate = null;
+                    cal.refresh();
+                }
+            };
+
+        };
+        Calendar.setup({
+            inputField  : "<%$field->{fieldname}%>",
+            ifFormat    : "%d.%m.%Y %H:%M",
+            showsTime   : true,
+            timeFormat  : 24,
+            button      : "<%$field->{fieldname}%>-triggerButton",
+            singleClick : true,
+            onSelect    : getselectionHandler(),
+            step        : 1
+        })
+    });
+</script>
+
+<%args>
+$field
+$i18n
+$component
+$moduleFieldId => undef
+$fieldExtraHTML
+</%args>

@@ -136,5 +136,10 @@ my $typeOptions = select_options_manually([
         name => $i18n->get('Date'),
         selected => $type eq 'date',
     },
+    {
+        value => 'datetimerange',
+        name => $i18n->get('Date and time range'),
+        selected => $type eq 'datetimerange',
+    },
 	]);
 </%init>

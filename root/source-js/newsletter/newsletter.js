@@ -554,7 +554,29 @@ function editSubscriber (subscriberid)
 function importSubscriberWindow ()
 {
     var html = '<form action="/admin/newsletter/importsubscriber" name="importSubscriber" id="importSubscriber" method="post" enctype="multipart/form-data">';
-    html = html + '<table><tr><td>'+i18n.get('Import CSV')+':</td><td><input type="file" id="impsub" name="impsub" /></td></tr>';
+    html = html +'<table><tr><td colspan="2"><div style="overflow:auto; height: 75%;" id="LzGroupList"></div></td></tr>';
+
+    $.get('/admin/newsletter/groupList', function (data)
+    {
+        var my_arr = [],
+        checked = [];
+        var table;
+        table = '<table>';
+
+        for(var i = 0; i < data.groups.length; i++)
+        {
+             var name = data.groups[i].group_name,
+             gid = data.groups[i].group_id;
+             if(name == '')
+             {
+                 name = '&nbsp;&nbsp;';
+             }
+             table = table +'<tr><td><input type="checkbox" name="chk_bk" id="chk_'+gid+'" value="'+gid+'"/></td><td>'+name+'</td></tr>';
+         }
+         table = table+'</table>';
+         $('#LzGroupList').html(table);
+   })
+    html = html + '<tr><td>'+i18n.get('Import CSV')+':</td><td><input type="file" id="impsub" name="impsub" /></td></tr>';
     html = html + '</table></form>';
     var buttons = {};
     buttons[i18n.get('Upload and close')] = function () { $('form#importSubscriber').submit(); };

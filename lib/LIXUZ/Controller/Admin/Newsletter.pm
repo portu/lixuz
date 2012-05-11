@@ -104,6 +104,20 @@ sub importsubscriber : Local
                             send_every => $interval,
                         });
                         $subscriber->update();
+                        my $latestsubscriberid = $subscriber->subscription_id;
+                        if (defined $c->req->param('chk_bk') and length $c->req->param('chk_bk'))
+                        {
+                            my @check_group_array = $c->req->param('chk_bk');
+                            foreach my $grpid (@check_group_array)
+                            {
+                                my $subgroupobj = $c->model('LIXUZDB::LzNewsletterSubscriptionGroup')->create({
+                                        group_id => $grpid,
+                                        subscription_id => $latestsubscriberid,
+                                    });
+                                $subgroupobj->update();
+                            }
+                        }
+
                     }
                 }
             }

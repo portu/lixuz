@@ -58,7 +58,7 @@ function LZ_FieldTypeChanged ()
         $('#heightselection').css('display','block');
         $('#rteselection').css('display','block');
     }
-    else if ($('#type').val().match(/range/))
+    else if ($('#type').val().match(/^range/))
     {
         $('#rangeselection').css('display','block');
     }

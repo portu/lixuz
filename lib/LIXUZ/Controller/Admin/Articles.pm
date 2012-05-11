@@ -58,31 +58,103 @@ sub index : Path Args(0) Form('/core/search')
     my $article = $c->model('LIXUZDB::LzArticle');
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Articles');
     my $i18n = $c->stash->{i18n};
+    my $message;
+    my $msgStatus;
+    my $msgReassign;
+
     if (defined $c->req->param('articlestatuschange')) 
     {
         foreach my $param (keys %{$c->req->params})
         {
             my $ID = $param;
-            next if not $ID =~ s/^articlestatus_//;
-
-            my $updatedstatus = $c->req->param($param);
-            my $articleobj = get_latest_article($c,$ID);
-            my $liverevision = $articleobj->get_column('revision');
-            if ($articleobj->can_write($c))
+            if ($ID =~ s/^article_Status_//)
             {
-                if ($c->user->can_access('STATUSCHANGE_'.$updatedstatus))
+                if (not $ID=~/\D/)
                 {
-                    $articleobj->set_column('status_id',$updatedstatus);
-                    $articleobj->update();
-                    if ($updatedstatus == 2)
+                    my $updatedstatus = $c->req->param($param);
+                    my $articleobj = get_latest_article($c,$ID);
+                    my $liverevision = $articleobj->get_column('revision');
+                    if ($articleobj->can_write($c))
                     {
-                        set_other_articles_inactive($c,$ID,$liverevision);
+                        if ($c->user->can_access('STATUSCHANGE_'.$updatedstatus))
+                        {
+                            $articleobj->set_column('status_id',$updatedstatus);
+                            $articleobj->update();
+                            if ($updatedstatus == 2)
+                            {
+                                set_other_articles_inactive($c,$ID,$liverevision);
+                            }
+                            $msgStatus = 1;
+                        }
                     }
                 }
-                
+            }
+            elsif($ID =~ s/^article_ReAssign_//)
+            {
+                if (not $ID=~/\D/)
+                {
+                    my $updatedassignedto = $c->req->param($param);
+                    my $articleobj = get_latest_article($c,$ID);
+                    my $workflow = $articleobj->workflow;
+                    my $assigned_by = $workflow->assigned_by;
+
+                    if ($articleobj->can_write($c))
+                    {
+                        if ((defined $assigned_by && $assigned_by == $c->user->user_id) || (defined $workflow->assigned_to_user && $workflow->assigned_to_user == $c->user->user_id) || $c->user->can_access('SUPER_USER'))
+                        {
+                            if ($updatedassignedto =~ s/^user_//)
+                            {
+                                if (not $updatedassignedto=~/\D/)
+                                {
+                                    my $userid = $c->model('LIXUZDB::LzUser')->find({user_id => $updatedassignedto});
+                                    if (defined $userid and $userid->is_active)
+                                    {
+                                        if ($c->user->can_access('WORKFLOW_REASSIGN_TO_USER'))
+                                        {
+                                            $workflow->set_column('assigned_to_user',$updatedassignedto);
+                                            $workflow->set_column('assigned_to_role',undef);
+                                        }
+                                    }
+                                }
+                            }
+                            elsif($updatedassignedto =~ s/^role_//)
+                            {                                
+                                if (not $updatedassignedto=~/\D/)
+                                {
+                                    my $roleid = $c->model('LIXUZDB::LzRole')->find({role_id => $updatedassignedto});
+                                    if (defined $roleid and $roleid->is_active)
+                                    {
+                                        if ($c->user->can_access('WORKFLOW_REASSIGN_TO_ROLE') and $c->user->can_access('WORKFLOW_REASSIGN_TO_ROLE_'.$updatedassignedto) )
+                                        {
+                                            $workflow->set_column('assigned_to_user',undef);
+                                            $workflow->set_column('assigned_to_role',$updatedassignedto);
+                                        }
+                                    }
+                                }
+                            }
+                            $workflow->update();
+                            $msgReassign = 1;
+                        }
+                    }
+                }
             }
         }
-        $self->messageToList($c,$i18n->get('Article status changed'));
+
+        if ($msgStatus == 1 and  $msgReassign ==1)
+        {
+            $message = $i18n->get('Article status changed, and article(s) have been reassigned');
+        }
+        elsif($msgStatus == 1)
+        {
+            $message = $i18n->get('Article status changed');
+        }
+        elsif($msgReassign == 1)
+        {
+            $message = $i18n->get('Article(s) have been reassigned');
+        }
+
+
+        $self->messageToList($c, $message );
     } 
 
     # Order the articles by default
@@ -215,6 +287,7 @@ sub init_searchFilters : Private
 
     my $i18n = $c->stash->{i18n};
     my $userOptions = [];
+    my $userOptionAccess = [];
     my $users = $c->model('LIXUZDB::LzUser')->search(undef,{ order_by => 'user_name' });
     while(my $user = $users->next)
     {
@@ -223,15 +296,28 @@ sub init_searchFilters : Private
                 value =>  'user-'.$user->user_id,
                 label =>  $user->user_name.' '.$i18n->get('(user)'),
             });
+        next if not $user->is_active or not $c->user->can_access('WORKFLOW_REASSIGN_TO_USER');
+        push(@{$userOptionAccess}, {
+                value => 'user_'.$user->user_id,
+                label =>  $user->user_name.' '.$i18n->get('(user)'),
+            });
     }
     my $roles= $c->model('LIXUZDB::LzRole')->search(undef,{ order_by => 'role_name' });
     while(my $role = $roles->next)
     {
-         push(@{$userOptions}, {
-                value =>  'role-'.$role->role_id,
-                label =>  $role->role_name.' '.$i18n->get('(role)'),
+        push(@{$userOptions}, {
+            value =>  'role-'.$role->role_id,
+            label =>  $role->role_name.' '.$i18n->get('(role)'),
         });
+        next if not $role->is_active or not ( $c->user->can_access('WORKFLOW_REASSIGN_TO_ROLE') and $c->user->can_access('WORKFLOW_REASSIGN_TO_ROLE_'.$role->role_id) );
+        push(@{$userOptionAccess}, {
+                value =>  'role_'.$role->role_id,
+                label =>  $role->role_name.' '.$i18n->get('(role)'),
+            });
     }
+
+    $c->stash->{userOptions} = $userOptionAccess;
+
     my $statusOptions = [];
     my $statusOptionAccess = [];
     my $statuses = $c->model('LIXUZDB::LzStatus');
@@ -458,8 +544,6 @@ sub read : Local Args
         }
     }
 }
-
-
 
 # --------
 # Preview

@@ -22,22 +22,23 @@ $(function ()
             selectdOption = $this.data('value'),
             clickedID     = '#'+$this.parents('div.select').attr('id'),
             divData       = $this.parents('div.select').data('value'),
-            $statusDiv    = $('#articlestatus_'+divData);
+            divType       = $this.parents('div.select').attr('divtype'),
+            $statusDiv    = $("#article_"+divType+"_"+divData);
 
         if($statusDiv.data('value') == selectdOption)
         {
             $statusDiv.attr('disabled','disabled');
             $(clickedID).removeAttr("dt");
-            $('#unsavedstatus_'+divData).html('');
-            $('#unsavedTd_'+divData).css('height','auto');
+            $('#unsaved_'+divType+'_'+divData).html('');
+            $('#unsavedTd_'+divType+'_'+divData).css('height','auto');
         }
         else
         {
-            $('#articlestatus_'+ divData).removeAttr('disabled');
+            $("#article_"+divType+"_"+divData).removeAttr('disabled');
             $statusDiv.val(selectdOption);
             $(clickedID).attr('dt','nofollow');
-            $('#unsavedstatus_'+ divData).html(i18n.get('(Unsaved)'));
-            $('#unsavedTd_'    + divData).css("height", "35px");
+            $('#unsaved_'+divType+'_'+divData).html(i18n.get('(Unsaved)'));
+            $('#unsavedTd_'+divType+'_'+divData).css("height", "35px");
         }
         var $unsaveddiv = $('#quickedit div[dt=nofollow]');
 
@@ -84,9 +85,10 @@ $(function ()
     {
         var $this = $(this),
             cdivId   = $this.attr('id'),
+            cdivType = $(this).attr('divtype'),
             cdivData = $this.data('value');
-        $("#writeaccesss_"+cdivData).hide();
-        $("#writeaccessmsg_"+cdivData).show();
+        $("#writeaccesss_"+cdivType+"_"+cdivData).hide();
+        $("#writeaccessmsg_"+cdivType+"_"+cdivData).show();
 
         $('div.showmsg').each(function(){
             var $this  = $(this),
@@ -94,10 +96,11 @@ $(function ()
 
             $this.removeClass('showmsg');
             $this.hide();
-            $("#writeaccesss_"+cdivDt).show();
+            $("#writeaccesss_"+cdivType+"_"+cdivDt).show();
         })
 
-        $("#writeaccessmsg_"+cdivData).addClass('showmsg');
+        $("#writeaccessmsg_"+cdivType+"_"+cdivData).addClass('showmsg');
+
     });
 
     // Don't run beforeunload when submitting
@@ -114,3 +117,4 @@ $(function ()
         }
     });
 });
+

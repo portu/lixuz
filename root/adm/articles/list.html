@@ -130,12 +130,12 @@ if($artAuthor eq $author)
     $artAuthor = '';
 }
 </%perl>
-<td id="unsavedTd_<% $article->article_id %>">
+<td id="unsavedTd_Status_<% $article->article_id %>">
 %if($article->can_write($c)){  
 <div class="statusChangeEntry">
-    <div id="unsavedstatus_<% $article->article_id %>"></div>
-<div class="select" id="statusdiv_<% $article->article_id %>" data-value="<%$article->article_id %>">
-        <input type="hidden" name="articlestatus_<%$article->article_id%>" id="articlestatus_<%$article->article_id%>" value="<%$article->status_id%>" disabled="disabled" data-value="<%$article->status_id%>">
+    <div id="unsaved_Status_<% $article->article_id %>"></div>
+<div class="select" id="div_Status_<% $article->article_id %>" data-value="<%$article->article_id %>" divtype="Status">
+        <input type="hidden" name="article_Status_<%$article->article_id%>" id="article_Status_<%$article->article_id%>" value="<%$article->status_id%>" disabled="disabled" data-value="<%$article->status_id%>">
         <ul>
             <li data-value="<%$article->status_id%>" class="destination option small darr <% $i%2==0 ? 'dest' : 'loc' %>"><%$stat_name%></li>
 %foreach my $opt (@{$statusOptions})            
@@ -150,20 +150,60 @@ if($artAuthor eq $author)
  <div style="clear: both;"></div>
  </div>
 %}else{ 
- <div id="writeaccesss_<% $article->article_id %>" class="dclass" data-value="<% $article->article_id %>">
+ <div id="writeaccesss_Status_<% $article->article_id %>" class="dclass" data-value="<% $article->article_id %>">
          <%$stat_name%>
      </div>
-     <div id="writeaccessmsg_<% $article->article_id %>" style="display:none" data-value="<% $article->article_id %>">
+     <div id="writeaccessmsg_Status_<% $article->article_id %>" style="display:none" data-value="<% $article->article_id %>">
        <% $i18n->get("You don't have permission to change the status of this article")  %>
      </div>
-     
 %}     
 
 </td>
     <td><span class="useTipsy" title="<% $artAuthor %>"><% $author %></span></td>
 %if($article->workflow) {
 %my $title = $article->workflow->assigned_to_string($c,0,1);
-    <td><span title="<% $title |h %>" class="useTipsy"><% $article->workflow->assigned_to_string($c,1) %></span></td>
+
+<td id="unsavedTd_ReAssign_<% $article->article_id %>">
+%if($article->can_write($c)){
+    <div id="statusChangeEntry">
+        <div id="unsaved_ReAssign_<% $article->article_id %>"></div>
+        <div class="select" id="div_ReAssign_<% $article->article_id %>" data-value="<%$article->article_id %>" divtype="ReAssign">
+            <input type="hidden" name="article_ReAssign_<%$article->article_id%>" id="article_ReAssign_<%$article->article_id%>" value="<%$article->workflow->assigned_to_user %>" disabled="disabled" data-value="<% $article->workflow->assigned_to_user %>">
+            <ul>
+                <li data-value= "<% $article->workflow->assigned_to_user %>" class="destination option small darr <% $i%2==0 ? 'dest' : 'loc' %>"><% $article->workflow->assigned_to_string($c,1) %></li>
+%foreach my $opt (@{$userOptions})
+%{
+%if( $article->workflow->assigned_to_user )
+%{
+%my $uidd =  $opt->{value} ;
+%$uidd =~ s/^user_//;
+%if( $article->workflow->assigned_to_user != $uidd )
+%{
+<li data-value="<%$opt->{value}%>" class="destination option small <% $i%2==0 ? 'dest' : 'loc' %>"><% $opt->{label} |n %> </li>
+%}}elsif($article->workflow->assigned_to_role){
+%my $rodd =  $opt->{value} ;
+%$rodd =~ s/^role_//;
+%if( $article->workflow->assigned_to_role != $rodd )
+%{
+<li data-value="<%$opt->{value}%>" class="destination option small <% $i%2==0 ? 'dest' : 'loc' %>"><% $opt->{label} |n %></li>
+%}}
+%}
+            </ul>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+%}else{
+<div id="writeaccesss_ReAssign_<% $article->article_id %>" class="dclass" data-value="<% $article->article_id %>" divtype="ReAssign">
+    <% $article->workflow->assigned_to_string($c,1)  %>
+    </div>
+    <div id="writeaccessmsg_ReAssign_<% $article->article_id %>" style="display:none" data-value="<% $article->article_id %>">
+        <% $i18n->get("You don't have permission to reassign this article")  %>
+    </div>
+%}
+</td>
+
+
+
 %} else {
 % $c->log->debug('Article '.$article->article_id.' is missing a workflow entry!');
     <td><% $i18n->get('(nobody)') |n %></td>
@@ -235,4 +275,5 @@ $trashMode => undef
 $i18n
 $ordertype
 $statusOptions => []
+$userOptions => []
 </%args>

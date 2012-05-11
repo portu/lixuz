@@ -53,7 +53,7 @@ use Moose;
 use Carp;
 use Scalar::Util qw(weaken);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl add_bodyClass add_globalJSVar);
-use LIXUZ::HelperModules::Calendar qw(datetime_to_SQL datetime_from_SQL);
+use LIXUZ::HelperModules::Calendar qw(datetime_to_SQL datetime_from_SQL datetime_from_SQL_to_unix);
 use LIXUZ::HelperModules::Editor qw(create_editor);
 use Carp;
 use Hash::Merge qw(merge);
@@ -547,6 +547,43 @@ sub _get_value
             $value = '';
         }
     }
+    elsif($field->field_type eq 'datetimerange' and length $value)
+    {
+        my $frmdate;
+        my $todate;
+        my @parts = split('-',$value);
+        $frmdate = $parts[0];
+        $todate = $parts[1];
+        if (defined($frmdate) and defined($todate))
+        {
+            $value = $frmdate.'-'.$todate;
+            $frmdate = datetime_to_SQL($frmdate);
+            $todate  = datetime_to_SQL($todate);
+            if ($frmdate eq '0000-00-00 00:00:00' || $todate eq '0000-00-00 00:00:00')
+            {
+                $value='';
+            }
+            else
+            {
+                $frmdate = datetime_from_SQL_to_unix($frmdate);
+                $todate = datetime_from_SQL_to_unix($todate);
+            
+                if (not $frmdate=~/\D/ || not $todate =~/\D/)
+                {
+                    if ($frmdate >= $todate)
+                    {
+                        $c->log->warn('Fields.pm _get_value(): Invalid range value: '.$value);
+                        return undef;
+                    }
+                }
+            }
+        }
+        else
+        {
+            $value ='';
+        }
+    }  
+
     return $value;
 }
 
@@ -632,6 +669,10 @@ sub _prep_field
         elsif($f->field_type eq 'datetime' and length $value)
         {
             $info->{value} = datetime_from_SQL($value);
+        }
+        elsif($f->field_type eq 'datetimerange' and length $value)
+        {
+            $info->{value} = $value;
         }
         else
         {
