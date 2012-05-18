@@ -92,7 +92,6 @@ with 'LIXUZ::Role::AccessControl::Model';
 sub children_recursive
 {
     my $self = shift;
-    my $arrayRef = shift;
 
     my @children;
 
