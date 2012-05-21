@@ -36,7 +36,7 @@ our @EXPORT_OK = qw(get_live_articles_from);
 #   that will be counted as live in addition to the primary one.
 # rows = a limit on rows that gets appended to the search
 # order_by = an order by that gets appended to the search
-sub get_live_articles_from
+sub get_live_articles_from($;$$)
 {
     my($object,$o) = @_;
     $o = defined $o ? $o : {};
@@ -65,6 +65,10 @@ sub get_live_articles_from
     {
         $searchParams->{join} = 'revisionMeta';
         $search->{'revisionMeta.is_latest_in_status'} = 1;
+    }
+    if (!ref($object) || !$object->can('search'))
+    {
+        carp('get_live_articles_from(): Got non-searchable object: '.ref($object));
     }
     return $object->search( $search, $searchParams );
 }
