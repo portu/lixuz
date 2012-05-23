@@ -691,7 +691,7 @@ sub is_live
         push(@liveStatuses,$extraLiveStatus);
     }
 
-    my $ckey = get_ckey('article','livestatus',$self->article_id.'_'.join('_',@liveStatuses));
+    my $ckey = get_ckey('article','livestatus',$self->article_id.'_'.$self->revision.'_'.join('_',@liveStatuses));
     my $return = $c->cache->get($ckey);
     if(defined $return)
     {
