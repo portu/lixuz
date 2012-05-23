@@ -801,7 +801,7 @@ sub getField
     }
     else
     {
-        $c->log->debug('Unhandled getField() field type "'.$field->field_type.'" - returning raw value');
+        $c->log->warn('Unhandled getField() field type "'.$field->field_type.'" - returning raw value');
         return $value;
     }
 }
