@@ -721,7 +721,7 @@ sub is_live
         {
             $return = true;
             if(defined $self->expiry_time && 
-                (datetime_from_SQL_to_unix($self->expiry_time) > time())
+                (datetime_from_SQL_to_unix($self->expiry_time) < time())
               )
             {
                 $return = false;
