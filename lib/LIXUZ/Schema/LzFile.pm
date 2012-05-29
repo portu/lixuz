@@ -1476,8 +1476,8 @@ sub _returnStringAndAspect
     {
         return ($string,$self->height,$self->width);
     }
-    $height //= get_new_aspect($self->width,$self->height,$width);
-    $width  //= get_new_aspect($self->width,$self->height,undef,$height);
+    $height ||= get_new_aspect($self->width,$self->height,$width);
+    $width  ||= get_new_aspect($self->width,$self->height,undef,$height);
     return ($string,$height,$width);
 }
 
