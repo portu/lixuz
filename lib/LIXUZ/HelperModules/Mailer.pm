@@ -12,6 +12,7 @@ has '_mails' => (
 has '_defaultFrom' => (
     is => 'ro',
     builder => '_buildFrom',
+    lazy => 1,
 );
 
 has 'c' => (
@@ -56,11 +57,11 @@ sub add_mail
     {
         if ($contentHtml)
         {
-            $contentHtml = 'ORIGINAL TO: '.join(',',@{ $settings->{recipients} })."<br />\n<br />\n".$contentHtml;
+            $contentHtml = 'ORIGINAL TO: '.join(',',@{ $recipients })."<br />\n<br />\n".$contentHtml;
         }
         if ($contentText)
         {
-            $contentText = 'ORIGINAL TO: '.join(',',@{ $settings->{recipients} })."\n\n".$contentText;
+            $contentText = 'ORIGINAL TO: '.join(',',@{ $recipients })."\n\n".$contentText;
         }
         $recipients = [ $self->c->config->{LIXUZ}->{email_to_override} ];
     }
