@@ -99,6 +99,12 @@ if ($fork)
     }
 }
 
+# Remove the logfile if it's empty
+if (-s $logfile == 0)
+{
+    unlink($logfile);
+}
+
 sub trySend
 {
     my $mail = shift;
