@@ -439,17 +439,19 @@ sub read : Local Args
                         file_name => $fileNameSplit,
                         fsize => $fileObj->sizeString($c),
                         caption => $caption,
-                        identifier => $fileObj->identifier
+                        identifier => $fileObj->identifier,
+                        fields => {},
                     };
-                    if ($fileObj->ownerUser)
+                    my $fields = $fileObj->getAllFields($c);
+                    if ($fields)
                     {
-                        $info->{file_owner} = $fileObj->ownerUser->name;
+                        foreach my $f (keys %{$fields})
+                        {
+                            my $field = $c->model('LIXUZDB::LzField')->find({ field_id => $f });
+                            $info->{fields}->{ $field->field_name } = $fields->{$f};
+                        }
                     }
-                    else
-                    {
-                        $info->{file_owner} = $fileObj->owner;
-                    }
-                   push(@{$files},$info);
+                    push(@{$files},$info);
                 }
             }
 
