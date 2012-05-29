@@ -1053,7 +1053,7 @@ sub get_url_aspect
     # return the original size instead of the resized size
     if ($width >= $self->width && $height >= $self->height)
     {
-        return $self->get_url($c);
+        return $self->_returnStringAndAspect(wantarray,$self->get_url($c),$self->height,$self->width);
     }
 
     # If either the height or width exceed the original, then use the original
