@@ -92,7 +92,12 @@ sub resolve
     my $self = shift;
     if(not defined $self->template)
     {
-        $self->message('Attempted to render page without template','NOTEMPLATE');
+        my $err = 'Log: resolve() called without a template attribute';
+        if ($self->isa('LIXUZ::HelperModules::TemplateRenderer::URLHandler'))
+        {
+            $err .= ' (in ::URLHandler) for '.$self->c->req->uri->as_string;
+        }
+        $self->message('Attempted to render page without template','NOTEMPLATE',$err);
     }
     $self->_resolve_deps(
         $self->_templateInfo->{template_deps_parsed}
@@ -254,6 +259,17 @@ sub message
     {
         $template = $self->c->model('LIXUZDB::LzTemplate')->search({ type => 'message' });
     }
+    if (defined $techMessage)
+    {
+        if (!($techMessage =~ s/^Log:\s*//))
+        {
+            $self->c->stash->{lz_message_intMsg} = $techMessage;
+        }
+        if (! $self->c->stash->{_triedPrimaryMessage})
+        {
+            $self->c->log->warn('TemplateRenderer: '.$techMessage);
+        }
+    }
     if(!$template->count || $self->c->stash->{_triedPrimaryMessage})
     {
         my $c = $self->c;
@@ -261,10 +277,6 @@ sub message
         $c->stash->{lz_message_type} = $messageType;
         $c->stash->{template} = 'adm/core/message-fallback.html';
         $c->stash->{i18n} //= undef;
-        if (defined $techMessage)
-        {
-            $c->stash->{lz_message_intMsg} = $techMessage;
-        }
         $c->detach();
     }
     else
@@ -333,13 +345,8 @@ sub _error
             $error = 'Unknown error';
         }
     }
-    if(defined $techReason)
-    {
-        $techReason = 'Technical: '.$techReason."\n".'HTTP code: '.$httpVal;
-        $self->resolve_var('lz_message_intMsg',$techReason);
-    }
     $self->c->res->status($httpVal);
-    $self->message($error, $httpVal);
+    $self->message($error, $httpVal,$techReason);
 }
 
 sub _getTemplate
@@ -585,11 +592,11 @@ $httpError is the HTTP error code.
 
 $error is the error text as seen by the user.
 
-$techReason is a technical reason for the error, this is included in the
-markup inside a HTML comment (so it can be viewed using the browsers view
-source function).
+$techReason is a technical reason for the error. This is logged, and included
+in the markup inside a HTML comment (so it can be viewed using the browsers
+view source function).
 
-=item I<message($message,$type)>
+=item I<message($message,$type,$techMessage)>
 
 This displays a message to the requesting user, which does not have
 to be an error.
@@ -599,6 +606,11 @@ $message is the message shown to the user.
 $messageType is the type of message, so that templates can display custom
 messages if they want to. This can be a string or int. If it is an int
 then the template should assume it is the http error code.
+
+$techMessage is a technical explanation for the above message. This is
+logged. If techMessage does not start with "Log: " it is also included in the
+markup inside a HTML comment (so it can be viewed using the browsers view
+source function).
 
 =item I<clearstate()>
 
