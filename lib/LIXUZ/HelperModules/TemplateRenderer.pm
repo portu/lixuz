@@ -97,6 +97,11 @@ sub resolve
         {
             $err .= ' (in ::URLHandler) for '.$self->c->req->uri->as_string;
         }
+        # Don't bother cluttering the error log with requests for /favicon.ico
+        if ($self->c->req->uri->path eq '/favicon.ico')
+        {
+            $err = undef;
+        }
         $self->message('Attempted to render page without template','NOTEMPLATE',$err);
     }
     $self->_resolve_deps(
