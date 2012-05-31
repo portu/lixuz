@@ -82,7 +82,7 @@ sub get_fileSpots
         {
             if(not defined $filespot_index->{$f->spot_no})
             {
-                $self->c->log->warn('Template for article '.$artid.' wants to use nonexistant file spot '.$f->spot_no.' - ignoring request');
+                $self->c->log->warn('Article '.$artid.' wants to use file spot '.$f->spot_no.' that is not present in template - ignoring request');
             }
             else
             {
