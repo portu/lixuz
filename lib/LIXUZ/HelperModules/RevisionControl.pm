@@ -390,14 +390,13 @@ sub _dbicPortableID
 
     if ($obj->id)
     {
-        push(@id, $obj->id);
+        push(@id, map($_ // '',$obj->id));
     }
     else
     {
         push(@id, ref($obj));
     }
-
-    return join('-',sort(@id));
+    return join('-', sort(@id));
 }
 
 sub _dbicCompare
