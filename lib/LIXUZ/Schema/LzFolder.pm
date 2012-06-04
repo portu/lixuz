@@ -173,13 +173,20 @@ sub recursive_delete
             $art->update();
         }
     }
-    my $files = $c->model('LIXUZDB::LzFile')->search({
+    my $files = $c->model('LIXUZDB::LzFileFolder')->search({
             folder_id => $self->folder_id
         });
     while(my $file = $files->next)
     {
-        $file->set_column('folder_id',$newParent);
-        $file->update();
+        if (!$file->primary_folder)
+        {
+            $file->delete();
+        }
+        else
+        {
+            $file->set_column('folder_id',$newParent);
+            $file->update();
+        }
     }
     $c->model('LIXUZDB::LzFieldModule')->search({
             module    => 'folders',
