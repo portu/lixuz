@@ -8,8 +8,9 @@ use Cwd qw(realpath);
 use 5.010;
 use lib "$FindBin::RealBin/../../lib/";
 use LIXUZ::HelperModules::Scripts qw(fakeC);
+use Text::Lorem;
 
-my $folderID = 1;
+my $folderID;
 my $templateID;
 my $statusID = 2;
 my $noART = 1;
@@ -20,8 +21,9 @@ my $usage = "Usage: ./createDummyArticle.pl OPTIONS
 
  Options:
  --folderid FOLDER_ID         Set the folder for the article
- --template TEMPLATE_ID       Set the template for the article
- --status STATUS_ID           Set the status for the article
+ --template TEMPLATE_ID       Set the template for the article. TEMPLATE_ID is an int
+                              or a comma-separated list of templates to select at random.
+ --status STATUS_ID           Set the status for the article (default: live/$statusID)
  --no INT                     Number of articles to create (default: 1)
  --autoimg                    Automatically assign a random number of images
                               (0-7) to the article. Image 1 always gets spot 1,
@@ -34,7 +36,7 @@ my $usage = "Usage: ./createDummyArticle.pl OPTIONS
 
 GetOptions(
     'folderid|folder_id=i' => \$folderID,
-    'templateid|template|template_id=i' => \$templateID,
+    'templateid|template|template_id=s' => \$templateID,
     'status|statusid|status_id=i' => \$statusID,
     'no=i' => \$noART,
     'autoimg' => \$autoImg,
@@ -45,7 +47,17 @@ GetOptions(
         $minImg //= 1;
         $autoImg = 1;
     },
+    'h|help' => sub
+    {
+        print $usage;
+        exit(0);
+    },
 ) or die($usage);
+
+if ($templateID !~ /^(\d+,?)+/)
+{
+    die("Invalid --template\n");
+}
 
 if(not defined $folderID)
 {
@@ -95,14 +107,26 @@ for(my $i = 0; $i < $noART; $i++)
 {
     silent
     {
-        my $title = randomSentence(2,5);
-        $title =~ s/\s*\.$//;
+        my $lipsum = Text::Lorem->new;
+        my $title = ucfirst(lc($lipsum->words( randBetween(2,5) )));
+        my $bodyLen = randBetween(5,15);
+        my $body = '';
+        while($bodyLen--)
+        {
+            $body .= '<p>'.$lipsum->sentences(randBetween(5,15)).'</p>';
+        }
+        my $template = $templateID;
+        if ($template =~ /\S/)
+        {
+            my @templates = split(/,/, $template);
+            $template = $templates[ int(rand(scalar(@templates))) ];
+        }
         my $art = $c->model('LIXUZDB::LzArticle')->create({
                 title        => $title,
-                body         => randomText( randBetween(7,15) ),
-                lead         => randomText(1),
-                author       => 'Dummy article generator',
-                template_id  => $templateID,
+                body         => $body,
+                lead         => $lipsum->sentences(randBetween(4,15)),
+                author       => 'Dummy Article Generator',
+                template_id  => $template,
                 status_id    => $statusID,
                 revision     => 0,
                 publish_time => \'now()',
@@ -181,72 +205,6 @@ sub randomImg
             return $f->file_id;
         }
     }
-}
-
-sub randomText
-{
-    my $paragraphs = shift;
-
-    my $sentences = randBetween(5,15);
-
-    my $string = '';
-
-    my $p = 0;
-    while($p <= $paragraphs)
-    {
-        my $s = 0;
-        my $paragraph = '';
-        while($s < $sentences)
-        {
-            $s++;
-            $paragraph .= randomSentence().' ';
-        }
-        $p++;
-        $string .= '<p>'.$paragraph.'</p>';
-    }
-    return $string;
-}
-
-sub randomSentence
-{
-    my $min = shift;
-    $min //= 5;
-    my $max = shift;
-    $max //= 20;
-
-    my $words = randBetween($min,$max);
-    my $sentence = '';
-    my $w = 0;
-    while($w < $words)
-    {
-        $sentence .= randomString( randBetween(2,13) ).' ';
-        $w++;
-    }
-    $sentence =~ s/ $/./;
-    $sentence = ucfirst($sentence);
-    return $sentence;
-}
-
-sub randomString
-{
-    my $length = shift;
-    my @chars;
-    if(int(rand(15)) == 15)
-    {
-        @chars = split(//,'1234567890');
-    }
-    else
-    {
-        @chars = split(//,'abcdefghijklmnopqrstuvwxyz');
-        $length = int($length / 2);
-    }
-    my $string = '';
-
-    while(length($string) < $length)
-    {
-        $string .= $chars[ int(rand(scalar(@chars))) ];
-    }
-    return $string;
 }
 
 sub randBetween
