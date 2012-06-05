@@ -47,6 +47,50 @@ sub default : Private
 #    exit(0);
 #}
 
+# This can be used to perform simple "are you alive and well?" checks on the
+# running Lixuz instance, ie. via monit. If it returns anything other than a
+# 200 OK then you know something is wrong, and you can take neccesary steps -
+# either automatic or manual.
+#
+# It will only allow requests from 127.0.0.1, anyone else will be redirected
+# to /admin
+sub alive : Path('/admin/alive')
+{
+    my($self,$c) = @_;
+    if ($c->req->address eq '127.0.0.1')
+    {
+        my $db = 0;
+        my $status = 200;
+
+        # Make sure our database connection is alive and well
+        try
+        {
+            if ($c->model('LIXUZDB::LzStatus')->search()->first)
+            {
+                $db = 1;
+            }
+        };
+
+        # If the database check failed, return an error
+        if(!$db)
+        {
+            $status = 500;
+            $c->res->body('EDATABASE');
+        }
+        else
+        # Everything went well, so return success
+        {
+            $c->res->body('OK');
+        }
+        $c->res->status($status);
+    }
+    else
+    {
+        $c->res->redirect('/admin');
+    }
+    $c->detach;
+}
+
 # Purpose: Populate the stash with some useful defaults
 sub auto : Private
 {
