@@ -152,8 +152,6 @@ sub index : Path Args(0) Form('/core/search')
         {
             $message = $i18n->get('Article(s) have been reassigned');
         }
-
-
         $self->messageToList($c, $message );
     } 
 
@@ -211,7 +209,6 @@ sub index : Path Args(0) Form('/core/search')
     }
     else
     {
-
         # Create drag and drop
         my $dnd = LIXUZ::HelperModules::DragDrop->new($c,'LIXUZDB::LzFolder','/admin/articles/folderAjax/',
             {
@@ -416,25 +413,42 @@ sub read : Local Args
             my $files = [];
             if ($article->files)
             {
-                my $fil = $article->files;
-                while(my $f = $fil->next)
+                my $file = $article->files;
+                while(my $f = $file->next)
                 {
                     my $caption = $f->caption;
+                    my $fileObj = $f->file;
+                    if(not defined $fileObj)
+                    {
+                        $c->log->warn('Failed to locate LzFile entry for file '.$f->file_id.' attached to object '.$f->article_id);
+                        next;
+                    }
+
                     if(not defined $caption)
                     {
-                        $caption = $f->file->caption;
+                        $caption = $fileObj->caption;
                     }
+                    my $fileNameSplit = $fileObj->file_name;
+                    $fileNameSplit =~ s/(.{17})/$1<br \/>/g;
                     my $info = {
-                        iconItem =>$f->file->get_icon($c),
-                        iconItemBody => $f->file->get_url_aspect($c,250,250),
-                        file_id => $f->file->file_id,
-                        file_name => $f->file->file_name,
-                        file_owner => $f->file->ownerUser->name,
-                        fsize => $f->file->sizeString($c),
+                        iconItem =>$fileObj->get_icon($c),
+                        iconItemBody => $fileObj->get_url_aspect($c,250,250),
+                        file_id => $fileObj->file_id,
+                        file_name => $fileObj->file_name,
+                        add_fields =>$fileObj->getAllFields_values($c),
+                        fsize => $fileObj->sizeString($c),
                         caption => $caption,
-                        identifier => $f->file->identifier
+                        identifier => $fileObj->identifier
                     };
-                   push(@{$files},$info);
+                    if ($fileObj->ownerUser)
+                    {
+                        $info->{file_owner} = $fileObj->ownerUser->name;
+                    }
+                    else
+                    {
+                        $info->{file_owner} = $fileObj->owner;
+                    }
+                    push(@{$files},$info);
                 }
             }
 
@@ -445,8 +459,6 @@ sub read : Local Args
                 folder_id => $article->folder->folder_id,
                 revision => $article->revision,
             });
-
-
             
             my @fieldList = $fields->get_fields;
             foreach my $field (@fieldList)
@@ -634,7 +646,6 @@ sub preview : Local Args
     $renderer->resolve_var('lz_preview_mode',$includes);
     $renderer->autorender();
 }
-
 
 sub previewInfo : Private
 {

@@ -185,6 +185,13 @@ sub getPathsHash
           '/newsletter/submitManual' => 'Send manual newsletters',
           '/newsletter/subscriptionGroupEdit' => 'Add/remove people from newsletter subscription groups',
           '/newsletter/sentPreviously' => 'List newsletters that have been sent previously',
+          # Added for time entry (Time tracker)
+          '/timetracker' => 'Access the time entry list',
+          '/timetracker/timeentryInfo' => 'Retrieve information about time entry',
+          '/timetracker/entrySave' => 'Edit or create manual time entry',
+          '/timetracker/generate_report' => 'Generate time entry report',
+          '/timetracker/commentlist' => 'Retrive time entry comment list',
+          '/timetracker/addTimeEntry' => 'Automatically added time entry in db',
           '/rssimport' => 'Read and import data from RSS feeds',
           '/settings' => 'Access personal settings',
           '/settings/admin' => 'Access administrative settings',
@@ -235,6 +242,9 @@ sub getPathsHash
           'COMMENT_PREVIEWED_ARTICLES' => 'Comment on previewed articles',
           'VIEW_OTHER_FILES' => 'View files owned by other users',
           'EDIT_OTHER_FILES' => 'Edit files owned by other users',
+          'COMMENT_ON_TIME_ENTRY'=> 'Add comments on others time entry',
+          'VIEW_OTHERS_TIME_ENTRY' => 'View others time entry',
+          'DELETE_OTHERS_TIME_ENTRY' => 'Delete others time entry',
     );
     return %pathsToActions;
 }

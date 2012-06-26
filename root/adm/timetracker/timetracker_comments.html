@@ -1,0 +1,44 @@
+%if (defined $commentsobj) {
+%while(my $comment = $commentsobj->next)
+%{
+
+<div class="LZWorkflowComment">
+<%perl>
+    my $author = '(unknown)';
+    my $subjectline;
+    if($comment->subject)
+    {
+        $subjectline = $i18n->get_advanced('<b>%(SUBJECT)</b> <span class="lite"><i> by %(AUTHOR) at %(DATETIME)</i> </span>',{
+            SUBJECT => $comment->subject,
+            AUTHOR => $comment->ttUser->verboseName,
+            DATETIME => $comment->written_time,
+           
+        });
+    }
+    else
+    {
+        $subjectline = $i18n->get_advanced('<span class="lite"><i>%(AUTHOR)</i> at %(DATETIME)</span>',{
+            AUTHOR => $author,
+            DATETIME => $comment->written_time,
+        });
+    }
+</%perl>
+<% $subjectline|n %><br/>
+
+% my $body = $comment->body;
+% $body = encode_entities($body,'<>&"');
+% $body =~ s{(https?://[^\s\)]+)}{<a href="$1" target="blank">$1</a>}gi;
+% $body =~ s/\r?\n/<br \/>/g;
+<% $body |n %>
+</div>
+%}
+%}
+<%args>
+$i18n
+$commentsobj => undef
+$displaySite => 1
+</%args>
+<%init>
+use HTML::Entities qw(encode_entities);
+</%init>
+

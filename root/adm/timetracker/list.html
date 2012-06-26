@@ -1,0 +1,73 @@
+%if($message) {
+<div id="lzArticleListMessage">
+    <b><% $message %></b>
+</div>
+%}
+<& ../core/listnavigation.html, %ARGS &>
+<table cellspacing="0" class="listView">
+<tr>
+    <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'timeEntryUser', ordertype => $ordertype}) %>"><% $i18n->get('User Name') %></a></td>
+    <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'time_start', ordertype => $ordertype}) %>"><% $i18n->get('Start date/time') %></a></td>
+    <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'time_end', ordertype => $ordertype}) %>"><% $i18n->get('End date/time') %></a></td>
+    <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'duration', ordertype => $ordertype}) %>"><% $i18n->get('Duration') %></a></td>
+    <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'ip_start', ordertype => $ordertype}) %>"><% $i18n->get('IP in') %></a></td>
+    <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'ip_end', ordertype => $ordertype}) %>"><% $i18n->get('IP Out') %></a></td>
+    <td class="rowHead rowHeadIcon">&nbsp;</td>
+    <td class="rowHead rowHeadIcon">&nbsp;</td>
+</tr>
+%if(defined $timetrackentry && $timetrackentry->count > 0){
+%my $i=0;
+%while(my $timetrackentry = $timetrackentry->next){
+%$i++;
+<%perl>
+my $author = $timetrackentry->timeEntryUser->name;
+if(not defined $author or not length $author)
+{
+    $author = $i18n->get('(none)');
+}
+
+my $start_time = datetime_from_SQL_to_unix($timetrackentry->time_start);
+my $end_time =  datetime_from_SQL_to_unix($timetrackentry->time_end);
+my $tdiff = $end_time-$start_time;
+my $seconds = $tdiff % 60;
+$tdiff = ($tdiff - $seconds)/60;
+my $minutes = $tdiff % 60;
+$tdiff = ($tdiff - $minutes)/60;
+my $hours = $tdiff % 24;
+</%perl>
+<tr class="<% $i%2==0 ? 'even' : 'odd' %>">
+<td><% $author %> </td>
+<td><% $timetrackentry->time_start %></td>
+<td><% $timetrackentry->time_end %></td>
+<td><% $hours.':'.$minutes %></td>
+<td><% $timetrackentry->ip_start %></td>
+<td><% $timetrackentry->ip_end %></td>
+%if($c->user->can_access('/timetracker/entrySave')) {
+<td><a href="#" onclick="editTimeEntry(<%$timetrackentry->time_id%>);return false;"><img class="useTipsy" src="/static/images/icons/users-edit.png" border="0" title="<% $i18n->get('Edit or view') %>" alt="<% $i18n->get('Edit or View') %>" class="useTipsy" /></a></td>
+%}else{
+<td>&nbsp;</td>
+%}
+%if($c->user->can_access('/timetracker/deletetimeEntry')) {
+<td><a href="#" onclick="deleteTimeEntry(<%$timetrackentry->time_id%>);return false;"><img class="useTipsy" src="/static/images/icons/src/user_delete.png" border="0" title="<% $i18n->get('Delete') %>" alt="<% $i18n->get('Delete') %>" class="useTipsy" /></a></td>
+%}else{
+<td>&nbsp;</td>
+%}
+
+</tr>
+%}
+%}
+
+</table>
+<%args>
+$timetrackentry =>undef
+$message => undef
+$i18n
+$ordertype => ''
+</%args>
+<%init>
+use 5.010;
+</%init>
+<%once>
+use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL_to_unix datetime_to_SQL);
+</%once>
+

@@ -30,7 +30,25 @@ foreach my $filter (@{$searchFilters})
 </%perl>
 <span id="filter_<%$filter->{realname}%>_container">
 <% $filter->{name} %>:
-<select name="filter_<%$filter->{realname}%>">
+%if (defined $filter->{type} and $filter->{type} eq 'datetimerange'){
+<input type="text" style="width:200px;" id="filter_<%$filter->{realname}%>" name="filter_<%$filter->{realname}%>" value="<% $filter->{selected} %>"/> <a href="#" onclick="return false;" id="filter_<%$filter->{realname}%>_triggerButton"><img src="/static/images/calendar.png" style="border:0;" /></a>
+<script type='text/javascript'>
+    $LAB.queue(function () {
+        Calendar.setup({
+            inputField  : "filter_<%$filter->{realname}%>",
+            ifFormat    : "<%$filter->{dateformat}%>",
+            showsTime   : true,
+            timeFormat  : 24,
+            button      : "filter_<%$filter->{realname}%>_triggerButton",
+            singleClick : true,
+            onSelect : getselectionHandler(),
+            step        : 1
+        })
+    });
+</script>
+
+%} else {
+<select name="filter_<%$filter->{realname}%>" class="enableChosen"<% (defined $filter->{multiple}) ? 'multiple="true" style="width:100px;"' : '' |n %> >
     <option value="" <% $filter->{selected} ? '' : 'selected="selected"' |n %>>
 %my $anyString;
 %if($filter->{anyString}) {
@@ -40,17 +58,25 @@ foreach my $filter (@{$searchFilters})
 %}
 <% $anyString |n %>
 </option>
+%my @selectedarray;
+%if(defined $filter->{selected}){
+%   @selectedarray = split(/,/, $filter->{selected}); 
+%} 
 %foreach my $opt (@{$filter->{options}})
 %{
-<option value="<% $opt->{value}%>"<% (defined $filter->{selected} and $filter->{selected} eq $opt->{value}) ? ' selected="selected"' : '' |n%>><%$opt->{label}%></option>
+<option value="<% $opt->{value}%>"<% (exists{map{$_ => 1} @selectedarray}->{$opt->{value}}) ? ' selected="selected"' : '' |n %>><%$opt->{label}%></option>
 %} # end of foreach my $opt () ..
 </select>
+%}
 &nbsp;
 </span>
 %} # end of foreach my $filter () ..
 
+%if(not defined $displaytextfield){
 &nbsp;&nbsp;&nbsp;
-<input id="query" name="query" type="text" value="<% $FormBuilder->fields->{query} %>" /> <% $FormBuilder->submit |n %>
+<input id="query" name="query" type="text" value="<% $FormBuilder->fields->{query} %>" /> 
+%}
+<% $FormBuilder->submit |n %>
 <% $FormBuilder->end |n %>
 </div>
 
@@ -85,4 +111,5 @@ $FormBuilder
 $searchFilters => []
 $filterFolder => undef
 $i18n
+$displaytextfield => undef
 </%args>
