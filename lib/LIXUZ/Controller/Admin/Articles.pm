@@ -1,5 +1,5 @@
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2012
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -435,7 +435,7 @@ sub read : Local Args
                         iconItemBody => $fileObj->get_url_aspect($c,250,250),
                         file_id => $fileObj->file_id,
                         file_name => $fileObj->file_name,
-                        add_fields =>$fileObj->getAllFields_values($c),
+                        add_fields =>$fileObj->getAddtionalFields_values($c),
                         fsize => $fileObj->sizeString($c),
                         caption => $caption,
                         identifier => $fileObj->identifier

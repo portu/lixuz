@@ -33,8 +33,8 @@ function entryEditorWindow (data)
     destroyPI();
     var html = '<input type="hidden" id="timeentry_id" value="'+data.timeentry_id+'" />';
     html = html + '<table><tr><td colspan="2"><div id="entryError"></div></td></tr>';
-    html = html + '<tr><td>'+i18n.get('From')+':</td><td><input type="text" id="time_start" name="time_start" value="'+data.time_start+'" /><a href="#" onClick="openCalenderStart()"; return false;" id="time_start_triggerButton"><img src="/static/images/calendar.png"></a></td></tr>';
-    html = html + '<tr><td>'+i18n.get('To')+':</td><td><input type="text" id="time_end" name="time_end"  value="'+data.time_end+'" /><a href="#" onClick="openCalenderEnd(); return false;" id="time_end_triggerButton"><img src="/static/images/calendar.png"></a></td></tr>';
+    html = html + '<tr><td>'+i18n.get('From')+':</td><td><input type="text" id="time_start" name="time_start" value="'+data.time_start+'" /><a href="#" onClick="openCalendarStart()"; return false;" id="time_start_triggerButton"><img src="/static/images/calendar.png"></a></td></tr>';
+    html = html + '<tr><td>'+i18n.get('To')+':</td><td><input type="text" id="time_end" name="time_end"  value="'+data.time_end+'" /><a href="#" onClick="openCalendarEnd(); return false;" id="time_end_triggerButton"><img src="/static/images/calendar.png"></a></td></tr>';
     if (data.ip_start != "")
     {
         html = html + '<tr><td>'+i18n.get('IP In')+':</td><td>'+data.ip_start+'</td></tr>';
@@ -47,11 +47,11 @@ function entryEditorWindow (data)
     if (/^ *[0-9]+ *$/.test(data.timeentry_id)) 
     {
         html = html + '<tr><td colspan="2"><b>'+i18n.get('Comments')+'</b></td></tr>';
-        html = html + '<tr><td colspan="2"><div id="LZWorkflowCommentsContainer"></div></td></tr>';
+        html = html + '<tr><td colspan="2"><div id="TimetrackerCommentsContainer"></div></td></tr>';
 
         $.get('/admin/timetracker/commentlist/'+data.timeentry_id, function (data)
         {
-            $('#LZWorkflowCommentsContainer').html(data);
+            $('#TimetrackerCommentsContainer').html(data);
         });
     }
 
@@ -197,7 +197,7 @@ function timeEntryDeleted_failure (reply)
 }
 
 // open calender for selecting start time on add/edit page
-function openCalenderStart()
+function openCalendarStart()
 {
     Calendar.setup({
         inputField  : 'time_start',
@@ -213,7 +213,7 @@ function openCalenderStart()
 }
 
 // open calender for selecting end time on the add/edit page
-function openCalenderEnd()
+function openCalendarEnd()
 {
     Calendar.setup({
         inputField  : "time_end",

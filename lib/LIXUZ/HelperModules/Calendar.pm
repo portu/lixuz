@@ -1,5 +1,5 @@
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2012
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -129,6 +129,16 @@ sub datetime_from_unix
     $year += 1900;
     $month++;
     return($day.'.'.$month.'.'.$year.' '.$hour.':'.$minute);
+
+}
+
+sub get_current_time
+{
+    my $unixtime = time;
+    my ($sec,$minute,$hour,$day,$month,$year,$wday,$yday,$isdst) = localtime($unixtime);
+    $year += 1900;
+    $month++;
+    return ($hour.':'.$minute);
 
 }
 

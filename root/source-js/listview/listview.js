@@ -20,11 +20,11 @@ function previewWindow(data)
     if (data.subject != "")
     {
         html = html + '<tr><td colspan="2"><b>'+i18n.get('Comments')+'</b></td></tr>';
-        html = html + '<tr><td colspan="2"><div id="LZWorkflowCommentsContainer"></div></td></tr>';
+        html = html + '<tr><td colspan="2"><div id="TimetrackerCommentsContainer"></div></td></tr>';
 
         $.get('/admin/timetracker/commentlist/'+data.timeentry_id, function (data)
         {
-            $('#LZWorkflowCommentsContainer').html(data);
+            $('#TimetrackerCommentsContainer').html(data);
         });
     }
     html = html + '</table>';

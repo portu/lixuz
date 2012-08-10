@@ -1,5 +1,5 @@
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2012
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -196,7 +196,7 @@ sub entrySave : Local
     my $comment = $c->req->param('comment');
     my $timeentry_id = $c->req->param('timeentry_id');
 
-    if ($c->user->can_access('SUPER_USER') or $c->user->can_access('/timetracker/entrySave'))
+    if ($c->user->can_access('/timetracker/entrySave'))
     {
         if ($timeentry_id eq 'new')
         {
@@ -274,9 +274,7 @@ sub addTimeEntry : Local
     my $current_date_time = datetime_from_unix(time());
     $current_date_time = datetime_to_SQL($current_date_time);
     my $ip = $c->req->address;
-    my $current_time_date = datetime_from_unix(time());
-    $current_time_date =~ /\s+/g;
-    my ($current_time) = ($current_time_date=~/\G(\d+:\d+)/ );
+    my $current_time = get_current_time();
 
     if ($action eq 'start')
     {
@@ -394,9 +392,7 @@ sub checkTimeTrackerStatus : Local
 {
     my ( $self, $c) = @_;
     my $tt_status = 0;
-    my $current_date_time = datetime_from_unix(time());
-    $current_date_time =~ /\s+/g;
-    my ($current_time) = ($current_date_time=~/\G(\d+:\d+)/ );
+    my $current_time = get_current_time();
     my $timeentry = $c->model('LIXUZDB::LzTimeEntry')->find({ user_id => $c->user->user_id, tt_status => 1});
     if ($timeentry)
     {

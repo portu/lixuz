@@ -1,0 +1,79 @@
+<table border="0" width="100%">
+%my $i=0;
+%foreach my $ret (sort keys %{$retarray}) {
+%$i++;
+<%perl>
+
+</%perl>
+<tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+        <td colspan="2">
+            <% $retarray->{$ret}->{'recdate'} %>
+        </td>
+    </tr>
+    <tr>
+        <td style="width:50%;" valign="top">
+            <table cellspacing="0" class="listView" border="1" >
+
+                <tr>
+                    <td class="rowHead"><% $i18n->get('Username') %></td>
+                    <td class="rowHead"><% $i18n->get('From-To') %></td>
+                    <td class="rowHead"><% $i18n->get('Duration') %></td>
+                </tr>
+%my $timecount =0 ;
+%foreach my $dta ( @{$retarray->{$ret}->{'timedata'}}) {                
+<tr class="<% $timecount%2==0 ? 'even' : 'odd' %>" >
+        <td><% $dta->{'username'}%></td>
+        <td><% $dta->{'from_to'}%></td>
+        <td><% $dta->{'duration'}%></td>
+    </tr>
+%$timecount++;
+%}
+            </table>
+        
+        </td>
+        <td style="width:50%;" valign="top">
+            <table cellspacing="0" class="listView" border="1">
+                <tr>
+                    <td class="rowHead"><% $i18n->get('ID') %></td>
+                    <td class="rowHead"><% $i18n->get('Path') %></td>
+                    <td class="rowHead"><% $i18n->get('Title') %></td>
+                     <td class="rowHead"><% $i18n->get('Wordcount') %></td>
+                 </tr>
+% my $artcount =0;  
+%foreach my $inkey ( @{$retarray->{$ret}->{'articledata'}}) {
+<tr class="<% $artcount%2==0 ? 'even' : 'odd' %>">
+                    <td><% $inkey->{'article_id'} %></td>
+                    <td><% $inkey->{'path'} %></td>
+                    <td><% $inkey->{'title'} %></td>
+                    <td><% $inkey->{'wordcount'} %> </td>
+                </tr>
+%$artcount ++;                
+
+%}
+            </table>
+        </td>
+     
+    </tr>
+%}   
+<tr>
+    <td colspan ="2"><% $newhtml  %> </td>
+    </tr>
+
+</table>
+
+<%args>
+$timetrackentry =>undef
+$message => undef
+$i18n
+$ordertype => ''
+$retarray =>undef
+$newhtml => undef
+</%args>
+<%init>
+use 5.010;
+</%init>
+<%once>
+use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL_to_unix datetime_to_SQL );
+</%once>
+
