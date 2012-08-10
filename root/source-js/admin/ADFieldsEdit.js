@@ -81,7 +81,7 @@ function LZ_FieldSave ()
 
     showPI(i18n.get('Saving...')); // Show progress indicator
 
-    if ($('#type').val().match(/range/))
+    if ($('#type').val().match(/^range/))
     {
         fields.push('range');
         if (!LZ_ValidateRange())
