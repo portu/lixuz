@@ -124,7 +124,6 @@ function saveAndCloseEntryEditor (data)
 // called when successfull add or edit action on time entry.
 function timeTracker_success ()
 {
-    destroyPI();
     window.location.reload();
 }
 
