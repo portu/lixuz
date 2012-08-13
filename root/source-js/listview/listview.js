@@ -43,7 +43,6 @@ function previewWindow(data)
 function closeEntryEditor()
 {
     entryEditor.destroy();
-    JSON_Invalidate_Cache();
     destroyPI();
 }
 
