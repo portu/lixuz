@@ -31,11 +31,11 @@ if ($comment->author)
     $author = $comment->author->firstname.' '.$comment->author->lastname;
 }
 my $subjectline;
-my $revision = '<a href="/admin/articles/preview/'.$comment->article_id.'?revision='.$comment->on_revision.'">'.$comment->on_revision.'</a>';
-if($comment->comment_subject)
+my $revision = '<a href="/admin/articles/preview/'.$comment->object_id.'?revision='.$comment->on_revision.'">'.$comment->on_revision.'</a>';
+if($comment->subject)
 {
     $subjectline = $i18n->get_advanced('<b>%(SUBJECT)</b> <span class="lite"><i>%(AUTHOR)</i> at %(DATETIME) on revision %(REVISION)</span>',{
-        SUBJECT => $comment->comment_subject,
+        SUBJECT => $comment->subject,
         AUTHOR => $author,
         DATETIME => $comment->written_time,
         REVISION => $revision,
@@ -53,7 +53,7 @@ else
 
 <% $subjectline|n %><br/>
 
-% my $body = $comment->comment_body;
+% my $body = $comment->body;
 % $body = encode_entities($body,'<>&"');
 % $body =~ s{(https?://[^\s\)]+)}{<a href="$1" target="blank">$1</a>}gi;
 % $body =~ s/\r?\n/<br \/>/g;
