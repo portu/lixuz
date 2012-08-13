@@ -151,7 +151,6 @@ function timeTracker_failure (data)
 function entryEditorSaveSuccess ()
 {
     entryEditor.destroy();
-    JSON_Invalidate_Cache();
     destroyPI();
     window.location.reload();
 }
