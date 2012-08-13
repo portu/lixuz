@@ -35,7 +35,7 @@ function starttime_failure (data)
     }
     else 
     {
-        LZ_SaveFailure(data,i18n.get('Failed to submit article data.'));
+        LZ_SaveFailure(data,i18n.get('Failed to start timetracker.'));
     }
 
 }
