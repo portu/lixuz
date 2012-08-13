@@ -307,8 +307,6 @@ sub timeentryInfo : Local Param
 {
     my ( $self, $c, $timeentry_id ) = @_;
     my $i18n = $c->stash->{i18n};
-    my $dbsubject;
-    my $dbcomments;
     my $author = '(unknown)';
     my $timeentry = $c->model('LIXUZDB::LzTimeEntry')->find({ time_id => $timeentry_id });
     if(not $timeentry)
@@ -321,8 +319,6 @@ sub timeentryInfo : Local Param
         timeentry_id => $timeentry->time_id,
         ip_start => $timeentry->ip_start,
         ip_end => $timeentry->ip_end,
-        subject => $dbsubject,
-        comment => $dbcomments,
     };
 
     return json_response($c,$info);
