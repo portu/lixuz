@@ -116,7 +116,7 @@ function constructRSSEditFormFromData (data)
         }, {
             closeButton: i18n.get('Cancel')
         });
-        editorFormEditor = createLixuzRTE('rsseditor');
+        editorFormEditor = lixuzRTE.init('rsseditor');
     }
     catch(e)
     {
