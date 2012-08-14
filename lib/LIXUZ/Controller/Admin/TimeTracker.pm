@@ -25,7 +25,7 @@ with 'LIXUZ::Role::List::Database';
 use LIXUZ::HelperModules::Forms qw(finalize_form);
 use LIXUZ::HelperModules::Lists qw(reply_json_list);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl add_jsOnLoad add_globalJSVar add_jsOnLoadHeadCode);
-use LIXUZ::HelperModules::Calendar qw(create_calendar datetime_to_SQL datetime_from_SQL datetime_from_unix);
+use LIXUZ::HelperModules::Calendar qw(create_calendar datetime_to_SQL datetime_from_SQL datetime_from_unix get_current_time);
 use LIXUZ::HelperModules::Editor qw(create_editor);
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::TemplateRenderer;

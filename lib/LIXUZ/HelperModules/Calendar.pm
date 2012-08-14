@@ -36,7 +36,7 @@ use Carp;
 use Exporter qw(import);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl);
 use POSIX qw(mktime);
-our @EXPORT_OK = qw(create_calendar datetime_to_SQL datetime_from_SQL datetime_from_unix datetime_from_SQL_to_unix is_dst);
+our @EXPORT_OK = qw(create_calendar datetime_to_SQL datetime_from_SQL datetime_from_unix datetime_from_SQL_to_unix get_current_time is_dst);
 
 # TODO: Much more error handling in datetime_(from|to)_* functions
 
