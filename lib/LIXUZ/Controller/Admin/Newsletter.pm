@@ -35,7 +35,7 @@ sub index : Path Args(0) Form('/core/search')
 {
     my ( $self, $c, $query ) = @_;
     my $subscription = $c->model('LIXUZDB::LzNewsletterSubscription');
-    my $list = $self->handleListRequest({
+    my $list = $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $subscription,

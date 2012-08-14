@@ -32,7 +32,7 @@ sub index : Path Args(0) Form('/core/search') {
             type => 'dictionary'
         });
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Dictionary');
-    $self->handleListRequest({
+    $self->handleListRequest($c,{
             c => $c,
             object => $dictionary,
             objectName => 'dictionary',

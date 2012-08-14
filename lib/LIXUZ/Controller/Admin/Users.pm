@@ -32,7 +32,7 @@ sub index : Path Args(0) Form('/core/search')
     my ( $self, $c, $query ) = @_;
     my $users = $c->model('LIXUZDB::LzUser');
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Users');
-    $self->handleListRequest({
+    $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $users,

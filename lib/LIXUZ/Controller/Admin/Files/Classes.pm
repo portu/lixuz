@@ -36,7 +36,7 @@ sub index : Path Args(0) Form('/core/search')
 {
     my ( $self, $c, $query ) = @_;
     my $classes = $c->model('LIXUZDB::LzFileClass');
-    my $obj = $self->handleListRequest({
+    my $obj = $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $classes,

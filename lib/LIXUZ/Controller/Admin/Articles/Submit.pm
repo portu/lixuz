@@ -586,12 +586,12 @@ sub notifyNewAssignee
     }
     if ( !$workflow)
     {
-        $self->c->log->error('notifyNewAssignee called without $workflow');
+        $c->log->error('notifyNewAssignee called without $workflow');
         return;
     }
     elsif ( !$article)
     {
-        $self->c->log->error('notifyNewAssignee called without $article');
+        $c->log->error('notifyNewAssignee called without $article');
         return;
     }
 
