@@ -50,7 +50,7 @@ function closeEntryEditor()
 function generatePdfReport()
 {
     var url = location.href;
-    url = url.replace(/#/,'');
+    url = url.replace(/#(.*)/,'');
     if (url.indexOf('?') == -1)
     {
         url = url + '?';
