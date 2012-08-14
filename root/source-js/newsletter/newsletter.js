@@ -362,7 +362,7 @@ function removeThisRecipient (recipientId)
 function addManualRecipientsFromGroup ()
 {
     showPI(i18n.get('Loading group list...'));
-    JSON_Cachable_Request('/admin/newsletter/groupList',finalize_groupAddWin);
+    XHR.GET('/admin/newsletter/groupList',finalize_groupAddWin);
 }
 
 // Create the group adding window using the data supplied
@@ -399,7 +399,7 @@ function addGroupRecipient (gid)
 function groupEditPrompt ()
 {
     showPI(i18n.get('Loading group list...'));
-    JSON_Cachable_Request('/admin/newsletter/groupList',finalizeGroupEditPrompt);
+    XHR.GET('/admin/newsletter/groupList',finalizeGroupEditPrompt);
 }
 
 // Create the group list window using the data retrieved from the server
@@ -485,7 +485,6 @@ function saveAndCloseGroupEditor ()
 function groupEditorSaveSuccess ()
 {
     groupEditor.destroy();
-    JSON_Invalidate_Cache();
     destroyPI();
 }
 
@@ -537,7 +536,6 @@ function saveAndCloseSubscriberEditor ()
 function subscriberEditorSaveSuccess ()
 {
     subscriberEditor.destroy();
-    JSON_Invalidate_Cache();
     destroyPI();
     window.location.reload();
 }
