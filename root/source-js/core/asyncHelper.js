@@ -129,25 +129,6 @@ function JSON_Invalidate_Cache ()
 }
 
 /*
- * This works just like the above, except it takes a postData argument,
- * which is the data to post  to URL
- */
-function JSON_PostRequest (URL, postData, successFunc, errorFunc)
-{
-    deprecated('JSON_* functions have been superseeded by the XHR object');
-    try
-    {
-        if(postData != null && typeof(postData) != 'string')
-        {
-            lzlog('JSON_PostRequest(): got non-string, non-null argument as postData: '+typeof(postData)+' - content: '+postData);
-            lzError('JSON_PostRequest(): got non-string, non-null argument as postData. This is quite certainly not what you want. I will continue with the request and submit the stringified version of the variable. This is a bug. Submitting value: '+postData);
-        }
-    }
-    catch(e){}
-    _runOrQueue_JSON_Request(URL, postData, successFunc, errorFunc);
-}
-
-/*
  * This works just like JSON_PostRequest, with the exception that it takes a
  * JS hash as a data parameter instead of a string. The JS hash is converted
  * to URL post strings and then given to JSON_PostRequest. The hash has to be
@@ -188,7 +169,7 @@ function JSON_HashPostRequest(URL, postHashData, successFunc, errorFunc)
                         data = data+'&'+encodeURIComponent(key)+'='+encodeURIComponent(value);
                     }
                });
-        JSON_PostRequest(URL, data, successFunc, errorFunc);
+        _runOrQueue_JSON_Request(URL, data, successFunc, errorFunc);
     }
     catch(e)
     {
@@ -591,156 +572,4 @@ function JSON_multiRequest(paths,argHash,onSuccess,errorFunc,dontRequireAll)
     }
 
     return JSON_HashPostRequest('/admin/services/multiRequest',argHash,onSuccess,errorFunc);
-}
-
-/*
- * *******
- * Delayed multiRequest wrappers
- * *******
- *
- * The following functions are for all intents and purposes identical to that
- * of the various above JSON_ functions that they share names with, but they
- * will automatically wrap themselves into one big JSON_multiRequest that does
- * not get submitted until JSON_DelayedSubmit(); is called.
- *
- * Any successFunc or errorFunc can also abort processing of subsequent
- * success-/errorFunc's using JSON_DelayedAbort();, thus you can have an
- * initial submission to a URL that does a few sanity checks, which can then
- * return an error to be processed by errorFunc for that submission, which can
- * output an error dialog to the user and then stop processing the success or
- * error functions of any other requested URL.
- *
- * Like the other functions found in this file, these will queue subsequent
- * requests when another one is running.
- */
-
-var lixuz_JSOND_Abort = false,
-    lixuz_JSOND_ReqRunning = false,
-    lixuz_JSOND_queue;
-
-function JSON_DelayedRequest (URL, successFunc, errorFunc)
-{
-    deprecated('JSON_* functions have been superseeded by the XHR object');
-    JSON_DelayedHashPostRequest(URL,null,successFunc,errorFunc);
-}
-
-function JSON_DelayedHashPostRequest (URL, postData, successFunc, errorFunc)
-{
-    deprecated('JSON_* functions have been superseeded by the XHR object');
-    _JSOND_Prep(false);
-    var handlers = lixuz_JSOND_queue.getOrNew('handlers','hash'),
-        targets = lixuz_JSOND_queue.getOrNew('targets','array'),
-        post = lixuz_JSOND_queue.getOrNew('postData','hash');
-    handlers[URL] = { 'errorFunc':errorFunc, 'successFunc':successFunc };
-    targets.push(URL);
-    if(postData != null)
-    {
-        post.combine(postData);
-    }
-    lixuz_JSOND_queue.set('handlers',handlers);
-    lixuz_JSOND_queue.set('targets',targets);
-    lixuz_JSOND_queue.set('postData',post);
-}
-
-function JSON_DelayedSubmit (prevMustSucceed,onDoneRun)
-{
-    deprecated('JSON_* functions have been superseeded by the XHR object');
-    _JSOND_Prep(false);
-    if(onDoneRun != null)
-    {
-        lixuz_JSOND_queue.set('onDoneRun',onDoneRun);
-    }
-    lixuz_JSOND_queue.set('prevMustSucceed',prevMustSucceed);
-    lixuz_JSOND_queue.newQueue();
-    if(false == lixuz_JSOND_ReqRunning)
-    {
-        JSON_SubmitCurrent();
-    }
-}
-
-function JSON_SubmitCurrent ()
-{
-    deprecated('JSON_* functions have been superseeded by the XHR object');
-    var newR = lixuz_JSOND_queue.getVariables();
-    lixuz_JSOND_ReqRunning = newR;
-    JSON_multiRequest(newR['targets'], newR['postData'], _JSOND_successResponse, _JSOND_failureResponse, newR['prevMustSucceed']);
-}
-
-function JSON_DelayedAbort ()
-{
-    deprecated('JSON_* functions have been superseeded by the XHR object');
-    lixuz_JSOND_Abort = true;
-}
-
-/* Private functions */
-function _JSOND_Prep ()
-{
-    lixuz_JSOND_Abort = false;
-    if(lixuz_JSOND_queue == null)
-    {
-        lixuz_JSOND_queue = new lixuzVariableQueue();
-    }
-}
-
-function _JSOND_successResponse (data)
-{
-    _JSOND_processResponses(data,'success');
-}
-
-function _JSOND_failureResponse (data)
-{
-    throw('failure response from multiRequest');
-}
-
-function _JSOND_reset ()
-{
-    _JSOND_Prep(true);
-    lixuz_JSOND_ReqRunning = false;
-}
-
-function _JSOND_processResponses (data,type)
-{
-    data = data;
-    if(type != 'success')
-    {
-        handler = errorFunc;
-    }
-    var targets = lixuz_JSOND_ReqRunning['targets'],
-        handlers = lixuz_JSOND_ReqRunning['handlers']; 
-    for(var i = 0; i < targets.length; i++)
-    {
-        var URL = targets[i];
-        try
-        {
-            var handler = 'successFunc',
-                response = data[URL];
-            if(response['status'] != 'OK')
-            {
-                handler = 'errorFunc';
-            }
-            var submit = handlers[URL][handler];
-            submit(response);
-        }
-        catch(err)
-        {
-            lzException(err);
-        }
-        if(lixuz_JSOND_Abort)
-        {
-            break;
-        }
-    }
-    if (!lixuz_JSOND_Abort)
-    {
-        var onDoneRun = lixuz_JSOND_ReqRunning['onDoneRun'];
-        if(onDoneRun != null)
-        {
-            onDoneRun();
-        }
-    }
-    _JSOND_reset();
-    if(lixuz_JSOND_queue.hasQueue())
-    {
-        JSON_SubmitCurrent();
-    }
 }
