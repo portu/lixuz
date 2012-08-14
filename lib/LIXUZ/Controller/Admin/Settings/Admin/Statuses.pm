@@ -67,16 +67,6 @@ sub delete : Local Args
     return $self->messageToList($c,$c->stash->{i18n}->get('Status deleted.'));
 }
 
-# Summary: Forward the article to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList : Private
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    $c->response->redirect('/admin/settings/admin/statuses');
-    $c->detach();
-}
-
 sub edit : Local Args Form('/settings/edit_status')
 {
     my ( $self, $c, $uid ) = @_;

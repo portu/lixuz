@@ -44,20 +44,6 @@ sub index : Path Args(0) Form('/core/search') {
         });
 }
 
-# Summary: Forward the category to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    if(not $message)
-    {
-        $c->log->warn('No valid message supplied to messageToList in Categories.pm');
-    }
-    $c->response->redirect('/admin/categories');
-    $c->detach();
-}
-
 # Summary: Handle creating a new category
 sub add: Local Form('/categories/edit') {
     my ( $self, $c ) = @_;

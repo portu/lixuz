@@ -454,13 +454,4 @@ sub cleanPulldown: Private
     return true;
 }
 
-# Summary: Forward the article to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList : Private
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    $c->response->redirect('/admin/settings/admin/additionalfields');
-    $c->detach();
-}
 1;

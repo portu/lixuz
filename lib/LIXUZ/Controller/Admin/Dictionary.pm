@@ -230,18 +230,4 @@ sub savedata: Private
     $self->messageToList($c,$i18n->get('Definition saved'));
 }
 
-# Summary: Forward the category to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    if(not $message)
-    {
-        $c->log->warn('No valid message supplied to messageToList in Dictionary.pm');
-    }
-    $c->response->redirect('/admin/dictionary');
-    $c->detach();
-}
-
 1;

@@ -43,16 +43,6 @@ sub index : Path Args(0) Form('/core/search')
         });
 }
 
-# Purpose: Forward the user to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList : Private
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{roleListMessage} = $message;
-    $c->response->redirect('/admin/users/roles');
-    $c->detach();
-}
-
 # Summary: Save form data
 # Usage: $self->savedata($c);
 sub savedata : Private

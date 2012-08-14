@@ -156,16 +156,6 @@ sub ajax: Local
     $c->stash->{displaySite} = 0;
 }
 
-# Summary: Forward the file to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    $c->response->redirect('/admin/files');
-    $c->detach();
-}
-
 # Summary: Delete a file
 sub delete: Local Args
 {

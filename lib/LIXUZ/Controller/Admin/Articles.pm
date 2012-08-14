@@ -40,16 +40,6 @@ use constant { true => 1, false => 0};
 # The main list
 # --------
 
-# Summary: Forward the article to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    $c->response->redirect('/admin/articles');
-    $c->detach();
-}
-
 # Summary: Show the primary list
 sub index : Path Args(0) Form('/core/search')
 {

@@ -16,12 +16,15 @@
 
 package LIXUZ::Controller::Admin::Settings::Admin::Widgets;
 
-use strict;
-use warnings;
+use Moose;
+use MooseX::NonMoose;
+use namespace::autoclean;
+BEGIN { extends 'Catalyst::Controller::FormBuilder' };
 use base qw(Catalyst::Controller::FormBuilder);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 use LIXUZ::HelperModules::Forms qw(get_checkboxes);
 use List::MoreUtils qw(any);
+with 'LIXUZ::Role::List::Database';
 
 sub index : Private
 {
@@ -72,16 +75,6 @@ sub myAssignmentConfig
         $c->stash->{statuses} = $c->model('LIXUZDB::LzStatus')->search(undef,{ order_by => 'status_id' });
         $c->stash->{template} = 'adm/settings/admin/widget_myAssignmentsConfig.html';
     }
-}
-
-# Summary: Forward the article to the main view, and display a message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList : Private
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    $c->response->redirect('/admin/settings/admin/widgets');
-    $c->detach();
 }
 
 1;

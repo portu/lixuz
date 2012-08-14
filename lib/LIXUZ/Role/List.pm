@@ -367,4 +367,16 @@ sub _buildSearchData
     return { join => [], expression => {}, settings => {} };
 }
 
+sub messageToList
+{
+    my ($self, $c, $message) = @_;
+    $c->flash->{ListMessage} = $message;
+    if(not $message)
+    {   
+        $c->log->warn('No valid message supplied to messageToList in '.ref($self));
+    }
+    $c->response->redirect($c->uri_for($self->action_for('index')));
+    $c->detach();
+}
+
 1;
