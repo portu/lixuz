@@ -90,20 +90,6 @@ function ASYNCRequestWithObject_Response(text,xml)
 }
 
 /*
- * This creates a XMLHttpRPC request that returns JSON and
- * does all the parsing and handling for you.
- *
- * URL is the URL to request
- * success_func is the function to call on success, prototype (data)
- * error_func is the function to call on error, prototype (error)
- */
-function JSON_Request (URL, successFunc, errorFunc)
-{
-    deprecated('JSON_* functions have been superseeded by the XHR object');
-	_runOrQueue_JSON_Request(URL, null, successFunc, errorFunc);
-}
-
-/*
  * This is identical to JSON_Request, with the exception
  * that this will permanently cache the results in memory until the user
  * leaves the page

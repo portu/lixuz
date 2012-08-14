@@ -48,7 +48,7 @@ function deleteNewsletterSubscriptionNow (response)
     if(response)
     {
         showPI(i18n.get('Deleting...'));
-        JSON_Request('/admin/newsletter/delete/'+deleteThisNewsletter,subscriptionDeleted);
+        XHR.GET('/admin/newsletter/delete/'+deleteThisNewsletter,subscriptionDeleted);
     }
 }
 
@@ -87,7 +87,7 @@ function editSubscriptionGroups (id)
 {
     showPI(i18n.get('Loading group data...'));
     SGE_ID=id;
-    JSON_Request('/admin/newsletter/subscriptionGroupEdit/'+id, createSubscriptionGroupEditList);
+    XHR.GET('/admin/newsletter/subscriptionGroupEdit/'+id, createSubscriptionGroupEditList);
 }
 
 // Generates the subscription group editor on the data supplied (retrieved from the server)
@@ -130,7 +130,7 @@ function saveAndCloseGroupListEditor (id)
 {
     showPI(i18n.get('Saving...'));
     var myGroups = getdataFromChecklistTable('subscriptionGroupEditor');
-    JSON_Request('/admin/newsletter/subscriptionGroupEdit/'+id+'?groups='+encodeURIComponent(myGroups), saveAndCloseGroupListEditor_success);
+    XHR.GET('/admin/newsletter/subscriptionGroupEdit/'+id+'?groups='+encodeURIComponent(myGroups), saveAndCloseGroupListEditor_success);
 }
 
 // Succeeded, destroy it
@@ -168,7 +168,7 @@ function displayThisNewsletter(from,subject,body,format)
 function listSentNewsletters ()
 {
     showPI(i18n.get('Loading list...'));
-    JSON_Request('/admin/newsletter/sentPreviously?wants=list',showSentNewsletterList);
+    XHR.GET('/admin/newsletter/sentPreviously?wants=list',showSentNewsletterList);
 }
 
 // Show the list of sent+saved newsletters retrieved by listSentNewsletters
@@ -196,7 +196,7 @@ function viewSavedNewsletter (id)
 {
     showPI(i18n.get('Loading message...'));
     destroyMessageBox();
-    JSON_Request('/admin/newsletter/sentPreviously?wants='+id,viewThisSavedNewsletter);
+    XHR.GET('/admin/newsletter/sentPreviously?wants='+id,viewThisSavedNewsletter);
 }
 // View the retrieved newsletter
 function viewThisSavedNewsletter (data)
@@ -425,7 +425,7 @@ function editGroup (groupid)
 {
     destroyMessageBox();
     showPI(i18n.get('Loading group information...'));
-    JSON_Request('/admin/newsletter/groupInfo/'+groupid,groupEditorWindow);
+    XHR.GET('/admin/newsletter/groupInfo/'+groupid,groupEditorWindow);
 }
 
 // Actually create the group editing window
@@ -469,7 +469,7 @@ function deleteSubGroupNow (reply)
     if(reply)
     {
         showPI(i18n.get('Deleting...'));
-        JSON_Request('/admin/newsletter/groupDelete/'+deleteThisGroup,groupEditorSaveSuccess);
+        XHR.GET('/admin/newsletter/groupDelete/'+deleteThisGroup,groupEditorSaveSuccess);
     }
 }
 
@@ -478,7 +478,7 @@ function saveAndCloseGroupEditor ()
 {
     var submit = '/admin/newsletter/groupSave?group_id='+encodeURIComponent(getFieldData('group_id'))+'&group_name='+encodeURIComponent(getFieldData('group_name'))+'&group_internal='+encodeURIComponent(getFieldData('group_internal'));
     showPI(i18n.get('Saving...'));
-    JSON_Request(submit,groupEditorSaveSuccess);
+    XHR.GET(submit,groupEditorSaveSuccess);
 }
 
 // Group editor data successfully saved
@@ -530,7 +530,7 @@ function saveAndCloseSubscriberEditor ()
 
     var submit = '/admin/newsletter/subscriberSave?subsciber_id='+encodeURIComponent(getFieldData('subsciber_id'))+'&email='+encodeURIComponent(getFieldData('email'))+'&name='+encodeURIComponent(getFieldData('name'))+'&format='+encodeURIComponent(getformat)+'&interval='+encodeURIComponent(getinterval);
     showPI(i18n.get('Saving...'));
-    JSON_Request(submit,subscriberEditorSaveSuccess);
+    XHR.GET(submit,subscriberEditorSaveSuccess);
 }
 
 // Subscriber data successfully saved
@@ -547,7 +547,7 @@ function editSubscriber (subscriberid)
 {
     destroyMessageBox();
     showPI(i18n.get('Loading subscriber information...'));
-    JSON_Request('/admin/newsletter/subscriberInfo/'+subscriberid,subscriberWindow);
+    XHR.GET('/admin/newsletter/subscriberInfo/'+subscriberid,subscriberWindow);
 }
 
 //show window for import subscriber

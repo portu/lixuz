@@ -30,7 +30,7 @@ function reallyDeleteArticle(response)
         return;
     }
     showPI(i18n.get('Deleting...'));
-    JSON_Request('/admin/articles/trash/delete/'+delete_ArtID,articleDeletionSuccess,null);
+    XHR.GET('/admin/articles/trash/delete/'+delete_ArtID,articleDeletionSuccess,null);
 }
 
 function articleDeletionSuccess ()
@@ -51,7 +51,7 @@ function reallyRestoreArticle(response)
         return;
     }
     showPI(i18n.get('Restoring...'));
-    JSON_Request('/admin/articles/trash/restore/'+restore_ArtID,articleRestoreSuccess,null);
+    XHR.GET('/admin/articles/trash/restore/'+restore_ArtID,articleRestoreSuccess,null);
 }
 
 function articleRestoreSuccess()

@@ -75,7 +75,7 @@ var editFormDialog,
 function editRSSEntry (rss_id)
 {
     showPI(i18n.get('Retrieveing data...'));
-    JSON_Request('/admin/rssimport/?getdata='+rss_id,constructRSSEditFormFromData);
+    XHR.GET('/admin/rssimport/?getdata='+rss_id,constructRSSEditFormFromData);
 }
 
 /*
@@ -180,7 +180,7 @@ function reallyDeleteRSSEntry (deleteIt)
     if(deleteIt)
     {
         showPI(i18n.get('Deleting...'));
-        JSON_Request('/admin/rssimport/?delete='+deleteThisEntry,RSS_deletion_success);
+        XHR.GET('/admin/rssimport/?delete='+deleteThisEntry,RSS_deletion_success);
     }
 }
 

@@ -63,7 +63,7 @@ function saveCrop ()
     try
     {
         showPI(i18n.get('Saving cropped image...'));
-        JSON_Request('/admin/files/imgedit/saveCrop/'+$('#file_id').val()+"?"+getCropArgs(),cropSaved);
+        XHR.GET('/admin/files/imgedit/saveCrop/'+$('#file_id').val()+"?"+getCropArgs(),cropSaved);
     }
     catch(e) { lzException(e); }
 }
