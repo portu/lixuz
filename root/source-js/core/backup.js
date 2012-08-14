@@ -114,7 +114,7 @@ function backup_setInitialPayload ()
 function backup_handleError (reply)
 {
     backup_lastSubmitttedPayloadData = '';
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
 }
 
 /*
@@ -178,7 +178,7 @@ function backup_restore (layout,type,uid)
     showPI(i18n.get('Restoring backup...'));
     backup_restore_layout = layout;
     var requestURI = '/admin/services/backup?type='+encodeURIComponent(type)+'&uid='+encodeURIComponent(uid);
-    JSON_Request(requestURI,backup_restore_reply,backup_restore_replyError);
+    XHR.GET(requestURI,backup_restore_reply,backup_restore_replyError);
 }
 
 /*
@@ -328,7 +328,7 @@ function backup_restore_valueToObj (value, obj)
  */
 function backup_restore_replyError (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     if(error == 'NODATA')
     {
         userMessage(i18n.get('No backup data was found on the server that matched this dataset.'));
