@@ -55,7 +55,7 @@ var lixuz_curr_JSON_success,
  */
 function JSON_Request_WithObj(URL, obj, methname, POSTDATA)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     try
     {
         lixuz_curr_JSON_eval = methname;
@@ -70,7 +70,7 @@ function JSON_Request_WithObj(URL, obj, methname, POSTDATA)
  */
 function ASYNCRequestWithObject_Response(text,xml)
 {
-    deprecated();
+    deprecated('Superseeded by the XHR object');
     try
     {
         var obj = lixuz_curr_JSON_obj,
@@ -99,7 +99,7 @@ function ASYNCRequestWithObject_Response(text,xml)
  */
 function JSON_Request (URL, successFunc, errorFunc)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
 	_runOrQueue_JSON_Request(URL, null, successFunc, errorFunc);
 }
 
@@ -110,7 +110,7 @@ function JSON_Request (URL, successFunc, errorFunc)
  */
 function JSON_Cachable_Request(URL, successFunc, errorFunc)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     if(lixuz_JSON_dataCache != null && lixuz_JSON_dataCache[URL])
     {
         successFunc(lixuz_JSON_dataCache[URL]);
@@ -124,7 +124,7 @@ function JSON_Cachable_Request(URL, successFunc, errorFunc)
  */
 function JSON_Invalidate_Cache ()
 {
-    deprecated();
+    deprecated('Data cache should not be used');
     lixuz_JSON_dataCache = {};
 }
 
@@ -134,7 +134,7 @@ function JSON_Invalidate_Cache ()
  */
 function JSON_PostRequest (URL, postData, successFunc, errorFunc)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     try
     {
         if(postData != null && typeof(postData) != 'string')
@@ -156,7 +156,7 @@ function JSON_PostRequest (URL, postData, successFunc, errorFunc)
  */
 function JSON_HashPostRequest(URL, postHashData, successFunc, errorFunc)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     try
     {
         var data = '';
@@ -442,7 +442,7 @@ function LZ_SaveFailure (data, genericError)
  */
 function JSON_IgnoreError (data)
 {
-    deprecated();
+    deprecated('Should use $.noop');
     // Do nothing, successfully
     return true;
 }
@@ -568,7 +568,7 @@ function _runNextInJSONQueue ()
  */
 function JSON_multiRequest(paths,argHash,onSuccess,errorFunc,dontRequireAll)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     // Ensure variables are of proper types
     argHash = argHash;
     if(argHash['mrSource'])
@@ -620,13 +620,13 @@ var lixuz_JSOND_Abort = false,
 
 function JSON_DelayedRequest (URL, successFunc, errorFunc)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     JSON_DelayedHashPostRequest(URL,null,successFunc,errorFunc);
 }
 
 function JSON_DelayedHashPostRequest (URL, postData, successFunc, errorFunc)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     _JSOND_Prep(false);
     var handlers = lixuz_JSOND_queue.getOrNew('handlers','hash'),
         targets = lixuz_JSOND_queue.getOrNew('targets','array'),
@@ -644,7 +644,7 @@ function JSON_DelayedHashPostRequest (URL, postData, successFunc, errorFunc)
 
 function JSON_DelayedSubmit (prevMustSucceed,onDoneRun)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     _JSOND_Prep(false);
     if(onDoneRun != null)
     {
@@ -660,7 +660,7 @@ function JSON_DelayedSubmit (prevMustSucceed,onDoneRun)
 
 function JSON_SubmitCurrent ()
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     var newR = lixuz_JSOND_queue.getVariables();
     lixuz_JSOND_ReqRunning = newR;
     JSON_multiRequest(newR['targets'], newR['postData'], _JSOND_successResponse, _JSOND_failureResponse, newR['prevMustSucceed']);
@@ -668,7 +668,7 @@ function JSON_SubmitCurrent ()
 
 function JSON_DelayedAbort ()
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     lixuz_JSOND_Abort = true;
 }
 
