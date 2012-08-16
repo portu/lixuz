@@ -151,12 +151,6 @@ function LZ_AddFlashToArticle (flashId)
     LZ_ArtFilePrompt(flashId,'flash')
 }
 
-function LZ_ArtAddVideo (videoId)
-{
-    deprecated();
-    stub();
-}
-
 function LZ_ArtFilePrompt (fileId, fileType)
 {
     deprecated();
@@ -313,11 +307,6 @@ function LZ_RetrievedSpots  (data)
     LZ_ArtFilePrompt(currFileUID,currFileType,data['/admin/services/templateInfo'].spots,data['/admin/articles/JSON/getTakenFileSpots'].taken);
 }
 
-function fileSpotTaken ()
-{
-    deprecated();
-    stub();
-}
 /*
  * *************
  * Article <-> Files
