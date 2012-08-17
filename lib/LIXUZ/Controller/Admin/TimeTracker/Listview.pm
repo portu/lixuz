@@ -69,7 +69,7 @@ sub index : Path Args(0) Form('/core/search')
         if ((defined $frmdate and length $frmdate) and (defined $todate and length $todate))
         {
             $frmdate = $frmdate.' 00:00';
-            $todate = $todate.' 00:00';
+            $todate = $todate.' 23:59';
 
             if ($frmdate =~ s/^\s*(\S+\s+\S+)\s*$/$1/ and $todate =~ s/^\s*(\S+\s+\S+)\s*$/$1/)
             {
