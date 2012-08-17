@@ -33,8 +33,8 @@ function entryEditorWindow (data)
     destroyPI();
     var html = '<input type="hidden" id="timeentry_id" value="'+data.timeentry_id+'" />';
     html = html + '<table><tr><td colspan="2"><div id="entryError"></div></td></tr>';
-    html = html + '<tr><td>'+i18n.get('From')+':</td><td><input type="text" id="time_start" name="time_start" value="'+data.time_start+'" /><a href="#" onClick="openCalendarStart()"; return false;" id="time_start_triggerButton"><img src="/static/images/calendar.png"></a></td></tr>';
-    html = html + '<tr><td>'+i18n.get('To')+':</td><td><input type="text" id="time_end" name="time_end"  value="'+data.time_end+'" /><a href="#" onClick="openCalendarEnd(); return false;" id="time_end_triggerButton"><img src="/static/images/calendar.png"></a></td></tr>';
+    html = html + '<tr><td>'+i18n.get('From')+':</td><td><input type="text" id="time_start" name="time_start" value="'+data.time_start+'" /><a href="#" id="time_start_triggerButton"><img src="/static/images/calendar.png"></a></td></tr>';
+    html = html + '<tr><td>'+i18n.get('To')+':</td><td><input type="text" id="time_end" name="time_end"  value="'+data.time_end+'" /><a href="#" id="time_end_triggerButton"><img src="/static/images/calendar.png"></a></td></tr>';
     if (data.ip_start != "")
     {
         html = html + '<tr><td>'+i18n.get('IP In')+':</td><td>'+data.ip_start+'</td></tr>';
@@ -65,6 +65,32 @@ function entryEditorWindow (data)
             buttons: buttons,
             title: ptitle
         });
+
+    /* Force z-index for calendars here to be huge so that they don't appear
+     * behind the dialog */
+    $('<style />').appendTo('head').text('.calendar { z-index:999999; }');
+
+    /*
+     * Initialize calendars
+     */
+    Calendar.setup({
+        inputField  : 'time_start',
+        ifFormat    : "%d.%m.%Y %H:%M",
+        showsTime   : true,
+        timeFormat  : 24,
+        button      : "time_start_triggerButton",
+        singleClick : true,
+        step        : 1
+    });
+    Calendar.setup({
+        inputField  : "time_end",
+        ifFormat    : "%d.%m.%Y %H:%M",
+        showsTime   : true,
+        timeFormat  : 24,
+        button      : "time_end_triggerButton",
+        singleClick : true,
+        step        : 1
+    });
 }
 
 function validateForm()
@@ -192,38 +218,6 @@ function timeEntryDeleted_failure (reply)
     var error = LZ_JSON_GetErrorInfo(reply,null);
     destroyPI();
     userMessage(i18n.get('Failed to delete: ')+error);
-}
-
-// open calender for selecting start time on add/edit page
-function openCalendarStart()
-{
-    Calendar.setup({
-        inputField  : 'time_start',
-        ifFormat    : "%d.%m.%Y %H:%M",
-        showsTime   : true,
-        timeFormat  : 24,
-        button      : "time_start_triggerButton",
-        singleClick : true,
-        step        : 1
-    });
-
-    $('div.calendar').css('z-index',99999);
-}
-
-// open calender for selecting end time on the add/edit page
-function openCalendarEnd()
-{
-    Calendar.setup({
-        inputField  : "time_end",
-        ifFormat    : "%d.%m.%Y %H:%M",
-        showsTime   : true,
-        timeFormat  : 24,
-        button      : "time_end_triggerButton",
-        singleClick : true,
-        step        : 1
-    });
-
-    $('div.calendar').css('z-index',99999);
 }
 
 //generate PDF format report.
