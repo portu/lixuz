@@ -208,6 +208,7 @@ sub entrySave : Local
                 time_end => datetime_to_SQL($time_end),
                 ip_start => $ip_start,
                 ip_end => $ip_end,
+                entry_type => 'manually'
             });
             $timeentry->update();
             my $latestentryid = $timeentry->time_id;
@@ -285,6 +286,7 @@ sub addTimeEntry : Local
                 time_start => $current_date_time,
                 ip_start => $ip,
                 tt_status => 1,
+                entry_type => 'auto',
             });
     }
     else

@@ -159,6 +159,7 @@ sub index : Path Args(0) Form('/core/search')
                             username => $username ,
                             from_to => $from_to,
                             duration =>$hours.':'.$minutes,
+                            entry_type => $dateentry->entry_type,
                         });
                 }
             }

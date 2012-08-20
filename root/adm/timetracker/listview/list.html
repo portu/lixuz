@@ -26,6 +26,7 @@
                     <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'timeEntryUser', ordertype => $ordertype}) %>"><% $i18n->get('Username') %></a></td>
                     <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'time_start', ordertype => $ordertype}) %>"><% $i18n->get('From-To') %></a></td>
                     <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'time_end', ordertype => $ordertype}) %>"><% $i18n->get('Duration') %></a></td>
+                    <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'entry_type', ordertype => $ordertype}) %>"><% $i18n->get('Entry type') %></a></td>
                     <td class="rowHead rowHeadIcon">&nbsp;</td>
                 </tr>
 %my $timecount =0 ;
@@ -34,7 +35,15 @@
         <td><% $dta->{'username'}%></td>
         <td><% $dta->{'from_to'}%></td>
         <td><% $dta->{'duration'}%></td>
-        <td><a href="#" onclick="previewTimeEntry(<% $dta->{'timeentry_id'} %>)"><img class="useTipsy" src="/static/images/icons/article-preview.png" border="0" title="<% $i18n->get('Preview') %>" class="useTipsy" alt="<% $i18n->get('Preview') %>"/></a></td>
+        <td>
+
+%if($dta->{'entry_type'} eq 'manually'){
+<img class="useTipsy" src="/static/images/icons/manually-timeentry.png" border="0" title="<% $i18n->get('Manually time ntry') %>" alt="<% $i18n->get('Manually time entry') %>" class="useTipsy" />
+%}else{
+<img class="useTipsy" src="/static/images/icons/auto-timeentry.png" border="0" title="<% $i18n->get('Auto time ntry') %>" alt="<% $i18n->get('Auto time entry') %>" class="useTipsy" />
+%}
+</td>
+<td><a href="#" onclick="previewTimeEntry(<% $dta->{'timeentry_id'} %>)"><img class="useTipsy" src="/static/images/icons/article-preview.png" border="0" title="<% $i18n->get('Preview') %>" class="useTipsy" alt="<% $i18n->get('Preview') %>"/></a></td>
     </tr>
 %$timecount++;
 %}
