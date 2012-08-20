@@ -106,6 +106,9 @@ sub index : Path Args(0) Form('/core/search')
             $self->messageToList($c, $message );
         }
     }
+
+    $timetrackentry = $timetrackentry->search({ },{ order_by => {-desc => \'DATE(time_start)'} });
+
     $timetrackentry = $timetrackentry->search({ },{ group_by => \'DATE(time_start)' });
 
     if ($timetrackentry)

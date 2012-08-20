@@ -104,6 +104,8 @@ sub index : Path Args(0) Form('/core/search')
              $self->messageToList($c, $message );
          }
     }
+    $c->req->params->{orderby} = 'time_start';
+    $c->req->params->{ordertype} = 'DESC';
 
     if (defined $c->req->param('reports') and $c->req->param('reports') eq 'yes')
     {
