@@ -38,8 +38,8 @@ my $hours = $tdiff % 24;
 </%perl>
 <tr class="<% $i%2==0 ? 'even' : 'odd' %>">
 <td><% $author %> </td>
-<td><% $timetrackentry->time_start %></td>
-<td><% $timetrackentry->time_end %></td>
+<td><% datetime_from_SQL($timetrackentry->time_start) %></td>
+<td><% datetime_from_SQL($timetrackentry->time_end) %></td>
 <td><% $hours.':'.$minutes %></td>
 <td><% $timetrackentry->ip_start %></td>
 <td><% $timetrackentry->ip_end %></td>
@@ -76,6 +76,6 @@ $ordertype => ''
 use 5.010;
 </%init>
 <%once>
-use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL_to_unix datetime_to_SQL);
+use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL_to_unix datetime_to_SQL datetime_from_SQL);
 </%once>
 
