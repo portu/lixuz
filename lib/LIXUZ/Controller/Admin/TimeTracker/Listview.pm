@@ -120,7 +120,9 @@ sub index : Path Args(0) Form('/core/search')
             $i++;
             my $record_date = $timetracks->time_start;
             $record_date =~ s/\s+\S+$//;
-            my $changed_record_date = join '.', reverse split '-',$record_date;
+            my $changed_record_date = datetime_from_SQL($timetracks->time_start);
+            $changed_record_date =~ s/\s+\S+$//;
+
             my $inuserid = $timetracks->user_id;
 
             $info{$i}{recdate} = $changed_record_date;
