@@ -101,6 +101,11 @@ my @menu = (
          ],
      },
      {
+        name => $i18n->get('Timetracker'),
+        url => '/timetracker',
+        icon => 'calendar.png',
+     },
+     {
          name => $i18n->get('Users'),
          url => '/users',
          icon => 'users.png',
@@ -141,11 +146,6 @@ my @menu = (
                 url => '/settings/admin/info/memcached/flush',
             }
          ],
-     },
-     {
-        name => $i18n->get('Timetracker'),
-        url => '/timetracker',
-        icon => 'calendar.png',
      },
      
  );
