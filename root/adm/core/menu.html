@@ -1,6 +1,6 @@
 <%perl>
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2012
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -30,26 +30,26 @@ my @menu = (
          url => '/articles',
          icon => 'article.png',
          subentries => [
-             {
-                 name => $i18n->get('New article'),
-                 url => '/articles/add',
-                 click => 'LZ_NewArticle(); return false;',
-             },
-             {
-                 name => $i18n->get('Trash'),
+            {
+                name => $i18n->get('New article'),
+                url => '/articles/add',
+                click => 'LZ_NewArticle(); return false;',
+            },
+            {
+                name => $i18n->get('Trash'),
                 url => '/articles/trash',
             },
          ],
-     },
-     {
-         name => $i18n->get('Categories'),
-         url => '/categories',
-         icon => 'categories.png',
-         subentries => [
-            {
-                name => $i18n->get('New category'),
-                url => '/categories/add',
-            },
+    },
+    {
+     name => $i18n->get('Categories'),
+     url => '/categories',
+     icon => 'categories.png',
+     subentries => [
+        {
+            name => $i18n->get('New category'),
+            url => '/categories/add',
+        },
         ],
      },
      {
@@ -142,7 +142,13 @@ my @menu = (
             }
          ],
      },
-);
+     {
+        name => $i18n->get('Timetracker'),
+        url => '/timetracker',
+        icon => 'calendar.png',
+     },
+     
+ );
 my $menuHTML = '';
 my $onLoadJS = '';
 foreach my $entry ( @menu)

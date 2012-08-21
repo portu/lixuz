@@ -1,5 +1,5 @@
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2012
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -152,8 +152,6 @@ sub index : Path Args(0) Form('/core/search')
         {
             $message = $i18n->get('Article(s) have been reassigned');
         }
-
-
         $self->messageToList($c, $message );
     } 
 
@@ -211,7 +209,6 @@ sub index : Path Args(0) Form('/core/search')
     }
     else
     {
-
         # Create drag and drop
         my $dnd = LIXUZ::HelperModules::DragDrop->new($c,'LIXUZDB::LzFolder','/admin/articles/folderAjax/',
             {
@@ -426,6 +423,7 @@ sub read : Local Args
                         $c->log->warn('Failed to locate LzFile entry for file '.$f->file_id.' attached to object '.$f->article_id);
                         next;
                     }
+
                     if(not defined $caption)
                     {
                         $caption = $fileObj->caption;
@@ -462,8 +460,6 @@ sub read : Local Args
                 folder_id => $article->folder->folder_id,
                 revision => $article->revision,
             });
-
-
             
             my @fieldList = $fields->get_fields;
             foreach my $field (@fieldList)
@@ -651,7 +647,6 @@ sub preview : Local Args
     $renderer->resolve_var('lz_preview_mode',$includes);
     $renderer->autorender();
 }
-
 
 sub previewInfo : Private
 {

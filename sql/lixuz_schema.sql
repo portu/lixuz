@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.61, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.1.63, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: lixuz
 -- ------------------------------------------------------
--- Server version	5.1.61-0+squeeze1
+-- Server version	5.1.63-0+squeeze1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -223,6 +223,26 @@ CREATE TABLE `lz_category_folder` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `lz_comment`
+--
+
+DROP TABLE IF EXISTS `lz_comment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lz_comment` (
+  `comment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `object_id` int(11) NOT NULL,
+  `object_type` enum('article','time_entry') NOT NULL,
+  `on_revision` int(5) NOT NULL DEFAULT '1',
+  `written_time` datetime DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  `body` text,
+  PRIMARY KEY (`comment_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `lz_field`
 --
 
@@ -232,7 +252,7 @@ DROP TABLE IF EXISTS `lz_field`;
 CREATE TABLE `lz_field` (
   `field_id` int(11) NOT NULL AUTO_INCREMENT,
   `field_name` varchar(100) DEFAULT NULL,
-  `field_type` enum('singleline','multiline','user-pulldown','predefined-pulldown','multi-select','checkbox','range','meta-int','meta-date','meta-other','datetime','date') DEFAULT NULL,
+  `field_type` enum('singleline','multiline','user-pulldown','predefined-pulldown','multi-select','checkbox','range','meta-int','meta-date','meta-other','datetime','date','datetimerange') DEFAULT NULL,
   `field_height` smallint(6) DEFAULT NULL,
   `field_richtext` tinyint(1) DEFAULT '0',
   `field_range` varchar(20) DEFAULT NULL,
@@ -495,7 +515,7 @@ CREATE TABLE `lz_newsletter_subscription` (
   `email` varchar(254) NOT NULL,
   `name` varchar(254) NOT NULL,
   `format` enum('text','html') NOT NULL DEFAULT 'text',
-  `send_every` enum('month','week','day') NOT NULL DEFAULT 'week',
+  `send_every` enum('month','week','day','none') NOT NULL DEFAULT 'week',
   `last_sent` datetime DEFAULT NULL,
   `validation_hash` varchar(100) DEFAULT NULL,
   `validated` tinyint(1) NOT NULL DEFAULT '0',
@@ -705,6 +725,27 @@ CREATE TABLE `lz_template_includes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `lz_time_entry`
+--
+
+DROP TABLE IF EXISTS `lz_time_entry`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lz_time_entry` (
+  `time_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `time_start` datetime NOT NULL,
+  `time_end` datetime NOT NULL,
+  `last_seen` datetime NOT NULL,
+  `ip_start` varchar(50) DEFAULT NULL,
+  `ip_end` varchar(50) DEFAULT NULL,
+  `tt_status` int(11) DEFAULT '0',
+  `entry_type` enum('manually','auto') DEFAULT NULL,
+  PRIMARY KEY (`time_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `lz_user`
 --
 
@@ -811,4 +852,4 @@ CREATE TABLE `lz_workflow_comments` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-03-13 13:48:27
+-- Dump completed on 2012-08-21 11:21:36

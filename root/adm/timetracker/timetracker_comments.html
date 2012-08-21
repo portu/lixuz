@@ -1,0 +1,60 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2012
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+
+%if (defined $commentsobj) {
+%while(my $comment = $commentsobj->next)
+%{
+
+<div class="TimetrackerComment">
+<%perl>
+    my $author = '(unknown)';
+    my $subjectline;
+    if($comment->subject)
+    {
+        $subjectline = '<b>'.$comment->subject.'</b><span class="lite"><i>'.$i18n->get_advanced('by %(AUTHOR) at %(DATETIME)',{
+            AUTHOR => $comment->ttUser->verboseName,
+            DATETIME => $comment->written_time,
+        }).'</i></span>';
+    }
+    else
+    {
+        $subjectline = '<span class="lite"><i>'.$i18n->get_advanced('%(AUTHOR) at %(DATETIME)',{
+            AUTHOR => $author,
+            DATETIME => $comment->written_time,
+        }).'</i></span>';
+    }
+</%perl>
+<% $subjectline|n %><br/>
+
+% my $body = $comment->body;
+% $body = encode_entities($body,'<>&"');
+% $body =~ s{(https?://[^\s\)]+)}{<a href="$1" target="blank">$1</a>}gi;
+% $body =~ s/\r?\n/<br \/>/g;
+<% $body |n %>
+</div>
+%}
+%}
+<%args>
+$i18n
+$commentsobj => undef
+$displaySite => 1
+</%args>
+<%init>
+use HTML::Entities qw(encode_entities);
+</%init>
+

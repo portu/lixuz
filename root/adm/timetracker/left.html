@@ -1,0 +1,28 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2012
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+<div>
+%if($c->user->can_access('/timetracker/entrySave')) {    
+<div class="buttonHolder"><a href="#" onclick="entryEditorWindow();return false;"><img src="/static/images/icons/newsletter-add-group.png" border="0" align="left" />&nbsp;<% $i18n->get('Add a entry') %></a></div>
+%}
+<div class="buttonHolder"><a href="#" onclick="generatePdfReport();return false" target="_blank"><img src="/static/images/icons/newsletter-edit-group.png" border="0" align="left" />&nbsp;<% $i18n->get('Export as PDF') %></a></div>
+<div class="buttonHolder"><a href="timetracker/listview" ><img src="/static/images/icons/article.png" border="0" align="left" />&nbsp;<% $i18n->get('List view') %></a></div>
+
+</div>
+<%args>
+$i18n
+</%args>

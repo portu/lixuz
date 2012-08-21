@@ -21,6 +21,7 @@ use 5.010;
 use base 'Catalyst::Controller';
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::I18N;
+use LIXUZ::HelperModules::Calendar qw(datetime_from_unix);
 
 sub detectLang : Private
 {
@@ -93,6 +94,14 @@ sub auto : Private
     {
         $c->stash->{username} = $c->user->user_name;
         $c->stash->{user_id} = $c->user->get_column('user_id');
+
+        my $timetrackershow = $self->checktimetracker_status($c);
+        $c->stash->{timetrackershow} = $timetrackershow;
+        my $current_date_time = datetime_from_unix(time());
+        $current_date_time =~ /\s+/g;
+        my ($current_time) = ($current_date_time=~/\G(\d+:\d+)/ );
+        $c->stash->{current_time} = $current_time;
+
         # Make sure that the user can access the requested action.
         # check_access() will detach and display an access denied page if
         # access is denied.
@@ -184,5 +193,18 @@ sub end : Private
 
     $c->forward('LIXUZ::View::Mason');
 }
+
+sub checktimetracker_status : Local
+{
+    my ( $self, $c) = @_;
+    my $tt_status = 0;
+    my $timeentry = $c->model('LIXUZDB::LzTimeEntry')->find({ user_id => $c->user->user_id, tt_status => 1});
+    if ($timeentry)
+    {
+        $tt_status = $timeentry->tt_status;
+    }
+    return $tt_status;
+}
+
 
 1;

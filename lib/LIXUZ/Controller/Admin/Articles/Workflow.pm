@@ -140,17 +140,19 @@ sub submitComment : Local
         $c->user->access_denied();
     }
 
-	my $comment = $c->model('LIXUZDB::LzWorkflowComments')->create({
-			article_id => $article->article_id,
-			comment_subject => $subject,
-			comment_body => $body,
-			written_time => \'NOW()',
-			user_id => $c->user->user_id,
-            on_revision => $revision,
-		});
-	$comment->update();
+    my $comment = $c->model('LIXUZDB::LzComment')->create({
+                    object_id => $article->article_id,
+                    object_type => 'article',
+                    subject => $subject,
+                    body => $body,
+                    written_time => \'NOW()',
+                    user_id => $c->user->user_id,
+                    on_revision => $revision,
+                });
+
+    $comment->update();
     $self->notifyAboutComment($c,$artid,$comment);
-	return json_response($c,{});
+    return json_response($c,{});
 }
 
 # Summary: Get the list of comments
@@ -170,7 +172,9 @@ sub preparePage : Private
 	my ( $self, $c, $article ) = @_;
 	if ($article)
 	{
-        my $comments = $c->model('LIXUZDB::LzWorkflowComments')->search({ article_id => $article->article_id }, { order_by => 'written_time' });
+        my $comments = $c->model('LIXUZDB::LzComment')->search({ object_id => $article->article_id, object_type=>'article' }, { order_by => 'written_time' });
+
+
         my $workflow = $article->workflow;
 		$self->prepare($c,$article,$workflow,$comments);
 	}
@@ -399,8 +403,8 @@ sub notifyAboutComment
         });
     my $message = $i18n->get_advanced("%(SUBJECT) by %(FIRSTNAME) %(LASTNAME) (%(USERNAME)):\n%(BODY)",{
             ARTICLE_ID => $artid,
-            SUBJECT => $comment->comment_subject,
-            BODY => $comment->comment_body,
+            SUBJECT => $comment->subject,
+            BODY => $comment->body,
             FIRSTNAME => $c->user->firstname,
             LASTNAME => $c->user->lastname,
             USERNAME => $c->user->user_name

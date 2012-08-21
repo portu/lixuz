@@ -1,5 +1,5 @@
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2012
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -36,7 +36,7 @@ use Carp;
 use Exporter qw(import);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl);
 use POSIX qw(mktime);
-our @EXPORT_OK = qw(create_calendar datetime_to_SQL datetime_from_SQL datetime_from_unix datetime_from_SQL_to_unix is_dst);
+our @EXPORT_OK = qw(create_calendar datetime_to_SQL datetime_from_SQL datetime_from_unix datetime_from_SQL_to_unix get_current_time is_dst);
 
 # TODO: Much more error handling in datetime_(from|to)_* functions
 
@@ -129,6 +129,16 @@ sub datetime_from_unix
     $year += 1900;
     $month++;
     return($day.'.'.$month.'.'.$year.' '.$hour.':'.$minute);
+
+}
+
+sub get_current_time
+{
+    my $unixtime = time;
+    my ($sec,$minute,$hour,$day,$month,$year,$wday,$yday,$isdst) = localtime($unixtime);
+    $year += 1900;
+    $month++;
+    return ($hour.':'.$minute);
 
 }
 

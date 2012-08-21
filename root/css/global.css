@@ -464,3 +464,13 @@ select ul li.subs {
     border-radius: 10px 10px 10px 10px;
     max-width: 250px;    
 }
+
+#TimetrackerCommentsContainer{
+    border-top: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
+}
+
+.TimetrackerComment{
+    padding: 8px 0px 12px 0px;
+}
+

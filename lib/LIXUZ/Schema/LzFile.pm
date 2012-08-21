@@ -606,6 +606,25 @@ sub getAllFields
     return $href;
 }
 
+# Purpose: Get a list of all addtional fields and their values associated with this file 
+# Usage: hashref = file->getAddtionalFields_values($c);
+sub getAddtionalFields_values
+{
+    my($self,$c) = @_;
+    my $href = {};
+    my $fields = $c->model('LIXUZDB::LzFieldValue')->search({ module_id => $self->file_id, module_name => 'files' });
+    while(my $f = $fields->next)
+    {
+        my $fld = $c->model('LIXUZDB::LzField')->find({field_id => $f->field_id});
+        my $field_name = $fld->field_name;
+        if ($field_name)
+        {
+            $href->{$field_name} = $f->value;
+        }
+    }
+    return $href;
+}
+
 # ---
 # File format methods
 # ---

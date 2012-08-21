@@ -1,0 +1,48 @@
+<div class="TimetrackerComment">
+<table cellspacing="0" class="listView" border="1" width="100%">
+        <tr>
+            <td>ID</td>
+            <td>start date</td>
+            <td>End Date</td>
+            <td>Duration</td>
+            <td>IP In</td>
+            <td>IP Out</td>
+        </tr>
+%while(my $timetrack = $timetrackentry->next){
+<%perl>
+my $author = $timetrack->timeEntryUser->name;
+if(not defined $author or not length $author)
+{
+$author = $i18n->get('(none)');
+}
+my $start_time = datetime_from_SQL_to_unix($timetrack->time_start);
+my $end_time =  datetime_from_SQL_to_unix($timetrack->time_end);
+my $tdiff = $end_time-$start_time;
+my $seconds = $tdiff % 60;
+$tdiff = ($tdiff - $seconds)/60;
+my $minutes = $tdiff % 60;
+$tdiff = ($tdiff - $minutes)/60;
+my $hours = $tdiff % 24;
+
+</%perl>
+<tr>
+            <td><%$timetrack->user_id%></td>
+            <td><%$timetrack->time_start%></td>
+            <td><%$timetrack->time_end %></td>
+            <td><% $hours.':'.$minutes %></td>
+            <td><%$timetrack->ip_start %></td>
+            <td><%$timetrack->ip_end %></td>
+        <tr>
+%}
+</table>
+</div>
+<%args>
+$timetrackentry =>undef
+$i18n
+$reportTitle=>undef
+$displaySite => 1
+</%args>
+<%once>
+use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL_to_unix datetime_to_SQL);
+</%once>
+
