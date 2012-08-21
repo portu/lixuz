@@ -90,6 +90,7 @@ sub index : Path Args(0) Form('/core/search')
     }
 
     add_jsIncl($c,
+        'utils.js',
         'rssimport.js',
     );
     add_editor_incl($c);

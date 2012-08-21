@@ -251,6 +251,14 @@ function insertImage_resizeObj(editorName,obj,width,height)
             {
                 return this.inlineMap[RTE];
             }
+            else
+            {
+                var mapped = RTE.replace(/^inline_/,'');
+                if(this.inlineMap[mapped])
+                {
+                    return this.inlineMap[mapped];
+                }
+            }
             return RTE;
         },
 

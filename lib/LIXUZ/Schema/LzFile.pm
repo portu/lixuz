@@ -194,7 +194,7 @@ __PACKAGE__->set_primary_key("file_id");
 use Graphics::Magick;
 use Carp;
 use LIXUZ::HelperModules::Cache qw(get_ckey CT_24H);
-use LIXUZ::HelperModules::Files qw(get_new_aspect fsize);
+use LIXUZ::HelperModules::Files qw(get_new_aspect get_new_aspect_constrained fsize);
 use File::MMagic::XS qw(:compat);
 use URI::Escape qw(uri_escape);
 use Math::Int2Base qw( int2base );
@@ -1043,6 +1043,12 @@ sub get_url_aspect
 {
     my($self, $c, $height, $width) = @_;
 
+    # Die if this isn't an image file
+    if (!$self->is_image)
+    {
+        carp('get_url_aspect called on non-image file '.$self->file_id);
+    }
+
     # If we only got either height or width, then hand control to get_url,
     # as we don't need to do any calculation
     if ( !defined($height) || !defined($width) )
@@ -1066,7 +1072,7 @@ sub get_url_aspect
     # return the original size instead of the resized size
     if ($width >= $self->width && $height >= $self->height)
     {
-        return $self->get_url($c);
+        return $self->_returnStringAndAspect(wantarray,$self->get_url($c),$self->height,$self->width);
     }
 
     # If either the height or width exceed the original, then use the original
@@ -1079,42 +1085,11 @@ sub get_url_aspect
         $width = $self->width;
     }
 
-    my $final = {
-        height => undef,
-        width => undef,
-    };
-    # Landscape format
-    if ($self->width > $self->height)
-    {
-        # Okay, it's landscape, thus if the height supplied is larger than the
-        # width, we use that as our base, otherwise, we use the width
-        if ($height > $width)
-        {
-            $final->{height} = $height;
-        }
-        else
-        {
-            $final->{width} = $width;
-        }
-    }
-    # Portrait
-    else
-    {
-        # Okay, it's portrait, thus if the width supplied is larger than the
-        # height, we use that as our base, otherwise, we use the height
-        if ($width > $height)
-        {
-            $final->{width} = $width;
-        }
-        else
-        {
-            $final->{height} = $height;
-        }
-    }
+    ($width,$height) = get_new_aspect_constrained($self->width,$self->height,$width,$height);
 
-    my $URL = $self->get_url($c, $final->{height}, $final->{width});
+    my $URL = $self->get_url($c, $height,$width);
 
-    return $self->_returnStringAndAspect(wantarray,$URL,$final->{height},$final->{width});
+    return $self->_returnStringAndAspect(wantarray,$URL,$height,$width);
 }
 
 # Summary: Get a resized version of this file
@@ -1520,8 +1495,8 @@ sub _returnStringAndAspect
     {
         return ($string,$self->height,$self->width);
     }
-    $height //= get_new_aspect($self->width,$self->height,$width);
-    $width  //= get_new_aspect($self->width,$self->height,undef,$height);
+    $height ||= get_new_aspect($self->width,$self->height,$width);
+    $width  ||= get_new_aspect($self->width,$self->height,undef,$height);
     return ($string,$height,$width);
 }
 

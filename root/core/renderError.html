@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </%perl>
+<!DOCTYPE html>
 <html>
 <head>
 <!-- Lixuz error -->
@@ -23,15 +24,24 @@
 <body>
 <h4><% $error|n %></h4>
 <h5><% $error_no|n %></h5>
-<b><i>EN</i></b>: <% $text |n %>
-<br /><br />
-<b><i>NO</i></b>: <% $text_no |n %>
-<br /><br /><br /><br />
-<br /><br /><br /><br />
-<small><code>
-Technical: <% $techie |n %>
-</code></small>
-</body></html>
+<div class="errorMessage">
+    <b><i>EN</i></b>:
+    <div class="content"><% $text |n %>
+    <br /><br />
+</div>
+<div class="errorMessage">
+    <b><i>NO</i></b>:
+    <% $text_no |n %>
+    <br /><br /><br /><br />
+    <br /><br /><br /><br />
+</div>
+<div class="details">
+    <small><code>
+    Technical: <% $techie |n %>
+    </code></small>
+</div>
+</body>
+</html>
 <%args>
 $error => 'UNKNOWN ERROR'
 $error_no => 'UKJENT FEIL'

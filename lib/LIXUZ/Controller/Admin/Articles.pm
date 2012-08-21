@@ -423,7 +423,6 @@ sub read : Local Args
                         $c->log->warn('Failed to locate LzFile entry for file '.$f->file_id.' attached to object '.$f->article_id);
                         next;
                     }
-
                     if(not defined $caption)
                     {
                         $caption = $fileObj->caption;
@@ -434,19 +433,20 @@ sub read : Local Args
                         iconItem =>$fileObj->get_icon($c),
                         iconItemBody => $fileObj->get_url_aspect($c,250,250),
                         file_id => $fileObj->file_id,
-                        file_name => $fileObj->file_name,
-                        add_fields =>$fileObj->getAddtionalFields_values($c),
+                        file_name => $fileNameSplit,
                         fsize => $fileObj->sizeString($c),
                         caption => $caption,
-                        identifier => $fileObj->identifier
+                        identifier => $fileObj->identifier,
+                        fields => {},
                     };
-                    if ($fileObj->ownerUser)
+                    my $fields = $fileObj->getAllFields($c);
+                    if ($fields)
                     {
-                        $info->{file_owner} = $fileObj->ownerUser->name;
-                    }
-                    else
-                    {
-                        $info->{file_owner} = $fileObj->owner;
+                        foreach my $f (keys %{$fields})
+                        {
+                            my $field = $c->model('LIXUZDB::LzField')->find({ field_id => $f });
+                            $info->{fields}->{ $field->field_name } = $fields->{$f};
+                        }
                     }
                     push(@{$files},$info);
                 }

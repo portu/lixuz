@@ -117,6 +117,11 @@ var artRevUI = {
     {
         destroyPI();
         var html = '<table id="artRevTable"><tr><th>'+i18n.get('Revision')+'</th><th>'+i18n.get('Saved by')+'</th><th>'+i18n.get('Saved at')+'</th><th>'+i18n.get('Status')+'</th><th>'+i18n.get('Title')+'</th><th style="min-width: 36px">&nbsp;</th></tr>';
+        var viewURL = '/admin/articles/preview/';
+        if (/articles\/read/.test(location.href))
+        {
+            viewURL = '/admin/articles/read/';
+        }
         $.each(data.revisions, function (i, rev)
         {
             html = html + '<tr><td class="revNo">'+rev.revision+'</td><td>'+rev.savedBy+'</td><td>'+rev.savedAt+'</td><td class="revStatusID" uid="'+rev.status_id+'">'+rev.status+'</td><td>'+rev.title+'</td>'+'<td>';

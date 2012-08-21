@@ -26,8 +26,8 @@ use LIXUZ::HelperModules::Lists qw(reply_json_list);
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 use LIXUZ::HelperModules::Editor qw(add_editor_incl);
-use LIXUZ::HelperModules::EMail qw(send_raw_email_to);
 use LIXUZ::HelperModules::Search qw(perform_search perform_advanced_search);
+use LIXUZ::HelperModules::Mailer;
 use Text::CSV_XS;
 use Regexp::Common qw[Email::Address];
 
@@ -204,7 +204,8 @@ sub submitManual : Local
 {
     my ( $self, $c ) = @_;
 
-    my $message = $c->req->param('message');
+    my($message_html,$message_text);
+
     my $subject = $c->req->param('subject');
     my $type = $c->req->param('type');
     my $from = $c->req->param('from');
@@ -213,6 +214,15 @@ sub submitManual : Local
     $from = (defined $from && $from =~ /.+@.*\./) ? $from : $c->config->{LIXUZ}->{from_email};
     my @recipients = $c->req->param('recipient');
     my %dupeCheck;
+
+    if ($type eq 'HTML')
+    {
+        $message_html = $c->req->param('message');
+    }
+    else
+    {
+        $message_text = $c->req->param('message');
+    }
 
     my @sendTo;
 
@@ -251,6 +261,7 @@ sub submitManual : Local
             push(@sendTo, { email => $email, name => $name });
         }
     }
+    my @to;
     foreach my $email (@sendTo)
     {
         my $name = $email->{name};
@@ -260,15 +271,23 @@ sub submitManual : Local
             $name =~ s/(<|>)//g;
             $address = $name.' <'.$address.'>';
         }
-        send_raw_email_to($c,$subject,$message,$address,$from,$type);
+        push(@to,$address);
     }
-    $type = lc($type);
+    my $mailer = LIXUZ::HelperModules::Mailer->new( c => $c );
+    $mailer->add_mail({
+        recipients   => \@to,
+        subject      => $subject,
+        message_text => $message_text,
+        message_html => $message_html,
+        from         => $from
+    });
+    $mailer->send;
     my $newMessage = $c->model('LIXUZDB::LzNewsletterSaved')->create({
             sent_by_user => $c->user->user_id,
             from_address => $from,
             format => $type,
             subject => $subject,
-            body => $message,
+            body => $c->req->param('message'),
         });
     return json_response($c);
 }

@@ -121,6 +121,13 @@ sub renderImg
         return $img->to_xml;
     }
 
+    # Ignore non-images (ie. in the case of videos, which may also have <img>
+    # tags in the body)
+    if (! $image->is_image)
+    {
+        return;
+    }
+
     my $attrs       = $img->attrs;
     my $size = $self->_metaSizeExtractor($img,$img->attrs('src'));
 

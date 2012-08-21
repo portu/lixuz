@@ -691,7 +691,7 @@ sub is_live
         push(@liveStatuses,$extraLiveStatus);
     }
 
-    my $ckey = get_ckey('article','livestatus',$self->article_id.'_'.join('_',@liveStatuses));
+    my $ckey = get_ckey('article','livestatus',$self->article_id.'_'.$self->revision.'_'.join('_',@liveStatuses));
     my $return = $c->cache->get($ckey);
     if(defined $return)
     {
@@ -721,7 +721,7 @@ sub is_live
         {
             $return = true;
             if(defined $self->expiry_time && 
-                (datetime_from_SQL_to_unix($self->expiry_time) > time())
+                (datetime_from_SQL_to_unix($self->expiry_time) < time())
               )
             {
                 $return = false;
@@ -788,13 +788,20 @@ sub getField
                     field_id => $field_id,
                     option_id => $v,
                 });
-            push(@resolved,$val->option_name);
+            if(not defined $val)
+            {
+                $c->log->warn('Failed to locate value for option_id='.$v.' for field_id='.$field_id);
+            }
+            else
+            {
+                push(@resolved,$val->option_name);
+            }
         }
         return(join(', ',@resolved));
     }
     else
     {
-        $c->log->debug('Unhandled getField() field type "'.$field->field_type.'" - returning raw value');
+        $c->log->warn('Unhandled getField() field type "'.$field->field_type.'" - returning raw value');
         return $value;
     }
 }

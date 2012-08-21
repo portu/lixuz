@@ -174,13 +174,13 @@ print "Upgrade flags:";
             print " $k";
         }
     }
-    logAction('Upgrade flags: '.$uflags);
+    slog('Upgrade flags: '.$uflags);
 }
 print "\n";
 print "Logging to: $lfile\n" if not $chained;
 
-logAction('Starting database upgrade of Lixuz installation referenced by config file '.$file);
-logAction('Using config '.$file);
+slog('Starting database upgrade of Lixuz installation referenced by config file '.$file);
+slog('Using config '.$file);
 {
     my $dir = dirname($0);
     chdir($dir) or die("Failed to chdir($dir): $!\n");
@@ -372,7 +372,7 @@ sub upgradeData
     }
     else
     {
-        logAction("Using Lixuz located at $pathToData");
+        slog("Using Lixuz located at $pathToData");
     }
     dualPrint("Preparing to upgrade data...");
     my $loaded = 1;
@@ -384,12 +384,12 @@ sub upgradeData
         {
             require LIXUZ;
         };
-        logAction('Working dir after LIXUZ init: '.getcwd);
+        slog('Working dir after LIXUZ init: '.getcwd);
     }
     catch
     {
         $loaded = 0;
-        logAction('Failed, perl crash while initializing LIXUZ: '.$_);
+        slog('Failed, perl crash while initializing LIXUZ: '.$_);
         print "failed, unable to perform data upgrade (see the logfile).\n";
     };
     return if not $loaded;
@@ -429,6 +429,10 @@ sub upgradeData
         {
             upgradeFileClassPerms($c);
         }
+        if ($flags{upgradeACL})
+        {
+            upgradeACL($c);
+        }
         silent
         {
             mysql_exec('DROP TABLE lz_workflow_change');
@@ -436,7 +440,7 @@ sub upgradeData
     } 
     catch
     {
-        logAction('Failed, perl crash: '.$_);
+        slog('Failed, perl crash: '.$_);
         print "failed (see the logfile).\n";
         return;
     };
@@ -496,7 +500,7 @@ sub updateActionPath
             next;
         }
         print '.';
-        logAction('Created lz_action action_path entry for '.$path);
+        slog('Created lz_action action_path entry for '.$path);
         $s = getModel('LIXUZDB::LzAction')->create({ action_path => $path });
         $s->update();
     }
@@ -510,7 +514,7 @@ sub updateActionPath
         {
             if(not defined $paths{$name})
             {
-                logAction('Deleted unknown lz_action with action_path '.$name.' (action_id '.$s->action_id.')');
+                slog('Deleted unknown lz_action with action_path '.$name.' (action_id '.$s->action_id.')');
                 $s->delete();
                 print '.';
             }
@@ -519,7 +523,7 @@ sub updateActionPath
         {
             print '.';
             my $badPerms = getModel('LIXUZDB::LzRoleAction')->search({ action_id => $s->action_id });
-            logAction('Detected duplicate actions for '.$name.' will delete '.$s->action_id.' and merge permission settings for the duplicates together');
+            slog('Detected duplicate actions for '.$name.' will delete '.$s->action_id.' and merge permission settings for the duplicates together');
             while((defined $badPerms) && (my $bad = $badPerms->next))
             {
                 if ($bad->allowed)
@@ -575,7 +579,7 @@ sub checkOrAddField
         return;
     }
     print '.';
-    logAction('Created the inline field '.$name);
+    slog('Created the inline field '.$name);
     my $newField = getModel('LIXUZDB::LzField')->create({
             field_name => $name,
             field_type => $type,
@@ -609,7 +613,7 @@ sub checkOrAddField
                 object_id => $f->folder_id,
                 position => $pos,
             });
-        logAction('Added the inline field '.$name.' to the folder '.$f->folder_id);
+        slog('Added the inline field '.$name.' to the folder '.$f->folder_id);
     }
     return $newField->field_id;
 }
@@ -619,7 +623,7 @@ sub revisionUpgrade
 {
     my $c = shift;
 
-    logAction('Performing revision upgrade');
+    slog('Performing revision upgrade');
 
     my $articles = $c->model('LIXUZDB::LzArticle')->search(undef, { order_by => 'article_id'});;
     my $upgradedNO = 0;
@@ -642,7 +646,7 @@ sub revisionUpgrade
             }
         }
     }
-    logAction('Revision upgrade done');
+    slog('Revision upgrade done');
 }
 
 # Upgrade to identifier-based lz_files
@@ -650,7 +654,7 @@ sub fileIdentifierUpgrade
 {
     my $c = shift;
 
-    logAction('Performing file identifier upgrade');
+    slog('Performing file identifier upgrade');
     my $files = $c->model('LIXUZDB::LzFile')->search(undef, { order_by => 'file_id'});;
     my $upgradedNO = 0;
 
@@ -672,7 +676,7 @@ sub fileIdentifierUpgrade
             }
         }
     }
-    logAction('File identifier upgrade done');
+    slog('File identifier upgrade done');
 }
 
 # Re-index database
@@ -809,6 +813,11 @@ sub detectFlags
     {
         $flags{reIndex} = 1;
     }
+    # Trigger ACL upgrades if needed
+    if ($currentDBRevision < 8)
+    {
+        $flags{'upgradeACL'} = 1;
+    }
 }
 
 sub getCurrentDBRevision
@@ -870,7 +879,7 @@ sub articleLatestStatusUpgrade
 {
     my $c = shift;
 
-    logAction('Performing article latest_in_status upgrade');
+    slog('Performing article latest_in_status upgrade');
 
     my $articles = $c->model('LIXUZDB::LzArticle')->search(undef, { order_by => 'article_id'});;
     my $upgradedNo = 0;
@@ -914,7 +923,7 @@ sub articleLatestStatusUpgrade
             }
         }
     }
-    logAction('Revision upgrade done');
+    slog('Revision upgrade done');
 }
 
 sub performPreStructureChanges
@@ -923,7 +932,7 @@ sub performPreStructureChanges
     {
         try
         {
-            logAction('Performing structure changes to lz_field_module and dropping fields from lz_article and lz_file');
+            slog('Performing structure changes to lz_field_module and dropping fields from lz_article and lz_file');
             $rawDBH->do('ALTER TABLE lz_field_module CHANGE folder_id object_id INT;') or die($DBI::errstr);
             $rawDBH->do('ALTER TABLE lz_article DROP article_order;') or die($DBI::errstr);
             $rawDBH->do('ALTER TABLE lz_article DROP hits;') or die($DBI::errstr);
@@ -940,7 +949,7 @@ sub performPreStructureChanges
     {
         try
         {
-            logAction('Pre-creating lz_file_folder');
+            slog('Pre-creating lz_file_folder');
             mysql_exec(readCreateStatement('lz_file_folder'),true,true);
             print '.';
         }
@@ -983,7 +992,7 @@ sub convertFileFields
 }
 sub migrateFileFolders
 {
-    logAction('Migrating folder_id on lz_file table to lz_file_folder');
+    slog('Migrating folder_id on lz_file table to lz_file_folder');
     my $files = $rawDBH->selectall_arrayref(
         'SELECT file_id, folder_id FROM lz_file',
         { Slice => {} }
@@ -1040,12 +1049,80 @@ sub readCreateStatement
     return $statement;
 }
 
+sub upgradeACL
+{
+    my $c = shift;
+
+    # This is a PATH => arrayref map
+    #  existing_path => [
+    #           new_path, # The new path that should be granted in addition to existing_path
+    #           new_path2
+    #    ]
+    # 
+    # If a role has access to existing_path then they will automatically be granted access
+    # to new_path
+    #
+    # (make sure you update the DBrevision used for the ACLupgrade flag in
+    #  detectFlags if you add something to this)
+    my %aclMap = (
+        '/articles/preview' => [
+            '/articles/read'
+        ],
+        '/newsletter' => [
+            '/newsletter/subscriberInfo',
+        ]
+    );
+
+    slog('Upgrading ACL entries');
+
+    foreach my $part (keys %aclMap)
+    {
+        my $action = $c->model('LIXUZDB::LzAction')->find({
+                action_path => $part
+            });
+        if(not $action)
+        {
+            slog('Failed to locate (old) object for action path '.$part);
+            next;
+        }
+        my $existing = $c->model('LIXUZDB::LzRoleAction')->search({
+                action_id => $action->id,
+                allowed => 1
+            });
+        if ($existing->count == 0)
+        {
+            slog('No roles appear to have access to '.$part);
+        }
+        while(my $e = $existing->next)
+        {
+            foreach my $grant ( @{$aclMap{$part}})
+            {
+                my $grantAction = $c->model('LIXUZDB::LzAction')->find({
+                        action_path => $grant
+                    });
+                if(not $grantAction)
+                {
+                    slog('Failed to locate (new) object for action path '.$grant);
+                    next;
+                }
+                my $entry = $c->model('LIXUZDB::LzRoleAction')->find_or_create({
+                        action_id => $grantAction->id,
+                        role_id => $e->role_id
+                    });
+                $entry->set_column('allowed',1);
+                $entry->update;
+                slog('Updated permission for role '.$e->role_id.' to include '.$grant.' due to existance of '.$part);
+            }
+        }
+    }
+}
+
 # Run a system() and log it as well
 sub logSystem
 {
     my $logged = join('\',\'',@_);
     $logged =~ s/-(p|u)[^']+/-$1XXXX/g;
-    logAction('Running system(\''.$logged.'\');');
+    slog('Running system(\''.$logged.'\');');
     return system(@_);
 }
 
@@ -1055,7 +1132,7 @@ sub dualPrint
     my $msg = shift;
     print $msg;
     chomp($msg);
-    logAction($msg);
+    slog($msg);
 }
 
 # Both log and die()
@@ -1066,13 +1143,13 @@ sub dualDie
     {
         my $msg = $_[0];
         chomp($msg);
-        logAction('Dying: '.$msg);
+        slog('Dying: '.$msg);
     }
     die(@_);
 }
 
 # Log something
-sub logAction
+sub slog
 {
     my $msg = shift;
     my ($lsec,$lmin,$lhour,$lmday,$lmon,$lyear,$lwday,$lyday,$lisdst) = localtime(time());
