@@ -193,7 +193,7 @@ sub index : Path Args(0) Form('/core/search')
                     if(length $artdt->body)
                     {
                         my  $string  = $artdt->text_body();
-                        $wordcount = scalar(split(/\s+/,$string));
+                        $wordcount = () = split(/\s+/,$string,-1);
                     }
 
                     push(@{$info{$i}{articledata}}, {
