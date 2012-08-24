@@ -45,10 +45,18 @@ var validNavigation= false;
 
 function wiredUpEvents()
 {
-    window.onbeforeunload = function()
+    window.onbeforeunload = function(e)
     {
         if (!validNavigation)
         {
+            if (!e) e = window.event;
+            e.cancelBubble = true;
+            e.returnValue = i18n.get('Timetracker status is on, please stop it.');
+            if (e.stopPropagation)
+            {
+                e.stopPropagation();
+                e.preventDefault();
+            }
             return i18n.get('Timetracker status is on, please stop it.');
         }
     }
@@ -60,6 +68,13 @@ function wiredUpEvents()
             validNavigation = true;
         }
     });
+
+    $(document).bind('keydown',function(e){
+        if (e.keyCode == 116)
+        {
+            validNavigation = true;
+        }
+    })
 
     $("a").bind('click',function()
     {
