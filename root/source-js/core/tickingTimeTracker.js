@@ -14,11 +14,12 @@ function startedTime(data)
         $('#startBtn').hide();
     }
     else
-    {   
+    {
+        $('#stopBtn').hide();
+        $('#tracActive').html("");
         $('#tracActive').hide();
         $('#startBtn').show();
         $('#startBtn').html("<a href='#'  onclick=showTimeTracker('start');>Start</a>");
-        $('#stopBtn').hide();
     }   
 }
 
@@ -40,3 +41,63 @@ function starttime_failure (data)
 
 }
 
+var validNavigation= false;
+
+function wiredUpEvents()
+{
+    window.onbeforeunload = function(e)
+    {
+        if (!validNavigation)
+        {
+            if (!e) e = window.event;
+            e.cancelBubble = true;
+            e.returnValue = i18n.get('Timetracker status is on, please stop it.');
+            if (e.stopPropagation)
+            {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+            return i18n.get('Timetracker status is on, please stop it.');
+        }
+    }
+
+    $(document).bind('keypress',function(e)
+    {
+        if (e.keyCode == 116)
+        {
+            validNavigation = true;
+        }
+    });
+
+    $(document).bind('keydown',function(e){
+        if (e.keyCode == 116)
+        {
+            validNavigation = true;
+        }
+    })
+
+    $("a").bind('click',function()
+    {
+        validNavigation=true;
+    });
+
+    $("form").bind('submit', function () 
+    {
+        validNavigation=true;
+    });
+
+    $("input[type=submit]").bind('click', function()
+    {
+        validNavigation=true;
+    });
+
+    $("input[type=button]").bind('click', function()
+    {
+        validNavigation=true;
+    });
+}
+
+$(document).ready(function()
+{
+    wiredUpEvents();
+});

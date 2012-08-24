@@ -168,6 +168,7 @@ sub index : Path Args(0) Form('/core/search')
             }
 
             my $articledata = $c->model('LIXUZDB::LzArticle');
+            $articledata = article_latest_revisions($articledata);
             if (defined $c->req->param('filter_status_id') and length $c->req->param('filter_status_id'))
             {
                 @arrsts = $c->req->param('filter_status_id');
@@ -241,6 +242,7 @@ sub index : Path Args(0) Form('/core/search')
         $htmldoc->set_html_content($html);
         my $pdf = $htmldoc->generate_pdf();
         my $fh = $pdf->to_string();
+        $c->res->content_type('application/octet-stream');
         $c->res->body($fh);
     }
     else

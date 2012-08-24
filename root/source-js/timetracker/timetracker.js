@@ -97,8 +97,6 @@ function validateForm()
 {
     var pstStartDate =  $('#time_start').val();
     var pstEndDate = $('#time_end').val();
-    var pstSubject = $('#subject').val();
-    var pstComment = $('#comment').val();
     datereg =  /^\s*\d+\.\d+\.\d\d\d\d\s+\d\d?\:\d\d?\s*$/;
 
     if (pstStartDate == '' || !pstStartDate.match(datereg))
@@ -116,15 +114,6 @@ function validateForm()
     if (new Date(pstStartDateFormat).getTime() > new Date(pstEndDateFormat).getTime())
     {
         $('#entryError').html('Start date should be less than end date.');
-        return false;
-    }
-    if (pstSubject == '')
-    {
-        $('#entryError').html('You need to enter subject.');
-        return false;
-    }
-    if (pstComment == '')
-    {   $('#entryError').html('You need to enter comment.');
         return false;
     }
 
