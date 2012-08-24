@@ -243,6 +243,9 @@ sub entrySave : Local
                 {
                     $timeentry->set_column('time_end',datetime_to_SQL($time_end));
                 }
+
+                $timeentry->set_column('entry_type','manually');
+
                 $timeentry->update();
 
                 if ($c->req->param('timeentry_id'))
