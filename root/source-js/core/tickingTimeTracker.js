@@ -14,11 +14,12 @@ function startedTime(data)
         $('#startBtn').hide();
     }
     else
-    {   
+    {
+        $('#stopBtn').hide();
+        $('#tracActive').html("");
         $('#tracActive').hide();
         $('#startBtn').show();
         $('#startBtn').html("<a href='#'  onclick=showTimeTracker('start');>Start</a>");
-        $('#stopBtn').hide();
     }   
 }
 
