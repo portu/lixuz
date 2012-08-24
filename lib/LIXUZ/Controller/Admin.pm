@@ -21,7 +21,7 @@ use 5.010;
 use base 'Catalyst::Controller';
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::I18N;
-use LIXUZ::HelperModules::Calendar qw(datetime_from_unix);
+use LIXUZ::HelperModules::Calendar qw(get_current_time);
 
 sub detectLang : Private
 {
@@ -97,9 +97,8 @@ sub auto : Private
 
         my $timetrackershow = $self->checktimetracker_status($c);
         $c->stash->{timetrackershow} = $timetrackershow;
-        my $current_date_time = datetime_from_unix(time());
-        $current_date_time =~ /\s+/g;
-        my ($current_time) = ($current_date_time=~/\G(\d+:\d+)/ );
+        my $current_time = get_current_time();
+
         $c->stash->{current_time} = $current_time;
 
         # Make sure that the user can access the requested action.

@@ -36,6 +36,7 @@ use Carp;
 use Exporter qw(import);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl);
 use POSIX qw(mktime);
+use POSIX qw(strftime);
 our @EXPORT_OK = qw(create_calendar datetime_to_SQL datetime_from_SQL datetime_from_unix datetime_from_SQL_to_unix get_current_time is_dst);
 
 # TODO: Much more error handling in datetime_(from|to)_* functions
@@ -134,11 +135,8 @@ sub datetime_from_unix
 
 sub get_current_time
 {
-    my $unixtime = time;
-    my ($sec,$minute,$hour,$day,$month,$year,$wday,$yday,$isdst) = localtime($unixtime);
-    $year += 1900;
-    $month++;
-    return ($hour.':'.$minute);
+    my $dt = strftime('%H:%M',localtime);
+    return $dt;
 
 }
 
