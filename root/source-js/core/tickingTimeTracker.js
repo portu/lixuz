@@ -41,3 +41,48 @@ function starttime_failure (data)
 
 }
 
+var validNavigation= false;
+
+function wiredUpEvents()
+{
+    window.onbeforeunload = function()
+    {
+        if (!validNavigation)
+        {
+            return i18n.get('Timetracker status is on, please stop it.');
+        }
+    }
+
+    $(document).bind('keypress',function(e)
+    {
+        if (e.keyCode == 116)
+        {
+            validNavigation = true;
+        }
+    });
+
+    $("a").bind('click',function()
+    {
+        validNavigation=true;
+    });
+
+    $("form").bind('submit', function () 
+    {
+        validNavigation=true;
+    });
+
+    $("input[type=submit]").bind('click', function()
+    {
+        validNavigation=true;
+    });
+
+    $("input[type=button]").bind('click', function()
+    {
+        validNavigation=true;
+    });
+}
+
+$(document).ready(function()
+{
+    wiredUpEvents();
+});
