@@ -22,6 +22,7 @@ use base 'Catalyst::Controller';
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::I18N;
 use LIXUZ::HelperModules::Calendar qw(get_current_time);
+use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 
 sub detectLang : Private
 {
@@ -108,6 +109,10 @@ sub auto : Private
         if(not $c->req->uri eq $c->uri_for('/admin/logout'))
         {
             $c->user->check_access();
+        }
+        if ($c->user->can_access('/timetracker'))
+        {
+            add_jsIncl($c,'timetracker.js');
         }
         # Reset the session expiration time
         $c->session_expires(1);
