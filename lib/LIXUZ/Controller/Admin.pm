@@ -112,7 +112,7 @@ sub auto : Private
         }
         if ($c->user->can_access('/timetracker'))
         {
-            add_jsIncl($c,'tickingtimetracker.js');
+            add_jsIncl($c,'timetracker.js');
         }
         # Reset the session expiration time
         $c->session_expires(1);
