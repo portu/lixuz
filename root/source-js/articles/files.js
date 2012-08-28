@@ -20,12 +20,6 @@
  * the user to add and edit images
  */
 
-function LZ_AddImageToRTE(imageId, RTE)
-{
-    deprecated('Use articleFiles.addToRTE');
-    articleFiles.addToRTE(imageId,RTE);
-}
-
 // TODO: At some point we probably want to autorefresh data about the file
 function LZ_VideoFLVMissing (videoId,running)
 {
@@ -38,42 +32,6 @@ function LZ_VideoFLVMissing (videoId,running)
     {
         userMessage(i18n.get_advanced('The conversion of this file (%(FILEID)) to the FLV format failed. Please contact your system administrator.', { 'FILEID':videoId}));
     }
-}
-
-function LZ_AddAudioToArticle (audioId)
-{
-    deprecated();
-    LZ_AddAudioToRTE(audioId,'inline_body');
-}
-
-function LZ_AddAudioToRTE(audioId, RTE)
-{
-    deprecated('Use articleFiles.addToRTE');
-    articleFiles.addToRTE(audioId,RTE);
-}
-
-function LZ_AddVideoToArticle (videoId)
-{
-    deprecated();
-    LZ_AddVideoToRTE(videoId,'inline_body');
-}
-
-function LZ_AddVideoToRTE(videoId, RTE)
-{
-    deprecated('Use articleFiles.addToRTE');
-    articleFiles.addToRTE(videoId,RTE);
-}
-
-function LZ_AddFileToArticle (fileId)
-{
-    deprecated();
-    LZ_AddFileToRTE(fileId,'inline_body');
-}
-
-function LZ_AddFileToRTE(fileId, RTE)
-{
-    deprecated('Use articleFiles.addToRTE');
-    articleFiles.addToRTE(fileId,RTE);
 }
 
 // New
@@ -130,12 +88,6 @@ function LZ_ArtFilePrompt (fileId, fileType)
     destroyPI();
 }
 
-function LZ_assignFileToSpot (destroy, spot, file,force)
-{
-    deprecated('Use articleFiles.UI.assignToSpot');
-    articleFiles.UI.assignToSpot(file,spot,destroy,force);
-}
-
 function LZ_FileSpotOK ()
 {
     deprecated();
@@ -181,19 +133,6 @@ function LZ_FileSpotOK ()
     destroy();
 }
 
-function setCaptionForImage(destroy,caption,fileId)
-{
-    deprecated('Assign to articleFiles.getFileFromVar(fileId).caption directly');
-    destroy();
-    articleFiles.getFileFromVar(fileId).caption = caption;
-}
-
-function LZ_addToRTE (type, id, RTE)
-{
-    deprecated('Use articleFiles.addToRTE');
-    articleFiles.addToRTE(id,RTE);
-}
-
 function LZ_RetrieveSpots (spotType,onDone)
 {
     deprecated();
@@ -237,13 +176,6 @@ function LZ_addThisFileToArticle (fileIds)
     XHR.GET('/admin/articles/ajax?wants=fileInfo'+files,articleFiles.addTheseFiles);
 }
 
-// Initial deletion function
-function LZ_deleteFileFromArticle (fileId)
-{
-    deprecated('Use articleFiles.UI.removeFromArticle');
-    articleFiles.UI.removeFromArticle(fileId);
-}
-
 // Toggle the files section closed/open
 function LZ_toggleFilesSection ()
 {
@@ -269,10 +201,4 @@ function LZ_toggleFilesSection ()
     {
         toggler();
     }
-}
-
-function buildIconItemFromEntry (entry,filesAssigned,spotlist)
-{
-    deprecated('Superseeded by articleFiles.getIconItem');
-    return articleFiles.getIconItem(entry);
 }
