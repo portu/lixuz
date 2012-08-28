@@ -22,20 +22,8 @@
 
 function LZ_AddImageToRTE(imageId, RTE)
 {
-    deprecated();
-    try
-    {
-        var d = new Date();
-        var identifier = articleFiles.getIdentifierByID(imageId);
-        articleFiles.removeFromSpot(imageId);
-        var image = '<img alt="" title="" style="float:right;" src="/files/get/'+identifier+'?width=210" imgId="'+identifier+'" id="image_'+RTE+identifier+d.getTime()+'" /> ';
-        lixuzRTE.pushContent(RTE,image);
-        articleFiles.buildFileList();
-    }
-    catch(e)
-    {
-        lzException(e);
-    }
+    deprecated('Use articleFiles.addToRTE');
+    articleFiles.addToRTE(imageId,RTE);
 }
 
 // TODO: At some point we probably want to autorefresh data about the file
@@ -60,17 +48,8 @@ function LZ_AddAudioToArticle (audioId)
 
 function LZ_AddAudioToRTE(audioId, RTE)
 {
-    deprecated();
-    try
-    {
-        var d = new Date();
-        var audio = '<div name="lixuz_audio" uid="'+audioId+'" style="display:block;width:400px;height:50" id="player_'+RTE+audioId+d.getTime()+'"><img src="/static/images/icons/audio.png" alt="" /></div>';
-        lixuzRTE.pushContent(RTE,audio);
-    }
-    catch(e)
-    {
-        lzException(e);
-    }
+    deprecated('Use articleFiles.addToRTE');
+    articleFiles.addToRTE(audioId,RTE);
 }
 
 function LZ_AddVideoToArticle (videoId)
@@ -81,18 +60,8 @@ function LZ_AddVideoToArticle (videoId)
 
 function LZ_AddVideoToRTE(videoId, RTE)
 {
-    deprecated();
-    try
-    {
-        var d = new Date();
-        var identifier = articleFiles.getIdentifierByID(videoId);
-        var video = '<div name="lixuz_video" uid="'+identifier+'" style="display:block;width:400px;height:300px" id="player_'+RTE+identifier+d.getTime()+'"><img src="/files/get/'+identifier+'?flvpreview=1" style="border:0;" /></div>';
-        lixuzRTE.pushContent(RTE,video);
-    }
-    catch(e)
-    {
-        lzException(e);
-    }
+    deprecated('Use articleFiles.addToRTE');
+    articleFiles.addToRTE(videoId,RTE);
 }
 
 function LZ_AddFileToArticle (fileId)
@@ -103,31 +72,8 @@ function LZ_AddFileToArticle (fileId)
 
 function LZ_AddFileToRTE(fileId, RTE)
 {
-    deprecated();
-    try
-    {
-        var d = new Date();
-        var file = articleFiles.getFileByID(fileId).file;
-        var title = file.title;
-        var fileName = file.file_name.replace(/"/g,'').replace(/\s/g,'_');;
-        if(title == null || title.length == 0)
-        {
-            title = file.file_name;
-            if(title == null || title.length == 0)
-            {
-                title = 'file_id '+fileId;
-                fileName = fileId;
-            }
-        }
-        title = title.replace(/<imageId/g,'&gt;').replace(/>/g,'&lt;');
-        var identifier = articleFiles.getIdentifierByID(fileId);
-        var entry = '<a href="/files/get/'+identifier+'/'+fileName+'">'+title+'</a>';
-        lixuzRTE.pushContent(RTE,entry);
-    }
-    catch(e)
-    {
-        lzException(e);
-    }
+    deprecated('Use articleFiles.addToRTE');
+    articleFiles.addToRTE(fileId,RTE);
 }
 
 // New
@@ -184,44 +130,10 @@ function LZ_ArtFilePrompt (fileId, fileType)
     destroyPI();
 }
 
-var takenResponseData;
-
-function LZ_spotTakenResponse (response)
-{
-    deprecated();
-    if (!response)
-    {
-        return;
-    }
-    LZ_assignFileToSpot(takenResponseData[0],takenResponseData[1],takenResponseData[2],true);
-}
-
 function LZ_assignFileToSpot (destroy, spot, file,force)
 {
-    deprecated();
-    if(articleFiles.spotTaken(spot) && !force)
-    {
-        var spotFile = articleFiles.getFileBySpot(spot);
-        if(spotFile.file_id != file)
-        {
-            var thisFile = articleFiles.getFileByID(file);
-            takenResponseData = [destroy,spot,file];
-            AuserQuestion(i18n.get_advanced('A file named "%(NAME)" (id %(ID)) is already assigned to this spot. Do you want to replace it with the file "%(NEWNAME)"?', {
-                'NAME': spotFile.file.file_name,
-                'ID': spotFile.file_id,
-                'NEWNAME': thisFile.file.file_name
-            }), 'LZ_spotTakenResponse');
-            return;
-        }
-        else // This file is already assigned to this very spot.
-        {
-            destroy();
-            return;
-        }
-    }
-    destroy();
-    articleFiles.assignToSpot(file,spot);
-    articleFiles.buildFileList();
+    deprecated('Use articleFiles.UI.assignToSpot');
+    articleFiles.UI.assignToSpot(file,spot,destroy,force);
 }
 
 function LZ_FileSpotOK ()
@@ -271,26 +183,15 @@ function LZ_FileSpotOK ()
 
 function setCaptionForImage(destroy,caption,fileId)
 {
-    deprecated();
+    deprecated('Assign to articleFiles.getFileFromVar(fileId).caption directly');
     destroy();
     articleFiles.getFileFromVar(fileId).caption = caption;
 }
 
 function LZ_addToRTE (type, id, RTE)
 {
-    deprecated();
-    if (type == 'video')
-    {
-        LZ_AddVideoToRTE(id,RTE);
-    }
-    else if (type == 'image')
-    {
-        LZ_AddImageToRTE(id,RTE);
-    }
-    else
-    {
-        lzError('LZ_addToRTE(): Unknown type "'+type+'"');
-    }
+    deprecated('Use articleFiles.addToRTE');
+    articleFiles.addToRTE(id,RTE);
 }
 
 function LZ_RetrieveSpots (spotType,onDone)
@@ -312,11 +213,6 @@ function LZ_RetrievedSpots  (data)
  * Article <-> Files
  * *************
  */
-
-var deleteThisFile = null,
-
-    fidToNameMap = {},
-    fidToCaptionMap = {};
 
 // Add a file to an article
 function LZ_addFileToArticle ()
@@ -344,8 +240,8 @@ function LZ_addThisFileToArticle (fileIds)
 // Initial deletion function
 function LZ_deleteFileFromArticle (fileId)
 {
-    deleteThisFile = fileId;
-    AuserQuestion(i18n.get('Are you sure you wish to remove that file from this article? The file will not be deleted.'),'LZ_reallyDeleteFile');
+    deprecated('Use articleFiles.UI.removeFromArticle');
+    articleFiles.UI.removeFromArticle(fileId);
 }
 
 // Toggle the files section closed/open
@@ -377,42 +273,6 @@ function LZ_toggleFilesSection ()
 
 function buildIconItemFromEntry (entry,filesAssigned,spotlist)
 {
-    deprecated();
-    var iconItem = '';
-    try
-    {
-        iconItem = '<div name="fileEntry" style="height:80px; width:80px;"><img class="filePreview" style="border:0;" src="'+entry.icon+'" /></div>';
-        // FIXME: Sanitize the filename length
-        iconItem = iconItem+'<span class="fileName">'+entry.fileName+'</span>';
-        iconItem = iconItem+'<br /><span class="fileInfo">'+i18n.get('File ID:')+' '+entry.file_id+'<br />';
-        iconItem = iconItem+i18n.get('Size:')+' '+entry.sizeString+'<br />';
-        var spotName = i18n.get('(none)');
-        if(filesAssigned[entry.file_id])
-        {
-            var spot = filesAssigned[entry.file_id];
-            try
-            {
-                for(var i = 0; i < spotlist.length; i++)
-                {
-                    if (spotlist[i].id == spot)
-                    {
-                        spotName = spotlist[i].name;
-                    }
-                }
-            } catch(e) { lzelog(e); }
-            if(spotName == i18n.get('(none)'))
-            {
-                lzlog('Failed to locate spot with id '+spot);
-            }
-        }
-        iconItem = iconItem+i18n.get('Spot:')+' '+spotName;
-        iconItem = iconItem+'</span>';
-        fidToNameMap[entry.file_id] = entry.fileName;
-        fidToCaptionMap[entry.file_id] = entry.caption;
-        return iconItem;
-    }
-    catch(e)
-    {
-        lzException(e);
-    }
+    deprecated('Superseeded by articleFiles.getIconItem');
+    return articleFiles.getIconItem(entry);
 }
