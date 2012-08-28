@@ -14,6 +14,10 @@
         }
     };
     $LAB.queue = function(fn,ignoredParam) {
+        if(typeof(fn) == 'function')
+        {
+            return $LAB.queueWait(fn);
+        }
         return $LAB.queueScript(fn).queueWait();
     };
     $LAB.executeQueue = function() {
