@@ -53,13 +53,13 @@ function wiredUpEvents()
             {
                 if (!e) e = window.event;
                 e.cancelBubble = true;
-                e.returnValue = i18n.get('Timetracker is still on. Do you want to stop it?');
+                e.returnValue = i18n.get('Timetracker is still on, please stop it.');
                 if (e.stopPropagation)
                 {
                     e.stopPropagation();
                     e.preventDefault();
                 }
-                return i18n.get('Timetracker is still on . Do you want stop it?');
+                return i18n.get('Timetracker is still on, Please stop it. ');
             }
         }
     }
