@@ -110,11 +110,6 @@ sub add : Local Form('/settings/edit_status')
     $c->stash->{template} = 'adm/settings/admin/statuses/edit.html';
 }
 
-sub prepareform
-{
-    # We're creating a article
-}
-
 sub savedata : Private
 {
     my ( $self, $c, $form ) = @_;
