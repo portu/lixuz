@@ -162,6 +162,7 @@ sub edit : Local
     $c->{stash}->{template} = 'adm/users/roles/edit/index.html';
 }
 
+# Purpose: Stash settings for the edit/crete form
 sub buildform : Private
 {
     my ($self, $c, $role) = @_;
@@ -227,6 +228,7 @@ sub delete: Local
     }
 }
 
+# Purpose: Define and return a list of access groups to simplify editing of ACLs
 sub get_groups : Private
 {
     my($self,$c) = @_;

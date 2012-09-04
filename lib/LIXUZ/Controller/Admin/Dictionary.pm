@@ -25,6 +25,7 @@ with 'LIXUZ::Role::List::Database';
 use LIXUZ::HelperModules::Search qw(perform_search perform_advanced_search);
 use LIXUZ::HelperModules::Forms qw(finalize_form);
 
+# Summary: Handle the list request
 sub index : Path Args(0) Form('/core/search') {
     my ( $self, $c, $query ) = @_;
 

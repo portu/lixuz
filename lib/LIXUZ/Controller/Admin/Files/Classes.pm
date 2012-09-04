@@ -32,6 +32,7 @@ use LIXUZ::HelperModules::Fields;
 use LIXUZ::HelperModules::HTMLFilter qw(filter_string);
 use constant { true => 1, false => 0};
 
+# Summary: List all file classes
 sub index : Path Args(0) Form('/core/search')
 {
     my ( $self, $c, $query ) = @_;
@@ -49,6 +50,7 @@ sub index : Path Args(0) Form('/core/search')
         });
 }
 
+# Summary: Save changes to a file class, or create a new one
 sub savedata
 {
     my ($self, $c) = @_;
@@ -76,6 +78,7 @@ sub savedata
     $c->detach();
 }
 
+# Summary: Wrappper for savedata that makes sure class_submit was provided
 sub checkSavedata
 {
     my($self,$c) = @_;
@@ -85,6 +88,7 @@ sub checkSavedata
     }
 }
 
+# Summary: Displays the 'add a new file class' form
 sub add : Local
 {
     my ($self, $c) = @_;
@@ -93,6 +97,7 @@ sub add : Local
     add_jsIncl($c, qw(utils.js));
 }
 
+# Summary: Displays the edit form for an existing file class
 sub edit : Args(1) Local
 {
     my ($self, $c,$fileID) = @_;
@@ -118,6 +123,7 @@ sub edit : Args(1) Local
     $self->add($c);
 }
 
+# Summary: Deletes a file class
 sub delete : Args(1) Local
 {
     my ($self, $c,$fileID) = @_;

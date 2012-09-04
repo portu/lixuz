@@ -846,6 +846,7 @@ sub notifyWatchers : Private
     }
 }
 
+# Summary: Handle saving a single article field (inline or not)
 sub art_save_fielddata
 {
     my($self,$c,$uid, $field,$value, $obj,$RCS) = @_;
@@ -943,7 +944,7 @@ sub art_save_fielddata
     }
 }
 
-# FIXME: Expand upon these and make them less harsh
+# TODO: These helpers should be provided elsewhere
 sub isArray
 {
     my $r = shift;

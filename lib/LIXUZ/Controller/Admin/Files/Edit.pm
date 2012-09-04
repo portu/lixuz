@@ -28,6 +28,8 @@ use constant {
     TYPE_IMAGE => 2,
     };
 
+# Summary: Display the edit form for a file (which one depends upon the
+# filetype)
 sub default : Path('/admin/files/edit') Local Args
 {
     my ( $self, $c, $uid ) = @_;
@@ -77,6 +79,7 @@ sub default : Path('/admin/files/edit') Local Args
     }
 }
 
+# Summary: Display the edit form for an image
 sub image_edit : Local Form('/files/edit')
 {
     my($self,$c,$file) = @_;
@@ -93,6 +96,7 @@ sub image_edit : Local Form('/files/edit')
     $c->stash->{template} = 'adm/files/edit.html';
 }
 
+# Summary: Display the edit form for a non-image file
 sub file_edit : Local Form('/files/edit')
 {
     my($self,$c,$file) = @_;
@@ -110,6 +114,7 @@ sub file_edit : Local Form('/files/edit')
     $c->stash->{template} = 'adm/files/edit.html';
 }
 
+# Summary: Get information to be used to construct an edit/create form
 sub get_forminfo : Private
 {
     my ($self, $c, $file, $addFields) = @_;
@@ -186,6 +191,8 @@ sub get_forminfo : Private
     }
 }
 
+# Summary: Get a list of fields and their POSTed values, to be used to create or
+# update a file entry
 sub get_input_settings : Private
 {
     my($self,$c,$form,$type,$file) = @_;
@@ -230,6 +237,7 @@ sub get_input_settings : Private
     return \%data;
 }
 
+# Purpose: Handle saving the data to the db
 sub savedata : Private
 {
     my($self,$c,$form,$file,$type) = @_;
@@ -276,6 +284,7 @@ sub savedata : Private
     }
 }
 
+# Purpose: Handle LzFileFolder entries
 sub handleFolders : Private
 {
     my($self,$c,$file) = @_;

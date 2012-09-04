@@ -32,6 +32,7 @@ use constant {
     false => 0,
     };
 
+# Summary: Display the upload form for templates
 sub index : Private
 {
     my ($self, $c) = @_;
@@ -44,6 +45,7 @@ sub index : Private
 # TODO: Create some concept of 'template packages' so they can mass-upload templates
 # TODO: make error() unlink $targetFile if it is still around
 
+# Summary: Handle submitted template data (write to disk, create objects etc.)
 sub submitTemplate : Local
 {
     my ($self, $c) = @_;
@@ -112,6 +114,7 @@ sub submitTemplate : Local
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Template uploaded');
 }
 
+# Summary: Validate that settings for a template match what we expect
 sub validateTemplate : Private
 {
     my ($self, $c, $file) = @_;
@@ -159,6 +162,7 @@ sub validateTemplate : Private
     return $data;
 }
 
+# Summary: Display a basic error page
 sub error : Private
 {
     my ($self, $c, $error) = @_;

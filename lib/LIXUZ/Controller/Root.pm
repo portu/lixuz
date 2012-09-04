@@ -101,6 +101,8 @@ sub auto : Private
     return 1;
 }
 
+# Summary: Handle errors and non-Mason data requests, and redirect to the Mason
+# view if needed
 sub end : Private
 {
     my ( $self, $c ) = @_;

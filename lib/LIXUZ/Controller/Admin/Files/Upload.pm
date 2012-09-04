@@ -29,6 +29,8 @@ use constant {
     TYPE_TEMPLATE    => 6,
 };
 
+# Summary: Displays an upload form. Depending upon GET parameters, this might
+# be a full upload page, or a simple upload form (for use in iframes)
 sub index : Path Args(0)
 {
     my ( $self, $c ) = @_;
@@ -64,6 +66,7 @@ sub index : Path Args(0)
     }
 }
 
+# Summary: Handle uploads, saving fields etc.
 sub upload : Path Args(1) Form('/files/edit')
 {
     my($self,$c,$fileClassID) = @_;
@@ -144,6 +147,7 @@ sub upload : Path Args(1) Form('/files/edit')
     }
 }
 
+# Summary: Handle data, storing it to disk
 sub handleData : Private
 {
     my($self,$c,$fileName,$upload) = @_;
@@ -160,6 +164,7 @@ sub handleData : Private
     return $obj;
 }
 
+# Summary: Retrieve and store a file, and then redirect to an edit page
 sub receiveFile : Private
 {
     my ($self, $c, $form) = @_;
@@ -178,6 +183,8 @@ sub receiveFile : Private
     $c->detach();
 }
 
+# Summary: Display and handle errors, deleting partially-populated file objects
+# if needed
 sub error : Private
 {
     my ($self, $c, $fileObj, $error, $info) = @_;

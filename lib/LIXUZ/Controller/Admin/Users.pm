@@ -46,6 +46,7 @@ sub index : Path Args(0) Form('/core/search')
     $self->init_searchFilters($c);
 }
 
+# Summary: Initialize search filters
 sub init_searchFilters : Private
 {
     my ( $self, $c ) = @_;
@@ -452,6 +453,8 @@ sub delete: Args Local
     }
 }
 
+# Purpose: Helper function that redirects to the appropriate action with an
+# error message
 sub redirWithError : Private
 {
     my($self,$c,$uid,$errorAcc, $errorEdit, $errorAdd) = @_;
@@ -472,6 +475,8 @@ sub redirWithError : Private
     }
 }
 
+# Purpose: Wrapper that lets users access their own "user edit"-page (with
+# certain limitations)
 sub myaccount : Path('/admin/myaccount')
 {
     my($self,$c) = @_;

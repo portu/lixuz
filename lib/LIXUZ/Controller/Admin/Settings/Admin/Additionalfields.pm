@@ -30,6 +30,7 @@ use 5.010;
 # Used in responses as well, don't make false undef.
 use constant { true => 1, false => 0};
 
+# Summary: Display the additional fields-list
 sub index : Path Args(0) Form('/core/search')
 {
     my ( $self, $c, $query ) = @_;

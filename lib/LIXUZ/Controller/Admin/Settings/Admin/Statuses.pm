@@ -26,6 +26,7 @@ use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 use LIXUZ::HelperModules::Forms qw(get_checkboxes);
 use List::MoreUtils qw(any);
 
+# Summary: Display the list of statuses
 sub index : Path Args(0) Form('/core/search')
 {
     my ( $self, $c ) = @_;
@@ -67,6 +68,7 @@ sub delete : Local Args
     return $self->messageToList($c,$c->stash->{i18n}->get('Status deleted.'));
 }
 
+# Summary: Edit an existing status
 sub edit : Local Args Form('/settings/edit_status')
 {
     my ( $self, $c, $uid ) = @_;
@@ -97,6 +99,7 @@ sub edit : Local Args Form('/settings/edit_status')
     $c->stash->{template} = 'adm/settings/admin/statuses/edit.html';
 }
 
+# Summary: Create a new status
 sub add : Local Form('/settings/edit_status')
 {
     my ( $self, $c ) = @_;
@@ -110,6 +113,7 @@ sub add : Local Form('/settings/edit_status')
     $c->stash->{template} = 'adm/settings/admin/statuses/edit.html';
 }
 
+# Summary: Save (create or modify) a status
 sub savedata : Private
 {
     my ( $self, $c, $form ) = @_;

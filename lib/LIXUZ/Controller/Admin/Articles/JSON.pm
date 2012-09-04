@@ -38,6 +38,7 @@ sub folderHandler : Path('/admin/articles/folderAjax')
     $c->stash->{displaySite} = 0;
 }
 
+# Summary: Change the status of a single article revision
 sub changeRevisionStatus
 {
     my ($self,$c) = @_;
@@ -74,6 +75,8 @@ sub changeRevisionStatus
     return json_response($c);
 }
 
+# Summary: Return a list of all statuses, with information about if this user
+# can change to it or not.
 sub statusList : Local
 {
     my($self,$c) = @_;
@@ -150,10 +153,10 @@ sub ajaxHandler : Path('/admin/articles/ajax')
     $c->log->warn('Warning: Reached end of handleOther in Articles::JSON. Was processing wants='.$wants);
 }
 
+# Summary: Retreive information about a set of files
 sub fetchFileInfo
 {
     my($self,$c) = @_;
-
 
     my @files;
     my $req = $c->req->params->{fileId};
@@ -176,6 +179,8 @@ sub fetchFileInfo
     return json_response($c,\%ret);
 }
 
+# Summary: Retreive a list of revisions an article has, along with relevant
+# information about said revision
 sub fetchRevisionList
 {
     my($self,$c) = @_;
@@ -365,6 +370,7 @@ sub assignFileToSpot : Local Path('/admin/articles/assignFileToSpot')
     return json_response($c,{ removed => \@removed });
 }
 
+# Summary: Set the caption of a file
 sub setFileCaption : Local Path('/admin/articles/setFileCaption')
 {
     my($self,$c) = @_;

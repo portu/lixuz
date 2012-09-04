@@ -26,6 +26,7 @@ use LIXUZ::HelperModules::Forms qw(get_checkboxes);
 use List::MoreUtils qw(any);
 with 'LIXUZ::Role::List::Database';
 
+# Summary: Display the widget configuration page
 sub index : Private
 {
     my ( $self, $c ) = @_;
@@ -36,6 +37,7 @@ sub index : Private
     $c->stash->{template} = 'adm/settings/admin/widget_index.html';
 }
 
+# Summary: Display widget configuration settings if available, or an error if not
 sub configure : Local Args
 {
     my ($self,$c,$widget) = @_;
@@ -50,6 +52,8 @@ sub configure : Local Args
     }
 }
 
+# Summary: Display the configuration page (and handle change submissions) for
+# the "My Assignments" widget
 sub myAssignmentConfig
 {
     my ($self,$c) = @_;
