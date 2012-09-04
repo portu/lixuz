@@ -27,6 +27,10 @@ sub default : Path('/cron')
 {
     my($self,$c) = @_;
     my $trigger = $c->req->param('schedule_trigger');
+    if ($c->req->address ne '127.0.0.1')
+    {
+        $c->res->body('ERR');
+    }
     if (not defined $trigger)
     {
         $c->res->body('ERR');
