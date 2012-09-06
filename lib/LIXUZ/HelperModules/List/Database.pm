@@ -52,7 +52,6 @@ sub listGetPaginatedResultObject
         $self->c->stash->{ $self->objectName } = $object;
     }
 
-    $self->c->log->debug('listGetPaginatedResultObject return');
     return $object;
 }
 
@@ -61,11 +60,9 @@ sub listPerformOrdering
     my $self = shift;
     my $object = shift;
     my $order = $self->listGetOrderFromParam($object);
-    $self->c->log->debug('listPerformOrdering return');
     return if not defined $order;
 
     $self->listSetParam('order_by',$order);
-    $self->c->log->debug('listPerformOrdering implicit return');
 }
 
 sub listGetResultObject
@@ -74,12 +71,10 @@ sub listGetResultObject
     my $options = shift;
     if ($options && $options->{paginate})
     {
-        $self->c->log->debug('listGetResultObject return 1');
         return $self->listGetPaginatedResultObject();
     }
     if (!$self->_lDataChanged && $self->_lResultObject)
     {
-        $self->c->log->debug('listGetResultObject return 2');
         return $self->_lResultObject;
     }
 
@@ -101,7 +96,6 @@ sub listGetResultObject
         $self->c->stash->{ $self->objectName } = $object;
     }
 
-    $self->c->log->debug('listGetResultObject return 3');
     return $object;
 }
 

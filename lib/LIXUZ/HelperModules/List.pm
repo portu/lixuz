@@ -155,8 +155,6 @@ sub handleListRequest
 {
     my $self = shift;
 
-    $self->c->log->debug('handleListRequest');
-
     if(not $self->object)
     {
         croak("Fatal: Object is missing");
@@ -233,19 +231,13 @@ sub handleListRequest
 
     if ($self->autoSearch)
     {
-        $self->c->log->debug('handleListRequest autoSearch ON');
         return $self->listGetResultObject({ paginate => $self->paginate });
-    }
-    else
-    {
-        $self->c->log->debug('handleListRequest autoSearch OFF');
     }
 }
 
 sub listGetOrderFromParam
 {
     my $self = shift;
-    $self->c->log->debug('listGetOrderFromParam');
     my @allowed = @{$self->orderParams};
     my $orderby = $self->c->req->param('orderby');
     my $ordertype = $self->c->req->param('ordertype');
