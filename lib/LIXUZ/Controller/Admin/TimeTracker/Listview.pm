@@ -210,8 +210,7 @@ sub index : Path Args(0) Form('/core/search')
         }
     }
 
-    my $list = $self->handleListRequest({
-        c => $c,
+    my $list = $self->handleListRequest($c,{
         query => $query,
         object => $timetrackentry,
         objectName => 'timetrackentry',
