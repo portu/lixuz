@@ -235,6 +235,13 @@ sub entrySave : Local
             }
             else
             {
+                my $dbstart_to_unix = datetime_from_SQL_to_unix($timeentry->time_start);
+                my $dbend_to_unix = datetime_from_SQL_to_unix($timeentry->time_end);
+                my $ent_time_start = datetime_to_SQL($time_start);
+                my $ent_time_end = datetime_to_SQL($time_end);
+                my $time_start_to_unix = datetime_from_SQL_to_unix($ent_time_start);
+                my $time_end_to_unix = datetime_from_SQL_to_unix($ent_time_end);
+
                 if(defined $time_start)
                 {
                     $timeentry->set_column('time_start',datetime_to_SQL($time_start));
@@ -244,23 +251,29 @@ sub entrySave : Local
                     $timeentry->set_column('time_end',datetime_to_SQL($time_end));
                 }
 
-                $timeentry->set_column('entry_type','manually');
+                if (($dbstart_to_unix != $time_start_to_unix) || ($dbend_to_unix != $time_end_to_unix))
+                {
+                      $timeentry->set_column('entry_type','manually');
+                }
 
                 $timeentry->update();
 
                 if ($c->req->param('timeentry_id'))
                 {
-                    my $editingtimeentry = $c->req->param('timeentry_id');
+                    if ((defined $subject && length $subject) || (defined $comment && length $comment))
+                    {
+                        my $editingtimeentry = $c->req->param('timeentry_id');
 
-                    $timetrackcomment = $c->model('LIXUZDB::LzComment')->create({
-                    user_id => $c->user->user_id,
-                    object_id => $editingtimeentry,
-                    object_type => 'time_entry',
-                    written_time => \'NOW()',
-                    subject => $subject,
-                    body => $comment,
-                    });
-                    $timetrackcomment->update();
+                        $timetrackcomment = $c->model('LIXUZDB::LzComment')->create({
+                        user_id => $c->user->user_id,
+                        object_id => $editingtimeentry,
+                        object_type => 'time_entry',
+                        written_time => \'NOW()',
+                        subject => $subject,
+                        body => $comment,
+                        });
+                        $timetrackcomment->update();
+                    }
                 }
             }
         }
