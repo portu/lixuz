@@ -198,6 +198,7 @@ use LIXUZ::HelperModules::Files qw(get_new_aspect get_new_aspect_constrained fsi
 use File::MMagic::XS qw(:compat);
 use URI::Escape qw(uri_escape);
 use Math::Int2Base qw( int2base );
+use Try::Tiny;
 
 __PACKAGE__->belongs_to('ownerUser' => 'LIXUZ::Schema::LzUser', { 'foreign.user_id' => 'self.owner' });
 __PACKAGE__->has_many('clones' => 'LIXUZ::Schema::LzFile', { 'foreign.clone' => 'self.file_id' });
@@ -1046,12 +1047,30 @@ sub get_url_aspect
     # Die if this isn't an image file
     if (!$self->is_image)
     {
-        carp('get_url_aspect called on non-image file '.$self->file_id);
+        croak('get_url_aspect called on non-image file '.$self->file_id);
     }
 
-    # If we only got either height or width, then hand control to get_url,
-    # as we don't need to do any calculation
+    my $useGetURL = 0;
+    # If we only got either height or width, then just use get_url, as we don't
+    # need to do any calculation
     if ( !defined($height) || !defined($width) )
+    {
+        $useGetURL = 1;
+    }
+    # Don't allow height or width to be merely zero
+    elsif($height == 0 && $width > 0)
+    {
+        carp('get_url_aspect called with zero height but nonzero width. This is not permitted, going to assume height=undef');
+        $height = undef;
+        $useGetURL = 1;
+    }
+    elsif($width == 0 && $height > 0)
+    {
+        carp('get_url_aspect called with zero width but nonzero height. This is not permitted, going to assume width=undef');
+        $width = undef;
+        $useGetURL = 1;
+    }
+    if ($useGetURL)
     {
         my $URL = $self->get_url($c,$height,$width);
         return $self->_returnStringAndAspect(wantarray,$URL,$height,$width);
@@ -1085,7 +1104,14 @@ sub get_url_aspect
         $width = $self->width;
     }
 
-    ($width,$height) = get_new_aspect_constrained($self->width,$self->height,$width,$height);
+    try
+    {
+        ($width,$height) = get_new_aspect_constrained($self->width,$self->height,$width,$height);
+    }
+    catch
+    {
+        croak('Failed to get_new_aspect_constrained() for file '.$self->file_id.': '.$_);
+    };
 
     my $URL = $self->get_url($c, $height,$width);
 

@@ -133,26 +133,51 @@ sub get_new_aspect
     my $oldVal;
     my $newVal;
     my $changeVal;
+    my $mode;
     if ($newWidth)
     {
         $oldVal = $oldWidth;
         $newVal = $newWidth;
         $changeVal = $oldHeight;
+        $mode = 'newWidth';
     }
     else
     {
         $oldVal = $oldHeight;
         $newVal = $newHeight;
         $changeVal = $oldWidth;
+        $mode = 'newHeight';
     }
     if ((not defined $oldVal or $oldVal == 0) || (not defined $newVal or $newVal == 0))
     {
-        croak("oldVal or newVal is zero");
+        if(not defined $oldVal)
+        {
+            croak('oldVal is not defined (in '.$mode.' mode)');
+        }
+        elsif($oldVal == 0)
+        {
+            croak('oldVal is zero (in '.$mode.'mode)');
+        }
+        elsif(not defined $newVal)
+        {
+            croak('newVal is not defined (in '.$mode.' mode)');
+        }
+        elsif($newVal == 0)
+        {
+            croak('newVal is zero (in '.$mode.' mode)');
+        }
     }
     $percentage_change = $oldVal/$newVal;
     if ($changeVal == 0 || $percentage_change == 0)
     {
-        croak("changeVal or percentage_change is zero");
+        if ($changeVal == 0)
+        {
+            croak('changeVal is zero');
+        }
+        elsif($percentage_change == 0)
+        {
+            croak('percentage_change is zero');
+        }
     }
     return sprintf('%d',$changeVal / $percentage_change );
 }
