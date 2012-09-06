@@ -423,3 +423,16 @@ sub checkTimeTrackerStatus : Local
     return json_response($c,$info);
 }       
 
+# Handle polling
+sub pollHandler : Private
+{
+    my ($self,$c,$timeentry) = @_;
+    $timeentry //= $c->model('LIXUZDB::LzTimeEntry')->find({ user_id => $c->user->user_id, tt_status => 1});
+    if ($timeentry)
+    {
+        $timeentry->set_column('last_seen',\'now()');
+        $timeentry->update;
+    }
+}
+
+1;

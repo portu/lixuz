@@ -104,4 +104,9 @@ function wiredUpEvents()
 $(document).ready(function()
 {
     wiredUpEvents();
+
+    $.subscribe('/polling/getPayload',function(payload)
+    {
+        payload.timetrackerRunning = timetrackerIsRunning();
+    });
 });

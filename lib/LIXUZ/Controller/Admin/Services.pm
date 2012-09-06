@@ -632,6 +632,13 @@ sub poll : Local
             }
         }
     }
+    if(defined $c->req->param('timetrackerRunning') && $c->req->param('timetrackerRunning') eq 'true')
+    {
+        if ($c->user->can_access('/timetracker'))
+        {
+            $c->forward(qw(LIXUZ::Controller::Admin::TimeTracker pollHandler));
+        }
+    }
     if (defined $c->req->param('backupData'))
     {
         if ($c->user->can_access('/services/backup'))

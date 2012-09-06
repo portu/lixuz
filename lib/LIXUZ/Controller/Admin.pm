@@ -206,6 +206,8 @@ sub checktimetracker_status : Local
     if ($timeentry)
     {
         $tt_status = $timeentry->tt_status;
+        # Call the poll handler to update the last_seen status
+        $c->forward(qw(LIXUZ::Controller::Admin::TimeTracker pollHandler), [ $timeentry ]);
     }
     return $tt_status;
 }
