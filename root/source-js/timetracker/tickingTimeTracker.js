@@ -47,20 +47,17 @@ function wiredUpEvents()
 {
     window.onbeforeunload = function(e)
     {
-        if(jstimetrackerStatus == 1)
+        if (!validNavigation)
         {
-            if (!validNavigation)
+            if (!e) e = window.event;
+            e.cancelBubble = true;
+            e.returnValue = i18n.get('Timetracker status is on, please stop it.');
+            if (e.stopPropagation)
             {
-                if (!e) e = window.event;
-                e.cancelBubble = true;
-                e.returnValue = i18n.get('Timetracker is still on, please stop it.');
-                if (e.stopPropagation)
-                {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }
-                return i18n.get('Timetracker is still on, Please stop it. ');
+                e.stopPropagation();
+                e.preventDefault();
             }
+            return i18n.get('Timetracker status is on, please stop it.');
         }
     }
 
