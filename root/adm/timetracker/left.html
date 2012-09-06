@@ -20,8 +20,9 @@
 <div class="buttonHolder"><a href="#" onclick="entryEditorWindow();return false;"><img src="/static/images/icons/newsletter-add-group.png" border="0" align="left" />&nbsp;<% $i18n->get('Add a entry') %></a></div>
 %}
 <div class="buttonHolder"><a href="#" onclick="generatePdfReport();return false" target="_blank"><img src="/static/images/icons/newsletter-edit-group.png" border="0" align="left" />&nbsp;<% $i18n->get('Export as PDF') %></a></div>
-<div class="buttonHolder"><a href="timetracker/listview" ><img src="/static/images/icons/article.png" border="0" align="left" />&nbsp;<% $i18n->get('List view') %></a></div>
-
+%if($c->user->can_access('/timetracker/listview')) {
+<div class="buttonHolder"><a href="/admin/timetracker/listview" ><img src="/static/images/icons/article.png" border="0" align="left" />&nbsp;<% $i18n->get('Show articles edited') %></a></div>
+%}
 </div>
 <%args>
 $i18n
