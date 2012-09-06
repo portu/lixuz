@@ -41,23 +41,27 @@ function starttime_failure (data)
 
 }
 
-var validNavigation= false;
+function timetrackerIsRunning ()
+{
+    return $('#tracActive').is(':visible') || $('#stopBtn').is(':visible');
+}
 
 function wiredUpEvents()
 {
+    var validNavigation= false;
     window.onbeforeunload = function(e)
     {
-        if (!validNavigation)
+        if (!validNavigation && timetrackerIsRunning())
         {
             if (!e) e = window.event;
             e.cancelBubble = true;
-            e.returnValue = i18n.get('Timetracker status is on, please stop it.');
+            e.returnValue = i18n.get('The timetracker will keep running even after you close Lixuz. If you don\'t want this, please stay on the page and stop it before proceeding');
             if (e.stopPropagation)
             {
                 e.stopPropagation();
                 e.preventDefault();
             }
-            return i18n.get('Timetracker status is on, please stop it.');
+            return i18n.get('The timetracker will keep running even after you close Lixuz. If you don\'t want this, please stay on the page and stop it before proceeding');
         }
     }
 
