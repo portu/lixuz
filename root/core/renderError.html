@@ -14,6 +14,24 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+my $loggedIn = 0;
+try
+{
+    if($c->user && $c->user_exists && $c->user->is_active )
+    {
+        $loggedIn = 1;
+    }
+};
+if($loggedIn && defined($internal) && length($internal))
+{
+    $techie = 'Technical information:'."\n".$internal;
+    $techie =~ s{\n}{<br />}g; #/
+}
+else
+{
+    $techie = 'Technical: '.$techie;
+}
 </%perl>
 <!DOCTYPE html>
 <html>
@@ -33,11 +51,13 @@
     <b><i>NO</i></b>:
     <% $text_no |n %>
     <br /><br /><br /><br />
+%if(!$loggedIn) {
     <br /><br /><br /><br />
+%}
 </div>
-<div class="details">
+<div class="details" style="max-width:650px">
     <small><code>
-    Technical: <% $techie |n %>
+    <% $techie |n %>
     </code></small>
 </div>
 </body>
@@ -48,4 +68,8 @@ $error_no => 'UKJENT FEIL'
 $text => 'An unknown error has occurred'
 $text_no => 'Ein ukjent feil har oppst&aring;tt'
 $techie => 'This is likely caused by missing parameters to renderError.html'
+$internal => undef
 </%args>
+<%once>
+use Try::Tiny;
+</%once>
