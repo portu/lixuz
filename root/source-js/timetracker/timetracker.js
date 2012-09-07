@@ -175,7 +175,7 @@ function editTimeEntry (timeentryid)
 {
     destroyMessageBox();
     showPI(i18n.get('Loading time entry information...'));
-    JSON_Request('/admin/timetracker/timeentryInfo/'+timeentryid,entryEditorWindow);
+    XHR.GET('/admin/timetracker/timeentryInfo/'+timeentryid,entryEditorWindow);
 }
 
 // Initial deletion function
@@ -191,7 +191,7 @@ function deleteTimeEntryNow (response)
     if(response)
     {
         showPI(i18n.get('Deleting...'));
-        JSON_Request('/admin/timetracker/deletetimeEntry/'+deleteThisEntry,timeEntryDeleted_success, timeEntryDeleted_failure);
+        XHR.GET('/admin/timetracker/deletetimeEntry/'+deleteThisEntry,timeEntryDeleted_success, timeEntryDeleted_failure);
     }
 }
 

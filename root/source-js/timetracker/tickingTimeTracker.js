@@ -2,7 +2,7 @@ function showTimeTracker(userAction)
 {
     destroyMessageBox();
     $('#startBtn').html(i18n.get('Loading...')+'<img src="/static/images/progind.gif" width="24" height="25">');
-    JSON_Request('/admin/timetracker/addTimeEntry/'+userAction,startedTime,starttime_failure);
+    XHR.GET('/admin/timetracker/addTimeEntry/'+userAction,startedTime,starttime_failure);
 }   
 
 function startedTime(data)

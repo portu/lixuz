@@ -3,7 +3,7 @@ function previewTimeEntry(tid)
 {
     destroyMessageBox();
     showPI(i18n.get('Loading time entry information...'));
-    JSON_Request('/admin/timetracker/timeentryInfo/'+tid,previewWindow);
+    XHR.GET('/admin/timetracker/timeentryInfo/'+tid,previewWindow);
 }
 
 // open a popup and preview the time entry information.
