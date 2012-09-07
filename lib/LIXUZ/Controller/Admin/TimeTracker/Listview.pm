@@ -192,7 +192,7 @@ sub index : Path Args(0) Form('/core/search')
                 while(my $artdt = $articledata->next)
                 {
                     my $wordcount;
-                    if(length $artdt->body)
+                    if(defined $artdt->body && length $artdt->body)
                     {
                         my  $string  = $artdt->text_body();
                         $wordcount = () = split(/\s+/,$string,-1);
