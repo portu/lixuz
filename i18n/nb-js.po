@@ -18,9 +18,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
-"Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2012-09-07 11:14+0200\n"
-"PO-Revision-Date: 2012-09-07 11:20+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-07 12:32+0200\n"
+"PO-Revision-Date: 2012-09-07 13:06+0200\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
 "Language: \n"
@@ -42,6 +42,7 @@ msgstr "Minimumstallet kan ikke være høyere enn maksimumstallet"
 #: root/source-js/newsletter/newsletter.js:531
 #: root/source-js/roles/roles.js:131 root/source-js/rssimport/rssimport.js:50
 #: root/source-js/rssimport/rssimport.js:134
+#: root/source-js/timetracker/timetracker.js:134
 #: root/source-js/utils/ModuleFieldEditor.js:98
 msgid "Saving..."
 msgstr "Lagrer …"
@@ -136,12 +137,15 @@ msgid "Deadline:"
 msgstr "Tidsfrist:"
 
 #: root/source-js/articles-previewUI/previewUI.js:170
+#: root/source-js/listview/listview.js:22
+#: root/source-js/timetracker/timetracker.js:49
 msgid "Comments"
 msgstr "Kommentarer"
 
 #: root/source-js/articles-previewUI/previewUI.js:173
 #: root/source-js/newsletter/newsletter.js:154
 #: root/source-js/newsletter/newsletter.js:183
+#: root/source-js/timetracker/timetracker.js:58
 msgid "Subject"
 msgstr "Emne"
 
@@ -222,8 +226,8 @@ msgid ""
 "You have unsaved status changes, those changes will be lost if you leave "
 "without saving."
 msgstr ""
-"Du har ulagrede statusendringer. Hvis du beveger deg bort fra denne sida "
-"vil disse endringene gå tapt."
+"Du har ulagrede statusendringer. Hvis du beveger deg bort fra denne sida vil "
+"disse endringene gå tapt."
 
 #: root/source-js/articles/articleSubmit.js:81
 msgid "Saving article..."
@@ -305,10 +309,12 @@ msgstr "Flytter til papirkurven …"
 #: root/source-js/newsletter/newsletter.js:471
 #: root/source-js/rssimport/rssimport.js:182 root/source-js/tags/ui.js:96
 #: root/source-js/templates/templates.js:70
+#: root/source-js/timetracker/timetracker.js:193
 msgid "Deleting..."
 msgstr "Sletter …"
 
 #: root/source-js/articles/articles.js:86
+#: root/source-js/timetracker/timetracker.js:209
 msgid "Failed to delete: "
 msgstr "Kunne ikke slette: "
 
@@ -823,6 +829,8 @@ msgstr ""
 "snart."
 
 #: root/source-js/core/asyncHelper.js:308
+#: root/source-js/timetracker/tickingTimeTracker.js:31
+#: root/source-js/timetracker/timetracker.js:151
 msgid "An error occurred with the request that was submitted."
 msgstr "En feil oppstod med forespørselen som ble sendt inn."
 
@@ -893,6 +901,10 @@ msgstr "Opprett artikkel"
 #: root/source-js/core/createArticle.js:89
 msgid "Creating article ..."
 msgstr "Oppretter artikkel …"
+
+#: root/source-js/core/datetimerange.js:27
+msgid "The start date must be before the end date."
+msgstr "Startdatoen må være før sluttdatoen"
 
 #: root/source-js/core/dialogHelpers.js:56
 msgid ""
@@ -1015,6 +1027,7 @@ msgstr "Overstyr eksisterende tilgangsrettigheter på undermapper"
 #: root/source-js/newsletter/newsletter.js:448
 #: root/source-js/newsletter/newsletter.js:506
 #: root/source-js/rssimport/rssimport.js:111
+#: root/source-js/timetracker/timetracker.js:62
 #: root/source-js/utils/arrangableList.js:101
 msgid "Save and close"
 msgstr "Lagre og lukk"
@@ -1144,6 +1157,40 @@ msgstr "Du har ikke valgt noen filer å laste opp"
 msgid "Uploading..."
 msgstr "Laster opp …"
 
+#: root/source-js/listview/listview.js:5
+#: root/source-js/timetracker/timetracker.js:177
+msgid "Loading time entry information..."
+msgstr "Laster informasjon om tidsoppføring …"
+
+#: root/source-js/listview/listview.js:12
+msgid "Preview time entry"
+msgstr "Forhåndsvis tidsoppføring"
+
+#: root/source-js/listview/listview.js:15
+#: root/source-js/newsletter/newsletter.js:153
+#: root/source-js/timetracker/timetracker.js:36
+msgid "From"
+msgstr "Fra"
+
+#: root/source-js/listview/listview.js:16
+#: root/source-js/timetracker/timetracker.js:37
+msgid "To"
+msgstr "Til"
+
+#: root/source-js/listview/listview.js:17
+#: root/source-js/timetracker/timetracker.js:40
+msgid "IP In"
+msgstr "IP-inn"
+
+#: root/source-js/listview/listview.js:18
+#: root/source-js/timetracker/timetracker.js:44
+msgid "IP Out"
+msgstr "IP-ut"
+
+#: root/source-js/listview/listview.js:33
+msgid "close"
+msgstr "lukk"
+
 #: root/source-js/newsletter/newsletter.js:42
 msgid "Are you sure you wish to cancel this users subscription?"
 msgstr "Er du sikker på at du vil avslutte abonnementet til denne brukeren?"
@@ -1151,10 +1198,6 @@ msgstr "Er du sikker på at du vil avslutte abonnementet til denne brukeren?"
 #: root/source-js/newsletter/newsletter.js:88
 msgid "Loading group data..."
 msgstr "Laster gruppedata …"
-
-#: root/source-js/newsletter/newsletter.js:153
-msgid "From"
-msgstr "Fra"
 
 #: root/source-js/newsletter/newsletter.js:164
 msgid "Message"
@@ -1410,6 +1453,51 @@ msgstr ""
 msgid "Setting as default..."
 msgstr "Setter som standard …"
 
+#: root/source-js/timetracker/tickingTimeTracker.js:4
+msgid "Loading..."
+msgstr "Laster …"
+
+#: root/source-js/timetracker/tickingTimeTracker.js:35
+#: root/source-js/timetracker/timetracker.js:155
+msgid "You do not have permission to change any of the data."
+msgstr ""
+"Du har ikke tilgang til å endre noe."
+
+#: root/source-js/timetracker/tickingTimeTracker.js:39
+msgid "Failed to start timetracker."
+msgstr "Klarte ikke å starte tidtakeren."
+
+#: root/source-js/timetracker/tickingTimeTracker.js:58
+#: root/source-js/timetracker/tickingTimeTracker.js:64
+msgid ""
+"The timetracker will keep running even after you close Lixuz. If you don't "
+"want this, please stay on the page and stop it before proceeding"
+msgstr "Tidtakeren vil fortsette å ta tida selv etter at du har lukket Lixuz. Om du ikke vil dette, bli på sida og stopp den før du fortsetter."
+
+#: root/source-js/timetracker/timetracker.js:27
+msgid "Add time entry"
+msgstr "Legg til tidsoppføring"
+
+#: root/source-js/timetracker/timetracker.js:31
+msgid "View / edit time entry"
+msgstr "Vis / rediger tidsoppføring"
+
+#: root/source-js/timetracker/timetracker.js:59
+msgid "Comment"
+msgstr "Kommenter"
+
+#: root/source-js/timetracker/timetracker.js:159
+msgid "Failed to submit time entry data."
+msgstr "Kunne ikke sende inn tidsoppføringsdata"
+
+#: root/source-js/timetracker/timetracker.js:185
+msgid "Are you sure you wish to delete this time entry?"
+msgstr "Er du sikker på at du vil slette denne oppføringen?"
+
+#: root/source-js/timetracker/timetracker.js:201
+msgid "Time entry deleted."
+msgstr "Tidsoppføringen er sletta."
+
 #: root/source-js/utils/FieldHelper.js:207
 msgid "The field \"%(field)\" must be filled in."
 msgstr "Feltet «%(field)» må fylles inn."
@@ -1541,46 +1629,31 @@ msgstr "Nekter å legge til et tomt emneord."
 msgid "Creating tag..."
 msgstr "Oppretter emneord …"
 
-#~ msgid "File ID:"
-#~ msgstr "Fil ID:"
+#~ msgid "Reassign file"
+#~ msgstr "Tildel fil"
 
-#~ msgid "Size:"
-#~ msgstr "Størrelse:"
-
-#~ msgid "You haven't selected any folder"
-#~ msgstr "Du har ikke valgt en mappe"
-
-#~ msgid "Loading element data..."
-#~ msgstr "Laster elementdata …"
-
-#~ msgid "Word/phrase"
-#~ msgstr "Ord/uttrykk"
-
-#~ msgid "Definition"
-#~ msgstr "Definisjon"
-
-#~ msgid "Save changes"
-#~ msgstr "Lagre endringene"
+#~ msgid "Assign file"
+#~ msgstr "Tildel fil"
 
 #~ msgid ""
-#~ "This article is currently locked for editing by <i>%(USER)</i>. <br /"
-#~ "><br />You have been forwarded to a read-only preview of the article "
-#~ "instead."
+#~ "Note: This file is already assigned to a spot. Reassigning it to another "
+#~ "will remove it from its current spot and move it to the new one."
 #~ msgstr ""
-#~ "Denne artikkelen er låst av <i>%(USER)</i>.<br /><br />Du har blitt "
-#~ "videresendt til en skrivebeskyttet forhåndsvisning av artikkelen i stedet."
+#~ "Merk: Denne fila er allerede tildelt et område. Om du tildeler den et "
+#~ "annet område vil den bli fjerna fra det gjeldende området og flyttet til "
+#~ "det nye."
 
-#~ msgid "Insert"
-#~ msgstr "Sett inn"
+#~ msgid "(can not assign to spots - this template has none)"
+#~ msgstr "(kan ikke tildele til områder - denne malen har ingen)"
 
-#~ msgid "Insert Table"
-#~ msgstr "Sett inn en tabell"
+#~ msgid "Assign to spot: "
+#~ msgstr "Tildel til område: "
 
-#~ msgid "Table"
-#~ msgstr "Tabell"
+#~ msgid "current spot"
+#~ msgstr "gjeldende område"
 
-#~ msgid "Insert text or HTML code"
-#~ msgstr "Sett inn tekst eller HTML-kode"
+#~ msgid "Show advanced options"
+#~ msgstr "Vis avanserte valg"
 
 #~ msgid ""
 #~ "Above you may choose to assign this file to a spot, these options allow "
@@ -1595,28 +1668,43 @@ msgstr "Oppretter emneord …"
 #~ "filområder tilgjengelig (ettersom filområder vil skaleres og vises i "
 #~ "lister automatisk, mens bilder i inngress eller brødtekst ofte ikke vil)."
 
-#~ msgid "Show advanced options"
-#~ msgstr "Vis avanserte valg"
+#~ msgid "Insert text or HTML code"
+#~ msgstr "Sett inn tekst eller HTML-kode"
 
-#~ msgid "current spot"
-#~ msgstr "gjeldende område"
+#~ msgid "Table"
+#~ msgstr "Tabell"
 
-#~ msgid "Assign to spot: "
-#~ msgstr "Tildel til område: "
+#~ msgid "Insert Table"
+#~ msgstr "Sett inn en tabell"
 
-#~ msgid "(can not assign to spots - this template has none)"
-#~ msgstr "(kan ikke tildele til områder - denne malen har ingen)"
+#~ msgid "Insert"
+#~ msgstr "Sett inn"
 
 #~ msgid ""
-#~ "Note: This file is already assigned to a spot. Reassigning it to another "
-#~ "will remove it from its current spot and move it to the new one."
+#~ "This article is currently locked for editing by <i>%(USER)</i>. <br /"
+#~ "><br />You have been forwarded to a read-only preview of the article "
+#~ "instead."
 #~ msgstr ""
-#~ "Merk: Denne fila er allerede tildelt et område. Om du tildeler den et "
-#~ "annet område vil den bli fjerna fra det gjeldende området og flyttet til "
-#~ "det nye."
+#~ "Denne artikkelen er låst av <i>%(USER)</i>.<br /><br />Du har blitt "
+#~ "videresendt til en skrivebeskyttet forhåndsvisning av artikkelen i stedet."
 
-#~ msgid "Assign file"
-#~ msgstr "Tildel fil"
+#~ msgid "Save changes"
+#~ msgstr "Lagre endringene"
 
-#~ msgid "Reassign file"
-#~ msgstr "Tildel fil"
+#~ msgid "Definition"
+#~ msgstr "Definisjon"
+
+#~ msgid "Word/phrase"
+#~ msgstr "Ord/uttrykk"
+
+#~ msgid "Loading element data..."
+#~ msgstr "Laster elementdata …"
+
+#~ msgid "You haven't selected any folder"
+#~ msgstr "Du har ikke valgt en mappe"
+
+#~ msgid "Size:"
+#~ msgstr "Størrelse:"
+
+#~ msgid "File ID:"
+#~ msgstr "Fil ID:"

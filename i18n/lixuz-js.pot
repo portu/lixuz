@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-07 11:14+0200\n"
+"POT-Creation-Date: 2012-09-07 12:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgstr ""
 
 #: ./root/source-js/roles/roles.js:131 ./root/source-js/utils/ModuleFieldEditor.js:98 ./root/source-js/admin/ADFieldsEdit.js:82
 #: ./root/source-js/newsletter/newsletter.js:131 ./root/source-js/newsletter/newsletter.js:480 ./root/source-js/newsletter/newsletter.js:531
-#: ./root/source-js/rssimport/rssimport.js:50 ./root/source-js/rssimport/rssimport.js:134
+#: ./root/source-js/timetracker/timetracker.js:134 ./root/source-js/rssimport/rssimport.js:50 ./root/source-js/rssimport/rssimport.js:134
 msgid "Saving..."
 msgstr ""
 
@@ -43,7 +43,8 @@ msgid ""
 msgstr ""
 
 #: ./root/source-js/templates/templates.js:70 ./root/source-js/tags/ui.js:96 ./root/source-js/articles/trash.js:32 ./root/source-js/newsletter/newsletter.js:50
-#: ./root/source-js/newsletter/newsletter.js:471 ./root/source-js/articles/articles.js:77 ./root/source-js/rssimport/rssimport.js:182
+#: ./root/source-js/newsletter/newsletter.js:471 ./root/source-js/articles/articles.js:77 ./root/source-js/timetracker/timetracker.js:193
+#: ./root/source-js/rssimport/rssimport.js:182
 msgid "Deleting..."
 msgstr ""
 
@@ -53,6 +54,10 @@ msgstr ""
 
 #: ./root/source-js/templates/templates.js:87
 msgid "Setting as default..."
+msgstr ""
+
+#: ./root/source-js/core/datetimerange.js:27
+msgid "The start date must be before the end date."
 msgstr ""
 
 #: ./root/source-js/tags/ui.js:21
@@ -191,7 +196,8 @@ msgid "Enabled?"
 msgstr ""
 
 #: ./root/source-js/utils/arrangableList.js:101 ./root/source-js/core/objPermEditor.js:175 ./root/source-js/newsletter/newsletter.js:112
-#: ./root/source-js/newsletter/newsletter.js:448 ./root/source-js/newsletter/newsletter.js:506 ./root/source-js/rssimport/rssimport.js:111
+#: ./root/source-js/newsletter/newsletter.js:448 ./root/source-js/newsletter/newsletter.js:506 ./root/source-js/timetracker/timetracker.js:62
+#: ./root/source-js/rssimport/rssimport.js:111
 msgid "Save and close"
 msgstr ""
 
@@ -481,7 +487,7 @@ msgid ""
 "Please try again soon."
 msgstr ""
 
-#: ./root/source-js/core/asyncHelper.js:308
+#: ./root/source-js/core/asyncHelper.js:308 ./root/source-js/timetracker/timetracker.js:151 ./root/source-js/timetracker/tickingTimeTracker.js:31
 msgid "An error occurred with the request that was submitted."
 msgstr ""
 
@@ -618,11 +624,12 @@ msgstr ""
 msgid "Loading group data..."
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:153
+#: ./root/source-js/newsletter/newsletter.js:153 ./root/source-js/timetracker/timetracker.js:36 ./root/source-js/listview/listview.js:15
 msgid "From"
 msgstr ""
 
 #: ./root/source-js/newsletter/newsletter.js:154 ./root/source-js/newsletter/newsletter.js:183 ./root/source-js/articles-previewUI/previewUI.js:173
+#: ./root/source-js/timetracker/timetracker.js:58
 msgid "Subject"
 msgstr ""
 
@@ -821,7 +828,7 @@ msgstr ""
 msgid "Moving to trash..."
 msgstr ""
 
-#: ./root/source-js/articles/articles.js:86
+#: ./root/source-js/articles/articles.js:86 ./root/source-js/timetracker/timetracker.js:209
 msgid "Failed to delete: "
 msgstr ""
 
@@ -956,7 +963,7 @@ msgstr ""
 msgid "Deadline:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:170
+#: ./root/source-js/articles-previewUI/previewUI.js:170 ./root/source-js/timetracker/timetracker.js:49 ./root/source-js/listview/listview.js:22
 msgid "Comments"
 msgstr ""
 
@@ -1169,6 +1176,50 @@ msgid ""
 "not be deleted."
 msgstr ""
 
+#: ./root/source-js/timetracker/timetracker.js:27
+msgid "Add time entry"
+msgstr ""
+
+#: ./root/source-js/timetracker/timetracker.js:31
+msgid "View / edit time entry"
+msgstr ""
+
+#: ./root/source-js/timetracker/timetracker.js:37 ./root/source-js/listview/listview.js:16
+msgid "To"
+msgstr ""
+
+#: ./root/source-js/timetracker/timetracker.js:40 ./root/source-js/listview/listview.js:17
+msgid "IP In"
+msgstr ""
+
+#: ./root/source-js/timetracker/timetracker.js:44 ./root/source-js/listview/listview.js:18
+msgid "IP Out"
+msgstr ""
+
+#: ./root/source-js/timetracker/timetracker.js:59
+msgid "Comment"
+msgstr ""
+
+#: ./root/source-js/timetracker/timetracker.js:155 ./root/source-js/timetracker/tickingTimeTracker.js:35
+msgid "You do not have permission to change any of the data."
+msgstr ""
+
+#: ./root/source-js/timetracker/timetracker.js:159
+msgid "Failed to submit time entry data."
+msgstr ""
+
+#: ./root/source-js/timetracker/timetracker.js:177 ./root/source-js/listview/listview.js:5
+msgid "Loading time entry information..."
+msgstr ""
+
+#: ./root/source-js/timetracker/timetracker.js:185
+msgid "Are you sure you wish to delete this time entry?"
+msgstr ""
+
+#: ./root/source-js/timetracker/timetracker.js:201
+msgid "Time entry deleted."
+msgstr ""
+
 #: ./root/source-js/core/XHR.js:104
 msgid ""
 "The connection to the server has timed out. Please retry the request soon."
@@ -1244,12 +1295,18 @@ msgstr ""
 msgid "Acceptance failed"
 msgstr ""
 
-#: ./root/source-js/articles/secondaryFolders.js:38
-msgid "You must first save the article."
+#: ./root/source-js/timetracker/tickingTimeTracker.js:4
+msgid "Loading..."
 msgstr ""
 
-#: ./root/source-js/articles/secondaryFolders.js:42
-msgid "Loading folders..."
+#: ./root/source-js/timetracker/tickingTimeTracker.js:39
+msgid "Failed to start timetracker."
+msgstr ""
+
+#: ./root/source-js/timetracker/tickingTimeTracker.js:58 ./root/source-js/timetracker/tickingTimeTracker.js:64
+msgid ""
+"The timetracker will keep running even after you close Lixuz. If you don't "
+"want this, please stay on the page and stop it before proceeding"
 msgstr ""
 
 #: ./root/source-js/articles/viewArticleRevisions.js:35
@@ -1313,6 +1370,22 @@ msgstr ""
 
 #: ./root/source-js/articles/viewArticleRevisions.js:136
 msgid "Revisions of %(ARTID)"
+msgstr ""
+
+#: ./root/source-js/articles/secondaryFolders.js:38
+msgid "You must first save the article."
+msgstr ""
+
+#: ./root/source-js/articles/secondaryFolders.js:42
+msgid "Loading folders..."
+msgstr ""
+
+#: ./root/source-js/listview/listview.js:12
+msgid "Preview time entry"
+msgstr ""
+
+#: ./root/source-js/listview/listview.js:33
+msgid "close"
 msgstr ""
 
 #: ./root/source-js/files/cropping.js:65
