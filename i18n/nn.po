@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2012-09-07 12:28+0200\n"
-"PO-Revision-Date: 2012-09-07 13:09+0200\n"
+"POT-Creation-Date: 2012-09-07 13:14+0200\n"
+"PO-Revision-Date: 2012-09-07 13:14+0200\n"
 "Last-Translator: Eskild Hustvedt <eskild@portu.no>\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
 "Language: nn\n"
@@ -1573,6 +1573,14 @@ msgstr "Lixuz versjon %(VERSION)"
 #: root/adm/core/header.html:158
 msgid "Log out"
 msgstr "Logg ut"
+
+#: root/adm/core/header.html:164 root/adm/core/header.html:167
+msgid "Start"
+msgstr "Start"
+
+#: root/adm/core/header.html:169
+msgid "Stop"
+msgstr "Stopp"
 
 #: root/adm/core/listnavigation.html:34 root/adm/core/listnavigation.html:38
 msgid "First"

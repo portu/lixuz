@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-07 12:32+0200\n"
+"POT-Creation-Date: 2012-09-07 13:14+0200\n"
 "PO-Revision-Date: 2012-09-07 13:06+0200\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
@@ -1460,8 +1460,7 @@ msgstr "Laster …"
 #: root/source-js/timetracker/tickingTimeTracker.js:35
 #: root/source-js/timetracker/timetracker.js:155
 msgid "You do not have permission to change any of the data."
-msgstr ""
-"Du har ikke tilgang til å endre noe."
+msgstr "Du har ikke tilgang til å endre noe."
 
 #: root/source-js/timetracker/tickingTimeTracker.js:39
 msgid "Failed to start timetracker."
@@ -1472,7 +1471,9 @@ msgstr "Klarte ikke å starte tidtakeren."
 msgid ""
 "The timetracker will keep running even after you close Lixuz. If you don't "
 "want this, please stay on the page and stop it before proceeding"
-msgstr "Tidtakeren vil fortsette å ta tida selv etter at du har lukket Lixuz. Om du ikke vil dette, bli på sida og stopp den før du fortsetter."
+msgstr ""
+"Tidtakeren vil fortsette å ta tida selv etter at du har lukket Lixuz. Om du "
+"ikke vil dette, bli på sida og stopp den før du fortsetter."
 
 #: root/source-js/timetracker/timetracker.js:27
 msgid "Add time entry"
