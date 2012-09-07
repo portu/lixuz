@@ -114,10 +114,8 @@ sub _list_search_indexer
         $page = 1;
     }
 
-    my $type;
-    # FIXME: Hacky, use a proper isa check
     my $searchType = 'articles';
-    if(ref($self) =~ /Files/)
+    if ($self->objectName eq 'file')
     {
         $searchType = 'files';
     }

@@ -51,17 +51,17 @@ sub getListHelper
     {
         when('database')
         {
-            return LIXUZ::HelperModules::List::Database->new($options);
+            return LIXUZ::HelperModules::List::Database->new(%{$options});
         }
 
         when('indexer')
         {
-            return LIXUZ::HelperModules::List::Indexer->new($options);
+            return LIXUZ::HelperModules::List::Indexer->new(%{$options});
         }
 
         when('dual')
         {
-            return LIXUZ::HelperModules::List::Dual->new($options);
+            return LIXUZ::HelperModules::List::Dual->new(%{$options});
         }
 
         default

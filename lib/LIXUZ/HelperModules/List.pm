@@ -85,6 +85,11 @@ has '_lDataChanged' => (
     isa => 'Bool',
     default => 0,
     );
+has '_handled' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => 0,
+    );
 
 sub handleListRequestJSON
 {
@@ -160,6 +165,8 @@ sub handleListRequest
         croak("Fatal: Object is missing");
     }
 
+    $self->_handled(1);
+
     # Get the form
     my $form;
     my $query = $self->query;
@@ -169,7 +176,7 @@ sub handleListRequest
     }
     else
     {
-        $self->c->log->debug('no formbuilder');
+        $self->c->log->warn('no formbuilder');
     }
     # I18n object
     my $i18n = $self->c->stash->{i18n};

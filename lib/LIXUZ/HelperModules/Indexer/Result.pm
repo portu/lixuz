@@ -17,6 +17,7 @@
 package LIXUZ::HelperModules::Indexer::Result;
 use Moose;
 use 5.010;
+use Carp;
 
 with 'LIXUZ::Role::IndexerData';
 

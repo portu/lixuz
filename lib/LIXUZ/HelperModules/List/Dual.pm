@@ -111,7 +111,7 @@ sub _dual_resolver
     }
     $ret->reset;
     my $idType = 'article_id';
-    if(ref($self) =~ /Files/)
+    if ($self->objectName eq 'file')
     {
         $idType = 'file_id';
     }
