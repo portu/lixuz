@@ -31,6 +31,7 @@ use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::TemplateRenderer;
 use constant { true => 1, false => 0};
 use LIXUZ::HelperModules::Calendar qw(datetime_from_unix datetime_to_SQL datetime_from_SQL_to_unix datetime_from_SQL);
+use LIXUZ::HelperModules::Files qw(lixuz_serve_scalar_file);
 use HTML::HTMLDoc;
 
 # Summary: Forward the time entry to the list view, and display a status message at the top of it
@@ -120,8 +121,8 @@ sub index : Path Args(0) Form('/core/search')
         $htmldoc->set_html_content($html);
         my $pdf = $htmldoc->generate_pdf();
         my $fh =  $pdf->to_string();
-        $c->res->content_type('application/octet-stream');
-        $c->res->body($fh);
+        $c->res->headers->header('Content-Disposition' => 'attachment; filename="lixuzTimetrackerReport.pdf"');
+        lixuz_serve_scalar_file($c,$fh,'application/pdf');
     }
     else
     {

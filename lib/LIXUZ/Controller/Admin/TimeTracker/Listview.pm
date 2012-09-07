@@ -32,6 +32,7 @@ use LIXUZ::HelperModules::Fields;
 use LIXUZ::HelperModules::HTMLFilter qw(filter_string);
 use LIXUZ::HelperModules::TemplateRenderer;
 use LIXUZ::HelperModules::RevisionHelpers qw(article_latest_revisions get_latest_article set_other_articles_inactive);
+use LIXUZ::HelperModules::Files qw(lixuz_serve_scalar_file);
 use constant { true => 1, false => 0};
 use HTML::HTMLDoc;
 
@@ -241,8 +242,8 @@ sub index : Path Args(0) Form('/core/search')
         $htmldoc->set_html_content($html);
         my $pdf = $htmldoc->generate_pdf();
         my $fh = $pdf->to_string();
-        $c->res->content_type('application/octet-stream');
-        $c->res->body($fh);
+        $c->res->headers->header('Content-Disposition' => 'attachment; filename="lixuzArticleTimeReport.pdf"');
+        lixuz_serve_scalar_file($c,$fh,'application/pdf');
     }
     else
     {
