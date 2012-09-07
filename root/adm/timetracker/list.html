@@ -45,13 +45,13 @@ my $hours = $tdiff % 24;
 <td><% $timetrackentry->ip_end %></td>
 <td>
 %if($timetrackentry->entry_type eq 'manually') {
-<img class="useTipsy" src="/static/images/icons/manually-timeentry.png" border="0" title="<% $i18n->get('Manually time ntry') %>" alt="<% $i18n->get('Manually time entry') %>" class="useTipsy" />
+<img class="useTipsy" src="/static/images/icons/manually-timeentry.png" border="0" title="<% $i18n->get('Manual entry') %>" alt="<% $i18n->get('Manual entry') %>" class="useTipsy" />
 %}else{
-<img class="useTipsy" src="/static/images/icons/auto-timeentry.png" border="0" title="<% $i18n->get('Auto time ntry') %>" alt="<% $i18n->get('Auto time entry') %>" class="useTipsy" />
+<img class="useTipsy" src="/static/images/icons/auto-timeentry.png" border="0" title="<% $i18n->get('Automatic entry') %>" alt="<% $i18n->get('Automatic entry') %>" class="useTipsy" />
 %}
 </td>
 %if($c->user->can_access('/timetracker/entrySave')) {
-<td><a href="#" onclick="editTimeEntry(<%$timetrackentry->time_id%>);return false;"><img class="useTipsy" src="/static/images/icons/users-edit.png" border="0" title="<% $i18n->get('Edit or view') %>" alt="<% $i18n->get('Edit or View') %>" class="useTipsy" /></a></td>
+<td><a href="#" onclick="editTimeEntry(<%$timetrackentry->time_id%>);return false;"><img class="useTipsy" src="/static/images/icons/users-edit.png" border="0" title="<% $i18n->get('Edit or view') %>" alt="<% $i18n->get('Edit or view') %>" class="useTipsy" /></a></td>
 %}else{
 <td>&nbsp;</td>
 %}
