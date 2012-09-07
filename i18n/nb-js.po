@@ -18,9 +18,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
 "POT-Creation-Date: 2012-09-07 11:14+0200\n"
-"PO-Revision-Date: 2012-03-13 14:18+0100\n"
+"PO-Revision-Date: 2012-09-07 11:20+0200\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
 "Language: \n"
@@ -215,15 +215,14 @@ msgstr "Legg til tilleggselement"
 
 #: root/source-js/articles/articleStatus.js:40
 msgid "(Unsaved)"
-msgstr ""
+msgstr "(Ikke lagret)"
 
 #: root/source-js/articles/articleStatus.js:116
-#, fuzzy
 msgid ""
 "You have unsaved status changes, those changes will be lost if you leave "
 "without saving."
 msgstr ""
-"Du har ikke lagret endringene dine. Hvis du beveger deg bort fra denne sida "
+"Du har ulagrede statusendringer. Hvis du beveger deg bort fra denne sida "
 "vil disse endringene gå tapt."
 
 #: root/source-js/articles/articleSubmit.js:81
@@ -1170,9 +1169,8 @@ msgid "There are no saved newsletters."
 msgstr "Ingen nyheitsbrev har blitt lagret."
 
 #: root/source-js/newsletter/newsletter.js:183
-#, fuzzy
 msgid "Action"
-msgstr "Bildetekst"
+msgstr "Handling"
 
 #: root/source-js/newsletter/newsletter.js:183
 msgid "Sent at"
@@ -1266,66 +1264,63 @@ msgstr "Er du sikker på at du vil slette denne gruppa?"
 
 #: root/source-js/newsletter/newsletter.js:500
 msgid "Email"
-msgstr ""
+msgstr "E-post"
 
 #: root/source-js/newsletter/newsletter.js:501
 msgid "Name"
-msgstr ""
+msgstr "Navn"
 
 #: root/source-js/newsletter/newsletter.js:502
 msgid "Format"
-msgstr ""
+msgstr "Format"
 
 #: root/source-js/newsletter/newsletter.js:502
 msgid "HTML"
-msgstr ""
+msgstr "HTML"
 
 #: root/source-js/newsletter/newsletter.js:502
 msgid "Text"
-msgstr ""
+msgstr "Tekst"
 
 #: root/source-js/newsletter/newsletter.js:503
 msgid "Daily"
-msgstr ""
+msgstr "Daglig"
 
 #: root/source-js/newsletter/newsletter.js:503
-#, fuzzy
 msgid "Interval"
-msgstr "Bare intern"
+msgstr "Intervall"
 
 #: root/source-js/newsletter/newsletter.js:503
 msgid "Monthly"
-msgstr ""
+msgstr "Månedlig"
 
 #: root/source-js/newsletter/newsletter.js:503
 msgid "None"
-msgstr ""
+msgstr "Ingen"
 
 #: root/source-js/newsletter/newsletter.js:503
 msgid "Weekly"
-msgstr ""
+msgstr "Ukentlig"
 
 #: root/source-js/newsletter/newsletter.js:510
 msgid "Add Subscriber"
-msgstr ""
+msgstr "Legg til abonnent"
 
 #: root/source-js/newsletter/newsletter.js:547
-#, fuzzy
 msgid "Loading subscriber information..."
-msgstr "Laster gruppeinformasjon …"
+msgstr "Laster abonnentsinformasjon …"
 
 #: root/source-js/newsletter/newsletter.js:577
 msgid "Import CSV"
-msgstr ""
+msgstr "Importer CSV"
 
 #: root/source-js/newsletter/newsletter.js:580
-#, fuzzy
 msgid "Upload and close"
-msgstr "Lagre og lukk"
+msgstr "Last opp og lukk"
 
 #: root/source-js/newsletter/newsletter.js:584
 msgid "Import Subscribers"
-msgstr ""
+msgstr "Importer abonnenter"
 
 #: root/source-js/roles/roles.js:149
 msgid "A name for the role is required. Please enter one."

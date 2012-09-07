@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
 "POT-Creation-Date: 2012-09-07 11:04+0200\n"
-"PO-Revision-Date: 2012-03-13 14:19+0100\n"
+"PO-Revision-Date: 2012-09-07 11:20+0200\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
 "Language: \n"
@@ -462,16 +462,15 @@ msgstr "Artikler"
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:135
 msgid "Article status changed, and article(s) have been reassigned"
-msgstr ""
+msgstr "Artikkelstatus endra, og artikkelen(e) har blitt tildelt noen andre"
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:139
-#, fuzzy
 msgid "Article status changed"
-msgstr "Artikkel tittel"
+msgstr "Artikkelstatus endra"
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:143
 msgid "Article(s) have been reassigned"
-msgstr ""
+msgstr "Artikkelen(e) har blitt tildelt noen andre"
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:193
 #: root/adm/dashboard/widgetHelper_articleList.html:90
@@ -480,9 +479,8 @@ msgstr "(ukjent)"
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:284
 #: lib/LIXUZ/Controller/Admin/Articles.pm:289
-#, fuzzy
 msgid "(user)"
-msgstr "bruker"
+msgstr "(bruker)"
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:297
 #: lib/LIXUZ/Controller/Admin/Articles.pm:302
@@ -517,9 +515,8 @@ msgid "Error: Failed to locate a article with the UID %(UID)."
 msgstr "Feil: Kunne ikke finne en artikkel med IDen %(UID)."
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:483
-#, fuzzy
 msgid "Default Template"
-msgstr "(standardmal)"
+msgstr "Standardmal"
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:511
 #: lib/LIXUZ/Controller/Admin/Articles.pm:516
@@ -722,9 +719,8 @@ msgid "Edit other users articles"
 msgstr "Rediger artiklene til andre brukere"
 
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:281
-#, fuzzy
 msgid "Preview and read own articles"
-msgstr "Se forhåndsvisning av egne artikler"
+msgstr "Se forhåndsvisning og lesevisning av egne artikler"
 
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:287
 msgid "Preview others articles"
@@ -1171,9 +1167,8 @@ msgid "(unknown - \"%(FIELDNAME)\")"
 msgstr "(ukjent - «%(FIELDNAME»)"
 
 #: lib/LIXUZ/Schema/LzField.pm:250
-#, fuzzy
 msgid "Unknown"
-msgstr "(ukjent)"
+msgstr "Ukjent"
 
 #: lib/LIXUZ/Schema/LzWorkflow.pm:157
 msgid "(user not found)"
@@ -1188,9 +1183,8 @@ msgid "File ID:"
 msgstr "Fil ID:"
 
 #: lib/LIXUZ/Schema/LzFile.pm:871 lib/LIXUZ/Schema/LzFile.pm:876
-#, fuzzy
 msgid "Folder:"
-msgstr "Mapper:"
+msgstr "Mappe:"
 
 #: lib/LIXUZ/Schema/LzFile.pm:883 root/adm/files/list.html:73
 msgid "View other versions"
@@ -1625,7 +1619,6 @@ msgid "Submit changes"
 msgstr "Lagre endringene"
 
 #: root/adm/articles/list.html:27
-#, fuzzy
 msgid "Save Changes"
 msgstr "Lagre endringer"
 
@@ -1638,18 +1631,16 @@ msgid "Full title: %(TITLE)"
 msgstr "Full tittel: %(TITLE)"
 
 #: root/adm/articles/list.html:157
-#, fuzzy
 msgid "You don't have permission to change the status of this article"
-msgstr "(du har ikke tilgang til å redigere denne verdien)"
+msgstr "Du har ikke tilgang til å endre statusen til denne artikkelen"
 
 #: root/adm/articles/list.html:200
-#, fuzzy
 msgid "You don't have permission to reassign this article"
-msgstr "(du har ikke tilgang til å redigere denne verdien)"
+msgstr "Du har ikke tilgang til å tildele denne artikkelen til noen andre"
 
 #: root/adm/articles/list.html:212
 msgid "Read"
-msgstr ""
+msgstr "Les"
 
 #: root/adm/articles/list.html:223
 msgid "Restore"
@@ -1690,31 +1681,26 @@ msgstr ""
 "lagrer artikkelen."
 
 #: root/adm/articles/read/read.html:26
-#, fuzzy
 msgid "Edit Article"
 msgstr "Rediger en artikkel"
 
 #: root/adm/articles/read/filesread.html:30
 msgid "(no caption set)"
-msgstr ""
+msgstr "(ingen bildetekst er valgt)"
 
 #: root/adm/articles/read/filesread.html:32
-#, fuzzy
 msgid "File Id: "
-msgstr "Fil ID:"
+msgstr "Fil ID: "
 
 #: root/adm/articles/read/filesread.html:33
-#, fuzzy
 msgid "File Name: "
-msgstr "Fil lagret."
+msgstr "Filnavn: "
 
 #: root/adm/articles/read/filesread.html:34
-#, fuzzy
 msgid "File Size: "
-msgstr "FLV-størrelse"
+msgstr "Filstørrelse: "
 
 #: root/adm/articles/read/workflow_read.html:23
-#, fuzzy
 msgid "Article Id"
 msgstr "Artikkel ID"
 
@@ -1917,11 +1903,11 @@ msgstr "Rediger grupper"
 
 #: root/adm/newsletter/left.html:23
 msgid "Add Subscribers"
-msgstr ""
+msgstr "Legg til abonnementer"
 
 #: root/adm/newsletter/left.html:24
 msgid "Import Subscribers"
-msgstr ""
+msgstr "Importer abonnementer"
 
 #: root/adm/newsletter/list.html:25
 msgid "Subscription ID"
@@ -1936,26 +1922,24 @@ msgid "Preferred format"
 msgstr "Foretrukket format"
 
 #: root/adm/newsletter/list.html:50
-#, fuzzy
 msgid "Monthly"
-msgstr "måned"
+msgstr "Månedlig"
 
 #: root/adm/newsletter/list.html:55
 msgid "Weekly"
-msgstr ""
+msgstr "Ukentlig"
 
 #: root/adm/newsletter/list.html:60
 msgid "Daily"
-msgstr ""
+msgstr "Daglig"
 
 #: root/adm/newsletter/list.html:65
 msgid "None"
-msgstr ""
+msgstr "Ingen"
 
 #: root/adm/newsletter/list.html:74
-#, fuzzy
 msgid "Assign to Group"
-msgstr "Tildel til rolle"
+msgstr "Tildel til gruppe"
 
 #: root/adm/newsletter/send.html:20
 msgid "Add recipients"
@@ -2124,9 +2108,8 @@ msgid "Date"
 msgstr "Dato"
 
 #: root/adm/settings/admin/adfields/adfieldedit.html:141
-#, fuzzy
 msgid "Date and time range"
-msgstr "Dato og tid"
+msgstr "Dato og tids-intervall"
 
 #: root/adm/settings/admin/adfields/adfields_left.html:18
 msgid "Add a new field"
