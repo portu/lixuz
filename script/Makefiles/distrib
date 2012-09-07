@@ -42,6 +42,7 @@ distrib_clean:
 	rm -rf "$(DIST_TARGET)"
 dist_addgitver: distrib_prep
 	perl -pi -e "s{^(our \\\$$GITREV =).*}{\$$1 '$(GIT_VERSION)';}" "$(DIST_TARGET)/lib/LIXUZ.pm"
+	perl -pi -e "s{^(our \\\$$GITBRANCH =).*}{\$$1 '$(GIT_BRANCH)';}" "$(DIST_TARGET)/lib/LIXUZ.pm"
 # Create tarballs+.run wrapper
 fulldistrib: distrib_src distrib_use distrib_deploy distrib_clean
 
