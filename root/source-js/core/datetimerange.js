@@ -24,7 +24,7 @@ function getselectionHandler()
             var pstEndDateFormat = selectedDate.replace(/\./g,'/');
             if (new Date(pstStartDateFormat).getTime() > new Date(pstEndDateFormat).getTime())
             {
-                userMessage(i18n.get('Start date should be less than end date.'));
+                userMessage(i18n.get('The start date must be before the end date.'));
                 return false;
             }
             selectionObject.inputField.value =startDate+"-"+selectedDate;   

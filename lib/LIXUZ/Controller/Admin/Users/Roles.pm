@@ -420,34 +420,34 @@ sub get_groups : Private
             },
         },
         #ACL for Time entry (Time Tracker)
-        $i18n->get('Access the time entry') => {
+        $i18n->get('Access the timetracker') => {
             paths => [
                 '/timetracker',
             ],
             
-            $i18n->get('Add and edit time entry') => {
+            $i18n->get('Add and edit time entries') => {
                 paths => [
                     '/timetracker/entrySave',
                     '/timetracker/timeentryInfo',
                     '/timetracker/commentlist',
                 ],
             },
-            $i18n->get('Delete others time entry') => {
+            $i18n->get('Delete others users time entries') => {
                 paths => [
                     'DELETE_OTHERS_TIME_ENTRY',
                 ],
             },
-            $i18n->get('Add comments on others time entry') => {
+            $i18n->get('Add comments on others users time entries') => {
                 paths => [
                     'COMMENT_ON_TIME_ENTRY',                  
                 ],
             },   
-            $i18n->get('View others time entry') => {
+            $i18n->get('View other users time entries') => {
                 paths => [
                     'VIEW_OTHERS_TIME_ENTRY',
                 ],
             },
-            $i18n->get('Generate time entry report') => {
+            $i18n->get('Generate time entry reports') => {
                 paths => [
                     '/timetracker/generate_report',                  
                 ],
