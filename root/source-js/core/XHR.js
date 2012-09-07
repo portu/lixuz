@@ -186,7 +186,7 @@ var XHR = {
 
             if(params.method == null)
                 params.method = 'POST';
-            params.url = XHR._private.addPartToURL(params.url,'JSON_Submit=1');
+            params.url = XHR._private.addPartToURL(params.url,'_JSON_Submit=1');
             var reqParams = {
                 url     : params.url,
                 success : function (response)

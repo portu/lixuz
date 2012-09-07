@@ -60,6 +60,7 @@ sub index : Path Args(0) Form('/core/search')
             advancedSearch =>[ qw(status owner) ],
             paginate => 1,
         });
+
     if ($c->req->param('_JSON_Submit'))
     {
         if ($c->req->param('list_type') && $c->req->param('list_type') eq 'pure')

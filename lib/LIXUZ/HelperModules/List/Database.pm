@@ -69,6 +69,10 @@ sub listGetResultObject
 {
     my $self = shift;
     my $options = shift;
+    if (!$self->_handled)
+    {
+        $self->handleListRequest();
+    }
     if ($options && $options->{paginate})
     {
         return $self->listGetPaginatedResultObject();
