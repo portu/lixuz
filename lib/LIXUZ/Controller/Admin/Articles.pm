@@ -40,16 +40,6 @@ use constant { true => 1, false => 0};
 # The main list
 # --------
 
-# Summary: Forward the article to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    $c->response->redirect('/admin/articles');
-    $c->detach();
-}
-
 # Summary: Show the primary list
 sub index : Path Args(0) Form('/core/search')
 {
@@ -248,35 +238,32 @@ sub retrieveArticles : Private
     my $trashed = shift;
     $trashed //= 0;
 
-    $self->c($c);
-
-    $self->handleListRequest({
+    $c->stash->{template} = 'adm/articles/index.html';
+    my $helper = $self->getListHelper($c,{
             query => $query,
             object => $baseModel,
             objectName => 'article',
-            template => 'adm/articles/index.html',
             orderParams => [qw(article_id title status_id modified_time assigned_to_user author)],
-            autoSearch => 0,
             formbuilder => $formbuilder,
             advancedSearch => [ qw(workflow.assigned_to_user workflow.assigned_by workflow.assigned_to_role status_id) ],
             searchColumns => [qw/title article_id body lead/],
         });
-    $self->listAddJoin('workflow');
+    $helper->listAddJoin('workflow');
 
     # If we can't edit other peoples articles, *and* we can't preview
     # other peoples articles then limit the results
     if(not $c->user->can_access('EDIT_OTHER_ARTICLES') and not $c->user->can_access('PREVIEW_OTHER_ARTICLES'))
     {
-        $self->listAddExpr({ '-or', => [
+        $helper->listAddExpr({ '-or', => [
                 { 'workflow.assigned_to_user' => $c->user->user_id },
                 { 'workflow.assigned_to_role' => $c->user->role->role_id },
                 ]});
     }
 
-    $self->listAddJoin('revisionMeta');
-    $self->listAddExpr({ 'revisionMeta.is_latest' => 1, trashed => $trashed});
+    $helper->listAddJoin('revisionMeta');
+    $helper->listAddExpr({ 'revisionMeta.is_latest' => 1, trashed => $trashed});
 
-    my $list = $self->listGetResultObject({ paginate => 1 });
+    my $list = $helper->listGetResultObject({ paginate => 1 });
     $c->stash->{article} = article_latest_revisions($list);
     return $list;
 }

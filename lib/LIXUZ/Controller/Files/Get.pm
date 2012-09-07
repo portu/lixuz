@@ -22,6 +22,7 @@ use base qw(Catalyst::Controller::FormBuilder);
 use LIXUZ::HelperModules::Files qw(lixuz_serve_static_file lixuz_serve_scalar_file);
 use LIXUZ::HelperModules::Live::CAPTCHA qw(serve_captcha);
 
+# Summary: Retrieve a captcha
 sub captcha : Path(/files/captcha)
 {
     my ( $self, $c, $uid ) = @_;
@@ -29,6 +30,7 @@ sub captcha : Path(/files/captcha)
     lixuz_serve_scalar_file($c,$data,$mimetype);
 }
 
+# Summary: Retrieve a file if possible
 sub default : Path(/files/get)
 {
     my ( $self, $c, $uid ) = @_;
@@ -111,6 +113,7 @@ sub default : Path(/files/get)
     lixuz_serve_static_file($c,$filePath, $file->get_mimetype($c));
 }
 
+# Summary: Handle the different requests for videos (flv, preview, ..)
 sub get_video: Private
 {
     my ( $self, $c, $file) = @_;
@@ -133,6 +136,7 @@ sub get_video: Private
     die;
 }
 
+# Summary: Handle the different requests for images (resize, original)
 sub get_image: Private
 {
     my ( $self, $c, $file) = @_;
@@ -162,6 +166,7 @@ sub get_image: Private
     }
 }
 
+# Summary: Display an error
 sub error : Private
 {
     my ( $self, $c ) = @_;

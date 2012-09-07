@@ -45,6 +45,7 @@ use LIXUZ::HelperModules::Live::CAPTCHA qw(validate_captcha);
 
 __PACKAGE__->config->{namespace} = 'newsletter';
 
+# Summary: Handle new subscriptions to the newsletter
 sub subscribe : Local
 {
     my ($self,$c) = @_;
@@ -144,6 +145,7 @@ sub subscribe : Local
     $self->message($c,$msg);
 }
 
+# Summary: Handle unsubscribe-requests
 sub unsubscribe : Local
 {
     my ($self,$c) = @_;
@@ -166,6 +168,7 @@ sub unsubscribe : Local
     $self->message($c,$msg);
 }
 
+# Summary: Validate a request to subscribe
 sub validate : Local
 {
     my ($self,$c) = @_;
@@ -190,6 +193,7 @@ sub validate : Local
     $self->message($c,$msg);
 }
 
+# Summary: Display an error message 
 sub message : Private
 {
     my ($self,$c,$message,$error) = @_;

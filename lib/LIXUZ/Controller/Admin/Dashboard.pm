@@ -23,6 +23,7 @@ use LIXUZ::HelperModules::RevisionHelpers qw(article_latest_revisions);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 use LIXUZ::HelperModules::Widget;
 
+# Summary: Handle the request
 sub index : Private
 {
     my ( $self, $c ) = @_;
@@ -54,6 +55,7 @@ sub index : Private
     }
 }
 
+# Summary: Prepare any data required for the "my assignments" widget
 sub prepareMyAssignments : Private
 {
     my ( $self, $c ) = @_;
@@ -74,6 +76,7 @@ sub prepareMyAssignments : Private
     $c->stash->{dashboard_MyAssignments} = article_latest_revisions($assignments);
 }
 
+# Summary: Prepare any data required for the "available assignments" widget
 sub prepareAvailableAssignments : Private
 {
     my ( $self, $c ) = @_;
@@ -82,6 +85,7 @@ sub prepareAvailableAssignments : Private
     $c->stash->{dashboard_AvailableAssignments} = $assignments;
 }
 
+# Summary: Fetch lists of articles that are in the status specified
 sub prepareArticlesInStatus : Private
 {
     my ( $self, $c, $status ) = @_;
@@ -104,6 +108,7 @@ sub prepareArticlesInStatus : Private
     $c->stash->{statusMap}->{$status} = $status_obj->status_name($c->stash->{i18n});
 }
 
+# Summary: Prepare any data required for the "recent comments" widget
 sub prepareRecentComments : Private
 {
     my ( $self, $c ) = @_;

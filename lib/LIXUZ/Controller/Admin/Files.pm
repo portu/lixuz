@@ -49,7 +49,7 @@ sub index : Path Args(0) Form('/core/search')
         $file = $file->search({ clone => \'IS NULL' });
     }
 
-    my $obj = $self->handleListRequest({
+    my $obj = $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $file,
@@ -64,11 +64,11 @@ sub index : Path Args(0) Form('/core/search')
     {
         if ($c->req->param('list_type') && $c->req->param('list_type') eq 'pure')
         {
-            return reply_json_list($c,$obj, \&formatFileJSON_PureIconItem,'CODE_ARRAY');
+            return reply_json_list($c,$obj, \&formatFileHTML_PureIconItem,'CODE_ARRAY');
         }
         else
         {
-            return reply_json_list($c,$obj, \&formatFileJSON,'SINGLE');
+            return reply_json_list($c,$obj, \&formatFileHTML,'SINGLE');
         }
     }
     else
@@ -94,6 +94,7 @@ sub index : Path Args(0) Form('/core/search')
     }
 }
 
+# Summary: Stash data required to build the search filter boxes for files
 sub init_searchFilters : Private
 {
     my ( $self, $c ) = @_;
@@ -156,16 +157,6 @@ sub ajax: Local
     $c->stash->{displaySite} = 0;
 }
 
-# Summary: Forward the file to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    $c->response->redirect('/admin/files');
-    $c->detach();
-}
-
 # Summary: Delete a file
 sub delete: Local Args
 {
@@ -213,9 +204,8 @@ sub getParamFileObj : Private
     return $file;
 }
 
-# XXX: This is about as far from JSON as one gets
-
-sub formatFileJSON
+# FIXME: HTML should not be generated here
+sub formatFileHTML
 {
     my($c, $files) = @_;
     my $n = 0;
@@ -245,7 +235,7 @@ sub formatFileJSON
     return $html;
 }
 
-sub formatFileJSON_PureIconItem
+sub formatFileHTML_PureIconItem
 {
     my($c, $file) = @_;
     return if not $file->can_read($c);

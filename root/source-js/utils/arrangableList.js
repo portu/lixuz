@@ -291,24 +291,6 @@ function listDialog_saveAndClose ()
     currListSettings = {};
 }
 
-// Dummy list creator for development
-function mkDummyList ()
-{
-    newArrangableListWindow({
-        'title': 'dummy',
-        'saveFunction': function () {},
-        'headers': ['ID','LOL'],
-        'checkButtonMode':true,
-        'data': {
-                1: [ '1','yay'],
-                2: [ '2','yay'],
-                3: [ '3','yay'],
-                4: [ 'ftw1','yay'],
-                5: [ 'ftw2','yay'],
-                6: [ 'ftw3','yay']
-        }});
-}
-
 /*
  * Summary: Bump an item to a new position
  */

@@ -30,7 +30,6 @@ var lixuz_curr_JSON_success,
     lixuz_curr_JSON_eval,
 /* Object */
     lixuz_curr_JSON_obj,
-    lixuz_curr_JSON_cacheEnabled = false,
 /*
  * Global variable keeping track of if we're running a request now or not.
  * Used for queue checks
@@ -38,114 +37,7 @@ var lixuz_curr_JSON_success,
     lixuz_JSON_Running = false,
 /* Our request queue */
     lixuz_JSON_Queue,
-    lixuz_curr_JSON_URL = null,
-
-    lixuz_JSON_dataCache = {};
-
-/*
- * This creates a XMLHttpRPC request, and lets you have an object
- * as the target.
- *
- * URL is the URL to request
- * obj is the object that the functions successName/errorName will run on
- * methname is a STRING, the name of the method to run on obj when
- *      a request has finished. Will get a single argument, which is the
- *      contents of the request.
- * POSTDATA can be null, if not it is the data to POST to URL
- */
-function JSON_Request_WithObj(URL, obj, methname, POSTDATA)
-{
-    deprecated();
-    try
-    {
-        lixuz_curr_JSON_eval = methname;
-        lixuz_curr_JSON_obj = obj;
-        _runOrQueue_JSON_Request(URL,POSTDATA,ASYNCRequestWithObject_Response,null);
-    } catch(e) { lzException(e); }
-}
-
-/*
- * Internal handler function for replies to JSON_Request_WithObj(),
- * you shouldn't ever have to call this yourself.
- */
-function ASYNCRequestWithObject_Response(text,xml)
-{
-    deprecated();
-    try
-    {
-        var obj = lixuz_curr_JSON_obj,
-            evalmeth = lixuz_curr_JSON_eval;
-        lixuz_curr_JSON_obj = null;
-        lixuz_curr_JSON_eval = null;
-        try
-        {
-            eval('(obj.'+evalmeth+'(text))');
-        }
-        catch(e)
-        {
-            lzException(e);
-        }
-    } catch(e) { lzException(e); }
-    return true;
-}
-
-/*
- * This creates a XMLHttpRPC request that returns JSON and
- * does all the parsing and handling for you.
- *
- * URL is the URL to request
- * success_func is the function to call on success, prototype (data)
- * error_func is the function to call on error, prototype (error)
- */
-function JSON_Request (URL, successFunc, errorFunc)
-{
-    deprecated();
-	_runOrQueue_JSON_Request(URL, null, successFunc, errorFunc);
-}
-
-/*
- * This is identical to JSON_Request, with the exception
- * that this will permanently cache the results in memory until the user
- * leaves the page
- */
-function JSON_Cachable_Request(URL, successFunc, errorFunc)
-{
-    deprecated();
-    if(lixuz_JSON_dataCache != null && lixuz_JSON_dataCache[URL])
-    {
-        successFunc(lixuz_JSON_dataCache[URL]);
-        return;
-    }
-	_runOrQueue_JSON_Request(URL, null, successFunc, errorFunc,true);
-}
-
-/*
- * This invalidates the entire JSON cache
- */
-function JSON_Invalidate_Cache ()
-{
-    deprecated();
-    lixuz_JSON_dataCache = {};
-}
-
-/*
- * This works just like the above, except it takes a postData argument,
- * which is the data to post  to URL
- */
-function JSON_PostRequest (URL, postData, successFunc, errorFunc)
-{
-    deprecated();
-    try
-    {
-        if(postData != null && typeof(postData) != 'string')
-        {
-            lzlog('JSON_PostRequest(): got non-string, non-null argument as postData: '+typeof(postData)+' - content: '+postData);
-            lzError('JSON_PostRequest(): got non-string, non-null argument as postData. This is quite certainly not what you want. I will continue with the request and submit the stringified version of the variable. This is a bug. Submitting value: '+postData);
-        }
-    }
-    catch(e){}
-    _runOrQueue_JSON_Request(URL, postData, successFunc, errorFunc);
-}
+    lixuz_curr_JSON_URL = null;
 
 /*
  * This works just like JSON_PostRequest, with the exception that it takes a
@@ -156,7 +48,7 @@ function JSON_PostRequest (URL, postData, successFunc, errorFunc)
  */
 function JSON_HashPostRequest(URL, postHashData, successFunc, errorFunc)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     try
     {
         var data = '';
@@ -188,7 +80,7 @@ function JSON_HashPostRequest(URL, postHashData, successFunc, errorFunc)
                         data = data+'&'+encodeURIComponent(key)+'='+encodeURIComponent(value);
                     }
                });
-        JSON_PostRequest(URL, data, successFunc, errorFunc);
+        _runOrQueue_JSON_Request(URL, data, successFunc, errorFunc);
     }
     catch(e)
     {
@@ -216,11 +108,9 @@ function JSON_Request_Response (reply,code,xhr_obj)
     }
 
 	var onError = lixuz_curr_JSON_error,
-	    onSuccess = lixuz_curr_JSON_success,
-        enableCache = lixuz_curr_JSON_cacheEnabled;
+	    onSuccess = lixuz_curr_JSON_success;
 	lixuz_curr_JSON_error = null;
 	lixuz_curr_JSON_success = null;
-    lixuz_curr_JSON_cacheEnabled = null;
 
 	if(reply == null || reply.status == null || reply.status == 'ERR' || reply.status != 'OK')
 	{
@@ -262,7 +152,6 @@ function JSON_Request_Response (reply,code,xhr_obj)
 		{
             try
             {
-                _LZ_JSON_AddToCache(lixuz_curr_JSON_URL,reply);
                 onSuccess(reply);
             }
             catch(e)
@@ -442,7 +331,7 @@ function LZ_SaveFailure (data, genericError)
  */
 function JSON_IgnoreError (data)
 {
-    deprecated();
+    deprecated('Should use $.noop');
     // Do nothing, successfully
     return true;
 }
@@ -452,11 +341,11 @@ function JSON_IgnoreError (data)
  */
 
 // Run a request, or add it to the queue
-function _runOrQueue_JSON_Request (URL, postData, successFunc, errorFunc, enableCache)
+function _runOrQueue_JSON_Request (URL, postData, successFunc, errorFunc)
 {
     if (!lixuz_JSON_Running && (lixuz_JSON_Queue == null || lixuz_JSON_Queue.length == 0))
     {
-        _run_JSON_Request(URL, postData, successFunc, errorFunc,enableCache);
+        _run_JSON_Request(URL, postData, successFunc, errorFunc);
     }
     else
     {
@@ -466,8 +355,7 @@ function _runOrQueue_JSON_Request (URL, postData, successFunc, errorFunc, enable
                         'URL':  URL,
                         'postData': postData,
                         'successFunc': successFunc,
-                        'errorFunc': errorFunc,
-                        'enableCache':enableCache
+                        'errorFunc': errorFunc
             };
             if (lixuz_JSON_Queue == null)
             {
@@ -488,7 +376,7 @@ function _runOrQueue_JSON_Request (URL, postData, successFunc, errorFunc, enable
 }
 
 // Run a request
-function _run_JSON_Request (URL, postData, successFunc, errorFunc, enableCache)
+function _run_JSON_Request (URL, postData, successFunc, errorFunc)
 {
     if(URL == null)
     {
@@ -499,7 +387,6 @@ function _run_JSON_Request (URL, postData, successFunc, errorFunc, enableCache)
     }
     try
     {
-        lixuz_curr_JSON_cacheEnabled = enableCache;
         lixuz_JSON_Running = true;
         lixuz_curr_JSON_error = errorFunc;
         lixuz_curr_JSON_success = successFunc;
@@ -531,12 +418,6 @@ function _run_JSON_Request (URL, postData, successFunc, errorFunc, enableCache)
     }
 }
 
-// Add data from a URL to the cache
-function _LZ_JSON_AddToCache (URL,data)
-{
-    lixuz_JSON_dataCache[URL] = data;
-}
-
 // Run the next queued request
 function _runNextInJSONQueue ()
 {
@@ -545,7 +426,7 @@ function _runNextInJSONQueue ()
         return;
     }
     var q = lixuz_JSON_Queue.shift();
-    _run_JSON_Request(q.URL, q.postData, q.successFunc, q.errorFunc, q.enableCache);
+    _run_JSON_Request(q.URL, q.postData, q.successFunc, q.errorFunc);
 }
 
 /*
@@ -568,7 +449,7 @@ function _runNextInJSONQueue ()
  */
 function JSON_multiRequest(paths,argHash,onSuccess,errorFunc,dontRequireAll)
 {
-    deprecated();
+    deprecated('JSON_* functions have been superseeded by the XHR object');
     // Ensure variables are of proper types
     argHash = argHash;
     if(argHash['mrSource'])
@@ -591,156 +472,4 @@ function JSON_multiRequest(paths,argHash,onSuccess,errorFunc,dontRequireAll)
     }
 
     return JSON_HashPostRequest('/admin/services/multiRequest',argHash,onSuccess,errorFunc);
-}
-
-/*
- * *******
- * Delayed multiRequest wrappers
- * *******
- *
- * The following functions are for all intents and purposes identical to that
- * of the various above JSON_ functions that they share names with, but they
- * will automatically wrap themselves into one big JSON_multiRequest that does
- * not get submitted until JSON_DelayedSubmit(); is called.
- *
- * Any successFunc or errorFunc can also abort processing of subsequent
- * success-/errorFunc's using JSON_DelayedAbort();, thus you can have an
- * initial submission to a URL that does a few sanity checks, which can then
- * return an error to be processed by errorFunc for that submission, which can
- * output an error dialog to the user and then stop processing the success or
- * error functions of any other requested URL.
- *
- * Like the other functions found in this file, these will queue subsequent
- * requests when another one is running.
- */
-
-var lixuz_JSOND_Abort = false,
-    lixuz_JSOND_ReqRunning = false,
-    lixuz_JSOND_queue;
-
-function JSON_DelayedRequest (URL, successFunc, errorFunc)
-{
-    deprecated();
-    JSON_DelayedHashPostRequest(URL,null,successFunc,errorFunc);
-}
-
-function JSON_DelayedHashPostRequest (URL, postData, successFunc, errorFunc)
-{
-    deprecated();
-    _JSOND_Prep(false);
-    var handlers = lixuz_JSOND_queue.getOrNew('handlers','hash'),
-        targets = lixuz_JSOND_queue.getOrNew('targets','array'),
-        post = lixuz_JSOND_queue.getOrNew('postData','hash');
-    handlers[URL] = { 'errorFunc':errorFunc, 'successFunc':successFunc };
-    targets.push(URL);
-    if(postData != null)
-    {
-        post.combine(postData);
-    }
-    lixuz_JSOND_queue.set('handlers',handlers);
-    lixuz_JSOND_queue.set('targets',targets);
-    lixuz_JSOND_queue.set('postData',post);
-}
-
-function JSON_DelayedSubmit (prevMustSucceed,onDoneRun)
-{
-    deprecated();
-    _JSOND_Prep(false);
-    if(onDoneRun != null)
-    {
-        lixuz_JSOND_queue.set('onDoneRun',onDoneRun);
-    }
-    lixuz_JSOND_queue.set('prevMustSucceed',prevMustSucceed);
-    lixuz_JSOND_queue.newQueue();
-    if(false == lixuz_JSOND_ReqRunning)
-    {
-        JSON_SubmitCurrent();
-    }
-}
-
-function JSON_SubmitCurrent ()
-{
-    deprecated();
-    var newR = lixuz_JSOND_queue.getVariables();
-    lixuz_JSOND_ReqRunning = newR;
-    JSON_multiRequest(newR['targets'], newR['postData'], _JSOND_successResponse, _JSOND_failureResponse, newR['prevMustSucceed']);
-}
-
-function JSON_DelayedAbort ()
-{
-    deprecated();
-    lixuz_JSOND_Abort = true;
-}
-
-/* Private functions */
-function _JSOND_Prep ()
-{
-    lixuz_JSOND_Abort = false;
-    if(lixuz_JSOND_queue == null)
-    {
-        lixuz_JSOND_queue = new lixuzVariableQueue();
-    }
-}
-
-function _JSOND_successResponse (data)
-{
-    _JSOND_processResponses(data,'success');
-}
-
-function _JSOND_failureResponse (data)
-{
-    throw('failure response from multiRequest');
-}
-
-function _JSOND_reset ()
-{
-    _JSOND_Prep(true);
-    lixuz_JSOND_ReqRunning = false;
-}
-
-function _JSOND_processResponses (data,type)
-{
-    data = data;
-    if(type != 'success')
-    {
-        handler = errorFunc;
-    }
-    var targets = lixuz_JSOND_ReqRunning['targets'],
-        handlers = lixuz_JSOND_ReqRunning['handlers']; 
-    for(var i = 0; i < targets.length; i++)
-    {
-        var URL = targets[i];
-        try
-        {
-            var handler = 'successFunc',
-                response = data[URL];
-            if(response['status'] != 'OK')
-            {
-                handler = 'errorFunc';
-            }
-            var submit = handlers[URL][handler];
-            submit(response);
-        }
-        catch(err)
-        {
-            lzException(err);
-        }
-        if(lixuz_JSOND_Abort)
-        {
-            break;
-        }
-    }
-    if (!lixuz_JSOND_Abort)
-    {
-        var onDoneRun = lixuz_JSOND_ReqRunning['onDoneRun'];
-        if(onDoneRun != null)
-        {
-            onDoneRun();
-        }
-    }
-    _JSOND_reset();
-    if(lixuz_JSOND_queue.hasQueue())
-    {
-        JSON_SubmitCurrent();
-    }
 }

@@ -245,7 +245,7 @@ var folderPermEditor = jClass({
     {
         showPI(i18n.get('Loading folder data ...'));
         var self = this;
-        JSON_Request('/admin/services/folderList',function (reply) {
+        XHR.GET('/admin/services/folderList',function (reply) {
             self.folderListFetched(reply);
         });
     },

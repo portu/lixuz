@@ -15,11 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-function createLixuzRTE (id)
-{
-    deprecated('Superseded by RTE.init()');
-    return lixuzRTE.init(id);
-}
 
 function editorHelper_removeFormat ()
 {
@@ -282,10 +277,5 @@ function insertImage_resizeObj(editorName,obj,width,height)
             editor.execCommand('mceInsertContent', false, HTML);
             return true;
         }
-    };
-    window.initRTE = function(id,inline)
-    {
-        deprecated();
-        lixuzRTE.init(id,inline);
     };
 })(jQuery);

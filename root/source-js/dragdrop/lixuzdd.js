@@ -293,7 +293,7 @@ function lixuz_DD_NewItem(junk,parentObj)
             return;
         }
     }
-    JSON_Request('/admin/services/folderList?showRoot=true&selected='+encodeURIComponent(myparent),lixuz_DD_NewFolderItem,null);
+    XHR.GET('/admin/services/folderList?showRoot=true&selected='+encodeURIComponent(myparent),lixuz_DD_NewFolderItem,null);
     return false;
 }
 /*
@@ -349,7 +349,7 @@ function lixuz_DD_CreateNewFolder()
     }
     lixuz_DD_DialogBox.hide();
     showPI(i18n.get('Creating folder...')); // Show progress indicator
-    JSON_Request(lixuz_DD_URL+'?parent='+encodeURIComponent(myparent)+'&addName='+encodeURIComponent(name), lixuz_DD_NewItemSuccess, lixuz_DD_NewItemFailure);
+    XHR.GET(lixuz_DD_URL+'?parent='+encodeURIComponent(myparent)+'&addName='+encodeURIComponent(name), lixuz_DD_NewItemSuccess, lixuz_DD_NewItemFailure);
 }
 /*
  * All good, new folder created, so we kick off a refresh of the data

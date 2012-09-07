@@ -73,7 +73,7 @@ sub index : Path Args(0) Form('/core/search')
 
     $self->init_searchFilters($c);
 
-    my $obj = $self->handleListRequest({
+    my $obj = $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $s,

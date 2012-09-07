@@ -47,7 +47,7 @@ function LZ_DisplayFieldEditForm (type,uid)
     {
         URL = URL + '?object_id=' + FieldEdit_UID;
     }
-    JSON_Request(URL,LZ_FieldEditFormReply,LZ_FieldEditFormError);
+    XHR.GET(URL,LZ_FieldEditFormReply,LZ_FieldEditFormError);
 }
 
 function LZ_FieldEditFormReply (data)
@@ -107,7 +107,7 @@ function LZ_SubmitADFields (data)
         }
     }
     reqData = reqData+'&fields='+data.join(',');
-    JSON_Request(reqData,LZ_ADFieldSuccess, LZ_ADFieldFailure);
+    XHR.GET(reqData,LZ_ADFieldSuccess, LZ_ADFieldFailure);
     FieldEdit_Type = null;
     FieldEdit_UID = null;
 }
