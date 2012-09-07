@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-13 14:16+0100\n"
+"POT-Creation-Date: 2012-09-07 11:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,9 +25,9 @@ msgstr ""
 msgid "Add files"
 msgstr ""
 
-#: ./root/source-js/roles/roles.js:131 ./root/source-js/utils/elementEditor.js:78 ./root/source-js/utils/ModuleFieldEditor.js:98
-#: ./root/source-js/admin/ADFieldsEdit.js:82 ./root/source-js/newsletter/newsletter.js:131 ./root/source-js/newsletter/newsletter.js:470
-#: ./root/source-js/rssimport/rssimport.js:50 ./root/source-js/rssimport/rssimport.js:135
+#: ./root/source-js/roles/roles.js:131 ./root/source-js/utils/ModuleFieldEditor.js:98 ./root/source-js/admin/ADFieldsEdit.js:82
+#: ./root/source-js/newsletter/newsletter.js:131 ./root/source-js/newsletter/newsletter.js:480 ./root/source-js/newsletter/newsletter.js:531
+#: ./root/source-js/rssimport/rssimport.js:50 ./root/source-js/rssimport/rssimport.js:134
 msgid "Saving..."
 msgstr ""
 
@@ -43,7 +43,7 @@ msgid ""
 msgstr ""
 
 #: ./root/source-js/templates/templates.js:70 ./root/source-js/tags/ui.js:96 ./root/source-js/articles/trash.js:32 ./root/source-js/newsletter/newsletter.js:50
-#: ./root/source-js/newsletter/newsletter.js:461 ./root/source-js/articles/articles.js:77 ./root/source-js/rssimport/rssimport.js:183
+#: ./root/source-js/newsletter/newsletter.js:471 ./root/source-js/articles/articles.js:77 ./root/source-js/rssimport/rssimport.js:182
 msgid "Deleting..."
 msgstr ""
 
@@ -59,7 +59,7 @@ msgstr ""
 msgid "Enter the name of the tag you wish to add"
 msgstr ""
 
-#: ./root/source-js/tags/ui.js:21 ./root/source-js/newsletter/newsletter.js:289
+#: ./root/source-js/tags/ui.js:21 ./root/source-js/newsletter/newsletter.js:299
 msgid "Add"
 msgstr ""
 
@@ -115,30 +115,6 @@ msgstr ""
 msgid ""
 "You have unsaved changes. If you move away from this page, those changes "
 "will be lost."
-msgstr ""
-
-#: ./root/source-js/utils/elementEditor.js:27
-msgid "Loading element data..."
-msgstr ""
-
-#: ./root/source-js/utils/elementEditor.js:52
-msgid "Word/phrase"
-msgstr ""
-
-#: ./root/source-js/utils/elementEditor.js:53
-msgid "Definition"
-msgstr ""
-
-#: ./root/source-js/utils/elementEditor.js:66
-msgid "Save changes"
-msgstr ""
-
-#: ./root/source-js/utils/elementEditor.js:67 ./root/source-js/utils/arrangableList.js:263 ./root/source-js/articles/relationships.js:192
-#: ./root/source-js/core/objPermEditor.js:174 ./root/source-js/core/objPermEditor.js:274 ./root/source-js/articles/files.js:189
-#: ./root/source-js/core/createArticle.js:76 ./root/source-js/core/dialogHelpers.js:275 ./root/source-js/core/dialogHelpers.js:309
-#: ./root/source-js/core/folders.js:53 ./root/source-js/core/folders.js:103 ./root/source-js/rssimport/rssimport.js:117
-#: ./root/source-js/articles/viewArticleRevisions.js:106
-msgid "Cancel"
 msgstr ""
 
 #: ./root/source-js/utils/ModuleFieldEditor.js:35
@@ -215,8 +191,15 @@ msgid "Enabled?"
 msgstr ""
 
 #: ./root/source-js/utils/arrangableList.js:101 ./root/source-js/core/objPermEditor.js:175 ./root/source-js/newsletter/newsletter.js:112
-#: ./root/source-js/newsletter/newsletter.js:438 ./root/source-js/rssimport/rssimport.js:111
+#: ./root/source-js/newsletter/newsletter.js:448 ./root/source-js/newsletter/newsletter.js:506 ./root/source-js/rssimport/rssimport.js:111
 msgid "Save and close"
+msgstr ""
+
+#: ./root/source-js/utils/arrangableList.js:263 ./root/source-js/articles/relationships.js:192 ./root/source-js/core/objPermEditor.js:174
+#: ./root/source-js/core/objPermEditor.js:274 ./root/source-js/articles/files.js:87 ./root/source-js/core/createArticle.js:76
+#: ./root/source-js/core/dialogHelpers.js:275 ./root/source-js/core/dialogHelpers.js:309 ./root/source-js/core/folders.js:53
+#: ./root/source-js/core/folders.js:103 ./root/source-js/rssimport/rssimport.js:117 ./root/source-js/articles/viewArticleRevisions.js:106
+msgid "Cancel"
 msgstr ""
 
 #: ./root/source-js/articles/articleSubmit.js:81
@@ -243,23 +226,23 @@ msgid ""
 "not change any of the data."
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:220
+#: ./root/source-js/articles/articleSubmit.js:221
 msgid ""
 "There are files that live in the same directory as this article, do you want "
 "to move them to the new folder as well?"
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:241
+#: ./root/source-js/articles/articleSubmit.js:244
 msgid ""
 "You have an unsaved comment. Do you want to save it now? If you choose not "
 "to save it, the comment will be lost."
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:243
+#: ./root/source-js/articles/articleSubmit.js:246
 msgid "You have an unsaved comment. Do you want to save it too?"
 msgstr ""
 
-#: ./root/source-js/articles/articleSubmit.js:295
+#: ./root/source-js/articles/articleSubmit.js:298
 msgid ""
 "You have reassigned this article. This will result in the article being "
 "automatically closed after saving. Do you want to save it now?"
@@ -277,7 +260,7 @@ msgstr ""
 msgid "Add additional elements"
 msgstr ""
 
-#: ./root/source-js/articles/backup.js:30 ./root/source-js/core/backup.js:193
+#: ./root/source-js/articles/backup.js:30 ./root/source-js/core/backup.js:178
 msgid "Restoring backup..."
 msgstr ""
 
@@ -384,26 +367,26 @@ msgstr ""
 msgid "Select folder"
 msgstr ""
 
-#: ./root/source-js/core/backup.js:103
+#: ./root/source-js/core/backup.js:74
 msgid "Last backed up at %(date)"
 msgstr ""
 
-#: ./root/source-js/core/backup.js:282
+#: ./root/source-js/core/backup.js:267
 msgid ""
 "The backup has been fully restored. Note that any changes made by other "
 "users since this backup was created (other than comments) will be lost if "
 "you save it."
 msgstr ""
 
-#: ./root/source-js/core/backup.js:349
+#: ./root/source-js/core/backup.js:334
 msgid "No backup data was found on the server that matched this dataset."
 msgstr ""
 
-#: ./root/source-js/core/backup.js:353
+#: ./root/source-js/core/backup.js:338
 msgid "Failed to retrieve backup data: "
 msgstr ""
 
-#: ./root/source-js/articles/files.js:47
+#: ./root/source-js/articles/files.js:29
 msgid ""
 "The video file with file_id %(FILEID) has not been converted to the FLV "
 "format used to serve video through Lixuz yet, the process is still running, "
@@ -411,122 +394,94 @@ msgid ""
 "more than an hour, please contact your system administrator"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:51
+#: ./root/source-js/articles/files.js:33
 msgid ""
 "The conversion of this file (%(FILEID)) to the FLV format failed. Please "
 "contact your system administrator."
 msgstr ""
 
-#: ./root/source-js/articles/files.js:163 ./root/source-js/files/multiUpload.js:30
+#: ./root/source-js/articles/files.js:61 ./root/source-js/files/multiUpload.js:38
 msgid "File"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:174
+#: ./root/source-js/articles/files.js:72
 msgid "Change the caption to:"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:180
+#: ./root/source-js/articles/files.js:78
 msgid "Add to the lead"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:181 ./root/source-js/articles/files.js:185
+#: ./root/source-js/articles/files.js:79 ./root/source-js/articles/files.js:83
 msgid "Add to the body"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:188 ./root/source-js/core/dialogHelpers.js:267 ./root/source-js/core/dialogHelpers.js:293
+#: ./root/source-js/articles/files.js:86 ./root/source-js/core/dialogHelpers.js:267 ./root/source-js/core/dialogHelpers.js:293
 msgid "Ok"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:215
-msgid ""
-"A file named \"%(NAME)\" (id %(ID)) is already assigned to this spot. Do you "
-"want to replace it with the file \"%(NEWNAME)\"?"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:346
+#: ./root/source-js/articles/files.js:170
 msgid "Fetching file information..."
 msgstr ""
 
-#: ./root/source-js/articles/files.js:359
-msgid ""
-"Are you sure you wish to remove that file from this article? The file will "
-"not be deleted."
-msgstr ""
-
-#: ./root/source-js/articles/files.js:374
+#: ./root/source-js/articles/files.js:191
 msgid "Retrieving file spots"
 msgstr ""
 
-#: ./root/source-js/articles/files.js:398
-msgid "File ID:"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:399
-msgid "Size:"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:400 ./root/source-js/articles/files.js:414 ./root/source-js/articles-previewUI/previewUI.js:268
-msgid "(none)"
-msgstr ""
-
-#: ./root/source-js/articles/files.js:419 ./root/source-js/articles/filesAPI.js:147
-msgid "Spot:"
-msgstr ""
-
-#: ./root/source-js/core/asyncHelper.js:380
+#: ./root/source-js/core/asyncHelper.js:269
 msgid ""
 "If the problem persists please contact your system administrator and include "
 "the information at the bottom of this message."
 msgstr ""
 
-#: ./root/source-js/core/asyncHelper.js:385
+#: ./root/source-js/core/asyncHelper.js:274
 msgid ""
 "Failed to submit data, you have been logged out of Lixuz. Please open the "
 "Dashboard page in another tab or window and log in there, and then try to "
 "save your data again"
 msgstr ""
 
-#: ./root/source-js/core/asyncHelper.js:389
+#: ./root/source-js/core/asyncHelper.js:278
 msgid "You do not have access to save or access this data"
 msgstr ""
 
-#: ./root/source-js/core/asyncHelper.js:393
+#: ./root/source-js/core/asyncHelper.js:282
 msgid ""
 "The data returned from the server was not safe, this is a bug. Your data may "
 "not have been saved."
 msgstr ""
 
-#: ./root/source-js/core/asyncHelper.js:397
+#: ./root/source-js/core/asyncHelper.js:286
 msgid ""
 "The data returned from the server was missing essential fields, this is a "
 "bug. Your data may not have been saved."
 msgstr ""
 
-#: ./root/source-js/core/asyncHelper.js:401
+#: ./root/source-js/core/asyncHelper.js:290
 msgid ""
 "The server did not reply with any data, this is a bug. Your data may not "
 "have been saved."
 msgstr ""
 
-#: ./root/source-js/core/asyncHelper.js:405
+#: ./root/source-js/core/asyncHelper.js:294
 msgid ""
 "A failure occurred while talking to the database server, this is most likely "
 "a bug. Your data has probably not been saved."
 msgstr ""
 
-#: ./root/source-js/core/asyncHelper.js:409
+#: ./root/source-js/core/asyncHelper.js:298
 msgid ""
 "An internal server error occurred while the server was processing your "
 "request. Please try again soon."
 msgstr ""
 
-#: ./root/source-js/core/asyncHelper.js:413
+#: ./root/source-js/core/asyncHelper.js:302
 msgid ""
 "The server misunderstood our request and attempted to return invalid data. "
 "Please try again soon."
 msgstr ""
 
-#: ./root/source-js/core/asyncHelper.js:419
+#: ./root/source-js/core/asyncHelper.js:308
 msgid "An error occurred with the request that was submitted."
 msgstr ""
 
@@ -543,19 +498,11 @@ msgid ""
 "The value for the field \"%(FIELD)\" must be within the range %(MIN)-%(MAX)"
 msgstr ""
 
-#: ./root/source-js/files/fileFormLogic.js:7
-msgid "No results matched"
-msgstr ""
-
-#: ./root/source-js/files/fileFormLogic.js:10 ./root/source-js/files/fileFormLogic.js:65
-msgid "-select-"
-msgstr ""
-
-#: ./root/source-js/files/fileFormLogic.js:60
+#: ./root/source-js/files/fileFormLogic.js:58
 msgid "Additional folder"
 msgstr ""
 
-#: ./root/source-js/files/fileFormLogic.js:75
+#: ./root/source-js/files/fileFormLogic.js:73
 msgid "You must select at least one folder"
 msgstr ""
 
@@ -651,7 +598,7 @@ msgstr ""
 msgid "Failed to create a new folder"
 msgstr ""
 
-#: ./root/source-js/files/asyncUpload.js:35 ./root/source-js/newsletter/newsletter.js:410 ./root/source-js/articles/viewArticleRevisions.js:132
+#: ./root/source-js/files/asyncUpload.js:35 ./root/source-js/newsletter/newsletter.js:420 ./root/source-js/articles/viewArticleRevisions.js:137
 msgid "Close"
 msgstr ""
 
@@ -675,7 +622,7 @@ msgstr ""
 msgid "From"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:154 ./root/source-js/newsletter/newsletter.js:183 ./root/source-js/articles-previewUI/previewUI.js:171
+#: ./root/source-js/newsletter/newsletter.js:154 ./root/source-js/newsletter/newsletter.js:183 ./root/source-js/articles-previewUI/previewUI.js:173
 msgid "Subject"
 msgstr ""
 
@@ -695,100 +642,168 @@ msgstr ""
 msgid "Sent at"
 msgstr ""
 
+#: ./root/source-js/newsletter/newsletter.js:183
+msgid "Action"
+msgstr ""
+
 #: ./root/source-js/newsletter/newsletter.js:184
 msgid "Select newsletter"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:191
+#: ./root/source-js/newsletter/newsletter.js:197
 msgid "Loading message..."
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:212
+#: ./root/source-js/newsletter/newsletter.js:217
 msgid "You need to add some recipients first"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:217
+#: ./root/source-js/newsletter/newsletter.js:222
 msgid "You need to enter a subject"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:222
+#: ./root/source-js/newsletter/newsletter.js:227
 msgid "The message can not be empty"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:227
+#: ./root/source-js/newsletter/newsletter.js:232
 msgid "The from e-mail can not be empty"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:244
+#: ./root/source-js/newsletter/newsletter.js:249
 msgid "Sending..."
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:274 ./root/source-js/newsletter/newsletter.js:275
+#: ./root/source-js/newsletter/newsletter.js:284 ./root/source-js/newsletter/newsletter.js:285
 msgid "Add recipients"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:289
+#: ./root/source-js/newsletter/newsletter.js:299
 msgid "Enter e-mail addresses here, separated by commas."
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:330
+#: ./root/source-js/newsletter/newsletter.js:340
 msgid "Group:"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:332
+#: ./root/source-js/newsletter/newsletter.js:342
 msgid "remove"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:354 ./root/source-js/newsletter/newsletter.js:391
+#: ./root/source-js/newsletter/newsletter.js:364 ./root/source-js/newsletter/newsletter.js:401
 msgid "Loading group list..."
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:374
+#: ./root/source-js/newsletter/newsletter.js:384
 msgid "Select the group(s) to add"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:410
+#: ./root/source-js/newsletter/newsletter.js:420
 msgid "Select the group to edit"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:417
+#: ./root/source-js/newsletter/newsletter.js:427
 msgid "Loading group information..."
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:435
+#: ./root/source-js/newsletter/newsletter.js:445
 msgid "Group name"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:436
+#: ./root/source-js/newsletter/newsletter.js:446
 msgid "Internal only"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:441
+#: ./root/source-js/newsletter/newsletter.js:451
 msgid "Delete group"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:445
+#: ./root/source-js/newsletter/newsletter.js:455
 msgid "Newsletter group editor"
 msgstr ""
 
-#: ./root/source-js/newsletter/newsletter.js:453
+#: ./root/source-js/newsletter/newsletter.js:463
 msgid "Are you sure you wish to delete this group?"
 msgstr ""
 
-#: ./root/source-js/files/multiUpload.js:30 ./root/source-js/articles/articles.js:277 ./root/source-js/articles/filesAPI.js:66
+#: ./root/source-js/newsletter/newsletter.js:500
+msgid "Email"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:501
+msgid "Name"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:502
+msgid "Format"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:502
+msgid "Text"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:502
+msgid "HTML"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:503
+msgid "Interval"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:503
+msgid "Daily"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:503
+msgid "Weekley"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:503
+msgid "Monthly"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:503
+msgid "None"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:510
+msgid "Add Subscriber"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:547
+msgid "Loading subscriber information..."
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:577
+msgid "Import CSV"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:580
+msgid "Upload and close"
+msgstr ""
+
+#: ./root/source-js/newsletter/newsletter.js:584
+msgid "Import Subscribers"
+msgstr ""
+
+#: ./root/source-js/files/multiUpload.js:38 ./root/source-js/articles/articles.js:277 ./root/source-js/articles/filesAPI.js:66
 msgid "Remove"
 msgstr ""
 
-#: ./root/source-js/files/multiUpload.js:82
+#: ./root/source-js/files/multiUpload.js:90
 msgid "You haven't selected any file(s) to upload"
 msgstr ""
 
-#: ./root/source-js/files/multiUpload.js:87
-msgid "You haven't selected any folder"
+#: ./root/source-js/files/multiUpload.js:99 ./root/source-js/files/multiUpload.js:103
+msgid "Uploading..."
 msgstr ""
 
-#: ./root/source-js/files/multiUpload.js:92 ./root/source-js/files/multiUpload.js:96
-msgid "Uploading..."
+#: ./root/source-js/core/chosen.js:9
+msgid "-select-"
+msgstr ""
+
+#: ./root/source-js/core/chosen.js:11
+msgid "No results matched"
 msgstr ""
 
 #: ./root/source-js/articles/articles.js:43
@@ -865,19 +880,19 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:50 ./root/source-js/articles-previewUI/previewUI.js:110
+#: ./root/source-js/articles-previewUI/previewUI.js:52 ./root/source-js/articles-previewUI/previewUI.js:112
 msgid "Show Lixuz sidebar"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:52
+#: ./root/source-js/articles-previewUI/previewUI.js:54
 msgid "Working..."
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:74
+#: ./root/source-js/articles-previewUI/previewUI.js:76
 msgid "This article is currently locked for editing by <i>%(USER)</i>."
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:75
+#: ./root/source-js/articles-previewUI/previewUI.js:77
 msgid ""
 "<br /><br />This is a read-only preview of the article. You can steal this "
 "lock from the user by pressing the \"Steal lock\" button below. Use this "
@@ -885,119 +900,123 @@ msgid ""
 "working on this article, that user may not be able to save their changes"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:94
+#: ./root/source-js/articles-previewUI/previewUI.js:96
 msgid "Locked"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:122
+#: ./root/source-js/articles-previewUI/previewUI.js:124
 msgid "Hide Lixuz sidebar"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:130
+#: ./root/source-js/articles-previewUI/previewUI.js:132
 msgid "Loading data ..."
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:155
+#: ./root/source-js/articles-previewUI/previewUI.js:157
 msgid "Edit article"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:158
+#: ./root/source-js/articles-previewUI/previewUI.js:160
 msgid "Article ID:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:159
+#: ./root/source-js/articles-previewUI/previewUI.js:161
 msgid "Publish time:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:160
+#: ./root/source-js/articles-previewUI/previewUI.js:162
 msgid "Expiry time:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:161
+#: ./root/source-js/articles-previewUI/previewUI.js:163
 msgid "Folder path:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:162
+#: ./root/source-js/articles-previewUI/previewUI.js:164
 msgid "Status:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:163
+#: ./root/source-js/articles-previewUI/previewUI.js:165
 msgid "Assigned to:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:164
+#: ./root/source-js/articles-previewUI/previewUI.js:166
 msgid "Assigned by:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:165
+#: ./root/source-js/articles-previewUI/previewUI.js:167
 msgid "Priority:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:166
+#: ./root/source-js/articles-previewUI/previewUI.js:168
 msgid "Start date:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:167
+#: ./root/source-js/articles-previewUI/previewUI.js:169
 msgid "Deadline:"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:168
+#: ./root/source-js/articles-previewUI/previewUI.js:170
 msgid "Comments"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:173
+#: ./root/source-js/articles-previewUI/previewUI.js:175
 msgid "Submit new comment"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:177
+#: ./root/source-js/articles-previewUI/previewUI.js:179
 msgid "Files"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:189
+#: ./root/source-js/articles-previewUI/previewUI.js:191
 msgid "View caption"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:191
+#: ./root/source-js/articles-previewUI/previewUI.js:193
 msgid "(no caption set)"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:195
+#: ./root/source-js/articles-previewUI/previewUI.js:197
 msgid "Additional fields"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:200
+#: ./root/source-js/articles-previewUI/previewUI.js:202
 msgid "Additional elements"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:200
+#: ./root/source-js/articles-previewUI/previewUI.js:202
 msgid "ID"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:200
+#: ./root/source-js/articles-previewUI/previewUI.js:202
 msgid "Key"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:200
+#: ./root/source-js/articles-previewUI/previewUI.js:202
 msgid "Value"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:200
+#: ./root/source-js/articles-previewUI/previewUI.js:202
 msgid "Type"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:210
+#: ./root/source-js/articles-previewUI/previewUI.js:212
 msgid "Caption"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:245
+#: ./root/source-js/articles-previewUI/previewUI.js:247
 msgid "Error"
 msgstr ""
 
-#: ./root/source-js/articles-previewUI/previewUI.js:245
+#: ./root/source-js/articles-previewUI/previewUI.js:247
 msgid "You must enter a comment"
 msgstr ""
 
-#: ./root/source-js/utils/editorHelper.js:193
+#: ./root/source-js/articles-previewUI/previewUI.js:270
+msgid "(none)"
+msgstr ""
+
+#: ./root/source-js/utils/editorHelper.js:188
 msgid "TINYMCE_LANGUAGE"
 msgstr ""
 
@@ -1112,6 +1131,16 @@ msgstr ""
 msgid "Deleting...<br />This is a heavy operation and may take a while"
 msgstr ""
 
+#: ./root/source-js/articles/articleStatus.js:40
+msgid "(Unsaved)"
+msgstr ""
+
+#: ./root/source-js/articles/articleStatus.js:116
+msgid ""
+"You have unsaved status changes, those changes will be lost if you leave "
+"without saving."
+msgstr ""
+
 #: ./root/source-js/articles/filesAPI.js:136
 msgid "File ID"
 msgstr ""
@@ -1120,8 +1149,24 @@ msgstr ""
 msgid "Folder"
 msgstr ""
 
+#: ./root/source-js/articles/filesAPI.js:147
+msgid "Spot:"
+msgstr ""
+
 #: ./root/source-js/articles/filesAPI.js:355
 msgid "Fetching list of file spots..."
+msgstr ""
+
+#: ./root/source-js/articles/filesAPI.js:460
+msgid ""
+"A file named \"%(NAME)\" (id %(ID)) is already assigned to this spot. Do you "
+"want to replace it with the file \"%(NEWNAME)\"?"
+msgstr ""
+
+#: ./root/source-js/articles/filesAPI.js:487
+msgid ""
+"Are you sure you wish to remove that file from this article? The file will "
+"not be deleted."
 msgstr ""
 
 #: ./root/source-js/core/XHR.js:104
@@ -1169,11 +1214,11 @@ msgstr ""
 msgid "Edit RSS entry"
 msgstr ""
 
-#: ./root/source-js/rssimport/rssimport.js:158 ./root/source-js/rssimport/rssimport.js:194
+#: ./root/source-js/rssimport/rssimport.js:157 ./root/source-js/rssimport/rssimport.js:193
 msgid "Reloading..."
 msgstr ""
 
-#: ./root/source-js/rssimport/rssimport.js:173
+#: ./root/source-js/rssimport/rssimport.js:172
 msgid "Are you sure you wish to permanently delete this entry?"
 msgstr ""
 
@@ -1258,15 +1303,15 @@ msgstr ""
 msgid "Saved at"
 msgstr ""
 
-#: ./root/source-js/articles/viewArticleRevisions.js:123
+#: ./root/source-js/articles/viewArticleRevisions.js:128
 msgid "View this revision of the article"
 msgstr ""
 
-#: ./root/source-js/articles/viewArticleRevisions.js:124
+#: ./root/source-js/articles/viewArticleRevisions.js:129
 msgid "Change the status of this revision"
 msgstr ""
 
-#: ./root/source-js/articles/viewArticleRevisions.js:131
+#: ./root/source-js/articles/viewArticleRevisions.js:136
 msgid "Revisions of %(ARTID)"
 msgstr ""
 
