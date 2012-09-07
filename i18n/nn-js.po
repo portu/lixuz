@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-07 11:14+0200\n"
-"PO-Revision-Date: 2012-09-07 11:13+0200\n"
+"PO-Revision-Date: 2012-09-07 11:14+0200\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
 "Language: nn\n"
@@ -1297,7 +1297,7 @@ msgstr "Inga"
 
 #: root/source-js/newsletter/newsletter.js:503
 msgid "Weekly"
-msgstr ""
+msgstr "Vekentleg"
 
 #: root/source-js/newsletter/newsletter.js:510
 msgid "Add Subscriber"
