@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
 "POT-Creation-Date: 2012-09-07 12:28+0200\n"
-"PO-Revision-Date: 2012-09-07 12:29+0200\n"
+"PO-Revision-Date: 2012-09-07 13:09+0200\n"
 "Last-Translator: Eskild Hustvedt <eskild@portu.no>\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
 "Language: nn\n"
@@ -476,7 +476,7 @@ msgstr "Brukar"
 #: lib/LIXUZ/Controller/Admin/TimeTracker.pm:181
 #: lib/LIXUZ/Controller/Admin/TimeTracker/Listview.pm:302
 msgid "(any user)"
-msgstr "(kven som hels)"
+msgstr "(kven som helst)"
 
 #: lib/LIXUZ/Controller/Admin/TimeTracker.pm:355
 msgid "Failed to locate timeentry id. The path specified is invalid."
