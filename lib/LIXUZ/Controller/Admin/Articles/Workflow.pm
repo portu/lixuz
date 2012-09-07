@@ -100,7 +100,6 @@ sub writecheck
     return 1;
 }
 
-
 # Summary: Process a new comment submission
 sub submitComment : Local
 {
@@ -387,6 +386,8 @@ sub notifyRoleMembers
     }
 }
 
+# Summary: Generate and send e-mails notifying watchers and assignees about comments
+# Usage: self->notifyAboutComment($c,$articleId,$comment_obj);
 sub notifyAboutComment
 {
     my ($self, $c, $artid, $comment) = @_;

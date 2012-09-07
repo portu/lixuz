@@ -1057,6 +1057,25 @@ sub get_url_aspect
     {
         $useGetURL = 1;
     }
+    # Don't allow non-numerical height or width
+    elsif($height =~ /\D/ || $width =~ /\D/ || $height eq '' || $width eq '')
+    {
+        if ($height =~ /\D/ && $width =~ /\D/)
+        {
+            croak('get_url_aspect called with non-integer height and width: '.$height.'//'.$width);
+        }
+        elsif($height =~ /\D/)
+        {
+            carp('get_url_aspect called with non-integer height="'.$height.'". This is not permitted, going to assume height=undef');
+            $height = undef;
+        }
+        elsif($width =~ /\D/)
+        {
+            carp('get_url_aspect called with non-integer width="'.$width.'". This is not permitted, going to assume width=undef');
+            $width = undef;
+        }
+        $useGetURL = 1;
+    }
     # Don't allow height or width to be merely zero
     elsif($height == 0 && $width > 0)
     {

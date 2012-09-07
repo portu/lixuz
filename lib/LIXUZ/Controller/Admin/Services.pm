@@ -36,6 +36,9 @@ use constant {
     false => 0,
     };
 
+# Summary: Handler for "merged" ajax requests
+# This subroutine performs routing of requests from the client side where it
+# has requested information from multiple sources at the same time.
 sub multiRequest : Local
 {
     my ($self,$c) = @_;
@@ -136,6 +139,7 @@ sub multiRequest : Local
     return json_response($c,$c->stash->{multiRequestResponse});
 }
 
+# Summary: Retusns a JSON-list of all templates
 sub templateList : Local
 {
     my ($self,$c) = @_;
@@ -154,6 +158,7 @@ sub templateList : Local
     return json_response($c,{ list => \@list });
 }
 
+# Summary: Returns a JSON-object with information about a specified template
 sub templateInfo : Local
 {
     my ($self,$c) = @_;
@@ -218,7 +223,9 @@ sub templateInfo : Local
     }
 }
 
-# Summary: Spellchecker
+# Summary: Checks each word in the supplied spellCheckData-string against Aspell
+# Returns a json object with information/suggestions for possibly-misspelled
+# words.
 sub spellcheck : Local
 {
     my ($self,$c) = @_;
@@ -489,6 +496,7 @@ sub permList : Local
     return json_response($c,$response);
 }
 
+# Summary: Handles setting permissions on folders
 sub setPerm : Local
 {
     my($self,$c) = @_;
@@ -992,6 +1000,8 @@ sub buildtree : Private
     }
 }
 
+# Summary: Returns a JSON object with settings that define how to display
+#   filtering options to the user
 sub jsFilter: Local
 {
     my($self,$c) = @_;
@@ -1043,6 +1053,7 @@ sub jsFilter: Local
         });
 }
 
+# Summary: Deletes a folder
 sub deleteFolder: Local
 {
     my ($self,$c) = @_;
@@ -1056,6 +1067,7 @@ sub deleteFolder: Local
     return json_response($c, {} );
 }
 
+# Summary: Renames a folder
 sub renameFolder: Local
 {
     my ($self,$c) = @_;

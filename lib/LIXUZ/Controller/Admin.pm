@@ -24,6 +24,7 @@ use LIXUZ::HelperModules::I18N;
 use LIXUZ::HelperModules::Calendar qw(get_current_time);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 
+# Summary: Detect which language to use, and return it
 sub detectLang : Private
 {
     my($self,$c) = @_;
@@ -57,6 +58,9 @@ sub detectLang : Private
     return $lang;
 }
 
+# Summary: Base URL handler for admin controllers. Makes sure a user is
+# logged in, that the user is active, that the user has access to the URL
+# requested, and keeps the session alive.
 sub auto : Private
 {
     my($self,$c) = @_;
@@ -120,6 +124,7 @@ sub auto : Private
     return 1;
 }
 
+# Summary: Initializes the i18n object in the stash
 sub initI18N : Private
 {
     my($self,$c) = @_;
@@ -133,6 +138,7 @@ sub initI18N : Private
     $c->stash->{i18n} = LIXUZ::HelperModules::I18N->new('lixuz',$lang,$c->path_to('i18n','locale')->stringify);
 }
 
+# Summary: The 404 error handler for admin pages
 sub default : Private
 {
     my ( $self, $c ) = @_;
@@ -155,6 +161,7 @@ sub default : Private
     }
 }
 
+# Summary: Redirect bare /admin requests to the dashboard
 sub index : Private
 {
     my ( $self, $c ) = @_;
@@ -162,6 +169,8 @@ sub index : Private
     $c->detach();
 }
 
+# Summary: Handle crashes, ensure 3xx responses don't get data from Mason, set
+# the correct content-type and forward to the default view if needed.
 sub end : Private
 {
     my ( $self, $c ) = @_;

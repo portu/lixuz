@@ -19,6 +19,7 @@ use Moose;
 BEGIN { extends 'Catalyst::Controller' };
 use IO::Socket::INET;
 
+# Summary: Connect to the memcached and tell it to flush all of its cached data
 sub memcached_flush : Path('/admin/settings/admin/info/memcached/flush')
 {
     my($self,$c) = @_;

@@ -30,11 +30,12 @@ use 5.010;
 # Used in responses as well, don't make false undef.
 use constant { true => 1, false => 0};
 
+# Summary: Display the additional fields-list
 sub index : Path Args(0) Form('/core/search')
 {
     my ( $self, $c, $query ) = @_;
     my $fields = $c->model('LIXUZDB::LzField');
-    my $obj = $self->handleListRequest({
+    my $obj = $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $fields,
@@ -454,13 +455,4 @@ sub cleanPulldown: Private
     return true;
 }
 
-# Summary: Forward the article to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList : Private
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    $c->response->redirect('/admin/settings/admin/additionalfields');
-    $c->detach();
-}
 1;

@@ -31,11 +31,12 @@ use LIXUZ::HelperModules::Mailer;
 use Text::CSV_XS;
 use Regexp::Common qw[Email::Address];
 
+# Summary: Handle requests for the subscriber list
 sub index : Path Args(0) Form('/core/search')
 {
     my ( $self, $c, $query ) = @_;
     my $subscription = $c->model('LIXUZDB::LzNewsletterSubscription');
-    my $list = $self->handleListRequest({
+    my $list = $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $subscription,
@@ -58,6 +59,7 @@ sub index : Path Args(0) Form('/core/search')
     $self->init_searchFilters($c);
 }
 
+# Summary: Delete a subscriber
 sub delete : Local Param
 {
     my ($self,$c,$subid) = @_;
@@ -72,6 +74,8 @@ sub delete : Local Param
     return json_response($c);
 }
 
+# Summary: Import a CSV list of users that are to be added to the database as
+# subscribers
 sub importsubscriber : Local
 {
     my ( $self, $c ) = @_;
@@ -122,12 +126,13 @@ sub importsubscriber : Local
                 }
             }
         }
-
     }
     $c->response->redirect('/admin/newsletter');
     $c->detach();
 }
 
+# Summary: Display an editor that allows a user to send a newsletter manually
+# to a select number of users
 sub send : Local
 {
     my ( $self, $c, $query ) = @_;
@@ -153,6 +158,8 @@ sub send : Local
     add_editor_incl($c);
 }
 
+# Summary: Returns a list of *manually sent* newsletters that have been sent so
+# far
 sub sentPreviously : Local
 {
     my ( $self, $c ) = @_;
@@ -200,6 +207,7 @@ sub sentPreviously : Local
     return json_error($c);
 }
 
+# Summary: Send a manual newsletter
 sub submitManual : Local
 {
     my ( $self, $c ) = @_;
@@ -292,6 +300,7 @@ sub submitManual : Local
     return json_response($c);
 }
 
+# Summary: Returns a JSON-list of subscriber groups
 sub groupList : Local
 {
     my ( $self, $c ) = @_;
@@ -304,9 +313,9 @@ sub groupList : Local
                 group_id => $group->group_id,
                 group_name=> $group->group_name,
             };
-        if(defined $self->{__groupsEnabled} )
+        if(defined $c->stash->{__groupsEnabled} )
         {
-            if($self->{__groupsEnabled}->{$group->group_id})
+            if($c->stash->{__groupsEnabled}->{$group->group_id})
             {
                 $info->{enabled} = 1;
             }
@@ -320,6 +329,8 @@ sub groupList : Local
     return json_response($c,{ groups => \@groupList });
 }
 
+# Summary: Returns a JSON-structure with information about a newsletter
+# subscriber group
 sub groupInfo : Local Param
 {
     my ( $self, $c, $group_id ) = @_;
@@ -336,6 +347,7 @@ sub groupInfo : Local Param
     return json_response($c,$info);
 }
 
+# Summary: Delete a newsletter subscriber group
 sub groupDelete : Local Param
 {
     my ( $self, $c, $group_id ) = @_;
@@ -348,6 +360,7 @@ sub groupDelete : Local Param
     return json_response($c);
 }
 
+# Summary: Create or rename a newsletter subscriber group
 sub groupSave : Local
 {
     my ( $self, $c ) = @_;
@@ -385,6 +398,7 @@ sub groupSave : Local
     return json_response($c);
 }
 
+# Summary: Edit
 sub subscriptionGroupEdit : Local Param
 {
     my ( $self, $c, $subid ) = @_;
@@ -416,7 +430,7 @@ sub subscriptionGroupEdit : Local Param
         {
             $groupsEnabled{$group->group_id} = 1;
         }
-        $self->{__groupsEnabled} = \%groupsEnabled;
+        $c->stash->{__groupsEnabled} = \%groupsEnabled;
         return $self->groupList($c);
     }
 }

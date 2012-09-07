@@ -28,6 +28,7 @@ use Graphics::Magick;
 use LIXUZ::HelperModules::Files qw(lixuz_serve_scalar_file);
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 
+# Summary: Displays the image "edit" form (ie. the crop form)
 sub default : Path('/admin/files/imgedit') Local Args
 {
     my ( $self, $c, $uid ) = @_;
@@ -46,6 +47,8 @@ sub default : Path('/admin/files/imgedit') Local Args
     $c->stash->{template} = 'adm/files/cropping.html';
 }
 
+# Summary: Return a cropped version of an image to the user without
+# saving it
 sub resizer : Local Args
 {
     my ( $self, $c, $uid ) = @_;
@@ -56,6 +59,8 @@ sub resizer : Local Args
     lixuz_serve_scalar_file($c, $blob,$file->get_mimetype($c));
 }
 
+# Summary: Save a cropped version of an image to the database (and disk) as
+# a child of the original image
 sub saveCrop : Local
 {
     my ( $self, $c, $uid ) = @_;
@@ -96,6 +101,8 @@ sub saveCrop : Local
     return json_response($c,{ newFile => $newFile->file_id });
 }
 
+# Summary: Stupid function that returns the file object belonging to
+# the supplied ID and dies if it detects an error state.
 sub _getFileFromUID : Private
 {
     my ( $self, $c, $uid ) = @_;
@@ -122,6 +129,8 @@ sub _getFileFromUID : Private
     return $file;
 }
 
+# Summary: Return a Graphics::Magick-object that corresponds to a cropped
+# version of the supplied LzFile object
 sub _getResized : Private
 {
     my ( $self, $c, $file ) = @_;

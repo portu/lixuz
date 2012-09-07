@@ -20,6 +20,9 @@ use strict;
 use warnings;
 use base 'Catalyst::Controller';
 
+# Summary: Display the settings page.
+# Which page that gets displayed is dependant on if the user can access
+# admin-settings or not.
 sub index : Private
 {
     my ( $self, $c ) = @_;
@@ -36,12 +39,14 @@ sub index : Private
     }
 }
 
+# Summary: Display the root-settings menu
 sub menu : Private
 {
     my ( $self, $c ) = @_;
     $c->stash->{template} = 'adm/settings/menu.html';
 }
 
+# Summary: Display the admin menu
 sub admin : Local Args
 {
     my ( $self, $c ) = @_;
@@ -49,6 +54,7 @@ sub admin : Local Args
     $c->stash->{template} = 'adm/settings/admin.html';
 }
 
+# Summary: Display the user menu
 sub user : Local
 {
     my ( $self, $c ) = @_;

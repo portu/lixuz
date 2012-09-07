@@ -20,6 +20,7 @@ use warnings;
 use 5.010;
 use base 'Catalyst::Controller';
 
+# Summary: Display the Lixuz license if possible
 sub license : Path('/lixuz/license')
 {
     my($self,$c) = @_;

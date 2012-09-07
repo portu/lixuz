@@ -45,7 +45,7 @@ function LZ_reallyDeleteComment (deleteIt)
     if(deleteIt)
     {
         showPI(i18n.get('Deleting comment ...'));
-        JSON_Request('/admin/articles/deleteComment/'+deleteThisComment,LZ_LiveCommentChangeSuccess,null);
+        XHR.GET('/admin/articles/deleteComment/'+deleteThisComment,LZ_LiveCommentChangeSuccess,null);
         deleteThisFile = null;
         $('#CommentsForArticle').html(CommentsForArticle--);
     }
@@ -73,7 +73,7 @@ function LZ_toggleLiveComments()
 // Fetch file list for an article
 function LZ_fetchLiveCommentsForArticle (toggle)
 {
-    JSON_Request('/admin/articles/getCommentListFor/'+$('#lixuzArticleEdit_uid').val(),LZ_newLiveCommentList,LZ_newLiveCommentListFailure);
+    XHR.GET('/admin/articles/getCommentListFor/'+$('#lixuzArticleEdit_uid').val(),LZ_newLiveCommentList,LZ_newLiveCommentListFailure);
 }
 
 // New file list recieved

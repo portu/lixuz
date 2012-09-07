@@ -25,6 +25,7 @@ with 'LIXUZ::Role::List::Database';
 use LIXUZ::HelperModules::Search qw(perform_search perform_advanced_search);
 use LIXUZ::HelperModules::Forms qw(finalize_form);
 
+# Summary: Handle the list request
 sub index : Path Args(0) Form('/core/search') {
     my ( $self, $c, $query ) = @_;
 
@@ -32,7 +33,7 @@ sub index : Path Args(0) Form('/core/search') {
             type => 'dictionary'
         });
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Dictionary');
-    $self->handleListRequest({
+    $self->handleListRequest($c,{
             c => $c,
             object => $dictionary,
             objectName => 'dictionary',
@@ -228,20 +229,6 @@ sub savedata: Private
     # Update the DB
     $category->update();
     $self->messageToList($c,$i18n->get('Definition saved'));
-}
-
-# Summary: Forward the category to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    if(not $message)
-    {
-        $c->log->warn('No valid message supplied to messageToList in Dictionary.pm');
-    }
-    $c->response->redirect('/admin/dictionary');
-    $c->detach();
 }
 
 1;

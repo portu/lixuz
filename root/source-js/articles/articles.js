@@ -55,7 +55,7 @@ function reallyMoveArticle(response)
         return;
     }
     showPI(i18n.get('Moving to trash...'));
-    JSON_Request('/admin/articles/trash/move/'+MoveToTrash_ArtID,articleMoveSuccess,null);
+    XHR.GET('/admin/articles/trash/move/'+MoveToTrash_ArtID,articleMoveSuccess,null);
 }
 
 function articleMoveSuccess ()
@@ -76,7 +76,7 @@ function LZ_DeleteArticleBackup (backup_id)
 {
     showPI(i18n.get('Deleting...'));
     LZ_newArticleDialog.destroy();
-    JSON_Request('/admin/services/backup?delete='+backup_id, LZ_DeleteArticleBackup_success, LZ_DeleteArticleBackup_failure);
+    XHR.GET('/admin/services/backup?delete='+backup_id, LZ_DeleteArticleBackup_success, LZ_DeleteArticleBackup_failure);
 }
 
 function LZ_DeleteArticleBackup_failure (reply)
@@ -103,7 +103,7 @@ function LZ_DeleteArticleBackup_success (reply)
 function LZ_ArticleBackupsAvailable ()
 {
     showPI(i18n.get('Backups found on server, loading information...'));
-    JSON_Request('/admin/services/backup?wants=list', LZ_ArticleBackupsAvailable_success, LZ_ArticleBackupsAvailable_failure);
+    XHR.GET('/admin/services/backup?wants=list', LZ_ArticleBackupsAvailable_success, LZ_ArticleBackupsAvailable_failure);
 }
 
 function LZ_ArticleBackupsAvailable_success (reply)

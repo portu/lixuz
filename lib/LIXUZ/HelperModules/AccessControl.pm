@@ -66,13 +66,6 @@ sub can_access_path
     return $can_access_path;
 }
 
-sub can_access_object
-{
-    my $self = shift;
-    my $objectType = shift;
-    my $objectId = shift;
-}
-
 # Summary: Check if the user is allowed to access or alter something, and
 #   forward to the ACL controller's access_denied method if not.
 # Usage: Same as can_access_path() but never returns if access is denied.

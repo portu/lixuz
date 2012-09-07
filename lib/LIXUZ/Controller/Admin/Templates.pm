@@ -25,12 +25,13 @@ with 'LIXUZ::Role::List::Database';
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 
+# Summary: Displays the template list
 sub index : Path Args(0) Form('/core/search')
 {
     my ( $self, $c, $query ) = @_;
 
     my $template = $c->model('LIXUZDB::LzTemplate');
-    my $list = $self->handleListRequest({
+    my $list = $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $template,
@@ -45,6 +46,7 @@ sub index : Path Args(0) Form('/core/search')
 	add_jsIncl($c,'templates.js');
 }
 
+# Summary: Sets the default template for a type
 sub setDefault : Local Param
 {
     my ($self, $c, $templateId) = @_;

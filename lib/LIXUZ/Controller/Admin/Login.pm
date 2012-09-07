@@ -23,12 +23,12 @@ use Digest::MD5 qw(md5);
 use LIXUZ::HelperModules::Forms qw(finalize_form);
 
 __PACKAGE__->config(
-'Controller::FormBuilder' => {
-template_type => 'Mason',    # default is 'TT' (e.g. TT2)
-}
+    'Controller::FormBuilder' => {
+        template_type => 'Mason',    # default is 'TT' (e.g. TT2)
+    }
 );
 
-# Summary: Logout handler
+# Summary: Handle logouts (delete locks, remove cookies etc.)
 sub logout : Path('/admin/logout')
 {
     my ( $self, $c ) = @_;
@@ -57,7 +57,8 @@ sub logout : Path('/admin/logout')
     $c->forward('login');
 }
 
-# Summary: Login handler, creates the form and other goodies
+# Summary: Login handler, creates the form, handles authentication,
+# forwards user when logged in if needed
 sub login : Path('/admin/login') Form('/login')
 {
     my ( $self, $c ) = @_;

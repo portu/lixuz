@@ -47,7 +47,7 @@ function LZWF_SubmitComment ()
 function LZWF_AcceptAssignment ()
 {
     $('#LZWorkflowAcceptButton').html(i18n.get('Accepting assingment ...'));
-    JSON_Request('/admin/articles/workflow/acceptAssignment/'+$('#artid').val(),LZWF_AssignmentAccepted, LZWF_AssignmentAcceptFailure);
+    XHR.GET('/admin/articles/workflow/acceptAssignment/'+$('#artid').val(),LZWF_AssignmentAccepted, LZWF_AssignmentAcceptFailure);
 }
 
 /*

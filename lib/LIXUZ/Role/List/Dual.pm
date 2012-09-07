@@ -22,115 +22,17 @@
 package LIXUZ::Role::List::Dual;
 
 use Moose::Role;
-use LIXUZ::HelperModules::Indexer;
-use List::MoreUtils qw(any);
-use LIXUZ::HelperModules::JSON qw(json_response);
-use Try::Tiny;
-use Carp;
 use 5.010;
+use LIXUZ::HelperModules::List::Dual;
 
-with 'LIXUZ::Role::List::Indexer';
+with 'LIXUZ::Role::List';
 
-has '_forceSearchMethod' => (
+has '_lResultObject' => (
     is => 'rw',
-);
-
-# Method that gets called in place of the ::Indexer versions resolve method
-# selector.
-sub _select_resolve_method
+    );
+sub listType
 {
-    my $self = shift;
-    my $orig = shift;
-
-    # Default to dual
-    my $resolveWith = 'dual';
-    # If we got no parameters then use the database, in these cases there's
-    # no search query, so the indexer is completely useless.
-    if (!@_)
-    {
-        $resolveWith = 'database';
-    }
-    # If we're attempting to force a certain resolver, then obey that request.
-    if ($self->_forceSearchMethod)
-    {
-        $resolveWith = $self->_forceSearchMethod;
-    }
-
-
-    given($resolveWith)
-    {
-        when('database')
-        {
-            return $self->$orig(@_);
-        }
-
-        when('dual')
-        {
-            return $self->_dual_resolver($orig,@_);
-        }
-        when('indexer')
-        {
-            return $self->_list_search_indexer(@_);
-        }
-
-        default
-        {
-            die('_indexerResultObject ended up with unknown resolveWith: '.$resolveWith);
-        }
-    }
-}
-
-sub _dual_resolver
-{
-    my $self = shift;
-    my $orig = shift;
-
-    my $ret = $self->_list_search_indexer(@_);
-
-    # If the indexer returned over 200 results, then we don't bother generating
-    # a secondary database-based search.
-    if ($ret->count >= 200)
-    {
-        return $ret;
-    }
-
-    $self->_indexerResultObject(0);
-
-    # Ok, generate a database-based search
-    if ($ret->count == 0)
-    {
-        return $self->$orig(@_);
-    }
-
-    my @ignore;
-    
-    # Exclude existing results
-    while(my $r = $ret->next)
-    {
-        push(@ignore,$r->id);
-    }
-    $ret->reset;
-    my $idType = 'article_id';
-    if(ref($self) =~ /Files/)
-    {
-        $idType = 'file_id';
-    }
-    $self->listAddExpr({ $idType => { '-not_in' => \@ignore }});
-
-    # Perform the database call
-    $self->$orig(@_);
-    my $databaseResult = $self->listGetResultObject;
-    # Push database results onto the indexer object
-    $ret->_pushFromDB($databaseResult);
-
-    # Remove forced search method
-    $self->_forceSearchMethod(undef);
-    # Overwrite any already generated objects
-    $self->_indexerResultObject($ret);
-    $self->_lResultObject($ret);
-    # Regenerate paginated object
-    $self->listGetPaginatedResultObject();
-    return $ret;
+    return 'dual';
 }
 
 1;

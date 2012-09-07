@@ -30,11 +30,6 @@ use LIXUZ::HelperModules::RevisionHelpers qw(article_latest_revisions get_latest
 use LIXUZ::HelperModules::HTMLFilter qw(filter_string);
 use LIXUZ::HelperModules::EMail qw(send_email_to);
 
-has 'RCS' => (
-    is => 'rw',
-    isa => 'Ref',
-    );
-
 sub index : Path : ActionClass('REST') {};
 
 # Summary: Handle article saving via JSON
@@ -87,32 +82,31 @@ sub index_POST
 	}
 
     my $RCS = LIXUZ::HelperModules::RevisionControl::Article->new( committer => $c->user->user_id );
-    $self->RCS($RCS);
     $RCS->set_root($article);
     $RCS->add_object($workflow);
 
-    if (!$self->savedata_article($c,$article,$type,$jsonReply))
+    if (!$self->savedata_article($c,$article,$type,$jsonReply,$RCS))
     {
         return json_error($c,$jsonReply->{error},$jsonReply->{verboseError});
     }
 
     # FIXME: The problem here is that we're returning an error, but it's only a partial failure
-    my($result,$sendRoleNotifications,$sendUserNotification) = $self->savedata_workflow($c,$article,$workflow,$type,$jsonReply);
+    my($result,$sendRoleNotifications,$sendUserNotification) = $self->savedata_workflow($c,$article,$workflow,$type,$jsonReply,$RCS);
 
     if (!$result)
     {
         return json_error($c,$jsonReply->{error},$jsonReply->{verboseError});
     }
 
-    $self->savedata_relationships($c,$article);
-    $self->savedata_files($c,$article);
-    $self->savedata_elements($c,$article);
-    $self->savedata_tags($c,$article);
+    $self->savedata_relationships($c,$article,$RCS);
+    $self->savedata_files($c,$article,$RCS);
+    $self->savedata_elements($c,$article,$RCS);
+    $self->savedata_tags($c,$article,$RCS);
 
-    $article = $self->RCS->commit();
+    $article = $RCS->commit();
 
     $jsonReply->{uid} = $article->article_id;
-    $jsonReply->{revision} = $self->RCS->revision;
+    $jsonReply->{revision} = $RCS->revision;
 
     if ($sendRoleNotifications)
     {
@@ -129,7 +123,7 @@ sub index_POST
 # Summary: Save relationship data
 sub savedata_relationships
 {
-    my ($self, $c, $article) = @_;
+    my ($self, $c, $article,$RCS) = @_;
 
     my $existing = $article->relationships;
     my $submitted = $c->req->data->{relationships} || {};
@@ -144,7 +138,7 @@ sub savedata_relationships
             delete($submitted->{$id});
             next;
         }
-        $self->RCS->delete_object($rel);
+        $RCS->delete_object($rel);
     }
 
     foreach my $relID (keys %{$submitted})
@@ -161,14 +155,14 @@ sub savedata_relationships
             next;
         }
         my $newRelationship = $c->model('LIXUZDB::LzArticleRelations')->new_result({article_id => $article->article_id, related_article_id => $related_article->article_id, relation_type => $submitted->{$relID} });
-        $self->RCS->add_object($newRelationship);
+        $RCS->add_object($newRelationship);
     }
 }
 
 # Summary: Save the core article data (ie. lead/body, ..)
 sub savedata_article
 {
-    my ( $self, $c, $article, $type, $jsonReply ) = @_;
+    my ( $self, $c, $article, $type, $jsonReply,$RCS ) = @_;
     my $i18n = $c->stash->{i18n};
 
 	my $origFolder;
@@ -179,10 +173,10 @@ sub savedata_article
 
     my $fields = LIXUZ::HelperModules::Fields->new($c,'articles',$article->article_id,{
             inlineSaveHandler => sub {
-                $self->art_save_fielddata(@_,$article);
+                $self->art_save_fielddata(@_,$article,$RCS);
             },
-            revisionControl => $self->RCS,
-            revision => $self->RCS->revision,
+            revisionControl => $RCS,
+            revision => $RCS->revision,
         });
     $fields->saveData();
 
@@ -215,7 +209,7 @@ sub savedata_article
             {
                 if (not $folders{$f->article_id})
                 {
-                    $self->RCS->delete_object($f);
+                    $RCS->delete_object($f);
                 }
                 else
                 {
@@ -230,7 +224,7 @@ sub savedata_article
                         folder_id => $fid,
                         primary_folder => 0,});
                 delete($folders{$fid});
-                $self->RCS->add_object($art);
+                $RCS->add_object($art);
             }
         }
     }
@@ -239,7 +233,7 @@ sub savedata_article
         my $sf = $article->secondary_folders;
         while(defined($sf) and (my $f = $sf->next))
         {
-            $self->RCS->delete_object($f);
+            $RCS->delete_object($f);
         }
     }
     if ($c->req->data->{'LZ_ArticleMoveFilesFound'} and $origFolder != $newPrimaryFolder)
@@ -290,7 +284,7 @@ sub savedata_article
     }
 
         $article->set_column('modified_time',\'NOW()');
-        $self->RCS->add_object($article);
+        $RCS->add_object($article);
         # XXX: Might not be needed
         $article->clearCache($c);
 
@@ -309,7 +303,7 @@ sub savedata_article
 # Summary: Save article<->files relationships
 sub savedata_files
 {
-    my ($self, $c, $article) = @_;
+    my ($self, $c, $article,$RCS) = @_;
 
     my $existing = $article->files;
     my $submitted = $c->req->data->{files} || [];
@@ -327,26 +321,26 @@ sub savedata_files
     {
         if(not $fileIdList{$f->file_id})
         {
-            $self->RCS->delete_object($f);
+            $RCS->delete_object($f);
         }
     }
 
     foreach my $entry (@{$submitted})
     {
-        my $rel = $self->RCS->find_or_new('LIXUZDB::LzArticleFile',{
+        my $rel = $RCS->find_or_new('LIXUZDB::LzArticleFile',{
                 article_id => $article->article_id,
                 file_id => $entry->{file_id}
             });
         $rel->set_column('spot_no',$entry->{spot_no});
         $rel->set_column('caption',$entry->{caption});
-        $self->RCS->add_object($rel);
+        $RCS->add_object($rel);
     }
 }
 
 # Summary: Save relationships with additional elements
 sub savedata_elements
 {
-    my ($self, $c, $article) = @_;
+    my ($self, $c, $article,$RCS) = @_;
 
     my $existing = $article->additionalElements;
     my $submitted = $c->req->data->{elements} || {};
@@ -357,24 +351,24 @@ sub savedata_elements
     {
         if(not $existing->{$f->keyvalue_id})
         {
-            $self->RCS->delete_object($f);
+            $RCS->delete_object($f);
         }
     }
 
     foreach my $entry (keys %{$submitted})
     {
-        my $rel = $self->RCS->find_or_new('LIXUZDB::LzArticleElements',{
+        my $rel = $RCS->find_or_new('LIXUZDB::LzArticleElements',{
                 article_id => $article->article_id,
                 keyvalue_id => $entry,
             });
-        $self->RCS->add_object($rel);
+        $RCS->add_object($rel);
     }
 }
 
 # Summary: Save relationships with tags
 sub savedata_tags
 {
-    my ($self, $c, $article) = @_;
+    my ($self, $c, $article,$RCS) = @_;
 
     my $existing = $article->tags;
     my $submitted = $c->req->data->{tags} || [];
@@ -385,17 +379,17 @@ sub savedata_tags
     {
         if(not $existing->{$f->tag_id})
         {
-            $self->RCS->delete_object($f);
+            $RCS->delete_object($f);
         }
     }
 
     foreach my $entry (@{$submitted})
     {
-        my $rel = $self->RCS->find_or_new('LIXUZDB::LzArticleTag',{
+        my $rel = $RCS->find_or_new('LIXUZDB::LzArticleTag',{
                 article_id => $article->article_id,
                 tag_id => $entry,
             });
-        $self->RCS->add_object($rel);
+        $RCS->add_object($rel);
     }
 }
 
@@ -407,7 +401,7 @@ sub savedata_tags
 # Summary: Process data submitted from client code
 sub savedata_workflow
 {
-    my ( $self, $c, $article, $workflow, $type, $jsonReply ) = @_;
+    my ( $self, $c, $article, $workflow, $type, $jsonReply,$RCS ) = @_;
 
 	my ($priority, $startdate, $deadline, $watch);
 
@@ -500,7 +494,7 @@ sub savedata_workflow
 	{
         $workflow->set_column('assigned_by',$c->user->user_id);
         $workflow->set_column('assigned_to_user',$c->user->user_id);
-        $self->RCS->add_object($workflow);
+        $RCS->add_object($workflow);
 	}
 
 
@@ -586,12 +580,12 @@ sub notifyNewAssignee
     }
     if ( !$workflow)
     {
-        $self->c->log->error('notifyNewAssignee called without $workflow');
+        $c->log->error('notifyNewAssignee called without $workflow');
         return;
     }
     elsif ( !$article)
     {
-        $self->c->log->error('notifyNewAssignee called without $article');
+        $c->log->error('notifyNewAssignee called without $article');
         return;
     }
 
@@ -852,9 +846,10 @@ sub notifyWatchers : Private
     }
 }
 
+# Summary: Handle saving a single article field (inline or not)
 sub art_save_fielddata
 {
-    my($self,$c,$uid, $field,$value, $obj) = @_;
+    my($self,$c,$uid, $field,$value, $obj,$RCS) = @_;
     my $had = 0;
     my $fnam = $field->inline;
     my %FieldMap = (
@@ -893,10 +888,10 @@ sub art_save_fielddata
             my $f = $obj->folder;
             if ($f)
             {
-                $self->RCS->delete_object($f);
+                $RCS->delete_object($f);
             }
             $f = $c->model('LIXUZDB::LzArticleFolder')->new_result({ folder_id => $value, article_id => $obj->article_id, primary_folder => 1});
-            $self->RCS->add_object($f);
+            $RCS->add_object($f);
             $c->stash->{newPrimaryFolder} = $value;
         }
         elsif($fnam eq 'status_id')
@@ -949,7 +944,7 @@ sub art_save_fielddata
     }
 }
 
-# FIXME: Expand upon these and make them less harsh
+# TODO: These helpers should be provided elsewhere
 sub isArray
 {
     my $r = shift;

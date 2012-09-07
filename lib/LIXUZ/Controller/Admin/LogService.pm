@@ -21,6 +21,13 @@ use JSON::XS;
 use LIXUZ::HelperModules::JSON qw(json_response);
 BEGIN { extends 'Catalyst::Controller' };
 
+# Summary: Handle requests from the client-side to put something in the log
+#
+# There aren't any limits on requests here, but it is handled by the normal
+# ACL, and thus only allows access from users that have authenticated.
+#
+# The client-side is handled by errorLog.js, and won't post anything unless it
+# is enabled in the config (though no checks are done here to enforce that).
 sub default : Public
 {
     my($self,$c) = @_;
