@@ -500,7 +500,7 @@ function subscriberWindow(data)
     html = html + '<table><tr><td>'+i18n.get('Email')+':</td><td><input type="text" id="email" value="'+data.email+'" /></td></tr>';
     html = html + '<tr><td>'+i18n.get('Name')+':</td><td><input type="text" id="name" value="'+data.name+'" /></td></tr>';
     html = html + '<tr><td>'+i18n.get('Format')+':</td><td><input type="radio" id="format" checked="checked" value="text" name="format">'+i18n.get('Text')+'<input type="radio" value="html" id="format" name="format">'+i18n.get('HTML')+'</td></tr>';
-    html = html + '<tr><td>'+i18n.get('Interval')+':</td><td><input type="radio" value="day" id="interval" name="interval">'+i18n.get('Daily')+' <input type="radio" checked="checked" value="week" id="interval"  name="interval">'+i18n.get('Weekley')+'<input type="radio" value="month" id="interval" name="interval">'+i18n.get('Monthly')+'<input type="radio" value="none" id="interval" name="interval">'+i18n.get('None')+' </td></tr></table>';
+    html = html + '<tr><td>'+i18n.get('Interval')+':</td><td><input type="radio" value="day" id="interval" name="interval">'+i18n.get('Daily')+' <input type="radio" checked="checked" value="week" id="interval"  name="interval">'+i18n.get('Weekly')+'<input type="radio" value="month" id="interval" name="interval">'+i18n.get('Monthly')+'<input type="radio" value="none" id="interval" name="interval">'+i18n.get('None')+' </td></tr></table>';
 
     var buttons = {};
     buttons[i18n.get('Save and close')] = function () { saveAndCloseSubscriberEditor() };

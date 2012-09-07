@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-07 11:04+0200\n"
+"POT-Creation-Date: 2012-09-07 11:14+0200\n"
 "PO-Revision-Date: 2012-09-07 11:13+0200\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
@@ -222,8 +222,8 @@ msgid ""
 "You have unsaved status changes, those changes will be lost if you leave "
 "without saving."
 msgstr ""
-"Du har ulagra statusendringar. Viss du beveg deg bort frå denne sida "
-"vil desse endringane gå tapt."
+"Du har ulagra statusendringar. Viss du beveg deg bort frå denne sida vil "
+"desse endringane gå tapt."
 
 #: root/source-js/articles/articleSubmit.js:81
 msgid "Saving article..."
@@ -1296,7 +1296,7 @@ msgid "None"
 msgstr "Inga"
 
 #: root/source-js/newsletter/newsletter.js:503
-msgid "Weekley"
+msgid "Weekly"
 msgstr ""
 
 #: root/source-js/newsletter/newsletter.js:510
@@ -1538,31 +1538,38 @@ msgstr "Nekter å leggja til eit tomt emneord."
 msgid "Creating tag..."
 msgstr "Opprettar emneord …"
 
-#~ msgid "Reassign file"
-#~ msgstr "Tildel fil"
+#~ msgid "File ID:"
+#~ msgstr "Fil ID:"
 
-#~ msgid "Assign file"
-#~ msgstr "Tildel fil"
+#~ msgid "Size:"
+#~ msgstr "Storleik:"
 
-#~ msgid ""
-#~ "Note: This file is already assigned to a spot. Reassigning it to another "
-#~ "will remove it from its current spot and move it to the new one."
-#~ msgstr ""
-#~ "Merk: Denne fila er allereie tildelt eit område. Om du tildeler den eit "
-#~ "anna område vil den verta fjerna frå det gjeldande området og flytta til "
-#~ "det nye."
+#~ msgid "You haven't selected any folder"
+#~ msgstr "Du har ikkje vald ei mappe"
 
-#~ msgid "(can not assign to spots - this template has none)"
-#~ msgstr "(kan ikkje tildela til område - denne malen har inga)"
+#~ msgid "Loading element data..."
+#~ msgstr "Lastar elementdata …"
 
-#~ msgid "Assign to spot: "
-#~ msgstr "Tildel til område: "
+#~ msgid "Word/phrase"
+#~ msgstr "Ord/uttrykk"
 
-#~ msgid "current spot"
-#~ msgstr "gjeldande område"
+#~ msgid "Definition"
+#~ msgstr "Definisjon"
 
-#~ msgid "Show advanced options"
-#~ msgstr "Vis avanserte val"
+#~ msgid "Save changes"
+#~ msgstr "Lagra endringane"
+
+#~ msgid "Insert"
+#~ msgstr "Set inn"
+
+#~ msgid "Insert Table"
+#~ msgstr "Set inn ein tabell"
+
+#~ msgid "Table"
+#~ msgstr "Tabell"
+
+#~ msgid "Insert text or HTML code"
+#~ msgstr "Sett inn tekst eller HTML-kode"
 
 #~ msgid ""
 #~ "Above you may choose to assign this file to a spot, these options allow "
@@ -1578,35 +1585,28 @@ msgstr "Opprettar emneord …"
 #~ "listar automatisk, medan bileta i inngress eller brødtekst ofte ikkje "
 #~ "vil)."
 
-#~ msgid "Insert text or HTML code"
-#~ msgstr "Sett inn tekst eller HTML-kode"
+#~ msgid "Show advanced options"
+#~ msgstr "Vis avanserte val"
 
-#~ msgid "Table"
-#~ msgstr "Tabell"
+#~ msgid "current spot"
+#~ msgstr "gjeldande område"
 
-#~ msgid "Insert Table"
-#~ msgstr "Set inn ein tabell"
+#~ msgid "Assign to spot: "
+#~ msgstr "Tildel til område: "
 
-#~ msgid "Insert"
-#~ msgstr "Set inn"
+#~ msgid "(can not assign to spots - this template has none)"
+#~ msgstr "(kan ikkje tildela til område - denne malen har inga)"
 
-#~ msgid "Save changes"
-#~ msgstr "Lagra endringane"
+#~ msgid ""
+#~ "Note: This file is already assigned to a spot. Reassigning it to another "
+#~ "will remove it from its current spot and move it to the new one."
+#~ msgstr ""
+#~ "Merk: Denne fila er allereie tildelt eit område. Om du tildeler den eit "
+#~ "anna område vil den verta fjerna frå det gjeldande området og flytta til "
+#~ "det nye."
 
-#~ msgid "Definition"
-#~ msgstr "Definisjon"
+#~ msgid "Assign file"
+#~ msgstr "Tildel fil"
 
-#~ msgid "Word/phrase"
-#~ msgstr "Ord/uttrykk"
-
-#~ msgid "Loading element data..."
-#~ msgstr "Lastar elementdata …"
-
-#~ msgid "You haven't selected any folder"
-#~ msgstr "Du har ikkje vald ei mappe"
-
-#~ msgid "Size:"
-#~ msgstr "Storleik:"
-
-#~ msgid "File ID:"
-#~ msgstr "Fil ID:"
+#~ msgid "Reassign file"
+#~ msgstr "Tildel fil"
