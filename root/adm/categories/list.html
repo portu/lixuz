@@ -60,7 +60,6 @@
         <td><img class="useTipsy" src="/static/images/<% $category->category_status %>.png" border="0" title="<% $i18n->get($category->category_status) %>" alt="<% $i18n->get($category->category_status) %>" /></td>
     <td><a href="/admin/categories/edit/<% $category->category_id %>"><img class="useTipsy" src="/static/images/icons/category-edit.png" border="0" title="<% $i18n->get('Edit') %>" alt="<% $i18n->get('Edit') %>" /></a></td>
     <td><a href="/admin/categories/delete/<% $category->category_id %>" onclick="return userQuestion('<% $i18n->get_advanced('Are you sure you want to delete the category "%(CATEGORYNAME)"?', { CATEGORYNAME => $category->category_name} ) %>')"><img class="useTipsy" src="/static/images/icons/trash.png" border="0" title="<% $i18n->get('Delete') %>" alt="<% $i18n->get('Delete') %>" /></a></td>
-    <td><a href="/admin/categories/layout/edit/<% $category->category_id %>" onclick=""><img class="useTipsy" src="/static/images/icons/table.png" border="0" title="<% $i18n->get('Article ordering') %>" alt="<% $i18n->get('Article Ordering') %>" /></a></td>
     
     </tr>
 %}
