@@ -11,7 +11,7 @@ GIT_VERSION=$(shell git log --format="%h" | head -n1)
 GIT_BRANCH=$(shell git branch|egrep '^\*'|perl -pi -e 's/^\S+\s+//')
 
 # Prepare for distrib
-distrib_prep: distrib_preclean sanitycheck distrib_prepdata build
+distrib_prep: distrib_preclean sanitycheck distrib_prepdata
 distrib_preclean: 
 	rm -rf "$(DIST_TARGET)"
 	rm -rf "$(DIST_SOURCE)/packages"
@@ -29,7 +29,7 @@ distrib_src: distrib_prep dist_addgitver
 distrib_use: distrib_prep dist_addgitver distrib_minify
 	cd packages && tar -jcf lixuz-$(DIST_VERSION).minified.tar.bz2 $(DIST_MAINTARGET)
 # Deployment distrib
-distrib_deploy: distrib_prep distrib_minify dist_addgitver
+distrib_deploy: distrib_prep dist_addgitver distrib_minify
 	( cd $$HOME/makeself* || cd $$HOME/downloads/makeself* || exit 1; $(BESILENT) ./makeself.sh --bzip2 --nox11 $(DIST_TARGET) lixuz-$(DIST_VERSION).run 'Lixuz $(DIST_VERSION) distribution script' ./script/lixuz_distrib_wrap.pl || exit 1; mv ./lixuz-$(DIST_VERSION).run "$(DIST_SOURCE)"/packages )
 # Minfy distrib
 distrib_minify:
@@ -42,6 +42,7 @@ distrib_clean:
 	rm -rf "$(DIST_TARGET)"
 dist_addgitver: distrib_prep
 	perl -pi -e "s{^(our \\\$$GITREV =).*}{\$$1 '$(GIT_VERSION)';}" "$(DIST_TARGET)/lib/LIXUZ.pm"
+	perl -pi -e "s{^(our \\\$$GITBRANCH =).*}{\$$1 '$(GIT_BRANCH)';}" "$(DIST_TARGET)/lib/LIXUZ.pm"
 # Create tarballs+.run wrapper
 fulldistrib: distrib_src distrib_use distrib_deploy distrib_clean
 
