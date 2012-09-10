@@ -249,7 +249,7 @@ sub index : Path Args(0) Form('/core/search')
     {
         $c->stash->{template} = 'adm/timetracker/listview/index.html';
         $c->stash->{pageTitle} = $i18n->{'List view'};
-        add_jsIncl($c,'jscalendar.lib.js','listview.js');
+        add_jsIncl($c,'jscalendar.lib.js');
         $self->init_searchFilters($c);
     }
 }
