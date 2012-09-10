@@ -129,11 +129,20 @@ body a:visited, .listView a:visited, .buttonHolder a:hover, .pageBox a:hover {
 
 #sliders_outer h2
 {
-    background-color: #E0E8EF;
     padding: 2px 8px;
     border-bottom: 2px solid #F4F4F4;
     margin:0px;
     padding:4px;
+    background: url('/static/images/icons/section-closed.png') no-repeat #E0E8EF;
+    background-position-y:6px;
+    background-position-x:4px;
+    padding-left:24px;
+}
+#sliders_outer h2.sliderOpen
+{
+    background: url('/static/images/icons/section-open.png') no-repeat #E0E8EF;
+    background-position-x:5px;
+    background-position-y:7px;
 }
 
 #files_slider_inner
