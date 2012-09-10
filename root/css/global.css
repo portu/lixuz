@@ -464,3 +464,8 @@ select ul li.subs {
     border-radius: 10px 10px 10px 10px;
     max-width: 250px;    
 }
+
+.initiallyHidden
+{
+    display:none;
+}

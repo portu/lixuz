@@ -28,43 +28,33 @@
 
 %# --- Files ---
 <h2><a href="#" onclick="LZ_toggleFilesSection(); return false;"><img src="/static/images/icons/section-closed.png" border="0" align="left" /><% $i18n->get('Files')%> (<span id="filesInArticle"><%$filesInArticle%></span>)</a></h2>
-<div id="files_slider_inner" class="expandable_holder">
+<div id="files_slider_inner" class="expandable_holder initiallyHidden">
 <& files_right.html, %ARGS &>
 </div>
 
 %# --- Relationships---
 <h2><a href="#" onclick="$('#relationships_slider_inner').slideToggle(); return false;" style="overflow: auto;"><img src="/static/images/icons/section-closed.png" border="0" align="left" /><% $i18n->get('Relationships')%> (<span id="relationshipsWithArticle"><%$relationshipsWithArticle%></span>)</a></h2>
-<div id="relationships_slider_inner" class="expandable_holder">
+<div id="relationships_slider_inner" class="expandable_holder initiallyHidden">
 <& relationships_right.html, %ARGS &>
 </div>
 
 %# --- Comments ---
 <h2><a href="#" onclick="LZ_toggleLiveComments(); return false;" style="overflow: auto;"><img src="/static/images/icons/section-closed.png" border="0" align="left" /><% $i18n->get('Live comments')%> (<span id="CommentsForArticle"><%$commentsForArticle%></span>)</a></h2>
-<div id="liveComments_slider_inner" class="expandable_holder">
+<div id="liveComments_slider_inner" class="expandable_holder initiallyHidden">
 <& liveComments_right.html, %ARGS &>
 </div>
 
 %# --- Secondary folders --
 <h2><a href="#" onclick="LZ_toggleSecondaryFolders(); return false;" style="overflow: auto;"><img src="/static/images/icons/section-closed.png" border="0" align="left" /><% $i18n->get('Secondary folders')%> (<span id="SecondaryFoldersForArticle"><%$secondaryFoldersForArticle%></span>)</a></h2>
-<div id="secondaryFolders_slider_inner" class="expandable_holder">
+<div id="secondaryFolders_slider_inner" class="expandable_holder initiallyHidden">
 <& secondaryFolders_right.html, %ARGS &>
 </div>
 
 %# --- Additional elements ---
 <h2><a href="#" onclick="additionalElements.toggle(); return false;" style="overflow: auto;"><img src="/static/images/icons/section-closed.png" border="0" align="left" /><% $i18n->get('Additional elements')%> (<span id="AdditionalElementsForArticle"><%$additionalElementsForArticle%></span>)</a></h2>
-<div id="additionalElements_slider_inner" class="expandable_holder">
+<div id="additionalElements_slider_inner" class="expandable_holder initiallyHidden">
 <& additionalElements_right.html, %ARGS &>
 </div>
-
-%# --- Initialization JS ---
-<script type="text/javascript">
-$LAB.queue(function () {
-    $.each(['#files_slider_inner','#relationships_slider_inner','#liveComments_slider_inner','#secondaryFolders_slider_inner','#additionalElements_slider_inner'], function (index,value)
-    {
-        $(value).hide();
-    })
-});
-</script>
 
 </div> <!-- sliders_outer -->
 <%args>

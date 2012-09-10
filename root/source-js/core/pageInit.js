@@ -73,6 +73,9 @@
         $('.useTipsy').tipsy({ gravity: 'ne' });
         $('.useTipsyW').tipsy({ gravity: 'nw' });
 
+        // Hide initially-hidden entries
+        $('.initiallyHidden').hide().removeClass('initiallyHidden');
+
         // Publish an initialization event
         $.publish('/lixuz/init');
 
