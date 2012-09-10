@@ -363,14 +363,21 @@ var articleFiles = {
             {
                 $.unsubscribe(id);
 
-                onDone({
-                    '/admin/services/templateInfo': {
-                        spots: data.spots
-                    },
-                    '/admin/articles/JSON/getTakenFileSpots': {
-                        taken: data.taken
-                    }
-                });
+                try
+                {
+                    onDone({
+                        '/admin/services/templateInfo': {
+                            spots: data.spots
+                        },
+                        '/admin/articles/JSON/getTakenFileSpots': {
+                            taken: data.taken
+                        }
+                    });
+                }
+                catch(e)
+                {
+                    lzException(e);
+                }
             });
         }
 

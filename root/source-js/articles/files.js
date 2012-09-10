@@ -144,7 +144,14 @@ function LZ_RetrieveSpots (spotType,onDone)
 function LZ_RetrievedSpots  (data)
 {
     deprecated();
-    LZ_ArtFilePrompt(currFileUID,currFileType,data['/admin/services/templateInfo'].spots,data['/admin/articles/JSON/getTakenFileSpots'].taken);
+    try
+    {
+        LZ_ArtFilePrompt(currFileUID,currFileType,data['/admin/services/templateInfo'].spots,data['/admin/articles/JSON/getTakenFileSpots'].taken);
+    }
+    catch(e)
+    {
+        lzException(e);
+    }
 }
 
 /*
