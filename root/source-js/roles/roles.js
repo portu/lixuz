@@ -149,5 +149,5 @@ function submitRoleData ()
         userMessage(i18n.get('A name for the role is required. Please enter one.'));
         return;
     }
-    JSON_HashPostRequest(url, submission, roleSaveSuccess);
+    XHR.Form.POST(url, submission, roleSaveSuccess);
 }

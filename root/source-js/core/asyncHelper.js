@@ -40,55 +40,6 @@ var lixuz_curr_JSON_success,
     lixuz_curr_JSON_URL = null;
 
 /*
- * This works just like JSON_PostRequest, with the exception that it takes a
- * JS hash as a data parameter instead of a string. The JS hash is converted
- * to URL post strings and then given to JSON_PostRequest. The hash has to be
- * one-dimensional, but arguments can be an array, in which case it will
- * generate one parameter for each value in the array.
- */
-function JSON_HashPostRequest(URL, postHashData, successFunc, errorFunc)
-{
-    deprecated('JSON_* functions have been superseeded by the XHR object');
-    try
-    {
-        var data = '';
-
-        $.each(postHashData, function (key,value)
-               {
-                    if(key == '$family')
-                       return; // Works like 'continue' when inside $.each()
-                    if(value == undefined || value == null)
-                    {
-                        lzlog('The value for the key '+key+' was undefined or null in JSON_HashPostRequest to '+URL+' - ignoring');
-                    }
-                    else if(typeof(value) == 'array' || typeof(value) == 'object' )
-                    {
-                        $.each(value, function(i,item) {
-                                data = data+'&'+encodeURIComponent(key)+'='+encodeURIComponent(item);
-                            });
-                    }
-                    else if(typeof(value) == 'object')
-                    {
-                        lzError('JSON_HashPostRequest got an object as the key '+key+': this is unhandled.',null,true);
-                    }
-                    else if(typeof(value) == 'function')
-                    {
-                            // Skip
-                    }
-                    else
-                    {
-                        data = data+'&'+encodeURIComponent(key)+'='+encodeURIComponent(value);
-                    }
-               });
-        _runOrQueue_JSON_Request(URL, data, successFunc, errorFunc);
-    }
-    catch(e)
-    {
-        lzException(e);
-    }
-}
-
-/*
  * Response handler for JSON_Request
  */
 function JSON_Request_Response (reply,code,xhr_obj)
@@ -471,5 +422,5 @@ function JSON_multiRequest(paths,argHash,onSuccess,errorFunc,dontRequireAll)
         argHash['multiReqFail'] = true;
     }
 
-    return JSON_HashPostRequest('/admin/services/multiRequest',argHash,onSuccess,errorFunc);
+    return XHR.Form.POST('/admin/services/multiRequest',argHash,function (data) { console.log(data); onSuccess(data); },errorFunc);
 }

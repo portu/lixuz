@@ -48,7 +48,7 @@ function submitRSSImportSettings ()
         submit['rssItems'] = $('#rssItems').val();
         submit['rss_submit'] = 1;
         showPI(i18n.get('Saving...'));
-        JSON_HashPostRequest(document.URL, submit, submittedRSSImportSettings);
+        XHR.Form.POST(document.URL, submit, submittedRSSImportSettings);
     } catch(e) { lzException(e); }
 }
 
@@ -140,7 +140,7 @@ function saveRSSItemInfo ()
                         'rssedit_id':'rss_id'
                     });
         data.rssEdit_submit = 1;
-        JSON_HashPostRequest('/admin/rssimport', data, saveRSSItemInfo_success);
+        XHR.Form.POST('/admin/rssimport', data, saveRSSItemInfo_success);
     }
     catch(e)
     {
