@@ -207,55 +207,8 @@ function LZ_SaveFailure (data, genericError)
 }
 
 /*
- * Dummy function that does nothing with the data supplied to it.
- * You can use this if you don't really care about errors.
- */
-function JSON_IgnoreError (data)
-{
-    deprecated('Should use $.noop');
-    // Do nothing, successfully
-    return true;
-}
-
-/*
  * Internal functions
  */
-
-// Run a request, or add it to the queue
-function _runOrQueue_JSON_Request (URL, postData, successFunc, errorFunc)
-{
-    if (!lixuz_JSON_Running && (lixuz_JSON_Queue == null || lixuz_JSON_Queue.length == 0))
-    {
-        _run_JSON_Request(URL, postData, successFunc, errorFunc);
-    }
-    else
-    {
-        try
-        {
-            var queueEntry = {
-                        'URL':  URL,
-                        'postData': postData,
-                        'successFunc': successFunc,
-                        'errorFunc': errorFunc
-            };
-            if (lixuz_JSON_Queue == null)
-            {
-                lixuz_JSON_Queue = [];
-            }
-            lixuz_JSON_Queue.push(queueEntry);
-
-            if (!lixuz_JSON_Running)
-            {
-                _runNextInJSONQueue();
-            }
-        }
-        catch(e)
-        {
-            lzException(e);
-        }
-    }
-}
-
 // Run a request
 function _run_JSON_Request (URL, postData, successFunc, errorFunc)
 {
