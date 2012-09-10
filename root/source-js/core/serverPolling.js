@@ -147,3 +147,8 @@ function pollServer_init ()
     catch(e){}
     pollServer_setTimer();
 }
+
+(function($)
+{
+    $.subscribe('/lixuz/init',pollServer_init);
+})(jQuery);

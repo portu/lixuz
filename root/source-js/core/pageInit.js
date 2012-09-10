@@ -22,16 +22,6 @@
 {
     $(function()
     {
-        // Initialize polling if available
-        try
-        {
-            if(pollServer_init !== undefined)
-                pollServer_init();
-        }
-        catch(e)
-        {
-            lzException(e);
-        };
 
         // Activate chosen
         $('.enableChosen').chosen();
