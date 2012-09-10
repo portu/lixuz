@@ -246,7 +246,7 @@ sub retrieveArticles : Private
             orderParams => [qw(article_id title status_id modified_time assigned_to_user author)],
             formbuilder => $formbuilder,
             advancedSearch => [ qw(workflow.assigned_to_user workflow.assigned_by workflow.assigned_to_role status_id) ],
-            searchColumns => [qw/title article_id body lead/],
+            searchColumns => [qw/title article_id body lead author/],
         });
     $helper->listAddJoin('workflow');
 
