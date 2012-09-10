@@ -344,7 +344,7 @@ var articleFiles = {
 
     addTheseFiles: function (files)
     {
-        LZ_RetrieveSpots('image',function (data)
+        articleFiles.retrieveFileSpots('image',function (data)
         {
             articleFiles.performFileAddition(data,files);
         });

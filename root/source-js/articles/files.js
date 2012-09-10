@@ -133,27 +133,6 @@ function LZ_FileSpotOK ()
     destroy();
 }
 
-function LZ_RetrieveSpots (spotType,onDone)
-{
-    deprecated();
-    if(onDone == null)
-        onDone = LZ_RetrievedSpots;
-    articleFiles.retrieveFileSpots(spotType,onDone);
-}
-
-function LZ_RetrievedSpots  (data)
-{
-    deprecated();
-    try
-    {
-        LZ_ArtFilePrompt(currFileUID,currFileType,data['/admin/services/templateInfo'].spots,data['/admin/articles/JSON/getTakenFileSpots'].taken);
-    }
-    catch(e)
-    {
-        lzException(e);
-    }
-}
-
 /*
  * *************
  * Article <-> Files
@@ -197,7 +176,7 @@ $.subscribe('/articles/toggleSection/files',function(evData)
     if(articleFiles.imageSpots.length == 0)
     {
         showPI(i18n.get('Retrieving file spots'));
-        LZ_RetrieveSpots('image',function (data)
+        articleFiles.retrieveFileSpots('image',function (data)
         {
             articleFiles.imageSpots = data['/admin/services/templateInfo'].spots;
             articleFiles.buildFileList();
