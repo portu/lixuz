@@ -209,4 +209,4 @@ var filesUI = {
     }
 };
 
-$(filesUI.init);
+$.subscribe('/lixuz/init',function () { filesUI.init(); });

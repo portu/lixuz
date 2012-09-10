@@ -496,4 +496,4 @@ var articleFiles = {
     }
 };
 
-$(articleFiles.initBuild);
+$.subscribe('/lixuz/init',function () { articleFiles.initBuild(); });
