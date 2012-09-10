@@ -183,9 +183,10 @@ function LZ_addThisFileToArticle (fileIds)
     XHR.GET('/admin/articles/ajax?wants=fileInfo'+files,articleFiles.addTheseFiles);
 }
 
-// Toggle the files section closed/open
-function LZ_toggleFilesSection ()
+// Toggle handler
+$.subscribe('/articles/toggleSection/files',function(evData)
 {
+    evData.handled = true;
     var toggler = function()
     {
         $("#files_slider_inner").slideToggle(null,function()
@@ -208,4 +209,4 @@ function LZ_toggleFilesSection ()
     {
         toggler();
     }
-}
+});

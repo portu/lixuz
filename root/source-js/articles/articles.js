@@ -295,3 +295,22 @@ function articleKeepLockStatus(stat,reply)
         }
     });
 }
+
+$.subscribe('/lixuz/init',function ()
+{
+    $('.sliderToggler').click(function(e)
+    {
+        e.preventDefault();
+        var $this = $(this);
+        $this.parent().toggleClass('sliderOpen');
+        var eventInfo = { handled: false, section: $this.data('section'), '$this':$this };
+        var name = eventInfo.section.replace(/_slider_inner/,'');
+        $.publish('/articles/toggleSection/'+name, [ eventInfo ]);
+        if(eventInfo.handled)
+        {
+            return;
+        }
+        $('#'+eventInfo.section).slideToggle();
+    });
+    articleFiles.initBuild();
+});

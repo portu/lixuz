@@ -17,7 +17,9 @@
 </%perl>
 <div id="sliders_outer" style="float: left;">
 %# --- Workflow ---
-<h2 class="sliderOpen"><a href="#" onclick="$(this).parent().toggleClass('sliderOpen');$('#workflow_slider_inner').slideToggle(); return false;"><% $i18n->get('Workflow') %></a></h2>
+<h2 class="sliderOpen">
+    <a href="#" class="sliderToggler" data-section="workflow_slider_inner"><% $i18n->get('Workflow') %></a>
+</h2>
 
 <div id="workflow_slider_inner" class="expandable_holder">
 <& workflow.html, %ARGS &>
@@ -27,31 +29,41 @@
 </div>
 
 %# --- Files ---
-<h2><a href="#" onclick="$(this).parent().toggleClass('sliderOpen');LZ_toggleFilesSection(); return false;"><% $i18n->get('Files')%> (<span id="filesInArticle"><%$filesInArticle%></span>)</a></h2>
+<h2>
+    <a href="#" class="sliderToggler" data-section="files_slider_inner"><% $i18n->get('Files')%> (<span id="filesInArticle"><%$filesInArticle%></span>)</a>
+</h2>
 <div id="files_slider_inner" class="expandable_holder initiallyHidden">
 <& files_right.html, %ARGS &>
 </div>
 
 %# --- Relationships---
-<h2><a href="#" onclick="$(this).parent().toggleClass('sliderOpen');$('#relationships_slider_inner').slideToggle(); return false;" style="overflow: auto;"><% $i18n->get('Relationships')%> (<span id="relationshipsWithArticle"><%$relationshipsWithArticle%></span>)</a></h2>
+<h2>
+    <a href="#" class="sliderToggler" data-section="relationships_slider_inner" style="overflow: auto;"><% $i18n->get('Relationships')%> (<span id="relationshipsWithArticle"><%$relationshipsWithArticle%></span>)</a>
+</h2>
 <div id="relationships_slider_inner" class="expandable_holder initiallyHidden">
 <& relationships_right.html, %ARGS &>
 </div>
 
 %# --- Comments ---
-<h2><a href="#" onclick="$(this).parent().toggleClass('sliderOpen');LZ_toggleLiveComments(); return false;" style="overflow: auto;"><% $i18n->get('Live comments')%> (<span id="CommentsForArticle"><%$commentsForArticle%></span>)</a></h2>
+<h2>
+    <a href="#" class="sliderToggler" data-section="liveComments_slider_inner" style="overflow: auto;"><% $i18n->get('Live comments')%> (<span id="CommentsForArticle"><%$commentsForArticle%></span>)</a>
+</h2>
 <div id="liveComments_slider_inner" class="expandable_holder initiallyHidden">
 <& liveComments_right.html, %ARGS &>
 </div>
 
 %# --- Secondary folders --
-<h2><a href="#" onclick="$(this).parent().toggleClass('sliderOpen');LZ_toggleSecondaryFolders(); return false;" style="overflow: auto;"><% $i18n->get('Secondary folders')%> (<span id="SecondaryFoldersForArticle"><%$secondaryFoldersForArticle%></span>)</a></h2>
+<h2>
+    <a href="#" class="sliderToggler" data-section="secondaryFolders_slider_inner" style="overflow: auto;"><% $i18n->get('Secondary folders')%> (<span id="SecondaryFoldersForArticle"><%$secondaryFoldersForArticle%></span>)</a>
+</h2>
 <div id="secondaryFolders_slider_inner" class="expandable_holder initiallyHidden">
 <& secondaryFolders_right.html, %ARGS &>
 </div>
 
 %# --- Additional elements ---
-<h2><a href="#" onclick="$(this).parent().toggleClass('sliderOpen');additionalElements.toggle(); return false;" style="overflow: auto;"><% $i18n->get('Additional elements')%> (<span id="AdditionalElementsForArticle"><%$additionalElementsForArticle%></span>)</a></h2>
+<h2>
+    <a href="#" class="sliderToggler" data-section="additionalElements_slider_inner" style="overflow: auto;"><% $i18n->get('Additional elements')%> (<span id="AdditionalElementsForArticle"><%$additionalElementsForArticle%></span>)</a>
+</h2>
 <div id="additionalElements_slider_inner" class="expandable_holder initiallyHidden">
 <& additionalElements_right.html, %ARGS &>
 </div>
