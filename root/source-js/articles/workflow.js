@@ -67,7 +67,7 @@ function LZWF_AssignmentAccepted (data)
  */
 function LZWF_AssignmentAcceptFailure (data)
 {
-    var error = LZ_JSON_GetErrorInfo(data,null);
+    var error = XHR.getErrorInfo(data,null);
     if(error == 'DENIED')
     {
         $('LZWorkflowAcceptButton').html(i18n.get('You were denied access to accepting this assignment'));

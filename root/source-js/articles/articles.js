@@ -81,7 +81,7 @@ function LZ_DeleteArticleBackup (backup_id)
 
 function LZ_DeleteArticleBackup_failure (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     destroyPI();
     userMessage(i18n.get('Failed to delete: ')+error);
 }
@@ -150,7 +150,7 @@ function LZ_ArticleBackupsAvailable_success (reply)
 
 function LZ_ArticleBackupsAvailable_failure (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     userMessage('Failed to retrieve backup information ('+error+')');
 }
 

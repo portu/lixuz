@@ -102,7 +102,7 @@ function buildLiveCommentListFromDataset (data)
 // Something went wrong when recieving the file list
 function LZ_newLiveCommentListFailure (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     if(error == 'ACCESS_DENIED')
     {
         destroyPI(); // Destroy progress indicator

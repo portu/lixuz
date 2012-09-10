@@ -55,7 +55,7 @@ function LZDB_AssignmentAccepted (data)
  */
 function LZDB_AssignmentAcceptFailure (data)
 {
-    var error = LZ_JSON_GetErrorInfo(data,null);
+    var error = XHR.getErrorInfo(data,null);
     if(error == 'DENIED')
     {
         $('#LZWorkflowAcceptButton_'+CURR_LZDB_ID).html(i18n.get('Acceptance denied'));
