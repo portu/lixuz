@@ -76,9 +76,6 @@
         // Hide initially-hidden entries
         $('.initiallyHidden').hide().removeClass('initiallyHidden');
 
-        // Publish an initialization event
-        $.publish('/lixuz/init');
-
         // Page initialization that should run after everything else
         // (setTimeout pushes it to the end of the call stack)
         setTimeout(function ()
@@ -88,8 +85,11 @@
             // Attach a live tipsy handler
             $('.useTipsy').tipsy({ gravity: 'ne', live: true });
             $('.useTipsyW').tipsy({ gravity: 'nw', live: true });
-            // Publish an initialization event
-            $.publish('/lixuz/lastInit');
         }, 1);
+        $LAB.onLoaded(function()
+        {
+            // Publish an initialization event
+            $.publish('/lixuz/init');
+        });
     });
 })(jQuery);
