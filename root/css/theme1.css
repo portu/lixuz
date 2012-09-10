@@ -127,10 +127,13 @@ body a:visited, .listView a:visited, .buttonHolder a:hover, .pageBox a:hover {
 		float: left;
 }
 
-#sliders_outer h2{
-		background-color: #E0E8EF;
-	   	padding: 2px 8px;
-	   	margin-bottom: 0px;
+#sliders_outer h2
+{
+    background-color: #E0E8EF;
+    padding: 2px 8px;
+    border-bottom: 2px solid #F4F4F4;
+    margin:0px;
+    padding:4px;
 }
 
 #files_slider_inner
