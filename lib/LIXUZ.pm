@@ -76,6 +76,12 @@ if ($GITREV)
 else
 {
     $VERSION = $VERSION_NO.' git';
+    if (-d './.git')
+    {
+        open(my $i,'-|','git','rev-parse','--abbrev-ref','HEAD');
+        $VERSION .= '/'.<$i>;
+        close($i);
+    }
 }
 
 # Configure the application. 
