@@ -127,7 +127,7 @@ sub index : Path Args(0) Form('/core/search')
             my $inuserid = $timetracks->user_id;
 
             $info{$i}{recdate} = $changed_record_date;
-            my $datewise_entry = $c->model('LIXUZDB::LzTimeEntry')->search({ time_start => {-like => $record_date.'%'}, user_id => $inuserid });
+            my $datewise_entry = $c->model('LIXUZDB::LzTimeEntry')->search({ 'DATE(time_start)' => $record_date, user_id => $inuserid });
 
             if ($datewise_entry)
             {
