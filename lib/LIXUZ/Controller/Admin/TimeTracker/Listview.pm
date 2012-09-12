@@ -170,7 +170,6 @@ sub index : Path Args(0) Form('/core/search')
             }
 
             my $articledata = $c->model('LIXUZDB::LzArticle');
-            $articledata = article_latest_revisions($articledata);
             if (defined $c->req->param('filter_status_id') and length $c->req->param('filter_status_id'))
             {
                 @arrsts = $c->req->param('filter_status_id');
@@ -187,6 +186,7 @@ sub index : Path Args(0) Form('/core/search')
                     'DATE(revisionMeta.created_at)' => $record_date
                 }, 
                 { join => 'revisionMeta' });
+            $articledata = article_latest_revisions($articledata);
 
             if ($articledata)
             {
