@@ -20,7 +20,7 @@ use strict;
 use warnings;
 use base 'Catalyst::Controller';
 use LIXUZ::HelperModules::RevisionHelpers qw(article_latest_revisions);
-use LIXUZ::HelperModules::Includes qw(add_jsIncl);
+use LIXUZ::HelperModules::Includes qw(add_jsIncl add_jsOnLoad);
 use LIXUZ::HelperModules::Widget;
 
 # Summary: Handle the request
@@ -39,6 +39,11 @@ sub index : Private
     $c->stash->{template} = 'adm/dashboard/main.html';
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Dashboard');
     add_jsIncl($c,'dashboard.js');
+    if ($c->user->can_access('/timetracker'))
+    {   
+        add_jsOnLoad($c,'timetrackerReminder');
+    }   
+
     #$c->stash->{content} = $cont;
 
     # If there's a ListMessage in the flash, fetch it and stash it
