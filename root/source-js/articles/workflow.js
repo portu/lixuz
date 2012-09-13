@@ -85,7 +85,8 @@ function LZWF_AssignmentAcceptFailure (data)
  * ***********************
  */
 
-window.onbeforeunload = function () {
+$.subscribe('/lixuz/beforeunload', function (messages)
+{
     try {
         if(changedSince === undefined)
         {
@@ -94,6 +95,6 @@ window.onbeforeunload = function () {
     } catch(e) { return; }
     if (changedSince('save') && $('#lz_artid_value').length)
     {
-        return i18n.get('You have unsaved changes. If you move away from this page, those changes will be lost.');
+        messages.push(i18n.get('You have unsaved changes. If you move away from this page, those changes will be lost.'));
     }
-};
+});

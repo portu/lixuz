@@ -2,7 +2,8 @@ $(function ()
 {
     // Dynamically enforce a minimum width
     var $first = $('.select ul').first();
-        width  = 0;
+        width  = 0,
+        submitting = false;
     $first.find('li.option').each(function()
     {
         var thisWidth = $(this).width();
@@ -105,15 +106,15 @@ $(function ()
 
     // Don't run beforeunload when submitting
     $("#quickedit").submit(function(){
-        $(window).unbind("beforeunload");
+        submitting = true;
     });
     // Check if any changes have been made and needs to be submitting before
     // allowing the user to move away from the page.
-    $(window).bind('beforeunload', function()
+    $.subscribe('/lixuz/beforeunload', function (messages)
     {
-        if ($('#quickedit div[dt=nofollow]').length > 0 )
+        if ($('#quickedit div[dt=nofollow]').length > 0 && !submitting)
         {
-            return i18n.get('You have unsaved status changes, those changes will be lost if you leave without saving.');
+            messages.push(i18n.get('You have unsaved status changes, those changes will be lost if you leave without saving.'));
         }
     });
 });
