@@ -243,7 +243,7 @@ sub retrieveArticles : Private
             orderParams => [qw(article_id title status_id modified_time assigned_to_user author)],
             formbuilder => $formbuilder,
             advancedSearch => [ qw(workflow.assigned_to_user workflow.assigned_by workflow.assigned_to_role status_id) ],
-            searchColumns => [qw/title article_id body lead/],
+            searchColumns => [qw/title article_id body lead author/],
         });
     $helper->listAddJoin('workflow');
 
@@ -419,14 +419,19 @@ sub read : Local Args
                     $fileNameSplit =~ s/(.{17})/$1<br \/>/g;
                     my $info = {
                         iconItem =>$fileObj->get_icon($c),
-                        iconItemBody => $fileObj->get_url_aspect($c,250,250),
                         file_id => $fileObj->file_id,
                         file_name => $fileNameSplit,
+                        file_name_real => $fileObj->file_name,
                         fsize => $fileObj->sizeString($c),
                         caption => $caption,
                         identifier => $fileObj->identifier,
                         fields => {},
+                        is_image => $fileObj->is_image,
                     };
+                    if ($fileObj->is_image)
+                    {
+                        $info->{iconItemBody} = $fileObj->get_url_aspect($c,250,250);
+                    }
                     my $fields = $fileObj->getAllFields($c);
                     if ($fields)
                     {
