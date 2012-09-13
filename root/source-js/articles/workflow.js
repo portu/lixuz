@@ -92,7 +92,7 @@ window.onbeforeunload = function () {
             return;
         }
     } catch(e) { return; }
-    if (changedSince('save'))
+    if (changedSince('save') && $('#lz_artid_value').length)
     {
         return i18n.get('You have unsaved changes. If you move away from this page, those changes will be lost.');
     }
