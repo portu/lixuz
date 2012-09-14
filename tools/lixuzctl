@@ -54,6 +54,11 @@ sub main
             plugins();
         }
 
+        when('database')
+        {
+            database();
+        }
+
         default
         {
             die('Unknown command: '.$action."\nSee --help for more information\n");
@@ -126,6 +131,7 @@ sub usage
     print "\n";
     print "Available categories:\n";
     printHelp('','plugins','Plugin actions (install, remove, upgrade, list etc.)');
+    printHelp('','database','Database actions (upgrade)');
     print "\n";
     print "Run: \"lixuzctl [category] --help\" for a list of subcommands and parameters\n";
     print "for that category\n";
@@ -199,6 +205,46 @@ sub DirIsEmpty
         return 1;
     }
     return 0;
+}
+
+# ---
+# Database functions
+# ---
+
+# Purpose: Handler for database-section subcommands
+sub database
+{
+    my $subcommand = shift(@ARGV);
+
+    if (!defined $subcommand || $subcommand eq '--help' || $subcommand eq '-h')
+    {
+        usageDatabase(0);
+    }
+
+    given($subcommand)
+    {
+
+        when('upgrade')
+        {
+            chdir($lixuzDir.'/sql');
+            exec('./upgradeDB','../lixuz.yml');
+        }
+
+        default
+        {
+            die('Unknown subcommand for database: '.$subcommand."\nSee \"database --help\" for more information\n");
+        }
+    }
+}
+
+# Purpose: Displays usage information for database subcommands
+sub usageDatabase
+{
+    print "USAGE: lixuzctl database [subcommand] [parameters]\n";
+    print "\n";
+    print "Available subcommands:\n";
+    printHelp('','upgrade','Upgrade the database to the latest schema revision');
+    exit(shift);
 }
 
 # ---
