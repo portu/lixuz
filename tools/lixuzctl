@@ -167,7 +167,7 @@ sub writeMetaFile
 sub slurp
 {
     my $file = shift;
-    open(my $in,'<',$file);
+    open(my $in,'<',$file) or die("Failed to open $file for reading: $!\n");
     local $/ = undef;
     my $data = <$in>;
     close($in);
@@ -548,6 +548,29 @@ sub installPackage
                 }
                 rmdir($checkDir);
             }
+        }
+    }
+    if (-d $lixuzDir.'/.git')
+    {
+        my $excludes = slurp($lixuzDir.'/.git/info/exclude');
+        my %files = map { $_ => 1 } split(/\n/,$excludes);
+        my @append;
+        foreach my $file (@copy)
+        {
+            if (!$files{$file})
+            {
+                push(@append,$file);
+            }
+        }
+        if (@append)
+        {
+            open(my $out,'>>',$lixuzDir.'/.git/info/exclude');
+            foreach my $file (@append)
+            {
+                print {$out} '# Added by lixuzctl for plugin '.$pluginName."\n";
+                print {$out} $file."\n";
+            }
+            close($out);
         }
     }
     $meta->{plugins}->{$pluginName}->{meta} = $pluginMeta;
