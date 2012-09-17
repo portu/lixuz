@@ -131,6 +131,7 @@ sub index : Path Args(0) Form('/core/search')
 
             if ($datewise_entry)
             {
+                my $total_duration;
                 while(my $dateentry = $datewise_entry->next)
                 {
                     push(@userArray,$dateentry->user_id);
@@ -158,15 +159,18 @@ sub index : Path Args(0) Form('/core/search')
                     my $minutes = $tdiff % 60;
                     $tdiff = ($tdiff - $minutes)/60;
                     my $hours = $tdiff % 24;
+                    $total_duration = $total_duration + ($hours * 60) + $minutes;
 
                     push(@{$info{$i}{timedata}}, {
                             timeentry_id => $dateentry->time_id,
                             username => $username ,
                             from_to => $from_to,
-                            duration =>$hours.':'.$minutes,
+                            duration =>sprintf("%.2d", $hours).':'.sprintf("%.2d", $minutes),
                             entry_type => $dateentry->entry_type,
                         });
                 }
+                $info{$i}{total_min} = $total_duration;
+
             }
 
             my $articledata = $c->model('LIXUZDB::LzArticle');
