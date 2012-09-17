@@ -39,10 +39,6 @@ sub index : Private
     $c->stash->{template} = 'adm/dashboard/main.html';
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Dashboard');
     add_jsIncl($c,'dashboard.js');
-    if ($c->user->can_access('/timetracker'))
-    {   
-        add_jsOnLoad($c,'timetrackerReminder');
-    }   
 
     #$c->stash->{content} = $cont;
 

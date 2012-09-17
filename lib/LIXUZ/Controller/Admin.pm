@@ -22,7 +22,7 @@ use base 'Catalyst::Controller';
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::I18N;
 use LIXUZ::HelperModules::Calendar qw(get_current_time);
-use LIXUZ::HelperModules::Includes qw(add_jsIncl);
+use LIXUZ::HelperModules::Includes qw(add_jsIncl add_jsOnLoad);
 
 # Summary: Detect which language to use, and return it
 sub detectLang : Private
@@ -117,6 +117,14 @@ sub auto : Private
         if ($c->user->can_access('/timetracker'))
         {
             add_jsIncl($c,'timetracker.js');
+            if ($c->flash->{'fromloginpage'} eq 'FROM_LOGIN_PAGE')
+            {
+                if ($timetrackershow == 0)
+                {
+                    add_jsOnLoad($c,'timetrackerReminder');
+                }
+            }
+
         }
         # Reset the session expiration time
         $c->session_expires(1);
