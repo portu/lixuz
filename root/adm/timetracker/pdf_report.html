@@ -30,7 +30,7 @@ $total_min = $total_min + ($hours * 60) + $minutes;
             <td><%$timetrack->user_id%></td>
             <td><%$timetrack->time_start%></td>
             <td><%$timetrack->time_end %></td>
-            <td><% $hours.':'.$minutes %></td>
+            <td><% sprintf("%.2d", $hours).':'.sprintf("%.2d", $minutes) %></td>
             <td><%$timetrack->ip_start %></td>
             <td><%$timetrack->ip_end %></td>
         <tr>

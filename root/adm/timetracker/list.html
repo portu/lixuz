@@ -33,6 +33,7 @@ my $tdiff = $end_time-$start_time;
 my $seconds = $tdiff % 60;
 $tdiff = ($tdiff - $seconds)/60;
 my $minutes = $tdiff % 60;
+
 $tdiff = ($tdiff - $minutes)/60;
 my $hours = $tdiff % 24;
 </%perl>
@@ -40,7 +41,7 @@ my $hours = $tdiff % 24;
 <td><% $author %> </td>
 <td><% datetime_from_SQL($timetrackentry->time_start) %></td>
 <td><% datetime_from_SQL($timetrackentry->time_end) %></td>
-<td><% $hours.':'.$minutes %></td>
+<td><% sprintf("%.2d", $hours).':'.sprintf("%.2d", $minutes) %></td>
 <td><% $timetrackentry->ip_start %></td>
 <td><% $timetrackentry->ip_end %></td>
 <td>
