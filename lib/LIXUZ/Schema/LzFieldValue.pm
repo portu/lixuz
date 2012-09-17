@@ -111,8 +111,9 @@ __PACKAGE__->belongs_to('field' => 'LIXUZ::Schema::LzField','field_id');
 use Moose;
 with 'LIXUZ::Role::Serializable';
 
-sub value
+around 'value' => sub
 {
+    my $orig = shift;
     my $self = shift;
     if (@_)
     {
@@ -122,7 +123,7 @@ sub value
     {
         return $self->get_column( $self->field->storage_type );
     }
-}
+};
 
 sub human_value
 {
