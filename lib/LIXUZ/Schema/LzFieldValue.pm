@@ -37,6 +37,11 @@ __PACKAGE__->table("lz_field_value");
   data_type: 'text'
   is_nullable: 1
 
+=head2 dt_value
+
+  data_type: 'datetime'
+  is_nullable: 1
+
 =head2 module_name
 
   data_type: 'enum'
@@ -58,6 +63,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_nullable => 0 },
   "value",
   { data_type => "text", is_nullable => 1 },
+  "dt_value",
+  { data_type => "datetime", is_nullable => 1 },
   "module_name",
   {
     data_type => "enum",
@@ -80,8 +87,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("field_id", "module_id", "revision");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-12 12:51:38
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:VDegquZqC0Dz6I4q0UQQ0w
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-09-17 11:54:40
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:KJTseKaS13xYFg0bpcGExg
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012
@@ -103,6 +110,19 @@ __PACKAGE__->belongs_to('field' => 'LIXUZ::Schema::LzField','field_id');
 
 use Moose;
 with 'LIXUZ::Role::Serializable';
+
+sub value
+{
+    my $self = shift;
+    if (@_)
+    {
+        return $self->set_column( $self->field->storage_type, @_ );
+    }
+    else
+    {
+        return $self->get_column( $self->field->storage_type );
+    }
+}
 
 sub human_value
 {

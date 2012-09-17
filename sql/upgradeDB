@@ -433,6 +433,10 @@ sub upgradeData
         {
             upgradeACL($c);
         }
+        if ($flags{fieldValToDatetime})
+        {
+            convertFieldValToDatetime($c);
+        }
         silent
         {
             mysql_exec('DROP TABLE lz_workflow_change');
@@ -801,6 +805,16 @@ sub detectFlags
         }
     };
     print '.';
+    # Check if we need to migrate datetimes on lz_field_value's
+    silent
+    {
+        $rawDBH->do('SELECT dt_value FROM lz_field_value LIMIT 1');
+        if ($DBI::errstr)
+        {
+            $flags{fieldValToDatetime} = 1;
+        }
+    };
+    print '.';
     # Force an upgrade of file class perms if db rev is < 4
     if ($currentDBRevision < 4)
     {
@@ -1016,6 +1030,37 @@ sub upgradeFileClassPerms
         my $new = $c->model('LIXUZDB::LzRoleAction')->find_or_create({ action_id => $newAction->action_id, role_id => $r->role_id });
         $new->set_column('allowed',1);
         $new->update();
+    }
+}
+sub convertFieldValToDatetime
+{
+    my $c = shift;
+    my $fields = $c->model('LIXUZDB::LzField')->search({ field_type => { IN => [ 'datetime', 'date' ] } });
+    my $no = 0;
+    while(my $field = $fields->next)
+    {
+        my $values = $c->model('LIXUZDB::LzFieldValue')->search({ field_id => $field->id, value => \'IS NOT NULL', dt_value => \'IS NULL' });
+        while(my $value = $values->next)
+        {
+            my $val = $value->get_column('value');
+            if ($val =~ /^\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d$/)
+            {
+                $value->set_column('dt_value',$val);
+                $value->set_column('value',undef);
+                $value->update;
+
+                $no++;
+                if ($no > 25)
+                {
+                    print '.';
+                    $no = 0;
+                }
+            }
+            else
+            {
+                warn('WARNING: LzFieldValue '.join('|',$value->id).' contains invalid datetime: '.$value->get_column('value').'. Unable to migrate'."\n");
+            }
+        }
     }
 }
 

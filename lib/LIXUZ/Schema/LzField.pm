@@ -218,7 +218,6 @@ sub can_render_for
     }
 }
 
-
 sub human_field_name
 {
     my($self, $c) = @_;
@@ -249,6 +248,16 @@ sub human_field_name
     {
         return $i18n->get('Unknown');
     }    
+}
+
+sub storage_type
+{
+    my $self = shift;
+    if ($self->field_type eq 'datetime' || $self->field_type eq 'date')
+    {
+        return 'dt_value';
+    }
+    return 'value';
 }
 
 __PACKAGE__->has_many('modules' => 'LIXUZ::Schema::LzFieldModule','field_id');
