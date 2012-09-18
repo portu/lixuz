@@ -32,6 +32,7 @@ use constant (
     false => 0
 );
 my $lixuzDir = realpath(dirname(realpath($0)).'/../');
+unshift(@INC,$lixuzDir.'/lib');
 my @pluginMetaFiles = qw(plugin.yml triggers.pl COPYING README);
 
 main();
@@ -367,7 +368,7 @@ sub runPackageTrigger
     if (-e $file)
     {
         my $ns = ($package =~ s/-//g);
-        $ns = 'CtlTriggers::'.$package.'::r'.time;
+        $ns = 'CtlTriggers::'.$package.'::r'.time.'::'.int(rand(9999999));
         try
         {
             eval('package '.$ns.';'.slurp($file).'; if ($triggers->{"'.$trigger.'"}) { $triggers->{"'.$trigger.'"}->(); };1;') or die($@);
