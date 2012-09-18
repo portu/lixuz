@@ -355,7 +355,15 @@ sub runPackageTrigger
     my $package = shift;
     my $trigger = shift;
 
-    my $file = $lixuzDir.'/.pluginMeta/'.$package.'/triggers.pl';
+    my $file;
+    if ($trigger eq 'build')
+    {
+        $file = shift;
+    }
+    else
+    {
+        $file = $lixuzDir.'/.pluginMeta/'.$package.'/triggers.pl';
+    }
     if (-e $file)
     {
         my $ns = ($package =~ s/-//g);
@@ -380,7 +388,9 @@ sub buildPackage
 {
     my $mode = shift;
     my $srcdir = shift;
+    $srcdir //= '.';
 
+    print 'Performing package sanity checks...';
     my $target = '.';
     if (! -w '.' && -w $srcdir)
     {
@@ -407,7 +417,15 @@ sub buildPackage
         }
     }
 
-    my $fname = lc($meta->{name}).'-'.$meta->{version}.'.lpp';
+    print 'done'."\n";
+
+    print 'Running build triggers...';
+    my $pluginName = getPluginSystemName($meta);
+    runPackageTrigger($pluginName,'build',$srcdir.'/triggers.pl');
+    print 'done'."\n";
+
+    print 'Constructing package...';
+    my $fname = $pluginName.'-'.$meta->{version}.'.lpp';
     $fname =~ s/\s+/-/g;
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-buildpkg.XXXXXXX');
@@ -432,6 +450,7 @@ sub buildPackage
             wanted => sub
             {
                 my $path = substr($_,length($srcdir));
+                return if /(\.swp|~)$/;
                 if (-d $_)
                 {
                     mkpath($dir.'/'.$path);
@@ -445,6 +464,7 @@ sub buildPackage
     my $targetFile = $target.'/'.$fname;
     $targetFile =~ s{/+}{/}g;
     system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzplugin');
+    print 'done'."\n";
     print 'Wrote package to '.realpath($targetFile)."\n";
     return realpath($targetFile);
 }
@@ -481,6 +501,16 @@ sub reconstructPackage
 # Package management functions
 # ---
 
+# Purpose: Generate a "system name" (normalized name) from a package meta-file
+sub getPluginSystemName
+{
+    my $meta = shift;
+    my $pluginName = $meta->{name};
+    $pluginName =~ s/ /-/g;
+    $pluginName = lc($pluginName);
+    return $pluginName;
+}
+
 # Purpose: Installs or upgrades a Lixuz plugin package
 sub installPackage
 {
@@ -498,9 +528,7 @@ sub installPackage
     $dir = $dir.'/lzplugin/';
 
     my $pluginMeta = readYML($dir.'/plugin.yml');
-    my $pluginName = $pluginMeta->{name};
-    $pluginName =~ s/ /-/g;
-    $pluginName = lc($pluginName);
+    my $pluginName = getPluginSystemName($pluginMeta);
     $| = 1;
     if($mode eq 'install' && defined $meta->{plugins}->{$pluginName})
     {
