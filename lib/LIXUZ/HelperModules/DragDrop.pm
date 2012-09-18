@@ -27,7 +27,6 @@
 # });
 # my $html = $dnd->get_html();
 # add_jsIncl($c,$dnd->get_jsfiles());
-# add_cssIncl($c,$dnd->get_cssfiles());
 # 
 # If you want to be able to drag+drop things /into/ folders:
 # $c->stash->{jsOnLoad} = $dnd->get_jsonload();
