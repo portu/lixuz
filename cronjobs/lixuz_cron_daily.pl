@@ -279,16 +279,16 @@ tryRun
 {
     die('SUB_SKIPPED') if $onlyIndex;
     title('stop timetracker');
-    my $timeentries = $dbh->selectall_arrayref('SELECT time_id,time_start,last_seen,tt_status,TIMESTAMPDIFF(MINUTE,time_start,CURRENT_TIMESTAMP) as mindiff FROM lz_time_entry where tt_status = 1');
+    my $timeentries = $dbh->selectall_arrayref('SELECT time_id,DATE(time_start), last_seen,tt_status,TIMESTAMPDIFF(MINUTE,time_start,CURRENT_TIMESTAMP) as time_start_diff from lz_time_entry where tt_status = 1 AND DATE(time_start) = DATE(DATE_SUB(NOW(),INTERVAL 1 DAY))  AND (last_seen = "0000-00-00 00:00:00" OR TIMESTAMPDIFF(MINUTE,last_seen,CURRENT_TIMESTAMP) > 15) ');
     foreach my $timeentry (@{$timeentries})
     {
         my $time_id = $timeentry->[0];
         my $start_time = $timeentry->[1];
-        my $last_seen = $timeentry->[2];
-        my $mindiff = $timeentry->[4];
-        if ($mindiff > 15 )
+        my $midnight_date_time = $start_time.' '.'23:59:59';
+        my $start_time_diff = $timeentry->[4];
+        if ($start_time_diff > 15)
         {
-            $dbh->do("update lz_time_entry set time_end ='".$last_seen."', tt_status = 0 where time_id=".$time_id);
+            $dbh->do("update lz_time_entry set time_end = '".$midnight_date_time."', tt_status = 0 where time_id=".$time_id);
         }
 
     }
