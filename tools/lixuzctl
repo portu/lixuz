@@ -263,10 +263,10 @@ sub plugins
 
     given($subcommand)
     {
-        when('buildmonitor')
+        when('watch')
         {
             my $dir = shift // '.';
-            print 'Monitoring '.$dir.' for changes'."\n";
+            print 'Watching '.$dir.' for changes'."\n";
             while(1)
             {
                 if(system(qw(inotifywait -q -q -e modify -e create -e delete -e moved_to),'--excludei','\.(ipp|swp)$','--excludei','~$','-r',$dir.'/') != 0)
@@ -344,7 +344,7 @@ sub usagePlugins
     printHelp('','upgrade X','Upgrade a plugin using the package located at X');
     printHelp('','build X?','Build a plugin package using data at X (where X defaults to ./)');
     printHelp('','buildinstall X','Runs build X, and then installs the package generated');
-    printHelp('','buildmonitor X','Runs buildinstall X whenever a file in the plugins subdirectory changes');
+    printHelp('','watch X','Runs buildinstall X whenever a file in the plugins subdirectory changes');
     printHelp('','reconstruct X Y','Reconstruct a plugin package from an installed plugin (X), saving the package to Y');
     exit(shift);
 }
