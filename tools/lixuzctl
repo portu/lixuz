@@ -60,6 +60,11 @@ sub main
             database();
         }
 
+        when('plumbing')
+        {
+            plumbing();
+        }
+
         default
         {
             die('Unknown command: '.$action."\nSee --help for more information\n");
@@ -133,6 +138,7 @@ sub usage
     print "Available categories:\n";
     printHelp('','plugins','Plugin actions (install, remove, upgrade, list etc.)');
     printHelp('','database','Database actions (upgrade)');
+    printHelp('','plumbing','Plumbing actions, used internally by Lixuz (not meant for public use)');
     print "\n";
     print "Run: \"lixuzctl [category] --help\" for a list of subcommands and parameters\n";
     print "for that category\n";
@@ -321,9 +327,11 @@ sub plugins
 
         when('reconstruct')
         {
-            foreach (@ARGV)
+            while(@ARGV)
             {
-                reconstructPackage($_);
+                my $package = shift(@ARGV);
+                my $targetDir = shift(@ARGV);
+                reconstructPackage($package,$targetDir);
             }
         }
 
@@ -390,16 +398,19 @@ sub buildPackage
     my $mode = shift;
     my $srcdir = shift;
     $srcdir //= '.';
+    my $target = shift;
+    $target //= '.';
+    my $disableTriggers = shift;
 
     print 'Performing package sanity checks...';
-    my $target = '.';
-    if (! -w '.' && -w $srcdir)
+    if (! -w $target && -w $srcdir)
     {
-        warn('./ is not writeable, saving package to '.$srcdir."\n");
+        warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
+        $target = $srcdir;
     }
-    elsif(! -w '.')
+    elsif(! -w $target)
     {
-        die('Neither ./ or '.$srcdir.' is writeable, giving up'."\n");
+        die('Neither '.$target.'/ or '.$srcdir.' is writeable, giving up'."\n");
     }
 
     if (! -e $srcdir.'/plugin.yml')
@@ -418,12 +429,15 @@ sub buildPackage
         }
     }
 
+    my $pluginName = getPluginSystemName($meta);
     print 'done'."\n";
 
-    print 'Running build triggers...';
-    my $pluginName = getPluginSystemName($meta);
-    runPackageTrigger($pluginName,'build',$srcdir.'/triggers.pl');
-    print 'done'."\n";
+    if (!$disableTriggers)
+    {
+        print 'Running build triggers...';
+        runPackageTrigger($pluginName,'build',$srcdir.'/triggers.pl');
+        print 'done'."\n";
+    }
 
     print 'Constructing package...';
     my $fname = $pluginName.'-'.$meta->{version}.'.lpp';
@@ -474,6 +488,7 @@ sub buildPackage
 sub reconstructPackage
 {
     my $pluginName = shift;
+    my $targetDir = shift;
     my $meta = loadMetaFile();
 
     if(! $meta->{plugins}->{$pluginName})
@@ -495,7 +510,7 @@ sub reconstructPackage
         copy($lixuzDir.'/'.$file,$dir.'/plugin');
     }
 
-    buildPackage('reconstruct',$dir);
+    buildPackage('reconstruct',$dir,$targetDir,1);
 }
 
 # ---
@@ -546,10 +561,14 @@ sub installPackage
     {
         $action = 'Upgrading';
     }
+    elsif($mode eq 'reinject')
+    {
+        $action = 'Re-injecting';
+    }
     print $action.' '.$pluginMeta->{name}.' '.$pluginMeta->{version}.' ['.basename($package).']...';
     my @copy;
     my %upgradeMap;
-    if ($mode eq 'upgrade')
+    if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
         foreach my $file (@{ $meta->{plugins}->{$pluginName}->{files} })
         {
@@ -571,7 +590,10 @@ sub installPackage
                         {
                             die("failed\n".$path.': already exists in Lixuz tree and does not belong to this plugin.'."\n".'Refusing to overwrite.'."\n");
                         }
-                        die("failed\n".$path.': already exists in Lixuz tree. Refusing to overwrite.'."\n");
+                        elsif($mode ne 'reinject')
+                        {
+                            die("failed\n".$path.': already exists in Lixuz tree. Refusing to overwrite.'."\n");
+                        }
                     }
                     delete($upgradeMap{$path});
                     push(@copy,$path);
@@ -587,7 +609,7 @@ sub installPackage
     print '.';
     my @metaFiles;
     mkpath($lixuzDir.'/.pluginMeta/'.$pluginName);
-    if ($mode eq 'upgrade')
+    if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
         print '.';
         foreach my $oldFile (keys %upgradeMap)
@@ -608,7 +630,7 @@ sub installPackage
             copy($dir.'/'.$copy,$lixuzDir.'/.pluginMeta/'.$pluginName);
         }
     }
-    if ($mode eq 'upgrade')
+    if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
         print '.';
         foreach my $oldFile (keys %upgradeMap)
@@ -657,7 +679,11 @@ sub installPackage
         $meta->{plugins}->{$pluginName}->{installed} = time;
         runPackageTrigger($pluginName,'install');
     }
-    else
+    elsif ($action eq 'reinject')
+    {
+        runPackageTrigger($pluginName,'lixuzUpgrade');
+    }
+    elsif($action eq 'upgrade')
     {
         runPackageTrigger($pluginName,'upgrade');
     }
@@ -704,4 +730,78 @@ sub listPackages
     {
         printf($fmt,$p,$meta->{plugins}->{$p}->{meta}->{version});
     }
+}
+
+# ---
+# Plumbing functions
+# ---
+# Purpose: Handler for plumbing-section subcommands
+sub plumbing
+{
+    my $subcommand = shift(@ARGV);
+
+    # These are used internally, for enforcing an api compatibility layer if
+    # required
+    if (defined($subcommand) && $subcommand =~ s/^v(\d+)/$1/)
+    {
+        if (int($subcommand) > 1)
+        {
+            die('ERROR: UNKNOWN API LEVEL: '.$subcommand."\n");
+        }
+        $subcommand = shift(@ARGV);
+    }
+    elsif(defined($subcommand) && $subcommand eq 'getlevel')
+    {
+        print "1\n";
+        exit(0);
+    }
+
+    if (!defined $subcommand || $subcommand eq '--help' || $subcommand eq '-h')
+    {
+        usagePlumbing(0);
+    }
+
+    given($subcommand)
+    {
+
+        when('packup')
+        {
+            my $dir = shift(@ARGV);
+            my $meta = loadMetaFile();
+            foreach my $p (keys %{$meta->{plugins}})
+            {
+                system($0,'plugins','reconstruct',$p,$dir);
+            }
+        }
+        when('reinject')
+        {
+            foreach my $pkg (@ARGV)
+            {
+                if (-e $pkg)
+                {
+                    installPackage('reinject',$pkg);
+                }
+            }
+        }
+
+        default
+        {
+            die('Unknown subcommand for plumbing: '.$subcommand."\n");
+        }
+    }
+}
+
+# Purpose: Displays usage information for plumbing subcommands
+sub usagePlumbing
+{
+    print "USAGE: lixuzctl plumbing [subcommand] [parameters]\n";
+    print "\n";
+    print "WARNING: Plumbing commands can be potentionally dangerous.\n";
+    print "Use with care.\n";
+    print "\n";
+    print "Available subcommands:\n";
+    printHelp('','packup X','Reconstruct a dump of all packages into X');
+    printHelp('','reinject X Y ..','Re-inject the packages specified into the Lixuz tree (similar to an upgrade, but runs lixuzUpgrade instead of upgrade triggers, and ignores all conflicts)');
+    printHelp('','getlevel','Output the API level supported by this version of lixuzctl');
+    exit(shift);
 }
