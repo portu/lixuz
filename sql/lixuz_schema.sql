@@ -309,6 +309,7 @@ CREATE TABLE `lz_field_value` (
   `field_id` int(11) NOT NULL,
   `module_id` int(11) NOT NULL,
   `value` text,
+  `dt_value` datetime DEFAULT NULL,
   `module_name` enum('articles','workflow','users','roles','folders','templates','files') NOT NULL,
   `revision` int(6) NOT NULL DEFAULT '1',
   PRIMARY KEY (`field_id`,`module_id`,`revision`)
@@ -852,4 +853,4 @@ CREATE TABLE `lz_workflow_comments` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-08-21 11:21:36
+-- Dump completed on 2012-09-17 11:34:28
