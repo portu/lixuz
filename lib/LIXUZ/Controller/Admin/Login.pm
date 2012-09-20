@@ -96,6 +96,7 @@ sub login : Path('/admin/login') Form('/login')
                 # User logged in, update fields
                 $c->user->update({'last_login' => \'now()'});
                 $c->stash->{username} = $form->field('user_name');
+                $c->flash->{fromloginpage} = 'FROM_LOGIN_PAGE';        
                 # Redirect if userRedirTo exists in flash
                 if ($redirectTo)
                 {

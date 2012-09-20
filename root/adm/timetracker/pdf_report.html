@@ -1,13 +1,14 @@
 <div class="TimetrackerComment">
 <table cellspacing="0" class="listView" border="1" width="100%">
         <tr>
-            <td>ID</td>
-            <td>start date</td>
-            <td>End Date</td>
-            <td>Duration</td>
-            <td>IP In</td>
-            <td>IP Out</td>
+            <td><% $i18n->get('ID') %></td>
+            <td><% $i18n->get('Start Date') %></td>
+            <td><% $i18n->get('End Date') %></td>
+            <td><% $i18n->get('Duration') %></td>
+            <td><% $i18n->get('Ip In') %> </td>
+            <td><% $i18n->get('Ip Out') %></td>
         </tr>
+%my $total_min;        
 %while(my $timetrack = $timetrackentry->next){
 <%perl>
 my $author = $timetrack->timeEntryUser->name;
@@ -23,17 +24,23 @@ $tdiff = ($tdiff - $seconds)/60;
 my $minutes = $tdiff % 60;
 $tdiff = ($tdiff - $minutes)/60;
 my $hours = $tdiff % 24;
-
+$total_min = $total_min + ($hours * 60) + $minutes;
 </%perl>
 <tr>
             <td><%$timetrack->user_id%></td>
             <td><%$timetrack->time_start%></td>
             <td><%$timetrack->time_end %></td>
-            <td><% $hours.':'.$minutes %></td>
+            <td><% sprintf("%.2d", $hours).':'.sprintf("%.2d", $minutes) %></td>
             <td><%$timetrack->ip_start %></td>
             <td><%$timetrack->ip_end %></td>
         <tr>
 %}
+<tr>
+    <td colspan="3"><% $i18n->get('Total time') %></td>
+    <td><% int($total_min/60).":".sprintf("%.2d", $total_min%60) %></td>
+    <td colspan="2">&nbsp;</td>
+</tr>
+
 </table>
 </div>
 <%args>

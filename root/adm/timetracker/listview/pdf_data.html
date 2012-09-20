@@ -29,6 +29,10 @@
     </tr>
 %$timecount++;
 %}
+<tr>
+    <td colspan="2"><% $i18n->get('Total duration') %></td>
+    <td><% int($retarray->{$ret}->{'total_min'}/60).":".sprintf("%.2d", $retarray->{$ret}->{'total_min'}%60) %> </td>
+    </tr>    
             </table>
         
         </td>

@@ -67,3 +67,4 @@ function LZDB_AssignmentAcceptFailure (data)
     }
     CURR_LZDB_ID = null;
 }
+
