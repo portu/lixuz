@@ -308,6 +308,11 @@ sub get_groups : Private
                     '/articles/trash/restore',
                 ],
             },
+            $i18n->get('Set permissions on folders/objects for roles/users') => {
+                paths => [
+                    '/services/setperm',
+                ]
+            },
         },
         $i18n->get('Manage categories') => {
             paths => [ 
