@@ -67,7 +67,7 @@ function LZWF_AssignmentAccepted (data)
  */
 function LZWF_AssignmentAcceptFailure (data)
 {
-    var error = LZ_JSON_GetErrorInfo(data,null);
+    var error = XHR.getErrorInfo(data,null);
     if(error == 'DENIED')
     {
         $('LZWorkflowAcceptButton').html(i18n.get('You were denied access to accepting this assignment'));
@@ -85,7 +85,8 @@ function LZWF_AssignmentAcceptFailure (data)
  * ***********************
  */
 
-window.onbeforeunload = function () {
+$.subscribe('/lixuz/beforeunload', function (messages)
+{
     try {
         if(changedSince === undefined)
         {
@@ -94,6 +95,6 @@ window.onbeforeunload = function () {
     } catch(e) { return; }
     if (changedSince('save') && $('#lz_artid_value').length)
     {
-        return i18n.get('You have unsaved changes. If you move away from this page, those changes will be lost.');
+        messages.push(i18n.get('You have unsaved changes. If you move away from this page, those changes will be lost.'));
     }
-};
+});

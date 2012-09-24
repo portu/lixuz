@@ -38,8 +38,6 @@ sub default : Path('/admin/files/imgedit') Local Args
     add_jsIncl($c,'files.js');
     add_jsOnLoad($c,'initCrop');
     add_CDNload($c,'YUI');
-    # We need toe YUI sam skin
-    add_cssIncl($c,'yui/sam-skin.css');
     # Body class
     add_bodyClass($c,'yui-skin-sam');
 

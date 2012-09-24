@@ -220,7 +220,6 @@ sub index : Path Args(0) Form('/core/search')
         }
         $c->stash->{dragdrop} = $dnd->get_html();
         add_jsIncl($c,$dnd->get_jsfiles());
-        add_cssIncl($c,$dnd->get_cssfiles());
         $self->init_searchFilters($c);
     }
 }
@@ -957,7 +956,6 @@ sub buildform: Private
     add_globalJSVar($c,'pollServer_interval_pageDefault',180000);
     # Folders
 	add_jsIncl($c,$dnd->get_jsfiles());
-	add_cssIncl($c,$dnd->get_cssfiles());
     add_globalJSVar($c,'hilightedFoldersSeed','[]');
 }
 

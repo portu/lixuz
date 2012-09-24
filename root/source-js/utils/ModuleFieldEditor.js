@@ -74,7 +74,7 @@ function LZ_FieldEditFormReply (data)
 
 function LZ_FieldEditFormError (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     if(error == 'FOLDER_NOT_FOUND')
     {
         userMessage(i18n.get('The folder associated with this article was not found, you need to set a new folder'));

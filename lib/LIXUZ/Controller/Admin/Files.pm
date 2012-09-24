@@ -88,7 +88,6 @@ sub index : Path Args(0) Form('/core/search')
         $c->stash->{dragdrop} = $dnd->get_html();
         add_jsIncl($c,$dnd->get_jsfiles());
         add_jsIncl($c,'utils.js','files.js');
-        add_cssIncl($c,$dnd->get_cssfiles());
         #add_jsOnLoad($c,@{$dnd->get_onload()}); # FIXME
         $c->stash->{pageTitle} = $c->stash->{i18n}->get('Files');
         $self->init_searchFilters($c);

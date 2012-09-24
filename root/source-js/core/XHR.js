@@ -270,3 +270,6 @@ var XHR = {
         },
     }
 };
+
+// Lixuz uses "traditional" request parameters
+jQuery.ajaxSettings.traditional = true;

@@ -15,13 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </%perl>
-%# TODO: noFolderList might not be the most useful name for this var as it hides more than folders
 <div>
-%if(not $noFolderList) {
+%if(not $noCreateAction) {
 <div class="buttonHolder"><a href="#" onclick="LZ_NewArticle(); return false"><img src="/static/images/icons/article-create.png" border="0" align="left" />&nbsp;<%$i18n->get('New Article')%></a></div>
 %}
 <div class="buttonHolder"><a href="/admin/articles/trash"><img src="/static/images/icons/trash.png" border="0" align="left" />&nbsp;<%$i18n->get('Trash') %> (<% $trashCount %>)</a></div>
-%if(not $noFolderList) {
+%if(not $noFolderActions) {
 <div style="height:16px; clear:both;">&nbsp;</div>
 <div class="buttonHolder"><a href="#" onclick="$(this).parent().hide(); $('#folderActionsHolder').fadeIn(); return false;"><img src="/static/images/icons/folder.png" border="0" align="left" alt="" /> <% $i18n->get('Folder actions') |n %></a></div>
 <div id="folderActionsHolder" style="display:none;">
@@ -43,7 +42,8 @@
 %}
 
 <%args>
-$noFolderList => 0
+$noFolderActions => 0
+$noCreateAction => 0
 $dragdrop => undef
 $i18n
 </%args>

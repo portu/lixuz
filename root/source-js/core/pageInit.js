@@ -22,16 +22,6 @@
 {
     $(function()
     {
-        // Initialize polling if available
-        try
-        {
-            if(pollServer_init !== undefined)
-                pollServer_init();
-        }
-        catch(e)
-        {
-            lzException(e);
-        };
 
         // Activate chosen
         $('.enableChosen').chosen();
@@ -83,6 +73,9 @@
         $('.useTipsy').tipsy({ gravity: 'ne' });
         $('.useTipsyW').tipsy({ gravity: 'nw' });
 
+        // Hide initially-hidden entries
+        $('.initiallyHidden').hide().removeClass('initiallyHidden');
+
         // Page initialization that should run after everything else
         // (setTimeout pushes it to the end of the call stack)
         setTimeout(function ()
@@ -93,5 +86,10 @@
             $('.useTipsy').tipsy({ gravity: 'ne', live: true });
             $('.useTipsyW').tipsy({ gravity: 'nw', live: true });
         }, 1);
+        $LAB.onLoaded(function()
+        {
+            // Publish an initialization event
+            $.publish('/lixuz/init');
+        });
     });
 })(jQuery);

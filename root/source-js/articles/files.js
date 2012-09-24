@@ -133,20 +133,6 @@ function LZ_FileSpotOK ()
     destroy();
 }
 
-function LZ_RetrieveSpots (spotType,onDone)
-{
-    deprecated();
-    if(onDone == null)
-        onDone = LZ_RetrievedSpots;
-    articleFiles.retrieveFileSpots(spotType,onDone);
-}
-
-function LZ_RetrievedSpots  (data)
-{
-    deprecated();
-    LZ_ArtFilePrompt(currFileUID,currFileType,data['/admin/services/templateInfo'].spots,data['/admin/articles/JSON/getTakenFileSpots'].taken);
-}
-
 /*
  * *************
  * Article <-> Files
@@ -176,9 +162,10 @@ function LZ_addThisFileToArticle (fileIds)
     XHR.GET('/admin/articles/ajax?wants=fileInfo'+files,articleFiles.addTheseFiles);
 }
 
-// Toggle the files section closed/open
-function LZ_toggleFilesSection ()
+// Toggle handler
+$.subscribe('/articles/toggleSection/files',function(evData)
 {
+    evData.handled = true;
     var toggler = function()
     {
         $("#files_slider_inner").slideToggle(null,function()
@@ -189,7 +176,7 @@ function LZ_toggleFilesSection ()
     if(articleFiles.imageSpots.length == 0)
     {
         showPI(i18n.get('Retrieving file spots'));
-        LZ_RetrieveSpots('image',function (data)
+        articleFiles.retrieveFileSpots('image',function (data)
         {
             articleFiles.imageSpots = data['/admin/services/templateInfo'].spots;
             articleFiles.buildFileList();
@@ -201,4 +188,4 @@ function LZ_toggleFilesSection ()
     {
         toggler();
     }
-}
+});

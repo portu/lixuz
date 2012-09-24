@@ -92,3 +92,10 @@ function LZ_GetSecondaryFoldersParams ()
     catch(e){}
     return null;
 }
+
+// Handle toggleSection events
+$.subscribe('/articles/toggleSection/secondaryFolders',function(evData)
+{
+    evData.handled = true;
+    LZ_toggleSecondaryFolders();
+});

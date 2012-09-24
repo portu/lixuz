@@ -22,7 +22,8 @@ use Config::Any;
 use FindBin;
 use Cwd qw(realpath);
 use Test::MockClass;
-our @EXPORT_OK = qw(fakeC getConfig getLixuzRoot mockC);
+use LIXUZ::Schema;
+our @EXPORT_OK = qw(fakeC getConfig getLixuzRoot mockC getDBIC);
 
 my ($root,$conf);
 
@@ -112,6 +113,12 @@ sub getConfig
     my $confloader = Config::Any->load_files({ files => [ $confFile ], use_ext => 1 });
     $conf = $confloader->[0]->{$confFile};
     return $conf;
+}
+
+sub getDBIC
+{
+    my $config = getConfig();
+    return LIXUZ::Schema->connect( $config->{'Model::LIXUZDB'}->{connect_info} );
 }
 
 1;

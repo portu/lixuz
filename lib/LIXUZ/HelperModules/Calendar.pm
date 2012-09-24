@@ -158,7 +158,6 @@ sub create_calendar
 
 	# Includes
 	add_jsIncl($c,'jscalendar.lib.js');
-	add_cssIncl($c,'widgets/jscalendar.css');
 
 	my $html = '<input type="text" size="65" id="'.$id.'" name="'.$id.'" value="'.$value.'"';
     if ($params->{disabled})
