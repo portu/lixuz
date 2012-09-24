@@ -722,16 +722,16 @@ sub installPackage
     $meta->{plugins}->{$pluginName}->{files} = \@copy;
     $meta->{plugins}->{$pluginName}->{metaFiles} = \@metaFiles;
     $meta->{plugins}->{$pluginName}->{lastModified} = time;
-    if ($action eq 'install')
+    if ($mode eq 'install')
     {
         $meta->{plugins}->{$pluginName}->{installed} = time;
         runPackageTrigger($pluginName,'install');
     }
-    elsif ($action eq 'reinject')
+    elsif ($mode eq 'reinject')
     {
         runPackageTrigger($pluginName,'lixuzUpgrade');
     }
-    elsif($action eq 'upgrade')
+    elsif($mode eq 'upgrade')
     {
         runPackageTrigger($pluginName,'upgrade');
     }
