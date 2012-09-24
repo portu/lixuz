@@ -16,7 +16,11 @@ packages/
 root/livedata
 lib/LIXUZ/Controller/SiteHacks.pm
 lib/LIXUZ/Controller/SiteHacks/
+.lixuzctl.data
+.pluginMeta
 
+# Lixuz plugin packages
+*.lpp
 # Built JS files
 root/js
 # Built CSS

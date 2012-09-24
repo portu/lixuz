@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </%perl>
 <div>
-%if(not $noFolderActions) {
+%if(not $noCreateAction) {
 <div class="buttonHolder"><a href="#" onclick="LZ_NewArticle(); return false"><img src="/static/images/icons/article-create.png" border="0" align="left" />&nbsp;<%$i18n->get('New Article')%></a></div>
 %}
 <div class="buttonHolder"><a href="/admin/articles/trash"><img src="/static/images/icons/trash.png" border="0" align="left" />&nbsp;<%$i18n->get('Trash') %> (<% $trashCount %>)</a></div>
@@ -43,6 +43,7 @@
 
 <%args>
 $noFolderActions => 0
+$noCreateAction => 0
 $dragdrop => undef
 $i18n
 </%args>

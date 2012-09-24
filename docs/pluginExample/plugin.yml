@@ -1,0 +1,5 @@
+name: Hello World
+version: 0.1
+apiversion: 1
+description: A simple hello-world example plugin
+license: GPLv3

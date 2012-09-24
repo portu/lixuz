@@ -83,11 +83,30 @@ sub main
     {
         dualPrint("Upgrading $installTarget from Lixuz version $oldVer to $newVer\n");
     }
+    my $packup = getTempDir(undef,'Plugin packup directory');
+    if (-x $installTarget.'/tools/lixuzctl')
+    {
+        print 'Packing up plugins...';
+        system($installTarget.'/tools/lixuzctl',qw(plumbing v1 packup),$packup);
+        print "done\n";
+        logAction('Packed up plugins');
+    }
+    else
+    {
+        dualPrint('(upgrading from pluginless Lixuz, skipping plugin tasks)'."\n");
+        $packup = undef;
+    }
     createMergeDirectory($dataLocation,$tempDir);
     mergeData($tempDir,$dataTarget);
     backupOldData($dataTarget);
     installNewData($tempDir,$dataTarget);
     upgradeConfig($dataTarget);
+    if ($packup)
+    {
+        print 'Re-injecting plugins...';
+        system($installTarget.'/tools/lixuzctl',qw(plumbing v1 reinject),glob($packup.'/*.lpp'));
+        print "done\n";
+    }
     dualPrint("All is done and appears to have gone well.\n\n");
     dualPrint("Note that you may need to upgrade the database. The recommended way to do this\n");
     dualPrint("is to stop the FastCGI instance, run the sql/upgradeDB script from the installed\n");

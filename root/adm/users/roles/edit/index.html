@@ -14,15 +14,17 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+my $paths = {};
 </%perl>
 <div id="form_edit">
 
 %if($message) {
-<% $message |n%>
+<% $message |n %>
 %}
 <form>
 %if(defined $role_id) {
-<input type="hidden" id="role_id" value="<%$role_id%>" />
+<input type="hidden" id="role_id" value="<%$role_id %>" />
 %}
 
 <div class="label role_name">
@@ -45,7 +47,23 @@
 <br />
 <b>Access rights:</b><br />
 
-<& renderPart.html, currPart => $groups, %ARGS &>
+<& renderPart.html, currPart => $groups, paths => $paths, %ARGS &>
+<%perl>
+my $entries = $c->model('LIXUZDB::LzAction');
+my %extra;
+while(my $e = $entries->next)
+{
+    if(! $paths->{ $e->action_path })
+    {
+        $extra{$e->action_path} = { paths => [ $e->action_path ] };
+    }
+}
+if (%extra)
+{
+</%perl>
+<br /><b><% $i18n->get('Additional rights (ie. from plugins)') |n %></b><br />
+<& renderPart.html, currPart => \%extra, paths => { }, %ARGS&>
+%}
 
 <br/><br/>
 <div class="submit"><input id="lixuz_roleEdit_submit" name="_submit" onclick="submitRoleData(); return false;" type="button" value="Save changes" /></div>

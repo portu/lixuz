@@ -38,6 +38,7 @@ foreach my $e (sort keys %{$part})
     {
         foreach my $p(@paths)
         {
+            $paths->{$p} = 1;
             if(not $hasAccessTo->{$p})
             {
                 $checked = '';
@@ -51,7 +52,7 @@ foreach my $e (sort keys %{$part})
     my $checkedBool = ($checked ? 1 : 0);
     my $super = $value eq 'SUPER_USER' ? 1 : 0;
 </%perl>
-<input type="checkbox" <% $super ? 'id="SUPER_USER"' : '' |n %>childLabel="<%$childId%>" isPermCheckbox="true" name="<% $value %>"<%$checked|n%><%$disabled|n%> parent="<%$parent%>" onchange="recalculateCheckedBoxes(this);" />
+<input type="checkbox" <% $super ? 'id="SUPER_USER"' : '' |n %>childLabel="<%$childId%>" isPermCheckbox="true" name="<% $value %>"<%$checked|n%><%$disabled|n %> parent="<%$parent%>" onchange="recalculateCheckedBoxes(this);" />
 <span id="<%$childId%>">
 <% $parentChecked ? '' : '<i>' |n %>
 <% $super ? '<b>' : '' |n %>
@@ -60,12 +61,13 @@ foreach my $e (sort keys %{$part})
 <% $parentChecked ? '' : '</i>' |n %>
 </span>
 <br />
-<& renderPart.html, currPart => $part->{$e}, currLevel => $nextLevel, hasAccessTo => $hasAccessTo, parentChecked => $checkedBool, parent => $value &>
+<& renderPart.html, currPart => $part->{$e}, currLevel => $nextLevel, hasAccessTo => $hasAccessTo, parentChecked => $checkedBool, parent => $value, paths => $paths &>
 %} # foreach my $e ...
 <%args>
 $currPart
 $currLevel => 0
 $parentChecked => 1
 $hasAccessTo
+$paths
 $parent => ''
 </%args>

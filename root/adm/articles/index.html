@@ -20,11 +20,12 @@
         <td class="left"><& left.html, %ARGS &></td>
 	<td class="main">
 	    <table>
-	        <tr>
-		    <td class="menu"><& menu.html, %ARGS &></td>
-		    <td class="filter">&nbsp;</td>
-		    <td class="search"><& ../core/searchAndFilter.html, %ARGS &></td>
-		</tr>
+            <& ../core/pluginIncludes.html, relPath => '../articles/', glob => 'artList-*.plugin.html', %ARGS &>
+            <tr>
+                <td class="menu"><& menu.html, %ARGS &></td>
+                <td class="filter">&nbsp;</td>
+                <td class="search"><& ../core/searchAndFilter.html, %ARGS &></td>
+            </tr>
 	        <tr>
 		    <td colspan="3" class="list"><& list.html, %ARGS &></td>
 		</tr>

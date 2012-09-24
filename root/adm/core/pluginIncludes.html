@@ -14,5 +14,22 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+use File::Basename qw(basename);
+my $current = $m->callers(1)->source_dir;
+my @pluginIncludes = glob($current.'/'.$glob);
+
+delete($ARGS{relPath});
+delete($ARGS{glob});
+
+foreach my $i (@pluginIncludes)
+{
+    if (-e $i)
+    {
+        $m->comp($relPath.'/'.basename($i),%ARGS);
+    }
+}
 </%perl>
-<& ../core/pluginIncludes.html, relPath => '../articles/', glob => 'menu-*.plugin.html', %ARGS &>
+<%args>
+$relPath
+$glob
+</%args>
