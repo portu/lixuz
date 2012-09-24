@@ -1,0 +1,38 @@
+<%perl>
+if ($c->user->can_access('/admin/articles/calendarview'))
+{
+    my $artSelected = '';
+    my $calSelected = '';
+    if($c->req->uri =~ /calendarview/)
+    {
+        $calSelected = 'checked="checked"';
+    }
+    else
+    {
+        $artSelected = 'checked="checked"';
+    }
+</%perl>
+<tr>
+    <td colspan="3">
+        <div id="aViewSelector">
+            <input <% $artSelected |n %> data-href="/admin/articles" type="radio" id="aListView" name="radio" /><label for="aListView">List view</label>
+            <input <% $calSelected |n %> data-href="/admin/articles/calendarview" type="radio" id="aCalView" name="radio" /><label for="aCalView">Calendar view</label>
+        </div>
+    </td>
+</tr>
+<script type="text/javascript">
+$LAB.onLoaded(function ()
+{
+    var $aViewSelector = $('#aViewSelector');
+    $aViewSelector.buttonset();
+    $aViewSelector.change(function ()
+    {
+        var href = $aViewSelector.find(':checked').data('href');
+        if(window.location != href)
+        {
+            window.location = href;
+        }
+    });
+});
+%}
+</script>

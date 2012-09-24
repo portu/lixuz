@@ -1,0 +1,157 @@
+<%perl>
+my $current = DateTime->new(month => $month, year => $year, day => 1);
+while($current->day_of_week != 1)
+{
+	$current = $current->subtract(days => 1);
+}
+my $today = DateTime->today->ymd;
+my @months = (
+        $i18n->get('January'),
+        $i18n->get('February'),
+        $i18n->get('March'),
+        $i18n->get('April'),
+        $i18n->get('May'),
+        $i18n->get('June'),
+        $i18n->get('July'),
+        $i18n->get('August'),
+        $i18n->get('September'),
+        $i18n->get('October'),
+        $i18n->get('November'),
+        $i18n->get('December'),
+);
+
+my $thisMonth = DateTime->new(month => $month, year => $year, day => 1);
+$thisMonth->subtract(months => 1);
+</%perl>
+<center class="dateSelector">
+    <a href="<% $c->req->uri_with({month => $thisMonth->month, year => $thisMonth->year}) %>">&lt;&lt;</a>
+    <select id="monthSelector">
+<%perl>
+        my $no = 0;
+        foreach my $monthName (@months)
+        {
+            $no++;
+            my $selected = '';
+            if($no == $month)
+            {
+                $selected = 'selected="selected"';
+            }
+</%perl>
+            <option value="<%$no%>" <%$selected %>><%$monthName |n %></option>
+%}
+    </select>
+    <select id="yearSelector">
+<%perl>
+        foreach my $outYear (1995..2030)
+        {
+            my $selected = '';
+            if($year == $outYear)
+            {
+                $selected = 'selected="selected"';
+            }
+</%perl>
+            <option <%$selected %>><%$outYear |n %></option>
+%}
+% $thisMonth->add(months => 2);
+    </select>
+    <a href="<% $c->req->uri_with({month => $thisMonth->month, year => $thisMonth->year}) %>">&gt;&gt;</a>
+</center>
+<table class="article_calendar">
+	<tr>
+        <th class="weekNumber">&nbsp;</th>
+		<th><% $i18n->get('Monday') %></th>
+		<th><% $i18n->get('Tuesday') %></th>
+		<th><% $i18n->get('Wednesday') %></th>
+		<th><% $i18n->get('Thursday') %></th>
+		<th><% $i18n->get('Friday') %></th>
+		<th><% $i18n->get('Saturday') %></th>
+		<th><% $i18n->get('Sunday') %></th>
+	</tr>
+<%perl>
+foreach(1..6)
+{
+</%perl>
+	<tr>
+        <td class="weekNumber"><% $current->week_number |n %></td>
+<%perl>
+	foreach my $day(1..7)
+	{
+		my $class = $current->month == $month ? 'current_month' : 'other_month';
+        if($current->ymd eq $today)
+        {
+            $class .= ' today';
+        }
+        my $key = $current->ymd;
+        if (!$index->{$key})
+        {
+            $class .= ' empty';
+        }
+</%perl>
+        <td class="day <% $class %>">
+            <span class="useTipsy" title="<% $current->ymd %>">
+				<% $current->day %>
+			</span>
+			<ul class="entries">
+<%perl>
+if($index->{$key})
+{
+	foreach my $sub (sort keys %{$index->{$key}})
+	{
+		foreach my $entry (@{ $index->{$key}->{$sub} })
+		{
+			my $link;
+			if($entry->can_edit($c))
+			{
+				$link = '/admin/articles/edit/'.$entry->article_id;
+			}
+			else
+			{
+				$link = '/admin/articles/preview/'.$entry->article_id;
+			}
+            my $lead = $entry->text_lead;
+            $lead =~ s/"/\&quot;/g; #"
+</%perl>
+			<li class="entry">
+                <a title="<% $lead |n %>" class="useTipsy" href="<% $link %>"><% $entry->title %></a>
+			</li>
+<%perl>
+		}
+	}
+}
+</%perl>
+			</ul>
+		</td>
+<%perl>
+        $current->add(days => 1);
+	}
+	last if $current->month ne $month;
+</%perl>
+	</tr>
+<%perl>
+}
+</%perl>
+</table>
+<script type="text/javascript">
+    $LAB.onLoaded(function ()
+    {
+        var $monthSel = $('#monthSelector');
+        var $yearSel  = $('#yearSelector');
+        var onChange = function ()
+        {
+            var year = $yearSel.val();
+            var month = $monthSel.val();
+            window.location = '/admin/articles/calendarview?year='+year+'&month='+month;
+        };
+        $monthSel.change(onChange).chosen();
+        $yearSel.change(onChange).chosen();
+    });
+</script>
+<%args>
+$year
+$month
+$index
+$i18n
+</%args>
+<%once>
+use DateTime;
+</%once>
