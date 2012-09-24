@@ -81,7 +81,7 @@ function LZ_DeleteArticleBackup (backup_id)
 
 function LZ_DeleteArticleBackup_failure (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     destroyPI();
     userMessage(i18n.get('Failed to delete: ')+error);
 }
@@ -150,7 +150,7 @@ function LZ_ArticleBackupsAvailable_success (reply)
 
 function LZ_ArticleBackupsAvailable_failure (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     userMessage('Failed to retrieve backup information ('+error+')');
 }
 
@@ -295,3 +295,22 @@ function articleKeepLockStatus(stat,reply)
         }
     });
 }
+
+$.subscribe('/lixuz/init',function ()
+{
+    $('.sliderToggler').click(function(e)
+    {
+        e.preventDefault();
+        var $this = $(this);
+        $this.parent().toggleClass('sliderOpen');
+        var eventInfo = { handled: false, section: $this.data('section'), '$this':$this };
+        var name = eventInfo.section.replace(/_slider_inner/,'');
+        $.publish('/articles/toggleSection/'+name, [ eventInfo ]);
+        if(eventInfo.handled)
+        {
+            return;
+        }
+        $('#'+eventInfo.section).slideToggle();
+    });
+    articleFiles.initBuild();
+});

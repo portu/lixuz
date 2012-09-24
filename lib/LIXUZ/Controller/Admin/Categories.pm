@@ -259,7 +259,6 @@ sub buildform: Private
     }
     add_jsOnLoad($c,'loadHilightedFolderSeedInit');
 	add_jsIncl($c,$dnd->get_jsfiles());
-	add_cssIncl($c,$dnd->get_cssfiles());
 }
 
 # Summary: Save form data

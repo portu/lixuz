@@ -344,7 +344,7 @@ var articleFiles = {
 
     addTheseFiles: function (files)
     {
-        LZ_RetrieveSpots('image',function (data)
+        articleFiles.retrieveFileSpots('image',function (data)
         {
             articleFiles.performFileAddition(data,files);
         });
@@ -363,14 +363,21 @@ var articleFiles = {
             {
                 $.unsubscribe(id);
 
-                onDone({
-                    '/admin/services/templateInfo': {
-                        spots: data.spots
-                    },
-                    '/admin/articles/JSON/getTakenFileSpots': {
-                        taken: data.taken
-                    }
-                });
+                try
+                {
+                    onDone({
+                        '/admin/services/templateInfo': {
+                            spots: data.spots
+                        },
+                        '/admin/articles/JSON/getTakenFileSpots': {
+                            taken: data.taken
+                        }
+                    });
+                }
+                catch(e)
+                {
+                    lzException(e);
+                }
             });
         }
 
@@ -496,4 +503,4 @@ var articleFiles = {
     }
 };
 
-$(articleFiles.initBuild);
+$.subscribe('/lixuz/init',function () { articleFiles.initBuild(); });
