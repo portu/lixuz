@@ -335,6 +335,11 @@ sub plugins
             }
         }
 
+        when('owner')
+        {
+            checkPackageOwners('output',@ARGV);
+        }
+
         default
         {
             die('Unknown subcommand for plugins: '.$subcommand."\nSee \"plugins --help\" for more information\n");
@@ -353,6 +358,7 @@ sub usagePlugins
     printHelp('','upgrade X','Upgrade a plugin using the package located at X');
     printHelp('','build X?','Build a plugin package using data at X (where X defaults to ./)');
     printHelp('','buildinstall X','Runs build X, and then installs the package generated');
+    printHelp('','owner X Y ..','Output which plugin (if any) owns the files specified');
     printHelp('','watch X','Runs buildinstall X whenever a file in the plugins subdirectory changes');
     printHelp('','reconstruct X Y','Reconstruct a plugin package from an installed plugin (X), saving the package to Y');
     exit(shift);
@@ -385,6 +391,48 @@ sub runPackageTrigger
         {
             warn('Warning: '.$trigger.' trigger for '.$package.' failed: '.$_."\n");
         };
+    }
+}
+
+# Purpose: Check owners
+sub checkPackageOwners
+{
+    my $mode = shift;
+    foreach my $checkFile (@_)
+    {
+        my $meta = loadMetaFile();
+        my $file = realpath($checkFile);
+        my $owner;
+        foreach my $plugin (keys %{$meta->{plugins}})
+        {
+            foreach my $pkgFile (@{$meta->{plugins}->{$plugin}->{files}})
+            {
+                if ($file eq realpath($lixuzDir.'/'.$pkgFile))
+                {
+                    $owner = $plugin;
+                    last;
+                }
+            }
+            last if $owner;
+        }
+        if ($mode eq 'output')
+        {
+            if ($owner)
+            {
+                print "$checkFile is owned by $owner\n";
+            }
+            else
+            {
+                print "$checkFile is not owned by any plugin\n";
+            }
+        }
+        elsif($mode eq 'plumbing')
+        {
+            if (!$owner)
+            {
+                exit(1);
+            }
+        }
     }
 }
 
@@ -723,12 +771,18 @@ sub removePackage
 sub listPackages
 {
     my $meta = loadMetaFile();
-
-    my $fmt = '%-30s %-6s'."\n";
-    printf($fmt,'Name','Version');
-    foreach my $p (keys %{$meta->{plugins}})
+    if (%{$meta->{plugins}})
     {
-        printf($fmt,$p,$meta->{plugins}->{$p}->{meta}->{version});
+        my $fmt = '%-30s %-6s'."\n";
+        printf($fmt,'Name','Version');
+        foreach my $p (keys %{$meta->{plugins}})
+        {
+            printf($fmt,$p,$meta->{plugins}->{$p}->{meta}->{version});
+        }
+    }
+    else
+    {
+        print '(there are no plugins installed)'."\n";
     }
 }
 
@@ -784,6 +838,11 @@ sub plumbing
             }
         }
 
+        when('checkowner')
+        {
+            checkPackageOwners('plumbing',@ARGV);
+        }
+
         default
         {
             die('Unknown subcommand for plumbing: '.$subcommand."\n");
@@ -802,6 +861,7 @@ sub usagePlumbing
     print "Available subcommands:\n";
     printHelp('','packup X','Reconstruct a dump of all packages into X');
     printHelp('','reinject X Y ..','Re-inject the packages specified into the Lixuz tree (similar to an upgrade, but runs lixuzUpgrade instead of upgrade triggers, and ignores all conflicts)');
+    printHelp('','checkowner X Y ..','Check if files X, Y, .. are owned by a plugin. Exits with exit status 0 if all the files are owned by plugins, 1 if not');
     printHelp('','getlevel','Output the API level supported by this version of lixuzctl');
     exit(shift);
 }
