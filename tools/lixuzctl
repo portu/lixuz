@@ -355,6 +355,10 @@ sub plugins
         {
             checkPackageOwners('output',@ARGV);
         }
+        when('create')
+        {
+            createPluginTree(@ARGV);
+        }
 
         default
         {
@@ -377,6 +381,7 @@ sub usagePlugins
     printHelp('','owner X Y ..','Output which plugin (if any) owns the files specified');
     printHelp('','watch X','Runs buildinstall X whenever a file in the plugins subdirectory changes');
     printHelp('','reconstruct X Y','Reconstruct a plugin package from an installed plugin (X), saving the package to Y');
+    printHelp('','create X','Create a new plugin named "X" in ./X');
     exit(shift);
 }
 
@@ -455,6 +460,66 @@ sub checkPackageOwners
             }
         }
     }
+}
+
+# Purpose: Create a new plugin tree
+sub createPluginTree
+{
+    my $path = shift;
+    if (!defined $path)
+    {
+        die('Usage: lixuzctl plugins create NAME'."\n");
+    }
+    if (-e $path)
+    {
+        die($path.': already exists');
+    }
+
+    mkdir($path);
+
+    open(my $yml,'>',$path.'/plugin.yml');
+    print {$yml} 'name: '.$path."\n";
+    print {$yml} 'version: 0.1'."\n";
+    print {$yml} 'apiversion: 1'."\n";
+    print {$yml} 'description: I did not edit plugin.yml'."\n";
+    print {$yml} 'license: GPLv3'."\n";
+    close($yml);
+    print 'Create: '.$path.'/plugin.yml'."\n";
+
+    open(my $triggers,'>',$path.'/triggers.pl');
+    print {$triggers} 'use strict;
+use warnings;
+use 5.010;
+use LIXUZ::HelperModules::Scripts qw(getDBIC);
+
+my $triggers = {
+    # Triggered on plugin upgrade
+    upgrade => sub {
+    },
+    # Triggered on plugin install
+    install => sub {
+    },
+    # Triggered on plugin removal
+    removal => sub {
+    },
+    # Triggered on a Lixuz upgrade
+    lixuzUpgrade => sub {
+    },
+    # Triggered during build of the plugin
+    build => sub
+    {
+    },
+};';
+    close($triggers);
+    print 'Create: '.$path.'/triggers.pl'."\n";
+
+    mkdir($path.'/plugin');
+    foreach my $sub (qw(lib root))
+    {
+        mkdir($path.'/plugin/'.$sub);
+        print 'Create: '.$path.'/plugin/'.$sub."\n";
+    }
+    exit(0);
 }
 
 # ---
