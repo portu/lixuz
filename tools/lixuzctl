@@ -31,6 +31,7 @@ use constant (
     true => 1,
     false => 0
 );
+my $verbosity = 0;
 my $lixuzDir = realpath(dirname(realpath($0)).'/../');
 unshift(@INC,$lixuzDir.'/lib');
 my @pluginMetaFiles = qw(plugin.yml triggers.pl COPYING README);
@@ -46,6 +47,11 @@ sub main
     if (!defined $action || $action eq '--help' || $action eq '-h')
     {
         usage(0);
+    }
+    if ($action eq '--verbose' || $action eq '-v')
+    {
+        $verbosity++;
+        $action = shift(@ARGV);
     }
 
     given($action)
@@ -212,6 +218,16 @@ sub DirIsEmpty
         return 1;
     }
     return 0;
+}
+
+# Purpose: Log some action
+# Usage: outLog(String);
+sub outLog
+{
+    if ($verbosity)
+    {
+        print shift(@_)."\n";
+    }
 }
 
 # ---
@@ -381,6 +397,7 @@ sub runPackageTrigger
     }
     if (-e $file)
     {
+        outLog('Running trigger '.$trigger.' in '.$file);
         my $ns = ($package =~ s/-//g);
         $ns = 'CtlTriggers::'.$package.'::r'.time.'::'.int(rand(9999999));
         try
@@ -391,6 +408,10 @@ sub runPackageTrigger
         {
             warn('Warning: '.$trigger.' trigger for '.$package.' failed: '.$_."\n");
         };
+    }
+    else
+    {
+        outLog('Skipping trigger '.$trigger.' because '.$file.' does not exist');
     }
 }
 
@@ -734,6 +755,10 @@ sub installPackage
     elsif($mode eq 'upgrade')
     {
         runPackageTrigger($pluginName,'upgrade');
+    }
+    else
+    {
+        outLog('Not running post-"install" triggers, unknown mode: '.$mode);
     }
     writeMetaFile($meta);
     print "done\n";
