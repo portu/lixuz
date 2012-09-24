@@ -14,8 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-my $paths = {};
 </%perl>
 <div id="form_edit">
 
@@ -47,8 +45,29 @@ my $paths = {};
 <br />
 <b>Access rights:</b><br />
 
-<& renderPart.html, currPart => $groups, paths => $paths, %ARGS &>
+<& renderPart.html, currPart => $groups, %ARGS &>
 <%perl>
+my $paths = {};
+sub generateActionList
+{
+    my $entry = shift;
+    my $paths = shift;
+    foreach my $key (keys %{$entry})
+    {
+        if(ref($entry->{$key}) eq 'ARRAY')
+        {
+            foreach my $entry (@{$entry->{$key}})
+            {
+                $paths->{$entry} = 1;
+            }
+        }
+        else
+        {
+            generateActionList($entry->{$key},$paths);
+        }
+    }
+}
+generateActionList($groups,$paths);
 my $entries = $c->model('LIXUZDB::LzAction');
 my %extra;
 while(my $e = $entries->next)
@@ -62,7 +81,7 @@ if (%extra)
 {
 </%perl>
 <br /><b><% $i18n->get('Additional rights (ie. from plugins)') |n %></b><br />
-<& renderPart.html, currPart => \%extra, paths => { }, %ARGS&>
+<& renderPart.html, currPart => \%extra, %ARGS&>
 %}
 
 <br/><br/>
