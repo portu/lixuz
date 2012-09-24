@@ -38,7 +38,6 @@ foreach my $e (sort keys %{$part})
     {
         foreach my $p(@paths)
         {
-            $paths->{$p} = 1;
             if(not $hasAccessTo->{$p})
             {
                 $checked = '';
@@ -61,13 +60,12 @@ foreach my $e (sort keys %{$part})
 <% $parentChecked ? '' : '</i>' |n %>
 </span>
 <br />
-<& renderPart.html, currPart => $part->{$e}, currLevel => $nextLevel, hasAccessTo => $hasAccessTo, parentChecked => $checkedBool, parent => $value, paths => $paths &>
+<& renderPart.html, currPart => $part->{$e}, currLevel => $nextLevel, hasAccessTo => $hasAccessTo, parentChecked => $checkedBool, parent => $value &>
 %} # foreach my $e ...
 <%args>
 $currPart
 $currLevel => 0
 $parentChecked => 1
 $hasAccessTo
-$paths
 $parent => ''
 </%args>

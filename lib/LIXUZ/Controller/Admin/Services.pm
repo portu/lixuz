@@ -21,7 +21,6 @@ use Moose;
 use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller' };
 
-use Text::Aspell;
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use JSON::XS;
 use Try::Tiny;
@@ -221,49 +220,6 @@ sub templateInfo : Local
     {
         return json_error($c,'UNKNOWNREQUEST');
     }
-}
-
-# Summary: Checks each word in the supplied spellCheckData-string against Aspell
-# Returns a json object with information/suggestions for possibly-misspelled
-# words.
-sub spellcheck : Local
-{
-    my ($self,$c) = @_;
-    my $data  = $c->req->param('spellCheckData');
-    if(not defined $data)
-    {
-        return json_error($c,'NODATA');
-    }
-
-    # Strip HTML/XML
-    $data =~ s/<[^>]+>//g;
-
-    # TODO: We need to be able to properly detect and handle other languages than Norwegian, this one is stupid.
-    # We might be able to just simply use $i18n->get('DICTIONARY') or something.
-    my $s = Text::Aspell->new();
-    $s->set_option('lang','nb_NO');
-
-    my @Suggestions;
-
-    foreach my $l(split(/(\s+|\.)/,$data))
-    {
-        next if not $l =~ /\D/;
-        (my $check = $l) =~ s/[,\.:\"«»\(\)\?\`\!\&\$\£\€]//g;;
-        if ((not $check =~ /[^A-Z]/) or ($check =~ /^(\d|\-)+$/))
-        {
-            next;
-        }
-        if (not $s->check($check))
-        {
-            my @Suggest = $s->suggest($check);
-            if (@Suggest && (@Suggest > 1 || $Suggest[0]))
-            {
-                push(@Suggestions, { word => $check, suggestions => \@Suggest });
-            }
-        }
-    }
-
-    return json_response($c,{ check => 'spelling', data => \@Suggestions });
 }
 
 # Summary: Get a list of folders
