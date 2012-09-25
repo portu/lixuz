@@ -476,12 +476,17 @@ sub updateActionPath
 {
     my $i18n = LIXUZ::HelperModules::I18N->new('lixuz','nn_NO','./i18n/locale');
 
+    # A map of actions that have been renamed
     my %renamedPaths = (
         '/articles/json/submit' => '/articles/submit',
         '/tagging' => '/tags',
         '/tagging/complete' => '/tags/complete',
         '/tagging/exists' => '/tags/exists',
         '/tagging/create' => '/tags/create',
+    );
+    # A map of actions that have been removed
+    my @removedPaths = qw(
+        /services/spellcheck
     );
 
     foreach my $path (keys(%renamedPaths))
@@ -492,6 +497,16 @@ sub updateActionPath
             print '.';
             $s->set_column('action_path',$renamedPaths{$path});
             $s->update();
+        }
+    }
+
+    foreach my $path (@removedPaths)
+    {
+        my $s = getModel('LIXUZDB::LzAction')->find({ action_path => $path });
+        if ($s)
+        {
+            print '.';
+            $s->delete();
         }
     }
 
@@ -514,15 +529,6 @@ sub updateActionPath
     while((defined $existing) && (my $s = $existing->next))
     {
         my $name = $s->action_path;
-        if ($name =~ m#/#)
-        {
-            if(not defined $paths{$name})
-            {
-                slog('Deleted unknown lz_action with action_path '.$name.' (action_id '.$s->action_id.')');
-                $s->delete();
-                print '.';
-            }
-        }
         if (defined $seen{$name})
         {
             print '.';
@@ -548,6 +554,7 @@ sub updateActionPath
             $seen{$name} = $s->action_id;
         }
     }
+
 }
 
 # Ensure that we have the standard inline fields
