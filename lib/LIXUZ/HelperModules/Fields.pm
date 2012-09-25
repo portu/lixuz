@@ -55,6 +55,7 @@ use Scalar::Util qw(weaken);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl add_bodyClass add_globalJSVar);
 use LIXUZ::HelperModules::Calendar qw(datetime_to_SQL datetime_from_SQL datetime_from_SQL_to_unix);
 use LIXUZ::HelperModules::Editor qw(create_editor);
+use LIXUZ::HelperModules::Cache qw(get_ckey CT_DEFAULT);
 use Carp;
 use Hash::Merge qw(merge);
 use constant {
@@ -219,6 +220,27 @@ sub _removeAndInsert
             $existing->set_column($k,$values->{$k});
         }
         $existing->update();
+    }
+}
+
+# Summary: Retrieve the value column for a field_id
+# Usage: columnName = obj->_getValueColumn($c,field_id);
+sub _getValueColumn
+{
+    my($self,$c,$field_id) = @_;
+    my $ckey = get_ckey('adfield','valuecolumn',$field_id);
+    if(my $val = $c->cache->get($ckey))
+    {
+        return $val;
+    }
+    my $obj = $c->model('LIXUZDB::LzField')->find({
+            field_id => $field_id
+        });
+    if ($obj)
+    {
+        my $val = $obj->storage_type;
+        $c->cache->set($ckey,$val,CT_DEFAULT);
+        return $val;
     }
 }
 
@@ -447,7 +469,7 @@ sub saveData
         };
         if(my $current = $c->model('LIXUZDB::LzFieldValue')->find($search))
         {
-            my $val = { value => $field_value };
+            my $val = { $self->_getValueColumn($c,$field_id) => $field_value };
             $self->_removeAndInsert($c->model('LIXUZDB::LzFieldValue'), $search, $val);
         }
         else
@@ -456,7 +478,7 @@ sub saveData
             {
                 next;
             }
-            my $m = $c->model('LIXUZDB::LzFieldValue')->new_result({field_id => $field_id, module_name => $self->module, module_id => $self->uid, value => $field_value});
+            my $m = $c->model('LIXUZDB::LzFieldValue')->new_result({field_id => $field_id, module_name => $self->module, module_id => $self->uid, $self->_getValueColumn($c,$field_id) => $field_value});
             $self->_update($m,'insert');
         }
     }
