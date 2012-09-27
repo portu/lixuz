@@ -173,6 +173,7 @@ sub default : Private
 sub index : Private
 {
     my ( $self, $c ) = @_;
+    $c->keep_flash('fromloginpage');
     $c->response->redirect('/admin/dashboard');
     $c->detach();
 }
