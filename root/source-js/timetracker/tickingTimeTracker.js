@@ -120,36 +120,12 @@ function currentstatusTimetracker (data)
 {
     if (data.tt_status != 1)
     {   
-        var ptitle = i18n.get( "Timetracker Reminder");
-        destroyPI();
-        html = '<table>';
-        html = html + '<tr><td>&nbsp;</td></tr>';
-        html = html + '<tr><td>'+i18n.get('Would you like to start timetracker?')+'</td></tr>';
-        html = html + '<tr><td>&nbsp;</td></tr>';
-        html = html + '</table>';
-
-        var buttons = {};
-        buttons[i18n.get('Start')] = function () { startTimetracker() };
-        buttons[i18n.get('cancel')] = function () { cancelTimetracker() };
-
-        entryEditor = new dialogBox(html,{
-            buttons: buttons,
-            title: ptitle
-        });     
+        XuserQuestion(
+            i18n.get('Would you like to start the timetracker?'),
+            i18n.get('Start timetracker?'), function()
+        {
+            console.log('started');
+            showTimeTracker('start');
+        });
     }   
 }
-
-function cancelTimetracker ()
-{
-    entryEditor.destroy();
-    JSON_Invalidate_Cache();
-    destroyPI();
-}
-
-function  startTimetracker ()
-{
-    showTimeTracker('start');
-    entryEditor.destroy();
-    destroyPI();
-}
-
