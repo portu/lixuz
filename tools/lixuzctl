@@ -23,6 +23,7 @@ use File::Copy qw(copy);
 use File::Path qw(mkpath);
 use File::Find qw(find);
 use File::Basename qw(basename dirname);
+use Getopt::Long;
 use Cwd qw(realpath);
 use Config::Any;
 use JSON qw(encode_json decode_json);
@@ -32,8 +33,9 @@ use constant (
     false => 0
 );
 my $verbosity = 0;
-my $lixuzDir = realpath(dirname(realpath($0)).'/../');
-unshift(@INC,$lixuzDir.'/lib');
+my $logOut;
+my $logfile;
+my $lixuzDir;
 my @pluginMetaFiles = qw(plugin.yml triggers.pl COPYING README);
 
 main();
@@ -42,16 +44,41 @@ main();
 # subsections
 sub main
 {
+    Getopt::Long::Configure('pass_through','permute');
+
+    GetOptions(
+        'v|verbose' => sub {
+            $verbosity++
+        },
+        'logfile=s' => sub {
+            shift;
+            $logfile = shift;
+            open($logOut,'>>',$logfile) or die('Failed to open logfile: '.$!."\n");
+        },
+        'quiet' => sub {
+            $verbosity = -1;
+        },
+        'lixuzdir=s' => sub {
+            shift;
+            $lixuzDir = shift;
+        },
+        # This is not used anywhere yet, but it is supported for use later
+        # (and already supplied by the upgrade script)
+        'lixuz-upgrade' => sub {},
+    );
+    
+    $lixuzDir //= realpath(dirname(realpath($0)).'/../');
+    if (!-d $lixuzDir)
+    {
+        die($lixuzDir.': does not exist'."\n");
+    }
+    outLog('Lixuz directory: '.$lixuzDir);
+    unshift(@INC,$lixuzDir.'/lib');
     my $action = shift(@ARGV);
 
     if (!defined $action || $action eq '--help' || $action eq '-h')
     {
         usage(0);
-    }
-    if ($action eq '--verbose' || $action eq '-v')
-    {
-        $verbosity++;
-        $action = shift(@ARGV);
     }
 
     given($action)
@@ -224,9 +251,24 @@ sub DirIsEmpty
 # Usage: outLog(String);
 sub outLog
 {
-    if ($verbosity)
+    my $msg = shift;
+    if ($verbosity > 0)
     {
-        print shift(@_)."\n";
+        print $msg."\n";
+    }
+    if ($logOut)
+    {
+        print {$logOut} '[lixuzctl] '.$msg."\n";
+    }
+}
+
+# Purpose: Output something when not in silent mode
+# Usage: same as print
+sub printv
+{
+    if($verbosity > -1)
+    {
+        print @_;
     }
 }
 
@@ -284,12 +326,14 @@ sub plugins
         usagePlugins(0);
     }
 
+    printv('Operating on Lixuz at '.$lixuzDir."\n");
+
     given($subcommand)
     {
         when('watch')
         {
             my $dir = shift // '.';
-            print 'Watching '.$dir.' for changes'."\n";
+            printv('Watching '.$dir.' for changes'."\n");
             while(1)
             {
                 if(system(qw(inotifywait -q -q -e modify -e create -e delete -e moved_to),'--excludei','\.(ipp|swp)$','--excludei','~$','-r',$dir.'/') != 0)
@@ -536,7 +580,7 @@ sub buildPackage
     $target //= '.';
     my $disableTriggers = shift;
 
-    print 'Performing package sanity checks...';
+    printv('Performing package sanity checks...');
     if (! -w $target && -w $srcdir)
     {
         warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
@@ -564,16 +608,16 @@ sub buildPackage
     }
 
     my $pluginName = getPluginSystemName($meta);
-    print 'done'."\n";
+    printv('done'."\n");
 
     if (!$disableTriggers)
     {
-        print 'Running build triggers...';
+        printv('Running build triggers...');
         runPackageTrigger($pluginName,'build',$srcdir.'/triggers.pl');
-        print 'done'."\n";
+        printv('done'."\n");
     }
 
-    print 'Constructing package...';
+    printv('Constructing package...');
     my $fname = $pluginName.'-'.$meta->{version}.'.lpp';
     $fname =~ s/\s+/-/g;
 
@@ -613,8 +657,8 @@ sub buildPackage
     my $targetFile = $target.'/'.$fname;
     $targetFile =~ s{/+}{/}g;
     system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzplugin');
-    print 'done'."\n";
-    print 'Wrote package to '.realpath($targetFile)."\n";
+    printv('done'."\n");
+    printv('Wrote package to '.realpath($targetFile)."\n");
     return realpath($targetFile);
 }
 
@@ -699,7 +743,7 @@ sub installPackage
     {
         $action = 'Re-injecting';
     }
-    print $action.' '.$pluginMeta->{name}.' '.$pluginMeta->{version}.' ['.basename($package).']...';
+    printv($action.' '.$pluginMeta->{name}.' '.$pluginMeta->{version}.' ['.basename($package).']...');
     my @copy;
     my %upgradeMap;
     if ($mode eq 'upgrade' || $mode eq 'reinject')
@@ -734,23 +778,23 @@ sub installPackage
                 }
             },
         }, $dir.'/plugin');
-    print '.';
+    printv('.');
     foreach my $f (@copy)
     {
         mkpath($lixuzDir.'/'.dirname($f));
         copy($dir.'/plugin/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
     }
-    print '.';
+    printv('.');
     my @metaFiles;
     mkpath($lixuzDir.'/.pluginMeta/'.$pluginName);
     if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
-        print '.';
+        printv('.');
         foreach my $oldFile (keys %upgradeMap)
         {
             unlink($lixuzDir.'/'.$oldFile);
         }
-        print '.';
+        printv('.');
         foreach my $oldFile (@{ $meta->{plugins}->{$pluginName}->{metaFiles} })
         {
             unlink($lixuzDir.'/.pluginMeta/'.$pluginName.'/'.$oldFile);
@@ -766,7 +810,7 @@ sub installPackage
     }
     if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
-        print '.';
+        printv('.');
         foreach my $oldFile (keys %upgradeMap)
         {
             unlink($lixuzDir.'/'.$oldFile);
@@ -826,7 +870,7 @@ sub installPackage
         outLog('Not running post-"install" triggers, unknown mode: '.$mode);
     }
     writeMetaFile($meta);
-    print "done\n";
+    printv("done\n");
 }
 
 # Purpose: Removes a Lixuz plugin package
@@ -840,7 +884,7 @@ sub removePackage
         die($pluginName.': is not installed, unable to remove package'."\n");
     }
 
-    print 'Removing '.$pluginName.'... ';
+    printv('Removing '.$pluginName.'... ');
 
     runPackageTrigger($pluginName,'removal');
 
@@ -854,7 +898,7 @@ sub removePackage
     }
     delete($meta->{plugins}->{$pluginName});
     writeMetaFile($meta);
-    print 'done'."\n";
+    printv('done'."\n");
 }
 
 # Purpose: Lists all installed Lixuz plugin packages
@@ -884,19 +928,28 @@ sub plumbing
 {
     my $subcommand = shift(@ARGV);
 
+    my $supportedApiLevel = 2;
+    $verbosity = -1;
+
     # These are used internally, for enforcing an api compatibility layer if
-    # required
+    # required. In most cases the caller is responsible for handling the
+    # compatibility layer.
     if (defined($subcommand) && $subcommand =~ s/^v(\d+)/$1/)
     {
-        if (int($subcommand) > 1)
+        my $levelNo = int($subcommand);
+        if ($levelNo > $supportedApiLevel)
         {
             die('ERROR: UNKNOWN API LEVEL: '.$subcommand."\n");
+        }
+        elsif($levelNo < $supportedApiLevel)
+        {
+            die('ERROR: TOO OLD API LEVEL: '.$subcommand."\n");
         }
         $subcommand = shift(@ARGV);
     }
     elsif(defined($subcommand) && $subcommand eq 'getlevel')
     {
-        print "1\n";
+        print "$supportedApiLevel\n";
         exit(0);
     }
 
@@ -914,7 +967,7 @@ sub plumbing
             my $meta = loadMetaFile();
             foreach my $p (keys %{$meta->{plugins}})
             {
-                system($0,'plugins','reconstruct',$p,$dir);
+                selfRun('plugins','reconstruct',$p,$dir);
             }
         }
         when('reinject')
@@ -954,4 +1007,24 @@ sub usagePlumbing
     printHelp('','checkowner X Y ..','Check if files X, Y, .. are owned by a plugin. Exits with exit status 0 if all the files are owned by plugins, 1 if not');
     printHelp('','getlevel','Output the API level supported by this version of lixuzctl');
     exit(shift);
+}
+
+# Purpose: Run self with the correct parameters
+# Usage: selfRun(options);
+sub selfRun
+{
+    my @command = ($0,'--lixuzdir',$lixuzDir);
+    if ($verbosity == -1)
+    {
+        push(@command,'--quiet');
+    }
+    elsif($verbosity > 0)
+    {
+        push(@command,'--verbose');
+    }
+    if ($logfile)
+    {
+        push(@command,'--logfile',$logfile);
+    }
+    return system(@command,@_);
 }

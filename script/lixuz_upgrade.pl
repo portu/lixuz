@@ -87,7 +87,7 @@ sub main
     if (-x $installTarget.'/tools/lixuzctl')
     {
         print 'Packing up plugins...';
-        system($installTarget.'/tools/lixuzctl',qw(plumbing v1 packup),$packup);
+        lixuzctl($installTarget,'packup',$packup);
         print "done\n";
         logAction('Packed up plugins');
     }
@@ -104,7 +104,7 @@ sub main
     if ($packup)
     {
         print 'Re-injecting plugins...';
-        system($installTarget.'/tools/lixuzctl',qw(plumbing v1 reinject),glob($packup.'/*.lpp'));
+        lixuzctl($installTarget,'reinject',glob($packup.'/*.lpp'));
         print "done\n";
     }
     dualPrint("All is done and appears to have gone well.\n\n");
@@ -395,6 +395,36 @@ sub checkRestoreInstall
 # ---
 # Various helper and wrapper functions
 # ---
+
+# Summary: Run a lixuzctl command
+# Usage: lixuzctl(/lixuz/path,plumbingCommand,args);
+# This wraps lixuzctl. It will check which version of the lixuzctl api we're
+# dealing with, and adapt which parameters are used to fit that version.
+sub lixuzctl
+{
+    my $lixuzPath = shift;
+    my $command = shift;
+    my @params;
+
+    open(my $apiIN,'-|',$lixuzPath.'/tools/lixuzctl',qw(plumbing getlevel));
+    my $apilevel = <$apiIN>;
+    close($apiIN);
+    $apilevel = int($apilevel);
+    $apilevel ||= 1;
+
+    push(@params,'v'.$apilevel);
+
+    if ($apilevel >= 2)
+    {
+        push(@params,'--logfile',$logfile);
+        push(@params,'--lixuzdir',$lixuzPath);
+        push(@params,qw(--lixuz-upgrade --quiet));
+    }
+
+    my @command = ($lixuzPath.'/tools/lixuzctl','plumbing',@params,$command,@_);
+    logAction('Running lixuzctl action: '.join(' ',@command));
+    return system(@command);
+}
 
 # Summary: Open the logfile and output initial messages
 sub startLog
