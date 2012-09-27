@@ -163,6 +163,28 @@ sub printHelp
 	return true;
 }
 
+# Purpose: Run the subroutine provided if --help or -h was provided *anywhere*
+# on the command-line, OR if there are no parameters left in @ARGV
+# Usage: checkForHelpParam(sub { } );
+sub checkForHelpParam
+{
+    my $sub = shift;
+    if (scalar(@ARGV) == 0)
+    {
+        $sub->();
+    }
+    else
+    {
+        foreach my $e (@ARGV)
+        {
+            if ($e eq '-h' || $e eq '--help')
+            {
+                $sub->();
+            }
+        }
+    }
+}
+
 # Purpose: Displays toplevel usage information
 sub usage
 {
@@ -281,10 +303,7 @@ sub database
 {
     my $subcommand = shift(@ARGV);
 
-    if (!defined $subcommand || $subcommand eq '--help' || $subcommand eq '-h')
-    {
-        usageDatabase(0);
-    }
+    checkForHelpParam(sub { usageDatabase(0) });
 
     given($subcommand)
     {
@@ -321,10 +340,7 @@ sub plugins
 {
     my $subcommand = shift(@ARGV);
 
-    if (!defined $subcommand || $subcommand eq '--help' || $subcommand eq '-h')
-    {
-        usagePlugins(0);
-    }
+    checkForHelpParam(sub { usagePlugins(0) });
 
     printv('Operating on Lixuz at '.$lixuzDir."\n");
 
@@ -953,10 +969,7 @@ sub plumbing
         exit(0);
     }
 
-    if (!defined $subcommand || $subcommand eq '--help' || $subcommand eq '-h')
-    {
-        usagePlumbing(0);
-    }
+    checkForHelpParam(sub { usagePlumbing(0) });
 
     given($subcommand)
     {
