@@ -36,7 +36,7 @@ distCloneSetSnapshot: mkDistClone
 	perl -pi -e 's{^(my\s+\$$SNAPSHOT)\s*=\s*\d*\;}{$$1 = 1;}g' "$(DIST_TARGET)/lib/LIXUZ.pm"
 
 distCloneSanity: mkDistClone
-	[  "$(DIST_QUICK)" == "1" ] || make -C "$(DIST_TARGET)" sanitycheck
+	[  "$(DIST_QUICK)" == "1" ] || make -C "$(DIST_TARGET)" sanitycheck_nojs
 
 vanillaPackage: mkDistClone distCloneSanity
 	tar -jcf lixuz-$(DIST_VERSION).src.tar.bz2 $(DIST_TARGET)
