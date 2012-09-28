@@ -728,6 +728,10 @@ sub installPackage
     my $mode = shift;
     my $package = shift;
     $package = realpath($package);
+    if (! -e $package)
+    {
+        die($package.': does not exist'."\n");
+    }
     my $meta = loadMetaFile();
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-installpkg.XXXXXXX');
