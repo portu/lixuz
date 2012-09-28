@@ -22,6 +22,7 @@ use LIXUZ::HelperModules::Live::Comments qw(comment_handler comment_prepare);
 use LIXUZ::HelperModules::Live::Articles qw(get_live_articles_from);
 use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL_to_unix);
 use LIXUZ::HelperModules::Cache qw(get_ckey);
+#use LIXUZ::HelperModules::Templates qw(cached_parse_templatefile);
 use HTML::Entities qw(decode_entities);
 use Carp;
 use constant { true => 1, false => 0 };
@@ -60,6 +61,8 @@ sub get_list
     }
 
     my $obj;
+    my $art;
+    my $ordered;
     my $limit = $searchContent->{limit} ? $searchContent->{limit} : 10;
     if ($self->renderer->has_var($saveAs))
     {
@@ -72,6 +75,13 @@ sub get_list
     }
     else
     {
+        #my $file = $template->path_to_template_file($c);
+        # my $info = cached_parse_templatefile($c,$file);
+        my $template_layout = '1|2|1|1';
+        #  my $template_layout = $info->{TEMPLATE_LAYOUT};
+        $self->c->stash->{template_layout} = $template_layout;
+        $self->c->stash->{layout} = $searchContent->{layout};
+
         if ($searchContent->{catid})
         {
             my $catid = $searchContent->{catid};
@@ -111,12 +121,68 @@ sub get_list
             if ($cat)
             {
                 $obj = $cat->get_live_articles($self->c,{ limit => $limit, extraLiveStatus => $searchContent->{extraLiveStatus}, overrideLiveStatus => $searchContent->{overrideLiveStatus}});
+
+
+# $obj = $obj->search({ 'article.status_id' => 2, 'revisionMeta.is_latest' => 1 }, { join => 'revisionMeta' });
+               
+              #  $obj = $obj->search_related('category_layout',{'article.status_id' => 2, 'revisionMeta.is_latest' => 1},{order_by=>'spot'})->search_related('article');
+
+                if (defined $template_layout)
+                {
+                    if (not defined $searchContent->{layout} and $searchContent->{layout}!=1)
+                    {
+                        $self->c->log->warn('Resolvers: Article->list:  layout not available in template settings');
+                    }
+                   my $ordered = $self->c->model('LIXUZDB::LzArticle')->search({ 'article.status_id' => 2, 'revisionMeta.is_latest' => 1 }, { join => 'revisionMeta' });
+                   $ordered = $ordered->search_related('category_layout',{'category_id' => 2},{order_by=>'spot'})->search_related('article');
+
+                    # my @ordered = $obj;
+
+                    $obj = $ordered;
+
+                    my $current_cat_id = $cat->get_column('category_id');
+                    my $obj_cat_layout = $self->c->model('LIXUZDB::LzCategoryLayout')->search({'category_id' =>$current_cat_id});       
+                    my $rs_date = $obj_cat_layout->get_column('ordered_at');
+                    my $max_date = $rs_date->max;
+                    my $newer = $obj->search({ 'me.publish_time' => \"> '$max_date'"});
+
+                    # my $obj_column = DBIx::Class::ResultSetColumn->new->($obj_cat_layout, 'article_id'); 
+                    # my @artids = $obj_column->all;
+                    # my @artids = (1,3,9);
+
+                    my $artids = $obj_cat_layout->get_column('article_id');
+                    my @artids = $artids->all;
+                    my @template_layout = split('\|', $template_layout);
+                    my $layout_count = 0;
+                    foreach(@template_layout)
+                    {
+                        $layout_count += $_;
+                    }
+                    my $ord_new_count = $obj->count;
+                    #merge $ordered and $newer
+                    if ($ord_new_count < $layout_count)
+                    {
+                        my $older = $obj->search({
+                            'me.article_id' => {
+                            -not_in => [ @artids ],
+                            },
+                            'me.publish_time' => \"< '$max_date'"
+                        });
+                  #   $obj = $obj->set_cache(\@ordered);
+                    # merge $ordered $newer, $older 
+                    }
+                    else
+                    {
+                        #    $obj = $obj->search_related('category_layout',{'article.status_id' => 2, 'revisionMeta.is_latest' => 1},{order_by=>'spot'})->search_related('article');
+                    }
+                }
+
                 $return->{$saveAs.'_category'} = $cat;
             }
         }
         else
         {
-            $obj = get_live_articles_from($self->c->model('LIXUZDB::LzArticle'), { rows => $limit, order_by => 'publish_time DESC', extraLiveStatus => $searchContent->{extraLiveStatus}, overrideLiveStatus => $searchContent->{overrideLiveStatus} });
+              $obj = get_live_articles_from($self->c->model('LIXUZDB::LzArticle'), { rows => $limit, order_by => 'publish_time DESC', extraLiveStatus => $searchContent->{extraLiveStatus}, overrideLiveStatus => $searchContent->{overrideLiveStatus} });
         }
 
         # FIXME: This might not always be an actual 404. It might be an empty category.
@@ -139,8 +205,9 @@ sub get_list
 
         if ($searchContent->{ignoreDupes} && $artid)
         {
-            $obj = $obj->search({ 'me.article_id' => \"!= $artid" });
+             $obj = $obj->search({ 'me.article_id' => \"!= $artid" });
         }
+
         $return->{$saveAs} = $obj;
     }
     if ($searchContent->{includePager})
@@ -158,7 +225,7 @@ sub get_list
         $return->{$saveAs.'_pager'} = $obj->pager;
         if ($return->{$saveAs})
         {
-            $return->{$saveAs} = $obj;
+             $return->{$saveAs} = $obj;
         }
     }
     return $return;

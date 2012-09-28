@@ -464,3 +464,24 @@ select ul li.subs {
     border-radius: 10px 10px 10px 10px;
     max-width: 250px;    
 }
+
+.makeMeDraggable{
+    width:290px; height:30px; background:#F9F9F9;
+    margin-bottom:5px;
+    padding:5px;
+    border:1px solid #CCCCCC;
+}
+
+.targetSpot {
+    background:#F9F9F9;
+    margin-bottom:5px;
+    padding:5px;
+    border:1px solid #CCCCCC;
+    height:110px;
+}
+
+.layout_category_heading
+{
+    font-size:18px;
+    height:50px;
+}

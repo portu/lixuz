@@ -44,7 +44,8 @@ INFOBLOCK DATA for more information on the various settings):
     # TEMPLATE_LICENSE=Proprietary
     # TEMPLATE_APIVERSION=1
     # TEMPLATE_TYPE=article
-    # TEMPLATE_NEEDSINFO=article_get_[artid=url,as=article,includeRelations=1,includeComments=1,handleComments=1]
+    # TEMPLATE_LAYOUT=1|2|1|1
+    # TEMPLATE_NEEDSINFO=article_get_[artid=url,as=article,includeRelations=1,includeComments=1,handleComments=1,layout=1]
     # TEMPLATE_FILESPOT=[type=image,name=Primary image,as=primaryImage,id=1]
     # TEMPLATE_INCLUDES=no.lixuz.header no.lixuz.footer no.lixuz.subscribeNewsletter
     # TEMPLATE_UNIQUEID=no.lixuz.basicArticle

@@ -83,7 +83,7 @@ sub _getLiveSearch
     push(@liveStatus,@extraStatuses);
 
     my @liveSearch = map { { $prefix.'status_id' => $_ } } @liveStatus;
-    return -and => [ trashed => \'!= 1', $prefix.publish_time => \'<= now()', -or => [ { $prefix.expiry_time => \'IS NULL' }, { $prefix.expiry_time => \'> now()' } ], -or => \@liveSearch ];
+    return -and => [$prefix.trashed => \'!= 1', $prefix.publish_time => \'<= now()', -or => [ { $prefix.expiry_time => \'IS NULL' }, { $prefix.expiry_time => \'> now()' } ], -or => \@liveSearch ];
 }
 
 1;

@@ -346,6 +346,8 @@ sub _recursiveChildrenFetcher
 __PACKAGE__->has_many(children => 'LIXUZ::Schema::LzCategory', { 'foreign.parent' => 'self.category_id' });
 __PACKAGE__->has_many(folders => 'LIXUZ::Schema::LzCategoryFolder', 'category_id');
 __PACKAGE__->belongs_to(parent => 'LIXUZ::Schema::LzCategory');
+
+__PACKAGE__->has_many(layouts => 'LIXUZ::Schema::LzCategoryLayout', 'category_id');
 1;
 
 

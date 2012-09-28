@@ -1,0 +1,59 @@
+<%$errorMessage%>
+<table>
+    <tr><td>
+%my @arl;            
+%if(defined $artlist && $artlist->count > 0){
+%my $i=0;
+%while(my $art = $artlist->next){
+
+%my $art_title = $art->title;
+%my $list_title = $art->shortText('title',50);
+%if(not defined $art_title or not length $art_title){
+%$art_title = $i18n->get('(unnamed)');
+%$list_title = $art_title;
+%}
+
+%my $art_lead = $art->lead;
+%my $list_lead = $art->shortText('lead',150);
+%if(not defined $art_lead or not length $art_lead){
+%$art_lead = '';
+%$list_lead = $art_lead;
+%}
+
+%my $imgpath;
+%my $img = $art->get_fileSpot(1);
+%if($img) {
+% $img = $img->file;
+%if($img && $img->is_image()) {
+% $imgpath = $img->get_url($c,undef,80);
+%}
+%}
+
+<div id="makeMeDraggable<% $i++ %>" class="makeMeDraggable" artid="<% $art->article_id %>" arttitle="<%$list_title %>" artimage="<% $imgpath %>" artlead="<%$list_lead |n %>">
+     <% $art->article_id %> - <%$list_title %>
+</div>
+%push(@arl,$art->to_hash);
+%}
+%}
+    </td>
+</tr>
+</table>
+
+% my @artlist;
+%while(($artlist) && (my $ar = $artlist->next)) {
+<% $ar->to_hash %>
+%}
+<script type="text/javascript">
+articleList.initDrag();
+</script>
+
+<%args>
+$artlist=>undef
+$i18n
+$errorMessage=>undef
+</%args>
+<%init>
+use JSON::DWIW;
+my $j = JSON::DWIW->new();
+</%init>
+

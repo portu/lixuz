@@ -744,10 +744,13 @@ addEvent : function(whichObject,eventType,functionName)
                initTree : function()
                {
                    JSTreeObj = this;
-                   JSTreeObj.createDropIndicator();
-                   document.documentElement.onselectstart = JSTreeObj.cancelSelectionEvent;
-                   document.documentElement.ondragstart = JSTreeObj.cancelEvent;
-                   document.documentElement.onmousedown = JSTreeObj.removeHighlight;
+                   if(this.renameAllowed || this.deleteAllowed)
+                   {
+                       JSTreeObj.createDropIndicator();
+                       document.documentElement.onselectstart = JSTreeObj.cancelSelectionEvent;
+                       document.documentElement.ondragstart = JSTreeObj.cancelEvent;
+                       document.documentElement.onmousedown = JSTreeObj.removeHighlight;
+                   }
 
                    /* Creating help object for storage of values */
                    this.helpObj = document.createElement('DIV');
