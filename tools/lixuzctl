@@ -301,9 +301,10 @@ sub printv
 # Purpose: Handler for database-section subcommands
 sub database
 {
+    checkForHelpParam(sub { usageDatabase(0) });
+
     my $subcommand = shift(@ARGV);
 
-    checkForHelpParam(sub { usageDatabase(0) });
 
     given($subcommand)
     {
@@ -338,9 +339,9 @@ sub usageDatabase
 # Purpose: Handler for plugins-section subcommands
 sub plugins
 {
-    my $subcommand = shift(@ARGV);
-
     checkForHelpParam(sub { usagePlugins(0) });
+
+    my $subcommand = shift(@ARGV);
 
     printv('Operating on Lixuz at '.$lixuzDir."\n");
 
@@ -942,7 +943,7 @@ sub listPackages
 # Purpose: Handler for plumbing-section subcommands
 sub plumbing
 {
-    my $subcommand = shift(@ARGV);
+    my $subcommand = $ARGV[0];
 
     my $supportedApiLevel = 2;
     $verbosity = -1;
@@ -961,7 +962,8 @@ sub plumbing
         {
             die('ERROR: TOO OLD API LEVEL: '.$subcommand."\n");
         }
-        $subcommand = shift(@ARGV);
+        shift;
+        $subcommand = $ARGV[0];
     }
     elsif(defined($subcommand) && $subcommand eq 'getlevel')
     {
@@ -970,6 +972,7 @@ sub plumbing
     }
 
     checkForHelpParam(sub { usagePlumbing(0) });
+    shift;
 
     given($subcommand)
     {
