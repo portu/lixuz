@@ -76,7 +76,7 @@ function saveElementData ()
             type: $('#element_type').val()
     };
     showPI(i18n.get('Saving...'));
-    JSON_HashPostRequest('/admin/services/elements?action=save',data,savedElementReply,null);
+    XHR.Form.POST('/admin/services/elements?action=save',data,savedElementReply,null);
     elementEditor.destroy();
     elementEditor = null;
 }
