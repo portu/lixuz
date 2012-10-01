@@ -728,6 +728,10 @@ sub installPackage
     my $mode = shift;
     my $package = shift;
     $package = realpath($package);
+    if (! -e $package)
+    {
+        die($package.': does not exist'."\n");
+    }
     my $meta = loadMetaFile();
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-installpkg.XXXXXXX');
@@ -962,7 +966,7 @@ sub plumbing
         {
             die('ERROR: TOO OLD API LEVEL: '.$subcommand."\n");
         }
-        shift;
+        shift(@ARGV);
         $subcommand = $ARGV[0];
     }
     elsif(defined($subcommand) && $subcommand eq 'getlevel')
@@ -972,7 +976,7 @@ sub plumbing
     }
 
     checkForHelpParam(sub { usagePlumbing(0) });
-    shift;
+    shift(@ARGV);
 
     given($subcommand)
     {

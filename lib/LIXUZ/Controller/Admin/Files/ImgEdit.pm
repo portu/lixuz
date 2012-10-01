@@ -53,6 +53,8 @@ sub resizer : Local Args
     my $file = $self->_getFileFromUID($c,$uid);
     my $gm = $self->_getResized($c,$file);
     my $blob = $gm->ImageToBlob();
+    # Explicitly destroy Graphics::Magick
+    undef $gm;
     $c->res->header('Expires' => 'Fri, 30 Oct 1998 14:19:41 GMT');
     lixuz_serve_scalar_file($c, $blob,$file->get_mimetype($c));
 }

@@ -990,6 +990,9 @@ sub detectImageFields
         $self->set_column('height',$height);
         $self->set_column('width',$width);
         $self->update();
+
+        # Explicitly destroy Graphics::Magick
+        undef $gm;
     }
 }
 
@@ -1256,6 +1259,8 @@ sub get_resized
         if ($e)
         {
             $c->log->error('get_resized(). GraphicksMagick failed to scale the file: '.$e);
+            # Explicitly destroy Graphics::Magick
+            undef $gm;
             return;
         }
     }
@@ -1270,6 +1275,8 @@ sub get_resized
     {
         $gm->Write($fname);
     }
+    # Explicitly destroy Graphics::Magick
+    undef $gm;
     return $fname;
 }
 

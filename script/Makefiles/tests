@@ -3,6 +3,8 @@
 # --
 sanitycheck:
 	./script/sanitycheck
+sanitycheck_nojs:
+	./script/sanitycheck --no-js
 quicksanity:
 	./script/sanitycheck quick
 testsuite:

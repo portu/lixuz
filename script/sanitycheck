@@ -1,5 +1,12 @@
 #!/bin/bash
 cd $(dirname $0) || exit 1
+
+REGEX='.*\.(pm|pl|html|js)$'
+
+if [ "$1" == "--no-js" ]; then
+    REGEX='.*\.(pm|pl|html)$'
+fi
+
 cd .. || exit 1
 [ -e "./lib" ] || exit 1
 CHECKED=0
@@ -7,7 +14,7 @@ TOTAL_LINES="0"
 PERL_LINES="0"
 MASON_LINES="0"
 JS_LINES="0"
-for file in ` ls -c $(find -regextype posix-extended -iregex ".*\.(pm|pl|html|js)$")|\egrep -v '(/js/|script|Makefile|live_utrop/incl|livedata/|3rdparty-libs)'`; do
+for file in ` ls -c $(find -regextype posix-extended -iregex "$REGEX")|\egrep -v '(/js/|script|Makefile|live_utrop/incl|livedata/|3rdparty-libs)'`; do
     if [ "$1" == "stats" ]; then
         if [ "`echo "$file"|egrep -v '(3rdparty-libs)'`" == "" ]; then
             continue
