@@ -985,9 +985,16 @@ sub plumbing
         {
             my $dir = shift(@ARGV);
             my $meta = loadMetaFile();
-            foreach my $p (keys %{$meta->{plugins}})
+            if ($meta->{plugins} && scalar(@{$meta->{plugins}}))
             {
-                selfRun('plugins','reconstruct',$p,$dir);
+                foreach my $p (keys %{$meta->{plugins}})
+                {
+                    selfRun('plugins','reconstruct',$p,$dir);
+                }
+            }
+            else
+            {
+                exit(1);
             }
         }
         when('reinject')
