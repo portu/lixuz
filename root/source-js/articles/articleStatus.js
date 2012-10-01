@@ -77,9 +77,10 @@ $(function ()
         {
             if ( !$(this).is(":hidden") )
             {
-                $(this).not('.darr').slideToggle(100);
+                $(this).not('.darr').slideToggle(100).removeClass('darr');
             }
         });
+        $('.select').removeClass('select_displayed');
     });
 
     $('div.dclass').click(function()
