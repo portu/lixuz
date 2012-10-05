@@ -18,6 +18,7 @@ lib/LIXUZ/Controller/SiteHacks.pm
 lib/LIXUZ/Controller/SiteHacks/
 .lixuzctl.data
 .pluginMeta
+root/source-js/handlebartemplates
 
 # Lixuz plugin packages
 *.lpp
@@ -27,3 +28,4 @@ root/js
 root/css/lixuz.css
 # Built MO files
 i18n/locale
+i18n/messages.mo
