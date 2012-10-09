@@ -318,6 +318,10 @@ sub listFolderFilter
 sub listPrepSearchForm
 {
     my($self,$form,$query) = @_;
+    if (!$form)
+    {
+        return;
+    }
     # There is no reason for this to get executed in json requests
     if ($self->c->req->param('_JSON_Submit'))
     {
