@@ -33,6 +33,10 @@ sub _serializeExtra
 {
     return [];
 }
+sub _serializeIgnore
+{
+    return [];
+}
 
 sub serialize
 {
@@ -75,28 +79,85 @@ sub to_hash
 {
     my $self = shift;
     my $ignoreRels = shift;
+    my $c = shift;
     my $rels = $self->_serializeExtra;
+    my $ignore = $self->_serializeIgnore;
 
     my %hash = $self->get_columns();
+    foreach my $ign (@{$ignore})
+    {
+        delete($hash{$ign});
+    }
 
     if(not $ignoreRels)
     {
         foreach my $rel (@{$rels})
         {
             my $saveAs = $rel;
+            my @args;
             if(ref($rel))
             {
+                my $wants;
+                # Check if we require $c for this option. If we do and we don't have $c,
+                # skip it.
+                if ($rel->{requires})
+                {
+                    if (!defined($c))
+                    {
+                        next;
+                    }
+                    $wants = $rel->{requires};
+                }
+                # Check if we *want* $c for this option
+                elsif($rel->{wants})
+                {
+                    $wants = $rel->{wants};
+                }
+
+                # If we want a $c option, and we have $c, provide it
+                if(defined($c) && $wants)
+                {
+                    if ($wants eq 'c')
+                    {
+                        push(@args,$c);
+                    }
+                    elsif ($wants eq 'i18n')
+                    {
+                        push(@args,$c->stash->{i18n});
+                    }
+                    else
+                    {
+                        warn('Serializable: warning: unknown wants/requires for '.$rel.' on '.ref($self).': '.$wants);
+                    }
+                }
+
                 $saveAs = $rel->{saveAs};
                 $rel = $rel->{source};
             }
-            my $obj = $self->$rel;
-            if(ref($obj) && $obj->can('to_hash'))
-            {
-                $hash{$saveAs} = $obj->to_hash;
-            }
-            elsif (!ref($obj))
+            my $obj = $self->$rel(@args);
+            if (!ref($obj))
             {
                 $hash{$saveAs} = $obj;
+            }
+            elsif($obj->can('to_hash'))
+            {
+                $hash{$saveAs} = $obj->to_hash(undef,$c);
+            }
+            elsif($obj->can('next'))
+            {
+                my @result;
+                while(my $o = $obj->next)
+                {
+                    if ($o->can('to_hash'))
+                    {
+                        push(@result,$o->to_hash(undef,$c));
+                    }
+                }
+                $hash{$saveAs} = \@result;
+            }
+            else
+            {
+                warn('Serializable: warning: called '.$rel.' on '.ref($self).' but got unrecognized value in return: '.ref($obj));
             }
         }
     }

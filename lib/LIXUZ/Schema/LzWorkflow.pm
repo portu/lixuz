@@ -123,9 +123,19 @@ __PACKAGE__->belongs_to('article' => 'LIXUZ::Schema::LzArticle',{ 'foreign.artic
 __PACKAGE__->belongs_to('role' => 'LIXUZ::Schema::LzRole',{'foreign.role_id' => 'self.assigned_to_role'});
 __PACKAGE__->belongs_to('user' => 'LIXUZ::Schema::LzUser',{'foreign.user_id' => 'self.assigned_to_user'});
 __PACKAGE__->belongs_to('assigned_by_user' => 'LIXUZ::Schema::LzUser', { 'foreign.user_id' => 'self.assigned_by' });
+__PACKAGE__->has_many('comments' => 'LIXUZ::Schema::LzWorkflowComments',{
+    'foreign.article_id' => 'self.article_id',
+    });
 
 use Moose;
 with 'LIXUZ::Role::Serializable';
+sub _serializeExtra
+{
+    return [ 'comments',
+        { source => 'assigned_to_string', saveAs => 'assigned_to_name' },
+        { source => 'assigned_by_string', saveAs => 'assigned_by_name' },
+    ];
+}
 
 # Summary: Get all fields in a hash
 # Usage: object->get_everything();
@@ -147,14 +157,18 @@ sub get_everything
 sub assigned_to_string
 {
     my $self = shift;
-    my $c = shift or die('assigned_to_string: needs $c');
+    my $c = shift;
     my $userNameOnly = shift;
     my $nameOnly = shift;
     if ($self->assigned_to_user)
     {
         if(not $self->user)
         {
-            return $c->stash->{i18n}->get('(user not found)');
+            if ($c)
+            {
+                return $c->stash->{i18n}->get('(user not found)');
+            }
+            return;
         }
         if ($userNameOnly)
         {
@@ -171,11 +185,22 @@ sub assigned_to_string
     }
     elsif($self->assigned_to_role)
     {
-        return $c->stash->{i18n}->get_advanced('%(ROLE_NAME) (role)', { ROLE_NAME => $self->role->role_name});
+        if ($c)
+        {
+            return $c->stash->{i18n}->get_advanced('%(ROLE_NAME) (role)', { ROLE_NAME => $self->role->role_name});
+        }
+        else
+        {
+            return $self->role->role_name;
+        }
     }
     else
     {
-        return $c->stash->{i18n}->get('(nobody)');
+        if ($c)
+        {
+            return $c->stash->{i18n}->get('(nobody)');
+        }
+        return;
     }
 }
 
@@ -183,12 +208,15 @@ sub assigned_to_string
 sub assigned_by_string
 {
     my $self = shift;
-    my $c = shift or die('assigned_by_string: needs $c');
     if ($self->assigned_by && $self->assigned_by_user)
     {
         return $self->assigned_by_user->user_name;
     }
-    return $c->stash->{i18n}->get('(nobody)');
+    my $c = shift;
+    if ($c)
+    {
+        return $c->stash->{i18n}->get('(nobody)');
+    }
 }
 
 # Summary: Check if the current user can write to this article

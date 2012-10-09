@@ -84,6 +84,7 @@ __PACKAGE__->set_primary_key("field_id", "option_id");
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+with 'LIXUZ::Role::Serializable';
 
 __PACKAGE__->belongs_to('field' => 'LIXUZ::Schema::LzField','field_id');
 

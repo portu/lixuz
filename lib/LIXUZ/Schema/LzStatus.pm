@@ -92,7 +92,7 @@ around 'status_name' => sub
     my $i18n = shift;
     if(not $i18n)
     {
-        die('LzStatus->status_name called without required argument: i18n object. Use: object->status_name($c->stash->{i18n});'."\n");
+        return $self->$orig();
     }
     my $name = $self->$orig();
     if ($self->get_column('system_status') == 1)

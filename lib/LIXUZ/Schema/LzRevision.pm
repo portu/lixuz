@@ -114,6 +114,7 @@ __PACKAGE__->set_primary_key("revision_id");
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 __PACKAGE__->belongs_to('committed_by','LIXUZ::Schema::LzUser', 'committer');
+with 'LIXUZ::Role::Serializable';
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

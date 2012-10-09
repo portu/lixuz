@@ -230,6 +230,36 @@ use Moose;
 with 'LIXUZ::Role::Serializable';
 with 'LIXUZ::Role::URLGenerator';
 with 'LIXUZ::Role::IndexTriggers';
+with 'LIXUZ::Role::SchemaHelpers';
+
+sub _serializeExtra
+{
+    return [ 
+        'revisionMeta',
+        'tags',
+        'additionalElements',
+        'workflow',
+        'files',
+        'primary_folder',
+        'folders',
+        'relationships',
+        {
+            source => 'comments', saveAs => 'live_comments',
+        },
+        {
+            source => 'getAllFields', saveAs => 'fieldValues',
+        },
+        {
+            source => 'can_read', saveAs => 'can_read', requires => 'c',
+        },
+        {
+            source => 'can_write', saveAs => 'can_write', requires => 'c',
+        },
+        {
+            source => 'status_name', saveAs => 'status_name', wants => 'i18n'
+        },
+    ];
+}
 
 # This is an alias for ->primary_folder
 sub folder
@@ -569,6 +599,14 @@ sub renderBody
 	return $rendered;
 }
 
+# Summary: Fetch the name of the status this article is in
+# Usage: article->status_name
+sub status_name
+{
+    my($self) = shift;
+    return $self->status->status_name(@_);
+}
+
 # Summary: Check if the current user can edit this article
 # Usage: article->can_edit($c);
 sub can_write
@@ -782,50 +820,16 @@ sub is_live
 #
 # This method *will* resolve the field into its actual value, so you will get the
 # text string associated with pulldowns, rather than the pulldown ID.
-# If you need the ID/raw data, use getFieldRaw()
-#
-# TODO: Caching
+# If you need the ID/raw data, use getFieldRaw() (or getFieldObject)
 sub getField
 {
-    my ($self,$c,$field_id) = @_;
-    croak('$c missing in getField call') if not ref $c;
-    my $value = $self->getFieldRaw($c,$field_id);
-    
-    return '' if not defined $value;
-
-    my $field = $c->model('LIXUZDB::LzField')->find({ field_id => $field_id });
-
-    if ($field->field_type =~ /^(singleline|multiline|meta-.+|date.*)$/)
+    my ($self,$field_id) = @_;
+    if(ref($field_id))
     {
-        # Raw value field, just return the data
-        return $value;
+        $field_id = $_[2];
     }
-    elsif($field->field_type =~ /^(user-pulldown|multi-select)$/)
-    {
-        my @vals = split(/,/,$value);
-        my @resolved;
-        foreach my $v (@vals)
-        {
-            my $val = $c->model('LIXUZDB::LzFieldOptions')->find({
-                    field_id => $field_id,
-                    option_id => $v,
-                });
-            if(not defined $val)
-            {
-                $c->log->warn('Failed to locate value for option_id='.$v.' for field_id='.$field_id);
-            }
-            else
-            {
-                push(@resolved,$val->option_name);
-            }
-        }
-        return(join(', ',@resolved));
-    }
-    else
-    {
-        $c->log->warn('Unhandled getField() field type "'.$field->field_type.'" - returning raw value');
-        return $value;
-    }
+    my $field = $self->getFieldObject($field_id);
+    return $field->human_value;
 }
 
 # Summary: Retrieve the raw/internal value of a field associated with this article
@@ -835,8 +839,6 @@ sub getField
 #
 # This method will not return the user-facing value of a field, if you need
 # the user-facing value use getField()
-#
-# TODO: Caching
 sub getFieldRaw
 {
     my ($self,$c,$field_id) = @_;
@@ -850,6 +852,26 @@ sub getFieldRaw
         return $value->value;
     }
     return;
+}
+
+# Summary: Retrieve the value object of a field associated with this article
+# Usage: article->getFieldObject(field_id);
+sub getFieldObject
+{
+    my ($self,$field_id) = @_;
+    return $self->model_resultset('LzFieldValue')->find({
+            module_id => $self->article_id,
+            revision => $self->revision,
+            field_id => $field_id,
+        });
+}
+
+# Summary: Retrieve all fields associated with this article that have values
+# Usage: fields = article->getAllFields($c)
+sub getAllFields
+{
+    my ($self,$c) = @_;
+    return $self->model_resultset('LzFieldValue')->search({ module_id => $self->article_id, revision => $self->revision });
 }
 
 # ---

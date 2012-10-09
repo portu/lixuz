@@ -151,6 +151,22 @@ __PACKAGE__->set_primary_key("field_id");
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+with 'LIXUZ::Role::Serializable';
+
+sub _serializeExtra
+{
+    return [
+        'is_inline',
+        'storage_type',
+        'options',
+        {
+            source => 'human_field_name', saveAs => 'human_field_name', requires => 'c'
+        },
+        {
+            source => 'type_name', saveAs => 'type_name', requires => 'c'
+        },
+    ];
+}
 
 sub type_name
 {
