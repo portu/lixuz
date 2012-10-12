@@ -40,10 +40,9 @@ build: buildjs buildcss buildi18n
 buildi18n:
 	./script/buildlocale.pl buildonly
 	mkdir -p root/js/i18n
-	for file in i18n/*-js.po; do \
-		lang="$$(echo $$file|perl -pi -e 's#.+/##;s#-js.po##;')"; \
+	for file in i18n/*.po; do \
+		lang="$$(echo $$file|perl -pi -e 's#.+/##;s#.po##;')"; \
 		jsmsgfmt root/js/i18n/"$$lang.js" "$$file"; \
-		perl -pi -e "s/\"$$lang-js\"/\"$$lang\"/g" root/js/i18n/"$$lang.js"; \
 	done
 updatepo:
 	./script/buildlocale.pl
