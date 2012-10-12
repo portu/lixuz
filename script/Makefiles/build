@@ -1,5 +1,3 @@
-HANDLEBARS_BUILDER=handlebars -k if -k i18n --known-only true
-HANDLEBARS_BUILD_INFO=printf "  [BUILDHANDLEBARS]  %s\n"
 JS_BUILDER=perl -p -e 'if ($$lastArg ne $$ARGV) { print "// FILE: $$ARGV\n" ; $$lastArg = $$ARGV; }; s/^\x{FEFF}//g; s/\r\n/\n/g;'
 JS_BUILD_INFO=printf "  [BUILDJS]  %-46s > %s\n"
 
@@ -21,14 +19,7 @@ buildloop:
 	@echo "Watching root/ for changes and rebuilding files whenever a change is detected"
 	@while :;do inotifywait -e modify -e create -e delete -e moved_to -r root &>/dev/null; echo -n "[$$(date +%H:%M:%S)] Rebuilding..."; make build &>/dev/null;echo "done";done
 
-buildhandlebars:
-	@if ! which handlebars >/dev/null; then echo "'handlebars' is required. See installation instructions on http://handlebarsjs.com/precompilation.html";exit 1;fi
-	for file in root/handlebars/*.handlebars root/handlebars/*/*.handlebars; do if [ -e "$$file" ]; then $(HANDLEBARS_BUILD_INFO) $$file; $(HANDLEBARS_BUILDER) $(shell pwd)/$$file -f $$file.js;fi;done
-	rm -rf  root/source-js/handlebartemplates
-	mkdir -p root/source-js/handlebartemplates
-	-mv -f root/handlebars/*.js root/handlebars/*/*.js root/source-js/handlebartemplates
-
-buildjs: buildhandlebars
+buildjs:
 	mkdir -p "$(JS_TARGET_DIR)"
 	cp -R root/source-js/3rdparty-libs/tiny_mce "$(JS_TARGET_DIR)"
 	@cd root/source-js/ && \
