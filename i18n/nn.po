@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2012-10-05 11:30+0200\n"
+"POT-Creation-Date: 2012-10-26 10:35+0200\n"
 "PO-Revision-Date: 2012-09-07 11:11+0200\n"
 "Last-Translator: Eskild Hustvedt <eskild@portu.no>\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
@@ -28,15 +28,272 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: lib/LIXUZ/Schema/LzAction.pm:89
+msgid "Change status of an article to \"%(STATUS)\""
+msgstr "Endra statusen til ein artikkel til «%(STATUS)»"
+
+#: lib/LIXUZ/Schema/LzAction.pm:100
+msgid "Reassign an article to the role \"%(ROLE)\""
+msgstr "Tildel ein artikkel til rollen «%(ROLE)»"
+
+#: lib/LIXUZ/Schema/LzAction.pm:239
+msgid "Assign articles to users"
+msgstr "Tildel artiklar til brukarar"
+
+#: lib/LIXUZ/Schema/LzField.pm:162
+msgid "Single line"
+msgstr "Ei linje"
+
+#: lib/LIXUZ/Schema/LzField.pm:163
+msgid "Multi-line"
+msgstr "Fleire linjer"
+
+#: lib/LIXUZ/Schema/LzField.pm:164
+#: root/adm/settings/admin/adfields/adfieldedit.html:111
+msgid "Custom pulldown"
+msgstr "Tilpassa nedtrekksmeny"
+
+#: lib/LIXUZ/Schema/LzField.pm:165
+#: root/adm/settings/admin/adfields/adfieldedit.html:116
+msgid "Range-defined pulldown"
+msgstr "Intervall-definert nedtrekksmeny"
+
+#: lib/LIXUZ/Schema/LzField.pm:166
+msgid "Multiple select"
+msgstr "Fleire val"
+
+#: lib/LIXUZ/Schema/LzField.pm:167
+msgid "Date/time"
+msgstr "Dato/tid"
+
+#: lib/LIXUZ/Schema/LzField.pm:168
+msgid "Pulldown"
+msgstr "Nedtrekksmeny"
+
+#: lib/LIXUZ/Schema/LzField.pm:169
+#: root/adm/settings/admin/adfields/adfieldedit.html:101
+msgid "Checkbox"
+msgstr "Avkryssingsboks"
+
+#: lib/LIXUZ/Schema/LzField.pm:170
+#: root/adm/settings/admin/adfields/adfieldedit.html:41
+#: root/adm/settings/admin/adfields/adfieldedit.html:126
+msgid "Range"
+msgstr "Intervall"
+
+#: lib/LIXUZ/Schema/LzField.pm:171
+msgid "Metadata (date)"
+msgstr "Metadata (dato)"
+
+#: lib/LIXUZ/Schema/LzField.pm:172
+msgid "Metadata (integer)"
+msgstr "Metadata (heiltal)"
+
+#: lib/LIXUZ/Schema/LzField.pm:173
+msgid "Date-time range"
+msgstr "Dato og tids-område"
+
+#: lib/LIXUZ/Schema/LzField.pm:178
+msgid "(unknown - not set in database)"
+msgstr "(ukjend - ikkje sett i databasen)"
+
+#: lib/LIXUZ/Schema/LzField.pm:191
+msgid "(unknown - \"%(FIELDNAME)\")"
+msgstr "(ukjend - «%(FIELDNAME»)"
+
+#: lib/LIXUZ/Schema/LzField.pm:228
+#: lib/LIXUZ/Controller/Admin/Categories.pm:172
+#: lib/LIXUZ/Controller/Admin/Articles.pm:906
+#: lib/LIXUZ/Controller/Admin/Articles.pm:976
+#: lib/LIXUZ/Controller/Admin/RSSImport.pm:354
+#: lib/LIXUZ/Controller/Admin/Users.pm:82
+#: lib/LIXUZ/Controller/Admin/Users.pm:141
+#: lib/LIXUZ/Controller/Admin/Files.pm:131
+#: root/adm/articles/relationships_right.html:34
+#: root/adm/articles/list.html:42
+#: root/adm/articles/read/relationshipsread.html:25
+#: root/adm/dashboard/widgetHelper_articleList.html:25
+#: root/adm/files/edit.html:90 root/adm/users/list.html:32
+#: root/adm/users/roles/list.html:26 root/adm/users/roles/edit/index.html:36
+#: root/adm/users/edit/index.html:133 root/adm/categories/editform.html:70
+#: root/adm/categories/list.html:33
+#: root/source-js/articles/relationships.js:76
+#: root/source-js/articles/viewArticleRevisions.js:119
+msgid "Status"
+msgstr "Status"
+
+#: lib/LIXUZ/Schema/LzField.pm:229 lib/LIXUZ/Controller/Admin/Articles.pm:898
+#: lib/LIXUZ/Controller/Admin/Articles.pm:977
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:126
+#: root/adm/dashboard/widgetHelper_articleList.html:22
+#: root/adm/files/edit.html:72 root/adm/timetracker/listview/pdf_data.html:44
+#: root/adm/timetracker/listview/list.html:58
+#: root/source-js/articles/relationships.js:76
+#: root/source-js/articles/articles.js:117
+#: root/source-js/rssimport/rssimport.js:105
+#: root/source-js/articles/viewArticleRevisions.js:119
+msgid "Title"
+msgstr "Tittel"
+
+#: lib/LIXUZ/Schema/LzField.pm:230 lib/LIXUZ/Controller/Admin/Articles.pm:901
+#: lib/LIXUZ/Controller/Admin/Articles.pm:978
+msgid "Body"
+msgstr "Brødtekst"
+
+#: lib/LIXUZ/Schema/LzField.pm:231 lib/LIXUZ/Controller/Admin/Articles.pm:899
+#: lib/LIXUZ/Controller/Admin/Articles.pm:979
+msgid "Lead"
+msgstr "Inngress"
+
+#: lib/LIXUZ/Schema/LzField.pm:232 lib/LIXUZ/Controller/Admin/Articles.pm:900
+#: lib/LIXUZ/Controller/Admin/Articles.pm:980 root/adm/articles/list.html:43
+msgid "Author"
+msgstr "Forfattar"
+
+#: lib/LIXUZ/Schema/LzField.pm:233 lib/LIXUZ/Controller/Admin/Articles.pm:902
+#: lib/LIXUZ/Controller/Admin/Articles.pm:981
+#: root/adm/articles/read/workflow_read.html:31
+msgid "Publish time"
+msgstr "Publiseringstid"
+
+#: lib/LIXUZ/Schema/LzField.pm:234 lib/LIXUZ/Controller/Admin/Articles.pm:982
+#: root/adm/articles/read/workflow_read.html:35
+msgid "Expiry time"
+msgstr "Gyldig til"
+
+#: lib/LIXUZ/Schema/LzField.pm:235 lib/LIXUZ/Controller/Admin/Articles.pm:983
+msgid "Primary folder"
+msgstr "Hovudmappe"
+
+#: lib/LIXUZ/Schema/LzField.pm:236
+#: lib/LIXUZ/Controller/Admin/Categories.pm:180
+#: lib/LIXUZ/Controller/Admin/Articles.pm:905
+#: lib/LIXUZ/Controller/Admin/Articles.pm:984 root/adm/articles/list.html:40
+#: root/adm/categories/editform.html:53 root/adm/categories/list.html:29
+msgid "Template"
+msgstr "Mal"
+
+#: lib/LIXUZ/Schema/LzField.pm:251
+msgid "Unknown"
+msgstr "Ukjend"
+
+#: lib/LIXUZ/Schema/LzStatus.pm:116
+msgid "Draft"
+msgstr "Utkast"
+
+#: lib/LIXUZ/Schema/LzStatus.pm:117
+msgid "Live"
+msgstr "Live (på nett)"
+
+#: lib/LIXUZ/Schema/LzStatus.pm:118 root/adm/articles/editform.html:55
+#: root/adm/articles/read/workflow_read.html:27
+#: root/source-js/articles/viewArticleRevisions.js:119
+msgid "Revision"
+msgstr "Revisjon"
+
+#: lib/LIXUZ/Schema/LzStatus.pm:119
+#: lib/LIXUZ/Controller/Admin/Categories.pm:175
+#: lib/LIXUZ/Controller/Admin/Categories.pm:344
+#: lib/LIXUZ/Controller/Admin/RSSImport.pm:349
+#: lib/LIXUZ/Controller/Admin/Users.pm:71
+#: lib/LIXUZ/Controller/Admin/Users.pm:144
+#: lib/LIXUZ/Controller/Admin/Users.pm:310
+#: lib/LIXUZ/Controller/Admin/Files.pm:119
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:130 root/adm/files/list.html:58
+#: root/adm/files/edit.html:101 root/adm/users/roles/edit/index.html:41
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#: lib/LIXUZ/Schema/LzFile.pm:858 lib/LIXUZ/Schema/LzFile.pm:880
+msgid "File ID:"
+msgstr "Fil ID:"
+
+#: lib/LIXUZ/Schema/LzFile.pm:883 lib/LIXUZ/Controller/Admin/Articles.pm:511
+#: lib/LIXUZ/Controller/Admin/Articles.pm:516
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:720
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:782
+#: lib/LIXUZ/Controller/Admin/TimeTracker/Listview.pm:141
+#: root/adm/articles/list.html:125
+#: root/adm/dashboard/widget_recentComments.html:54
+#: root/adm/dashboard/widgetHelper_articleList.html:93
+#: root/adm/dashboard/widgetHelper_articleList.html:112
+#: root/adm/files/list.html:87 root/adm/timetracker/list.html:27
+#: root/adm/timetracker/pdf_report.html:17
+#: root/source-js/articles-previewUI/previewUI.js:270
+msgid "(none)"
+msgstr "(inga)"
+
+#: lib/LIXUZ/Schema/LzFile.pm:890 lib/LIXUZ/Schema/LzFile.pm:895
+#: root/source-js/core/createArticle.js:49
+msgid "Folder:"
+msgstr "Mappe:"
+
+#: lib/LIXUZ/Schema/LzFile.pm:902 root/adm/files/list.html:73
+msgid "View other versions"
+msgstr "Sjå andre versjonar"
+
+#: lib/LIXUZ/Schema/LzFileClass.pm:79
+msgid "Default/generic"
+msgstr "Standard/generell"
+
+#: lib/LIXUZ/Schema/LzWorkflow.pm:157
+msgid "(user not found)"
+msgstr "(brukar ikkje funne)"
+
+#: lib/LIXUZ/Schema/LzWorkflow.pm:174
+msgid "%(ROLE_NAME) (role)"
+msgstr "%(ROLE_NAME) (rolle)"
+
+#: lib/LIXUZ/Schema/LzWorkflow.pm:178 lib/LIXUZ/Schema/LzWorkflow.pm:191
+#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:258
+#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:273
+#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:308
+#: root/adm/articles/list.html:209
+#: root/adm/dashboard/widgetHelper_articleList.html:103
+msgid "(nobody)"
+msgstr "(inga)"
+
+#: lib/LIXUZ/HelperModules/DragDrop.pm:574
+msgid "All"
+msgstr "Alle"
+
+#: lib/LIXUZ/HelperModules/DragDrop.pm:681
+msgid "Maximum depth of nodes reached"
+msgstr "Maksnivå på noder er nådd"
+
+#: lib/LIXUZ/HelperModules/Forms.pm:135 root/adm/files/edit.html:143
+msgid "Reset"
+msgstr "Nullstill"
+
+#: lib/LIXUZ/HelperModules/Forms.pm:159
+#: lib/LIXUZ/Controller/Admin/Articles.pm:1079
+#: root/adm/core/fields/rangepulldown.html:21
+#: root/adm/core/fields/userpulldown.html:55 root/source-js/core/chosen.js:9
+msgid "-select-"
+msgstr "-vel-"
+
+#: lib/LIXUZ/HelperModules/EMail.pm:90
+msgid "This message has been automatically generated by Lixuz"
+msgstr "Denne meldinga er sendt automatisk av Lixuz"
+
+#: lib/LIXUZ/HelperModules/List.pm:335
+#: root/source-js/utils/objectSelector.js:208
+msgid "Search"
+msgstr "Søk"
+
+#: lib/LIXUZ/HelperModules/List.pm:338
+msgid "Filter"
+msgstr "Filter"
+
 #: lib/LIXUZ/Controller/Admin.pm:76 lib/LIXUZ/Controller/Admin.pm:78
 msgid "This account has been deactivated."
 msgstr "Denne kontoen er deaktivert."
 
-#: lib/LIXUZ/Controller/Admin.pm:76 lib/LIXUZ/Controller/Admin.pm:86
-#: lib/LIXUZ/Controller/Admin/Articles.pm:379
-#: lib/LIXUZ/Controller/Admin/Articles.pm:383
+#: lib/LIXUZ/Controller/Admin.pm:78 lib/LIXUZ/Controller/Admin.pm:88
+#: lib/LIXUZ/Controller/Admin/Articles.pm:376
+#: lib/LIXUZ/Controller/Admin/Articles.pm:380
+#: lib/LIXUZ/Controller/Admin/Articles.pm:570
 #: lib/LIXUZ/Controller/Admin/Articles.pm:574
-#: lib/LIXUZ/Controller/Admin/Articles.pm:578
 msgid "Permission denied"
 msgstr "Tilgang nekta"
 
@@ -44,11 +301,11 @@ msgstr "Tilgang nekta"
 msgid "You need to log in to access that resource."
 msgstr "Du må logge inn for å få tilgang til denne ressursen"
 
-#: lib/LIXUZ/Controller/Admin.pm:154 lib/LIXUZ/Controller/Admin.pm:155
+#: lib/LIXUZ/Controller/Admin.pm:162 lib/LIXUZ/Controller/Admin.pm:163
 msgid "404 error"
 msgstr "404 feil"
 
-#: lib/LIXUZ/Controller/Admin.pm:156
+#: lib/LIXUZ/Controller/Admin.pm:164
 msgid ""
 "The component or object you requested could not be found<br /><br />If you "
 "entered the URL manually, please check if you have mistyped something.<br /"
@@ -62,193 +319,6 @@ msgstr ""
 "programfeil<br />rapporter den til din administrator eller utviklingslaget "
 "for Lixuz.<br /><br />Feilinformasjon:<br />"
 
-#: lib/LIXUZ/Controller/Admin/Files.pm:92
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:37
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:366 root/adm/core/menu.html:67
-#: root/adm/articles/rightside.html:33
-#: root/adm/articles/read/rightread.html:30
-#: root/source-js/articles-previewUI/previewUI.js:179
-msgid "Files"
-msgstr "Filer"
-
-#: lib/LIXUZ/Controller/Admin/Files.pm:115
-#: lib/LIXUZ/Controller/Admin/Users.pm:67
-#: lib/LIXUZ/Controller/Admin/Users.pm:143
-#: lib/LIXUZ/Controller/Admin/Users.pm:207
-#: lib/LIXUZ/Controller/Admin/Categories.pm:174
-#: lib/LIXUZ/Controller/Admin/Categories.pm:214
-#: lib/LIXUZ/Controller/Admin/RSSImport.pm:345
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:130
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:228
-#: root/adm/rssimport/list.html:23 root/adm/files/edit.html:100
-#: root/adm/files/list.html:56 root/adm/users/roles/edit/index.html:40
-msgid "Active"
-msgstr "Aktiv"
-
-#: lib/LIXUZ/Controller/Admin/Files.pm:119
-#: lib/LIXUZ/Controller/Admin/Users.pm:71
-#: lib/LIXUZ/Controller/Admin/Users.pm:144
-#: lib/LIXUZ/Controller/Admin/Users.pm:310
-#: lib/LIXUZ/Controller/Admin/Categories.pm:175
-#: lib/LIXUZ/Controller/Admin/Categories.pm:344
-#: lib/LIXUZ/Controller/Admin/RSSImport.pm:349
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:130
-#: lib/LIXUZ/Schema/LzStatus.pm:119 root/adm/files/edit.html:101
-#: root/adm/files/list.html:58 root/adm/users/roles/edit/index.html:41
-msgid "Inactive"
-msgstr "Inaktiv"
-
-#: lib/LIXUZ/Controller/Admin/Files.pm:124
-msgid "Uploaded by"
-msgstr "Lasta opp av"
-
-#: lib/LIXUZ/Controller/Admin/Files.pm:128
-msgid "(anyone)"
-msgstr "(kven som helst)"
-
-#: lib/LIXUZ/Controller/Admin/Files.pm:131
-#: lib/LIXUZ/Controller/Admin/Users.pm:82
-#: lib/LIXUZ/Controller/Admin/Users.pm:141
-#: lib/LIXUZ/Controller/Admin/Categories.pm:172
-#: lib/LIXUZ/Controller/Admin/RSSImport.pm:354
-#: lib/LIXUZ/Controller/Admin/Articles.pm:911
-#: lib/LIXUZ/Controller/Admin/Articles.pm:981 lib/LIXUZ/Schema/LzField.pm:226
-#: root/adm/categories/editform.html:70 root/adm/categories/list.html:33
-#: root/adm/articles/relationships_right.html:34
-#: root/adm/articles/list.html:42
-#: root/adm/articles/read/relationshipsread.html:25
-#: root/adm/files/edit.html:90 root/adm/users/list.html:32
-#: root/adm/users/roles/list.html:26 root/adm/users/roles/edit/index.html:36
-#: root/adm/users/edit/index.html:133
-#: root/adm/dashboard/widgetHelper_articleList.html:25
-#: root/source-js/articles/relationships.js:76
-#: root/source-js/articles/viewArticleRevisions.js:119
-msgid "Status"
-msgstr "Status"
-
-#: lib/LIXUZ/Controller/Admin/Files.pm:169
-#: lib/LIXUZ/Controller/Admin/Users.pm:415
-#: lib/LIXUZ/Controller/Admin/Users.pm:445
-#: lib/LIXUZ/Controller/Admin/Categories.pm:98
-#: lib/LIXUZ/Controller/Admin/Categories.pm:133
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:57
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:119
-#: lib/LIXUZ/Controller/Admin/Articles.pm:745
-#: lib/LIXUZ/Controller/Admin/Articles.pm:799
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:42
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:146
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:204
-#: lib/LIXUZ/Controller/Admin/Settings/Admin/Additionalfields.pm:58
-msgid "Error: Failed to locate UID. The path specified is invalid."
-msgstr "Feil: Kunna ikkje finne UIDen. Stigen som er spesifisert er ugyldig."
-
-#: lib/LIXUZ/Controller/Admin/Files.pm:180
-msgid "File deleted"
-msgstr "Fila er sletta"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:34 root/adm/core/menu.html:109
-msgid "Users"
-msgstr "Brukarar"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:76
-#: lib/LIXUZ/Controller/Admin/Users.pm:130 root/adm/users/edit/index.html:142
-msgid "Role"
-msgstr "Rolle"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:125 root/adm/users/edit/index.html:74
-msgid "First name"
-msgstr "Fornamn"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:126 root/adm/users/edit/index.html:80
-msgid "Last name"
-msgstr "Etternamn"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:127 root/adm/newsletter/list.html:26
-#: root/adm/users/edit/index.html:87
-msgid "E-mail"
-msgstr "E-post"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:128 root/adm/users/edit/index.html:97
-msgid "User name"
-msgstr "Brukarnamn"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:129
-#: lib/LIXUZ/Controller/Admin/Login.pm:122 root/adm/core/login.html:33
-msgid "Password"
-msgstr "Passord"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:132 root/adm/users/edit/index.html:119
-msgid "Language"
-msgstr "Språk"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:152
-#: lib/LIXUZ/Controller/Admin/Users.pm:153
-msgid "Create user"
-msgstr "Opprett brukar"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:159 root/adm/core/header.html:154
-msgid "Edit account information"
-msgstr "Rediger kontoinformasjon"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:163
-msgid "Editing user %(USER_ID)"
-msgstr "Redigerer brukar %(USER_ID)"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:166
-#: lib/LIXUZ/Controller/Admin/Categories.pm:193
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:178
-#: root/adm/rssimport/list.html:82 root/source-js/utils/elementEditor.js:66
-msgid "Save changes"
-msgstr "Lagra endringar"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:168
-#: root/adm/core/change_password.html:12 root/adm/users/edit/index.html:110
-msgid "Change password to"
-msgstr "Endre passordet til"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:197
-msgid ""
-"You have not defined any roles. You need to add some roles before you can "
-"add a new user."
-msgstr ""
-"Du har ikkje definert nokon roller. Du må leggja til nokon roller før du kan "
-"leggja til ein ny brukar."
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:286
-msgid "Your current password was incorrect"
-msgstr "Passordet ditt er feil"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:293
-msgid "Your new password is too short"
-msgstr "Ditt nye passord er for kort"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:294
-msgid "The new password is too short"
-msgstr "Det nye passordet er for kort"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:295
-msgid "The password is too short"
-msgstr "Passordet er for kort"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:348
-#: lib/LIXUZ/Controller/Admin/Dashboard.pm:49
-msgid "User data saved"
-msgstr "Brukardata lagra"
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:366
-msgid ""
-"Error: A user with the username %(USERNAME) already exists (UID %(UID))."
-msgstr ""
-"Feil: Ein brukar med brukarnamnet %(USERNAME) finst allerete (ID %(UID))."
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:421
-msgid "Error: Failed to locate a user with the UID %(UID)."
-msgstr "Feil: Kunna ikkje finna ein brukar med IDen %(UID)."
-
-#: lib/LIXUZ/Controller/Admin/Users.pm:452
-msgid "User deleted"
-msgstr "Brukar sletta"
-
 #: lib/LIXUZ/Controller/Admin/Categories.pm:35 root/adm/core/menu.html:45
 msgid "Categories"
 msgstr "Kategoriar"
@@ -258,6 +328,22 @@ msgid ""
 "Error: A category with the categoryname %(USERNAME) already exists (UID "
 "%(UID))."
 msgstr "Feil: Ein kategori med namnet %(USERNAME) finst allerete (ID %(UID))."
+
+#: lib/LIXUZ/Controller/Admin/Categories.pm:98
+#: lib/LIXUZ/Controller/Admin/Categories.pm:133
+#: lib/LIXUZ/Controller/Admin/Articles.pm:740
+#: lib/LIXUZ/Controller/Admin/Articles.pm:794
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:57
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:119
+#: lib/LIXUZ/Controller/Admin/Users.pm:415
+#: lib/LIXUZ/Controller/Admin/Users.pm:445
+#: lib/LIXUZ/Controller/Admin/Files.pm:169
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:146
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:204
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:42
+#: lib/LIXUZ/Controller/Admin/Settings/Admin/Additionalfields.pm:58
+msgid "Error: Failed to locate UID. The path specified is invalid."
+msgstr "Feil: Kunna ikkje finne UIDen. Stigen som er spesifisert er ugyldig."
 
 #: lib/LIXUZ/Controller/Admin/Categories.pm:107
 msgid "Error: Failed to locate a category with the UID %(UID)."
@@ -272,6 +358,20 @@ msgstr "Kategori sletta"
 msgid "Category name"
 msgstr "Kategorinamn"
 
+#: lib/LIXUZ/Controller/Admin/Categories.pm:174
+#: lib/LIXUZ/Controller/Admin/Categories.pm:214
+#: lib/LIXUZ/Controller/Admin/RSSImport.pm:345
+#: lib/LIXUZ/Controller/Admin/Users.pm:67
+#: lib/LIXUZ/Controller/Admin/Users.pm:143
+#: lib/LIXUZ/Controller/Admin/Users.pm:207
+#: lib/LIXUZ/Controller/Admin/Files.pm:115
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:130
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:228
+#: root/adm/rssimport/list.html:23 root/adm/files/list.html:56
+#: root/adm/files/edit.html:100 root/adm/users/roles/edit/index.html:40
+msgid "Active"
+msgstr "Aktiv"
+
 #: lib/LIXUZ/Controller/Admin/Categories.pm:178
 msgid "URL"
 msgstr "Nettadresse"
@@ -281,18 +381,17 @@ msgstr "Nettadresse"
 msgid "Folders"
 msgstr "Mapper"
 
-#: lib/LIXUZ/Controller/Admin/Categories.pm:180
-#: lib/LIXUZ/Controller/Admin/Articles.pm:910
-#: lib/LIXUZ/Controller/Admin/Articles.pm:989 lib/LIXUZ/Schema/LzField.pm:234
-#: root/adm/categories/editform.html:53 root/adm/categories/list.html:29
-#: root/adm/articles/list.html:40
-msgid "Template"
-msgstr "Mal"
-
 #: lib/LIXUZ/Controller/Admin/Categories.pm:186
 #: lib/LIXUZ/Controller/Admin/Categories.pm:188
 msgid "Create category"
 msgstr "Opprett kategori"
+
+#: lib/LIXUZ/Controller/Admin/Categories.pm:193
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:178
+#: lib/LIXUZ/Controller/Admin/Users.pm:166 root/adm/rssimport/list.html:82
+#: root/source-js/utils/elementEditor.js:66
+msgid "Save changes"
+msgstr "Lagra endringar"
 
 #: lib/LIXUZ/Controller/Admin/Categories.pm:199
 msgid "Editing category %(CATEGORY_ID)"
@@ -306,84 +405,98 @@ msgstr "Inga forelder"
 msgid "Category data saved"
 msgstr "Kategoridata lagra"
 
-#: lib/LIXUZ/Controller/Admin/ACL.pm:33
-msgid "<b>Access denied</b>: You are not allowed to access that resource"
-msgstr "<b>Tilgang nekta</b>: Du har ikkje tilgang til denne ressursen"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:49
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:240 root/adm/core/menu.html:29
+msgid "Articles"
+msgstr "Artiklar"
 
-#: lib/LIXUZ/Controller/Admin/ACL.pm:34
-msgid "Access denied"
-msgstr "Tilgang nekta"
-
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:35 root/adm/core/menu.html:56
-msgid "Dictionary"
-msgstr "Ordliste"
-
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:63
-msgid "Definition deleted"
-msgstr "Definisjonen er sletta"
-
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:77
-msgid ""
-"Error: a definition of the word \"%(WORD)\" already exists with the word id "
-"%(WORDID)"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:135
+msgid "Article status changed, and article(s) have been reassigned"
 msgstr ""
-"Feil: ein definisjon av ordet «%(WORD)» finst allereie med ord IDen %(WORDID)"
+"Artikkelstatus endra, og artikkelen/artiklane har blitt tildelt nokon nye"
 
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:128
-msgid "Error: Failed to locate a dictionary with the UID %(UID)."
-msgstr "Feil: Kunnne ikkje finna ein ordlisteoppføring med IDen %(UID)."
+#: lib/LIXUZ/Controller/Admin/Articles.pm:139
+msgid "Article status changed"
+msgstr "Artikkelstatus endra"
 
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:164
-#: root/adm/dictionary/editform.html:37 root/adm/dictionary/list.html:28
-msgid "Word"
-msgstr "Ord"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:143
+msgid "Article(s) have been reassigned"
+msgstr "Artikkel/artiklar har blitt tildelt nokon andre"
 
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:165
-#: root/adm/dictionary/editform.html:44 root/adm/dictionary/list.html:29
-#: root/source-js/utils/elementEditor.js:53
-msgid "Definition"
-msgstr "Definisjon"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:191
+#: root/adm/dashboard/widgetHelper_articleList.html:90
+msgid "(unknown)"
+msgstr "(ukjend)"
 
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:171
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:173
-msgid "Create definition"
-msgstr "Opprett definisjon"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:280
+#: lib/LIXUZ/Controller/Admin/Articles.pm:285
+msgid "(user)"
+msgstr "(brukar)"
 
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:179
-msgid "Editing definition %(DICTIONARY_ID)"
-msgstr "Redigerer definisjonen av ordet %(DICTIONARY_ID)"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:293
+#: lib/LIXUZ/Controller/Admin/Articles.pm:298
+#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:237
+msgid "(role)"
+msgstr "(rolle)"
 
-#: lib/LIXUZ/Controller/Admin/Dictionary.pm:231
-msgid "Definition saved"
-msgstr "Definisjon lagra"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:325 root/adm/articles/list.html:44
+#: root/adm/articles/workflow.html:43
+#: root/adm/articles/read/workflow_read.html:39
+#: root/adm/dashboard/widgetHelper_articleList.html:37
+msgid "Assigned to"
+msgstr "Tildelt"
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:54
-msgid "You have been logged out."
-msgstr "Du har blitt logga ut."
+#: lib/LIXUZ/Controller/Admin/Articles.pm:329
+msgid "(any user or role)"
+msgstr "(alle brukarar og roller)"
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:65
-msgid "Login"
-msgstr "Logg inn"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:332
+msgid "In status"
+msgstr "I status"
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:92
-msgid "<b>Login refused</b>: %(REASON)"
-msgstr "<b>Innlogging nekta</b>: %(REASON)"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:368
+#: lib/LIXUZ/Controller/Admin/Articles.pm:560
+msgid "Error: Failed to locate revision %(REVISION) of the article %(UID)"
+msgstr "Feil: Kunna ikkje finna revisjonen %(REVISION) av artikkelen %(UID)"
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:113
-msgid "Invalid username or password"
-msgstr "Uglydig brukarnamn eller passord"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:370
+#: lib/LIXUZ/Controller/Admin/Articles.pm:562
+#: lib/LIXUZ/Controller/Admin/Articles.pm:749
+msgid "Error: Failed to locate a article with the UID %(UID)."
+msgstr "Feil: Kunna ikkje finna ein artikkel med IDen %(UID)."
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:118 root/adm/core/header.html:160
-#: root/adm/core/login.html:37
-msgid "Log in"
-msgstr "Logg inn"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:483
+msgid "Default Template"
+msgstr "Standardmal"
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:121
-#: root/adm/timetracker/listview/list.html:26
-#: root/adm/timetracker/listview/pdf_data.html:19 root/adm/core/login.html:29
-#: root/adm/users/list.html:28
-msgid "Username"
-msgstr "Brukarnamn"
+#: lib/LIXUZ/Controller/Admin/Articles.pm:761
+msgid "You have stolen the edit lock for this article."
+msgstr "Du har stjålet redigeringslåsen for denne artikkelen."
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:814
+msgid "Article deleted"
+msgstr "Artikkelen er sletta"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:878
+#: lib/LIXUZ/Controller/Admin/Articles.pm:882
+msgid "Editing article %(ARTICLE_ID)"
+msgstr "Redigerer artikkel %(ARTICLE_ID)"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:886
+msgid "Creating article"
+msgstr "Opprettar artikkel"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:903
+msgid "Expires at"
+msgstr "Gyldig til"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:904
+msgid "Order"
+msgstr "Rekkjefølgja"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:1086
+msgid "(Default template)"
+msgstr "(standardmal)"
 
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:30
 #: lib/LIXUZ/Controller/Admin/ForgottenPw.pm:77 root/adm/core/login.html:43
@@ -437,6 +550,53 @@ msgstr ""
 msgid "The new passwords do not match"
 msgstr "Passorda du skreiv inn er ikkje like"
 
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:35 root/adm/core/menu.html:56
+msgid "Dictionary"
+msgstr "Ordliste"
+
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:63
+msgid "Definition deleted"
+msgstr "Definisjonen er sletta"
+
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:77
+msgid ""
+"Error: a definition of the word \"%(WORD)\" already exists with the word id "
+"%(WORDID)"
+msgstr ""
+"Feil: ein definisjon av ordet «%(WORD)» finst allereie med ord IDen %(WORDID)"
+
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:128
+msgid "Error: Failed to locate a dictionary with the UID %(UID)."
+msgstr "Feil: Kunnne ikkje finna ein ordlisteoppføring med IDen %(UID)."
+
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:164
+#: root/adm/dictionary/editform.html:37 root/adm/dictionary/list.html:28
+msgid "Word"
+msgstr "Ord"
+
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:165
+#: root/adm/dictionary/editform.html:44 root/adm/dictionary/list.html:29
+#: root/source-js/utils/elementEditor.js:53
+msgid "Definition"
+msgstr "Definisjon"
+
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:171
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:173
+msgid "Create definition"
+msgstr "Opprett definisjon"
+
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:179
+msgid "Editing definition %(DICTIONARY_ID)"
+msgstr "Redigerer definisjonen av ordet %(DICTIONARY_ID)"
+
+#: lib/LIXUZ/Controller/Admin/Dictionary.pm:231
+msgid "Definition saved"
+msgstr "Definisjon lagra"
+
+#: lib/LIXUZ/Controller/Admin/Templates.pm:45
+msgid "Templates"
+msgstr "Malar"
+
 #: lib/LIXUZ/Controller/Admin/Newsletter.pm:56
 msgid "Newsletter subscriptions"
 msgstr "Abonnenter på nyheitsbrev"
@@ -448,10 +608,6 @@ msgstr "Manuelt nyheitsbrev"
 #: lib/LIXUZ/Controller/Admin/Newsletter.pm:454
 msgid "Group"
 msgstr "Gruppe"
-
-#: lib/LIXUZ/Controller/Admin/Dashboard.pm:40 root/adm/core/menu.html:24
-msgid "Dashboard"
-msgstr "Dashbord"
 
 #: lib/LIXUZ/Controller/Admin/TimeTracker.pm:92
 #: lib/LIXUZ/Controller/Admin/TimeTracker.pm:98
@@ -468,17 +624,17 @@ msgid "Timetracker"
 msgstr "Timeliste"
 
 #: lib/LIXUZ/Controller/Admin/TimeTracker.pm:170
-#: lib/LIXUZ/Controller/Admin/TimeTracker/Listview.pm:292
+#: lib/LIXUZ/Controller/Admin/TimeTracker/Listview.pm:297
 msgid "From and to date"
 msgstr "Frå og til dato"
 
 #: lib/LIXUZ/Controller/Admin/TimeTracker.pm:177
-#: lib/LIXUZ/Controller/Admin/TimeTracker/Listview.pm:298
+#: lib/LIXUZ/Controller/Admin/TimeTracker/Listview.pm:303
 msgid "User"
 msgstr "Brukar"
 
 #: lib/LIXUZ/Controller/Admin/TimeTracker.pm:181
-#: lib/LIXUZ/Controller/Admin/TimeTracker/Listview.pm:302
+#: lib/LIXUZ/Controller/Admin/TimeTracker/Listview.pm:307
 msgid "(any user)"
 msgstr "(kven som helst)"
 
@@ -486,259 +642,213 @@ msgstr "(kven som helst)"
 msgid "Failed to locate timeentry id. The path specified is invalid."
 msgstr "Feil: Kunna ikkje finne UIDen. Stigen som er spesifisert er ugyldig."
 
-#: lib/LIXUZ/Controller/Admin/Settings.pm:31 root/adm/core/menu.html:128
-msgid "Settings"
-msgstr "Innstillingar"
+#: lib/LIXUZ/Controller/Admin/Users.pm:34 root/adm/core/menu.html:109
+msgid "Users"
+msgstr "Brukarar"
 
-#: lib/LIXUZ/Controller/Admin/Templates.pm:45
-msgid "Templates"
-msgstr "Malar"
+#: lib/LIXUZ/Controller/Admin/Users.pm:76
+#: lib/LIXUZ/Controller/Admin/Users.pm:130 root/adm/users/edit/index.html:142
+msgid "Role"
+msgstr "Rolle"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:49
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:240 root/adm/core/menu.html:29
-msgid "Articles"
-msgstr "Artiklar"
+#: lib/LIXUZ/Controller/Admin/Users.pm:125 root/adm/users/edit/index.html:74
+msgid "First name"
+msgstr "Fornamn"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:135
-msgid "Article status changed, and article(s) have been reassigned"
+#: lib/LIXUZ/Controller/Admin/Users.pm:126 root/adm/users/edit/index.html:80
+msgid "Last name"
+msgstr "Etternamn"
+
+#: lib/LIXUZ/Controller/Admin/Users.pm:127 root/adm/newsletter/list.html:26
+#: root/adm/users/edit/index.html:87
+msgid "E-mail"
+msgstr "E-post"
+
+#: lib/LIXUZ/Controller/Admin/Users.pm:128 root/adm/users/edit/index.html:97
+msgid "User name"
+msgstr "Brukarnamn"
+
+#: lib/LIXUZ/Controller/Admin/Users.pm:129
+#: lib/LIXUZ/Controller/Admin/Login.pm:123 root/adm/core/login.html:33
+msgid "Password"
+msgstr "Passord"
+
+#: lib/LIXUZ/Controller/Admin/Users.pm:132 root/adm/users/edit/index.html:119
+msgid "Language"
+msgstr "Språk"
+
+#: lib/LIXUZ/Controller/Admin/Users.pm:152
+#: lib/LIXUZ/Controller/Admin/Users.pm:153
+msgid "Create user"
+msgstr "Opprett brukar"
+
+#: lib/LIXUZ/Controller/Admin/Users.pm:159 root/adm/core/header.html:157
+msgid "Edit account information"
+msgstr "Rediger kontoinformasjon"
+
+#: lib/LIXUZ/Controller/Admin/Users.pm:163
+msgid "Editing user %(USER_ID)"
+msgstr "Redigerer brukar %(USER_ID)"
+
+#: lib/LIXUZ/Controller/Admin/Users.pm:168 root/adm/users/edit/index.html:110
+#: root/adm/core/change_password.html:12
+msgid "Change password to"
+msgstr "Endre passordet til"
+
+#: lib/LIXUZ/Controller/Admin/Users.pm:197
+msgid ""
+"You have not defined any roles. You need to add some roles before you can "
+"add a new user."
 msgstr ""
-"Artikkelstatus endra, og artikkelen/artiklane har blitt tildelt nokon nye"
+"Du har ikkje definert nokon roller. Du må leggja til nokon roller før du kan "
+"leggja til ein ny brukar."
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:139
-msgid "Article status changed"
-msgstr "Artikkelstatus endra"
+#: lib/LIXUZ/Controller/Admin/Users.pm:286
+msgid "Your current password was incorrect"
+msgstr "Passordet ditt er feil"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:143
-msgid "Article(s) have been reassigned"
-msgstr "Artikkel/artiklar har blitt tildelt nokon andre"
+#: lib/LIXUZ/Controller/Admin/Users.pm:293
+msgid "Your new password is too short"
+msgstr "Ditt nye passord er for kort"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:191
-#: root/adm/dashboard/widgetHelper_articleList.html:90
-msgid "(unknown)"
-msgstr "(ukjend)"
+#: lib/LIXUZ/Controller/Admin/Users.pm:294
+msgid "The new password is too short"
+msgstr "Det nye passordet er for kort"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:283
-#: lib/LIXUZ/Controller/Admin/Articles.pm:288
-msgid "(user)"
-msgstr "(brukar)"
+#: lib/LIXUZ/Controller/Admin/Users.pm:295
+msgid "The password is too short"
+msgstr "Passordet er for kort"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:296
-#: lib/LIXUZ/Controller/Admin/Articles.pm:301
-#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:233
-msgid "(role)"
-msgstr "(rolle)"
+#: lib/LIXUZ/Controller/Admin/Users.pm:348
+#: lib/LIXUZ/Controller/Admin/Dashboard.pm:50
+msgid "User data saved"
+msgstr "Brukardata lagra"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:328
-#: root/adm/articles/workflow.html:43 root/adm/articles/list.html:44
-#: root/adm/articles/read/workflow_read.html:39
-#: root/adm/dashboard/widgetHelper_articleList.html:37
-msgid "Assigned to"
-msgstr "Tildelt"
+#: lib/LIXUZ/Controller/Admin/Users.pm:366
+msgid ""
+"Error: A user with the username %(USERNAME) already exists (UID %(UID))."
+msgstr ""
+"Feil: Ein brukar med brukarnamnet %(USERNAME) finst allerete (ID %(UID))."
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:332
-msgid "(any user or role)"
-msgstr "(alle brukarar og roller)"
+#: lib/LIXUZ/Controller/Admin/Users.pm:421
+msgid "Error: Failed to locate a user with the UID %(UID)."
+msgstr "Feil: Kunna ikkje finna ein brukar med IDen %(UID)."
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:335
-msgid "In status"
-msgstr "I status"
+#: lib/LIXUZ/Controller/Admin/Users.pm:452
+msgid "User deleted"
+msgstr "Brukar sletta"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:371
-#: lib/LIXUZ/Controller/Admin/Articles.pm:564
-msgid "Error: Failed to locate revision %(REVISION) of the article %(UID)"
-msgstr "Feil: Kunna ikkje finna revisjonen %(REVISION) av artikkelen %(UID)"
+#: lib/LIXUZ/Controller/Admin/Files.pm:92
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:366
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:37
+#: root/adm/articles/rightside.html:33
+#: root/adm/articles/read/rightread.html:30 root/adm/core/menu.html:67
+#: root/source-js/articles-previewUI/previewUI.js:179
+msgid "Files"
+msgstr "Filer"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:373
-#: lib/LIXUZ/Controller/Admin/Articles.pm:566
-#: lib/LIXUZ/Controller/Admin/Articles.pm:754
-msgid "Error: Failed to locate a article with the UID %(UID)."
-msgstr "Feil: Kunna ikkje finna ein artikkel med IDen %(UID)."
+#: lib/LIXUZ/Controller/Admin/Files.pm:124
+msgid "Uploaded by"
+msgstr "Lasta opp av"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:487
-msgid "Default Template"
-msgstr "Standardmal"
+#: lib/LIXUZ/Controller/Admin/Files.pm:128
+msgid "(anyone)"
+msgstr "(kven som helst)"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:515
-#: lib/LIXUZ/Controller/Admin/Articles.pm:520
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:720
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:782
-#: lib/LIXUZ/Schema/LzFile.pm:883 root/adm/timetracker/pdf_report.html:16
-#: root/adm/timetracker/list.html:27 root/adm/articles/list.html:125
-#: root/adm/files/list.html:87
-#: root/adm/dashboard/widgetHelper_articleList.html:93
-#: root/adm/dashboard/widgetHelper_articleList.html:112
-#: root/adm/dashboard/widget_recentComments.html:54
-#: root/source-js/articles-previewUI/previewUI.js:270
-msgid "(none)"
-msgstr "(inga)"
+#: lib/LIXUZ/Controller/Admin/Files.pm:180
+msgid "File deleted"
+msgstr "Fila er sletta"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:766
-msgid "You have stolen the edit lock for this article."
-msgstr "Du har stjålet redigeringslåsen for denne artikkelen."
+#: lib/LIXUZ/Controller/Admin/ACL.pm:33
+msgid "<b>Access denied</b>: You are not allowed to access that resource"
+msgstr "<b>Tilgang nekta</b>: Du har ikkje tilgang til denne ressursen"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:819
-msgid "Article deleted"
-msgstr "Artikkelen er sletta"
+#: lib/LIXUZ/Controller/Admin/ACL.pm:34
+msgid "Access denied"
+msgstr "Tilgang nekta"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:883
-#: lib/LIXUZ/Controller/Admin/Articles.pm:887
-msgid "Editing article %(ARTICLE_ID)"
-msgstr "Redigerer artikkel %(ARTICLE_ID)"
+#: lib/LIXUZ/Controller/Admin/Login.pm:54
+msgid "You have been logged out."
+msgstr "Du har blitt logga ut."
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:891
-msgid "Creating article"
-msgstr "Opprettar artikkel"
+#: lib/LIXUZ/Controller/Admin/Login.pm:65
+msgid "Login"
+msgstr "Logg inn"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:903
-#: lib/LIXUZ/Controller/Admin/Articles.pm:982
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:126
-#: lib/LIXUZ/Schema/LzField.pm:227 root/adm/files/edit.html:72
-#: root/adm/dashboard/widgetHelper_articleList.html:22
-#: root/source-js/articles/relationships.js:76
-#: root/source-js/articles/articles.js:117
-#: root/source-js/rssimport/rssimport.js:105
-#: root/source-js/articles/viewArticleRevisions.js:119
-msgid "Title"
-msgstr "Tittel"
+#: lib/LIXUZ/Controller/Admin/Login.pm:92
+msgid "<b>Login refused</b>: %(REASON)"
+msgstr "<b>Innlogging nekta</b>: %(REASON)"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:904
-#: lib/LIXUZ/Controller/Admin/Articles.pm:984 lib/LIXUZ/Schema/LzField.pm:229
-msgid "Lead"
-msgstr "Inngress"
+#: lib/LIXUZ/Controller/Admin/Login.pm:114
+msgid "Invalid username or password"
+msgstr "Uglydig brukarnamn eller passord"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:905
-#: lib/LIXUZ/Controller/Admin/Articles.pm:985 lib/LIXUZ/Schema/LzField.pm:230
-#: root/adm/articles/list.html:43
-msgid "Author"
-msgstr "Forfattar"
+#: lib/LIXUZ/Controller/Admin/Login.pm:119 root/adm/core/header.html:176
+#: root/adm/core/login.html:37
+msgid "Log in"
+msgstr "Logg inn"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:906
-#: lib/LIXUZ/Controller/Admin/Articles.pm:983 lib/LIXUZ/Schema/LzField.pm:228
-msgid "Body"
-msgstr "Brødtekst"
+#: lib/LIXUZ/Controller/Admin/Login.pm:122
+#: root/adm/timetracker/listview/pdf_data.html:19
+#: root/adm/timetracker/listview/list.html:26 root/adm/users/list.html:28
+#: root/adm/core/login.html:29
+msgid "Username"
+msgstr "Brukarnamn"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:907
-#: lib/LIXUZ/Controller/Admin/Articles.pm:986 lib/LIXUZ/Schema/LzField.pm:231
-#: root/adm/articles/read/workflow_read.html:31
-msgid "Publish time"
-msgstr "Publiseringstid"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:908
-msgid "Expires at"
-msgstr "Gyldig til"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:909
-msgid "Order"
-msgstr "Rekkjefølgja"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:987 lib/LIXUZ/Schema/LzField.pm:232
-#: root/adm/articles/read/workflow_read.html:35
-msgid "Expiry time"
-msgstr "Gyldig til"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:988 lib/LIXUZ/Schema/LzField.pm:233
-msgid "Primary folder"
-msgstr "Hovudmappe"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:1084
-#: lib/LIXUZ/HelperModules/Forms.pm:159
-#: root/adm/core/fields/rangepulldown.html:21
-#: root/adm/core/fields/userpulldown.html:55 root/source-js/core/chosen.js:9
-msgid "-select-"
-msgstr "-vel-"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:1091
-msgid "(Default template)"
-msgstr "(standardmal)"
+#: lib/LIXUZ/Controller/Admin/Dashboard.pm:40 root/adm/core/menu.html:24
+msgid "Dashboard"
+msgstr "Dashbord"
 
 #: lib/LIXUZ/Controller/Admin/Services.pm:248
 msgid "Unsorted (files that are not in any folder yet)"
 msgstr "Usortert (filer som ikkje er i ei mappe)"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:759 root/adm/articles/list.html:67
+#: lib/LIXUZ/Controller/Admin/Services.pm:766 root/adm/articles/list.html:67
 msgid "(unnamed)"
 msgstr "(utan namn)"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:822 root/adm/templates/list.html:27
+#: lib/LIXUZ/Controller/Admin/Services.pm:829 root/adm/templates/list.html:27
 #: root/adm/articles/additionalElements_right.html:33
-#: root/adm/files/classes/list.html:27
-#: root/adm/dashboard/widgetHelper_articleList.html:21
 #: root/adm/dashboard/widget_recentComments.html:20
+#: root/adm/dashboard/widgetHelper_articleList.html:21
+#: root/adm/files/classes/list.html:27 root/adm/timetracker/pdf_report.html:4
+#: root/adm/timetracker/listview/pdf_data.html:42
+#: root/adm/timetracker/listview/list.html:56
 #: root/source-js/articles-previewUI/previewUI.js:202
 msgid "ID"
 msgstr "ID"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:822
+#: lib/LIXUZ/Controller/Admin/Services.pm:829
 #: root/adm/articles/additionalElements_right.html:34
 msgid "Element"
 msgstr "Element"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:822
+#: lib/LIXUZ/Controller/Admin/Services.pm:829
 #: root/adm/articles/additionalElements_right.html:35
 #: root/source-js/articles-previewUI/previewUI.js:202
 msgid "Value"
 msgstr "Verdi"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:964
+#: lib/LIXUZ/Controller/Admin/Services.pm:971
 msgid "In folder"
 msgstr "I mappe"
 
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:146
-msgid "File(s) successfully uploaded"
-msgstr "Fil(er) lasta opp"
+#: lib/LIXUZ/Controller/Admin/Settings.pm:31 root/adm/core/menu.html:128
+msgid "Settings"
+msgstr "Innstillingar"
 
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:196
-msgid ""
-"The target directory for files was not found or was not writable. Contact "
-"the system administrator."
-msgstr ""
-"Målmappa for filer kunna ikkje verta funne eller vart ikkje skrivbar. "
-"Kontakt systemadministratoren."
+#: lib/LIXUZ/Controller/Admin/Templates/Upload.pm:42
+#: root/adm/templates/left.html:19 root/adm/core/menu.html:141
+msgid "Upload template"
+msgstr "Last opp mal"
 
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:201
-msgid "An error occurred while writing data to disk: %(PERLIO_ERROR)"
-msgstr "Ein feil oppstod under skriving av data til disken: %(PERLIO_ERROR)"
+#: lib/LIXUZ/Controller/Admin/Templates/Upload.pm:113
+msgid "The template has been uploaded"
+msgstr "Malfila har blitt lasta opp"
 
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:206
-msgid "Templates must be of htm, html or xml type"
-msgstr "Malar må vera i html eller xml format"
-
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:211
-msgid "An internal unknown fatal error (ID %(ERRID)) occurred"
-msgstr "Ein ukjend og fatal intern feil oppstod (ID %(ERRID))"
-
-#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:214
-msgid "<b>Fatal error:</b><br />%(ERROR_MESSAGE)"
-msgstr "<b>Fatal feil:</b><br />%(ERROR_MESSAGE)"
-
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:47
-msgid "Error: That file does not exist."
-msgstr "Feil: Den fila finst ikkje."
-
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:125
-#: root/adm/templates/list.html:28 root/adm/files/edit.html:63
-#: root/adm/files/classes/edit.html:22 root/adm/files/classes/list.html:28
-#: root/adm/newsletter/list.html:27 root/adm/users/roles/list.html:25
-#: root/source-js/newsletter/newsletter.js:501
-msgid "Name"
-msgstr "Namn"
-
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:127 root/adm/files/edit.html:80
-#: root/source-js/articles-previewUI/previewUI.js:212
-msgid "Caption"
-msgstr "Bilettekst"
-
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:154 root/adm/files/edit.html:118
-msgid "Height (pixels)"
-msgstr "Høgd (pikslar)"
-
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:155 root/adm/files/edit.html:125
-msgid "Width (pixels)"
-msgstr "Breidd (pikslar)"
-
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:283
-msgid "File saved."
-msgstr "Fil lagra."
+#: lib/LIXUZ/Controller/Admin/Templates/Upload.pm:114
+msgid "Template uploaded"
+msgstr "Malfila har blitt lasta opp"
 
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:33 root/adm/core/menu.html:118
 msgid "Roles"
@@ -857,43 +967,67 @@ msgstr "Nyheitsbrev"
 msgid "Send, delete and edit"
 msgstr "Send, slett og rediger"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:427
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:428
+msgid "Access the timetracker"
+msgstr "Få tilgang til timelista"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:433
+msgid "Add and edit time entries"
+msgstr "Legg til og rediger oppføringar i timelista"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:440
+msgid "Delete others users time entries"
+msgstr "Slette oppføringar i timelista laga av andre brukarar"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:445
+msgid "Add comments on others users time entries"
+msgstr "Kommenter på andre brukarar sine oppføringar i timelista"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:450
+msgid "View other users time entries"
+msgstr "Sjå på andre brukarar sine oppføringar i timelista"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:455
+msgid "Generate time entry reports"
+msgstr "Generere timelisterapportar"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:461
 msgid "Access tags"
 msgstr "Få tilgang til emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:432
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:466
 msgid "Create new tags"
 msgstr "Opprett emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:434
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:468
 msgid "Manage tags"
 msgstr "Handter emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:439
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:473
 msgid "RSSImport"
 msgstr "RSS importering"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:442 root/adm/core/menu.html:128
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:476 root/adm/core/menu.html:133
 msgid "Administrative settings"
 msgstr "Administrative innstillingar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:449
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:483
 msgid "Edit additional fields"
 msgstr "Rediger tilleggsfelt"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:460
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:494
 msgid "Edit statuses"
 msgstr "Rediger statuser"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:468 root/adm/users/left.html:19
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:502 root/adm/users/left.html:19
 msgid "Manage users"
 msgstr "Handter brukarar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:475 root/adm/users/left.html:21
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:509 root/adm/users/left.html:21
 msgid "Manage roles"
 msgstr "Handter roller"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:485 root/adm/core/menu.html:132
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:519 root/adm/core/menu.html:137
 msgid "Manage templates"
 msgstr "Handter malar"
 
@@ -1003,15 +1137,6 @@ msgstr "Ein artikkel du følger (%(ARTID)) har blitt redigert"
 msgid "(you do not have permission to set this value)"
 msgstr "(du har ikkje tilgang til å redigera denne verdien)"
 
-#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:254
-#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:269
-#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:304
-#: lib/LIXUZ/Schema/LzWorkflow.pm:201 lib/LIXUZ/Schema/LzWorkflow.pm:218
-#: root/adm/articles/list.html:209
-#: root/adm/dashboard/widgetHelper_articleList.html:103
-msgid "(nobody)"
-msgstr "(inga)"
-
 #: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:282
 msgid "Reassign to role"
 msgstr "Tildel til rolle"
@@ -1072,10 +1197,79 @@ msgstr ""
 msgid "Trash (articles)"
 msgstr "Papirkurv (artiklar)"
 
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:47
+msgid "Error: That file does not exist."
+msgstr "Feil: Den fila finst ikkje."
+
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:125
+#: root/adm/templates/list.html:28 root/adm/newsletter/list.html:27
+#: root/adm/files/edit.html:63 root/adm/files/classes/list.html:28
+#: root/adm/files/classes/edit.html:22 root/adm/users/roles/list.html:25
+#: root/source-js/newsletter/newsletter.js:501
+msgid "Name"
+msgstr "Namn"
+
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:127 root/adm/files/edit.html:80
+#: root/source-js/articles-previewUI/previewUI.js:212
+msgid "Caption"
+msgstr "Bilettekst"
+
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:154 root/adm/files/edit.html:118
+msgid "Height (pixels)"
+msgstr "Høgd (pikslar)"
+
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:155 root/adm/files/edit.html:125
+msgid "Width (pixels)"
+msgstr "Breidd (pikslar)"
+
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:283
+msgid "File saved."
+msgstr "Fil lagra."
+
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:146
+msgid "File(s) successfully uploaded"
+msgstr "Fil(er) lasta opp"
+
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:196
+msgid ""
+"The target directory for files was not found or was not writable. Contact "
+"the system administrator."
+msgstr ""
+"Målmappa for filer kunna ikkje verta funne eller vart ikkje skrivbar. "
+"Kontakt systemadministratoren."
+
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:201
+msgid "An error occurred while writing data to disk: %(PERLIO_ERROR)"
+msgstr "Ein feil oppstod under skriving av data til disken: %(PERLIO_ERROR)"
+
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:206
+msgid "Templates must be of htm, html or xml type"
+msgstr "Malar må vera i html eller xml format"
+
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:211
+msgid "An internal unknown fatal error (ID %(ERRID)) occurred"
+msgstr "Ein ukjend og fatal intern feil oppstod (ID %(ERRID))"
+
+#: lib/LIXUZ/Controller/Admin/Files/Upload.pm:214
+msgid "<b>Fatal error:</b><br />%(ERROR_MESSAGE)"
+msgstr "<b>Fatal feil:</b><br />%(ERROR_MESSAGE)"
+
 #: lib/LIXUZ/Controller/Admin/Settings/Admin.pm:28
 #: root/adm/settings/admin.html:19
 msgid "Server settings"
 msgstr "Innstillingar for tenaren"
+
+#: lib/LIXUZ/Controller/Admin/Settings/Admin/Additionalfields.pm:64
+msgid "Error: Failed to locate a field with the UID %(UID)."
+msgstr "Feil: Kunna ikkje finna eit felt med IDen %(UID)"
+
+#: lib/LIXUZ/Controller/Admin/Settings/Admin/Additionalfields.pm:215
+msgid "Failed to locate the supplied field"
+msgstr "Kunna ikkje finna det valde feltet"
+
+#: lib/LIXUZ/Controller/Admin/Settings/Admin/Additionalfields.pm:229
+msgid "Field and all related values have been deleted"
+msgstr "Feltet og alle relaterte verdiar har blitt sletta"
 
 #: lib/LIXUZ/Controller/Admin/Settings/Admin/Statuses.pm:51
 msgid "Deleting system UIDs is not allowed"
@@ -1111,205 +1305,218 @@ msgstr "Status oppretta"
 msgid "Memcached has been flushed."
 msgstr "Memcached har blit tømt."
 
-#: lib/LIXUZ/Controller/Admin/Settings/Admin/Additionalfields.pm:64
-msgid "Error: Failed to locate a field with the UID %(UID)."
-msgstr "Feil: Kunna ikkje finna eit felt med IDen %(UID)"
-
-#: lib/LIXUZ/Controller/Admin/Settings/Admin/Additionalfields.pm:215
-msgid "Failed to locate the supplied field"
-msgstr "Kunna ikkje finna det valde feltet"
-
-#: lib/LIXUZ/Controller/Admin/Settings/Admin/Additionalfields.pm:229
-msgid "Field and all related values have been deleted"
-msgstr "Feltet og alle relaterte verdiar har blitt sletta"
-
 #: lib/LIXUZ/Controller/Admin/Settings/Admin/Widgets.pm:51
 msgid "Unknown widget"
 msgstr "Ukjend skjermelement"
 
-#: lib/LIXUZ/Controller/Admin/Templates/Upload.pm:42
-#: root/adm/templates/left.html:19 root/adm/core/menu.html:141
-msgid "Upload template"
-msgstr "Last opp mal"
+#: root/adm/dictionary/list.html:27
+msgid "Word ID"
+msgstr "Ord ID"
 
-#: lib/LIXUZ/Controller/Admin/Templates/Upload.pm:113
-msgid "The template has been uploaded"
-msgstr "Malfila har blitt lasta opp"
+#: root/adm/dictionary/list.html:52 root/adm/settings/admin/statuslist.html:47
+#: root/adm/settings/admin/adfields/adfieldlist.html:61
+#: root/adm/articles/list.html:233 root/adm/newsletter/list.html:71
+#: root/adm/tags/list.html:52 root/adm/timetracker/listview/list.html:71
+#: root/adm/users/list.html:48 root/adm/users/roles/list.html:38
+#: root/adm/categories/list.html:61
+msgid "Edit"
+msgstr "Rediger"
 
-#: lib/LIXUZ/Controller/Admin/Templates/Upload.pm:114
-msgid "Template uploaded"
-msgstr "Malfila har blitt lasta opp"
+#: root/adm/dictionary/list.html:53
+msgid "Are you sure you want to delete the definition of the word \"%(WORD)\"?"
+msgstr "Er du viss på at du vil sletta definisjonen av ordet «%(WORD)»?"
 
-#: lib/LIXUZ/HelperModules/List.pm:339
-#: root/source-js/utils/objectSelector.js:208
-msgid "Search"
-msgstr "Søk"
+#: root/adm/dictionary/list.html:53 root/adm/settings/admin/statuslist.html:48
+#: root/adm/settings/admin/adfields/adfieldlist.html:62
+#: root/adm/templates/list.html:54 root/adm/articles/list.html:257
+#: root/adm/newsletter/list.html:72 root/adm/tags/list.html:53
+#: root/adm/timetracker/list.html:60 root/adm/users/list.html:49
+#: root/adm/users/roles/list.html:39 root/adm/categories/list.html:62
+#: root/source-js/core/folders.js:92
+msgid "Delete"
+msgstr "Slett"
 
-#: lib/LIXUZ/HelperModules/List.pm:342
-msgid "Filter"
-msgstr "Filter"
+#: root/adm/dictionary/left.html:19 root/adm/core/menu.html:61
+msgid "Add a new word"
+msgstr "Legg til eit nytt ord"
 
-#: lib/LIXUZ/HelperModules/DragDrop.pm:574
-msgid "All"
-msgstr "Alle"
+#: root/adm/settings/admin.html:20
+#: root/source-js/articles-previewUI/previewUI.js:197
+msgid "Additional fields"
+msgstr "Tilleggsfelt"
 
-#: lib/LIXUZ/HelperModules/DragDrop.pm:681
-msgid "Maximum depth of nodes reached"
-msgstr "Maksnivå på noder er nådd"
+#: root/adm/settings/admin.html:21
+msgid "Statuses"
+msgstr "Statuser"
 
-#: lib/LIXUZ/HelperModules/Forms.pm:135 root/adm/files/edit.html:143
-msgid "Reset"
-msgstr "Nullstill"
+#: root/adm/settings/admin.html:22
+msgid "Config widgets"
+msgstr "Set opp skjermelementer"
 
-#: lib/LIXUZ/HelperModules/EMail.pm:90
-msgid "This message has been automatically generated by Lixuz"
-msgstr "Denne meldinga er sendt automatisk av Lixuz"
+#: root/adm/settings/menu.html:19
+msgid "User settings"
+msgstr "Brukarinnstillingar"
 
-#: lib/LIXUZ/Schema/LzField.pm:162
-msgid "Single line"
-msgstr "Ei linje"
+#: root/adm/settings/menu.html:20
+msgid "Admin settings"
+msgstr "Administrative innstillingar"
 
-#: lib/LIXUZ/Schema/LzField.pm:163
-msgid "Multi-line"
+#: root/adm/settings/admin/widget_index.html:18
+msgid "Configure defaults for the \"My Assignments\" widget"
+msgstr "Set opp standardverdiane for «mine oppgåver» elementet"
+
+#: root/adm/settings/admin/statuslist.html:27
+msgid "Status ID"
+msgstr "Status ID"
+
+#: root/adm/settings/admin/statuslist.html:28
+msgid "Status name"
+msgstr "Statusnamn"
+
+#: root/adm/settings/admin/statuslist.html:43
+msgid "Mandatory system status"
+msgstr "Obligatorisk systemstatus"
+
+#: root/adm/settings/admin/statuslist.html:48
+msgid "Are you sure you want to delete the status \"%(STATUSNAME)\"?"
+msgstr "Er du viss på at du vil seltte statusen «%(STATUSNAME)»?"
+
+#: root/adm/settings/admin/status_left.html:18
+msgid "Add new status"
+msgstr "Legg til ny status"
+
+#: root/adm/settings/admin/adfields/adfields_left.html:18
+msgid "Add a new field"
+msgstr "Legg til eit nytt felt"
+
+#: root/adm/settings/admin/adfields/adfieldedit.html:22
+#: root/adm/settings/admin/adfields/adfieldlist.html:28
+msgid "Field name"
+msgstr "Feltnamn"
+
+#: root/adm/settings/admin/adfields/adfieldedit.html:29
+#: root/adm/settings/admin/adfields/adfieldlist.html:29
+msgid "Field type"
+msgstr "Felt type"
+
+#: root/adm/settings/admin/adfields/adfieldedit.html:48
+msgid "Values, separated by a comma followed by an optional space"
+msgstr "Verdiar, separert med eit komma etterfulgt av eit valfritt mellomrom"
+
+#: root/adm/settings/admin/adfields/adfieldedit.html:55
+#: root/adm/files/edit.html:212
+msgid "Height"
+msgstr "Høgd"
+
+#: root/adm/settings/admin/adfields/adfieldedit.html:62
+msgid "Use the rich text editor on this field"
+msgstr "Bruk det grafiske skriveprogrammet på dette feltet"
+
+#: root/adm/settings/admin/adfields/adfieldedit.html:68
+#: root/adm/articles/form_save.html:20 root/adm/files/edit.html:139
+msgid "Save"
+msgstr "Lagra"
+
+#: root/adm/settings/admin/adfields/adfieldedit.html:69
+#: root/adm/articles/form_save.html:21 root/adm/files/edit.html:141
+#: root/adm/files/classes/edit.html:39
+#: root/source-js/timetracker/timetracker.js:62
+#: root/source-js/newsletter/newsletter.js:112
+#: root/source-js/newsletter/newsletter.js:448
+#: root/source-js/newsletter/newsletter.js:506
+#: root/source-js/rssimport/rssimport.js:111
+#: root/source-js/utils/arrangableList.js:101
+#: root/source-js/core/objPermEditor.js:175
+msgid "Save and close"
+msgstr "Lagra og lukk"
+
+#: root/adm/settings/admin/adfields/adfieldedit.html:91
+msgid "Single line input"
+msgstr "Ein linje"
+
+#: root/adm/settings/admin/adfields/adfieldedit.html:96
+msgid "Multi line input"
 msgstr "Fleire linjer"
 
-#: lib/LIXUZ/Schema/LzField.pm:164
-#: root/adm/settings/admin/adfields/adfieldedit.html:111
-msgid "Custom pulldown"
-msgstr "Tilpassa nedtrekksmeny"
+#: root/adm/settings/admin/adfields/adfieldedit.html:106
+msgid "Multiple-choice checkbox"
+msgstr "Avkryssningsboks med fleire val"
 
-#: lib/LIXUZ/Schema/LzField.pm:165
-#: root/adm/settings/admin/adfields/adfieldedit.html:116
-msgid "Range-defined pulldown"
+#: root/adm/settings/admin/adfields/adfieldedit.html:121
+msgid "Predefined pulldown"
 msgstr "Intervall-definert nedtrekksmeny"
 
-#: lib/LIXUZ/Schema/LzField.pm:166
-msgid "Multiple select"
-msgstr "Fleire val"
+#: root/adm/settings/admin/adfields/adfieldedit.html:131
+msgid "Date and time"
+msgstr "Dato og tid"
 
-#: lib/LIXUZ/Schema/LzField.pm:167
-msgid "Date/time"
-msgstr "Dato/tid"
+#: root/adm/settings/admin/adfields/adfieldedit.html:136
+msgid "Date"
+msgstr "Dato"
 
-#: lib/LIXUZ/Schema/LzField.pm:168
-msgid "Pulldown"
-msgstr "Nedtrekksmeny"
-
-#: lib/LIXUZ/Schema/LzField.pm:169
-#: root/adm/settings/admin/adfields/adfieldedit.html:101
-msgid "Checkbox"
-msgstr "Avkryssingsboks"
-
-#: lib/LIXUZ/Schema/LzField.pm:170
-#: root/adm/settings/admin/adfields/adfieldedit.html:41
-#: root/adm/settings/admin/adfields/adfieldedit.html:126
-msgid "Range"
-msgstr "Intervall"
-
-#: lib/LIXUZ/Schema/LzField.pm:171
-msgid "Metadata (date)"
-msgstr "Metadata (dato)"
-
-#: lib/LIXUZ/Schema/LzField.pm:172
-msgid "Metadata (integer)"
-msgstr "Metadata (heiltal)"
-
-#: lib/LIXUZ/Schema/LzField.pm:173
-msgid "Date-time range"
+#: root/adm/settings/admin/adfields/adfieldedit.html:141
+msgid "Date and time range"
 msgstr "Dato og tids-område"
 
-#: lib/LIXUZ/Schema/LzField.pm:178
-msgid "(unknown - not set in database)"
-msgstr "(ukjend - ikkje sett i databasen)"
+#: root/adm/settings/admin/adfields/adfieldlist.html:27
+msgid "Field ID"
+msgstr "Felt ID"
 
-#: lib/LIXUZ/Schema/LzField.pm:191
-msgid "(unknown - \"%(FIELDNAME)\")"
-msgstr "(ukjend - «%(FIELDNAME»)"
+#: root/adm/settings/admin/adfields/adfieldlist.html:30
+msgid "Module"
+msgstr "Modul"
 
-#: lib/LIXUZ/Schema/LzField.pm:249
-msgid "Unknown"
-msgstr "Ukjend"
+#: root/adm/settings/admin/adfields/adfieldlist.html:52
+msgid "(all/any)"
+msgstr "(kva som helst)"
 
-#: lib/LIXUZ/Schema/LzWorkflow.pm:169
-msgid "(user not found)"
-msgstr "(brukar ikkje funne)"
+#: root/adm/settings/admin/adfields/adfieldlist.html:57
+msgid "Metadata fields can not be edited or deleted"
+msgstr "Metadata-felt kan ikkje redigerast eller slettast"
 
-#: lib/LIXUZ/Schema/LzWorkflow.pm:190
-msgid "%(ROLE_NAME) (role)"
-msgstr "%(ROLE_NAME) (rolle)"
+#: root/adm/settings/admin/adfields/adfieldlist.html:59
+msgid "Inline fields can not be edited or deleted"
+msgstr "Innebygde felt kan ikkje redigerast eller slettast"
 
-#: lib/LIXUZ/Schema/LzFile.pm:858 lib/LIXUZ/Schema/LzFile.pm:880
-msgid "File ID:"
-msgstr "Fil ID:"
+#: root/adm/settings/admin/adfields/adfieldlist.html:62
+msgid ""
+"Are you sure you want to delete the additional field \"%(FIELDNAME)\" and "
+"all values entered into it? This action can not be undone."
+msgstr ""
+"Er du viss på at du vil sletta tilleggsfeltet «%(FIELDNAME)» og alle verdiar "
+"det har? Denne handlinga kan ikkje angrast."
 
-#: lib/LIXUZ/Schema/LzFile.pm:871 lib/LIXUZ/Schema/LzFile.pm:876
-#: root/source-js/core/createArticle.js:49
-msgid "Folder:"
-msgstr "Mappe:"
+#: root/adm/settings/admin/statuses/edit.html:37
+msgid "Status Name"
+msgstr "Statusnamn"
 
-#: lib/LIXUZ/Schema/LzFile.pm:902 root/adm/files/list.html:73
-msgid "View other versions"
-msgstr "Sjå andre versjonar"
+#: root/adm/templates/list.html:29
+msgid "Unique ID"
+msgstr "Unik ID"
 
-#: lib/LIXUZ/Schema/LzAction.pm:89
-msgid "Change status of an article to \"%(STATUS)\""
-msgstr "Endra statusen til ein artikkel til «%(STATUS)»"
+#: root/adm/templates/list.html:30
+#: root/adm/articles/additionalElements_right.html:36
+#: root/adm/articles/relationships_right.html:33
+#: root/adm/articles/read/relationshipsread.html:24
+#: root/source-js/articles-previewUI/previewUI.js:202
+msgid "Type"
+msgstr "Type"
 
-#: lib/LIXUZ/Schema/LzAction.pm:100
-msgid "Reassign an article to the role \"%(ROLE)\""
-msgstr "Tildel ein artikkel til rollen «%(ROLE)»"
+#: root/adm/templates/list.html:46
+msgid "default"
+msgstr "standard"
 
-#: lib/LIXUZ/Schema/LzAction.pm:232
-msgid "Assign articles to users"
-msgstr "Tildel artiklar til brukarar"
+#: root/adm/templates/list.html:52 root/source-js/newsletter/newsletter.js:183
+msgid "Action"
+msgstr "Handling"
 
-#: lib/LIXUZ/Schema/LzFileClass.pm:79
-msgid "Default/generic"
-msgstr "Standard/generell"
+#: root/adm/templates/list.html:53
+msgid "Replace"
+msgstr "Byt ut"
 
-#: lib/LIXUZ/Schema/LzStatus.pm:116
-msgid "Draft"
-msgstr "Utkast"
-
-#: lib/LIXUZ/Schema/LzStatus.pm:117
-msgid "Live"
-msgstr "Live (på nett)"
-
-#: lib/LIXUZ/Schema/LzStatus.pm:118 root/adm/articles/editform.html:55
-#: root/adm/articles/read/workflow_read.html:27
-#: root/source-js/articles/viewArticleRevisions.js:119
-msgid "Revision"
-msgstr "Revisjon"
-
-#: root/adm/articles2/left.html:3 root/adm/articles/left.html:20
-msgid "New Article"
-msgstr "Opprett artikkel"
-
-#: root/adm/articles2/left.html:5 root/adm/core/menu.html:39
-#: root/adm/articles/left.html:22 root/adm/articles/list.html:251
-msgid "Trash"
-msgstr "Papirkurv"
-
-#: root/adm/articles2/left.html:8 root/adm/articles/left.html:25
-msgid "Folder actions"
-msgstr "Mappehandlingar"
-
-#: root/adm/articles2/left.html:10 root/adm/articles/left.html:27
-#: root/source-js/dragdrop/lixuzdd.js:321
-msgid "New folder"
-msgstr "Opprett mappe"
-
-#: root/adm/articles2/left.html:12 root/adm/articles/left.html:29
-msgid "Edit folder"
-msgstr "Rediger mappe"
-
-#: root/adm/articles2/left.html:15 root/adm/articles/left.html:32
-msgid "Delete a folder"
-msgstr "Slett ei mappe"
-
-#: root/adm/articles2/left.html:18 root/adm/articles/left.html:35
-msgid "Rename a folder"
-msgstr "Gje nytt namn til ei mappe"
+#: root/adm/templates/list.html:56
+msgid "Set as default"
+msgstr "Set som standard"
 
 #: root/adm/templates/left.html:25
 msgid "Empty cache"
@@ -1329,355 +1536,40 @@ msgstr ""
 msgid "(you do not have permission to empty memcached)"
 msgstr "(du har ikkje tilgang til å tømme memcached)"
 
-#: root/adm/templates/list.html:29
-msgid "Unique ID"
-msgstr "Unik ID"
+#: root/adm/articles/additionalElements_right.html:18
+msgid "Add new elements"
+msgstr "Legg til nye elementer"
 
-#: root/adm/templates/list.html:30
-#: root/adm/articles/relationships_right.html:33
-#: root/adm/articles/additionalElements_right.html:36
-#: root/adm/articles/read/relationshipsread.html:24
-#: root/source-js/articles-previewUI/previewUI.js:202
-msgid "Type"
-msgstr "Type"
+#: root/adm/articles/additionalElements_right.html:20
+msgid "Create a new element"
+msgstr "Opprett eit element"
 
-#: root/adm/templates/list.html:46
-msgid "default"
-msgstr "standard"
+#: root/adm/articles/additionalElements_right.html:44
+#: root/adm/articles/additionalElements_right.html:56
+#: root/adm/articles/relationships_right.html:44
+#: root/adm/articles/relationships_right.html:57
+#: root/source-js/articles/articles.js:277
+#: root/source-js/articles/filesAPI.js:66
+#: root/source-js/files/multiUpload.js:38
+msgid "Remove"
+msgstr "Fjern"
 
-#: root/adm/templates/list.html:52 root/source-js/newsletter/newsletter.js:183
-msgid "Action"
-msgstr "Handling"
+#: root/adm/articles/files_right.html:19
+msgid "Attach a file to this article"
+msgstr "Legg ei fil til denne artikkelen"
 
-#: root/adm/templates/list.html:53
-msgid "Replace"
-msgstr "Byt ut"
-
-#: root/adm/templates/list.html:54 root/adm/timetracker/list.html:59
-#: root/adm/categories/list.html:62 root/adm/articles/list.html:257
-#: root/adm/newsletter/list.html:72 root/adm/settings/admin/statuslist.html:48
-#: root/adm/settings/admin/adfields/adfieldlist.html:62
-#: root/adm/users/list.html:49 root/adm/users/roles/list.html:39
-#: root/adm/tags/list.html:53 root/adm/dictionary/list.html:53
-#: root/source-js/core/folders.js:92
-msgid "Delete"
-msgstr "Slett"
-
-#: root/adm/templates/list.html:56
-msgid "Set as default"
-msgstr "Set som standard"
-
-#: root/adm/timetracker/left.html:20
-#: root/adm/timetracker/listview/left.html:20
-msgid "Add an entry"
-msgstr "Legg til oppføring"
-
-#: root/adm/timetracker/left.html:22
-#: root/adm/timetracker/listview/left.html:22
-msgid "Export as PDF"
-msgstr "Eksporter som PDF"
-
-#: root/adm/timetracker/left.html:24
-msgid "Show articles edited"
-msgstr "Vis redigerte artiklar"
-
-#: root/adm/timetracker/list.html:9
-msgid "User Name"
-msgstr "Brukarnamn"
-
-#: root/adm/timetracker/list.html:10
-msgid "Start date/time"
-msgstr "Startdato/tid"
-
-#: root/adm/timetracker/list.html:11
-msgid "End date/time"
-msgstr "Sluttdato/tid"
-
-#: root/adm/timetracker/list.html:12
-#: root/adm/timetracker/listview/list.html:28
-#: root/adm/timetracker/listview/pdf_data.html:21
-msgid "Duration"
-msgstr "Varighet"
-
-#: root/adm/timetracker/list.html:13
-msgid "IP in"
-msgstr "IP-inn"
-
-#: root/adm/timetracker/list.html:14
-msgid "IP Out"
-msgstr "IP-ut"
-
-#: root/adm/timetracker/list.html:15
-#: root/adm/timetracker/listview/list.html:29
-msgid "Entry type"
-msgstr "Oppføringstype"
-
-#: root/adm/timetracker/list.html:48
-#: root/adm/timetracker/listview/list.html:41
-msgid "Manual entry"
-msgstr "Manuell oppføring"
-
-#: root/adm/timetracker/list.html:50
-#: root/adm/timetracker/listview/list.html:43
-msgid "Automatic entry"
-msgstr "Automatisk oppføring"
-
-#: root/adm/timetracker/list.html:54
-msgid "Edit or view"
-msgstr "Rediger eller vis"
-
-#: root/adm/timetracker/timetracker_comments.html:29
-msgid "by %(AUTHOR) at %(DATETIME)"
-msgstr "av %(AUTHOR) på %(DATETIME)"
-
-#: root/adm/timetracker/timetracker_comments.html:36
-msgid "%(AUTHOR) at %(DATETIME)"
-msgstr "%(AUTHOR) på %(DATETIME)"
-
-#: root/adm/timetracker/listview/left.html:23
-msgid "Show basic list"
-msgstr "Vis enkel liste"
-
-#: root/adm/timetracker/listview/list.html:27
-#: root/adm/timetracker/listview/pdf_data.html:20
-msgid "From-To"
-msgstr "Frå - Til"
-
-#: root/adm/timetracker/listview/list.html:46
-#: root/adm/timetracker/listview/list.html:73
-#: root/adm/articles/relationships_right.html:43
-#: root/adm/articles/relationships_right.html:56
-#: root/adm/articles/list.html:217 root/adm/newsletter/send.html:44
-msgid "Preview"
-msgstr "Førehandsvis"
-
-#: root/adm/timetracker/listview/list.html:57
-#: root/adm/timetracker/listview/pdf_data.html:39 root/adm/files/edit.html:178
-msgid "Path"
-msgstr "Stig"
-
-#: root/adm/timetracker/listview/list.html:59
-#: root/adm/timetracker/listview/pdf_data.html:41
-msgid "Wordcount"
-msgstr "Tal på ord"
-
-#: root/adm/timetracker/listview/list.html:71 root/adm/categories/list.html:61
-#: root/adm/articles/list.html:233 root/adm/newsletter/list.html:71
-#: root/adm/settings/admin/statuslist.html:47
-#: root/adm/settings/admin/adfields/adfieldlist.html:61
-#: root/adm/users/list.html:48 root/adm/users/roles/list.html:38
-#: root/adm/tags/list.html:52 root/adm/dictionary/list.html:52
-msgid "Edit"
-msgstr "Rediger"
-
-#: root/adm/timetracker/listview/list.html:72 root/adm/articles/list.html:212
-msgid "Read"
-msgstr "Les"
-
-#: root/adm/rssimport/index.html:20
-msgid "Add new entry"
-msgstr "Legg til oppføring"
-
-#: root/adm/rssimport/list.html:24
-msgid "RSS ID"
-msgstr "RSS ID"
-
-#: root/adm/rssimport/list.html:25
-msgid "Title/content"
-msgstr "Tittel/innhald"
-
-#: root/adm/rssimport/list.html:26 root/adm/categories/list.html:31
-#: root/source-js/rssimport/rssimport.js:107
-msgid "Link"
-msgstr "Lenkje"
-
-#: root/adm/rssimport/list.html:27 root/source-js/rssimport/rssimport.js:108
-msgid "Source"
-msgstr "Kjelde"
-
-#: root/adm/categories/left.html:19
-msgid "New Category"
-msgstr "Opprett kategori"
-
-#: root/adm/categories/editform.html:43
-msgid "Parent category"
-msgstr "Forelderkategori"
-
-#: root/adm/categories/editform.html:64
-msgid "External link"
-msgstr "Ekstern lenkje"
-
-#: root/adm/categories/list.html:27
-msgid "Category ID"
-msgstr "Kategor-ID"
-
-#: root/adm/categories/list.html:30 root/adm/articles/list.html:41
-msgid "Parent"
-msgstr "Forelder"
-
-#: root/adm/categories/list.html:32
-msgid "Display type"
-msgstr "Visingstype"
-
-#: root/adm/categories/list.html:62
-msgid "Are you sure you want to delete the category \"%(CATEGORYNAME)\"?"
-msgstr "Er du viss på at du vil sletta kategorien «%(CATEGORYNAME)»?"
-
-#: root/adm/core/change_password.html:16 root/adm/users/edit/index.html:114
-msgid "Confirm password"
-msgstr "Stadfest passord"
-
-#: root/adm/core/change_password.html:22 root/adm/core/forgottenpw.html:37
-msgid "Submit"
-msgstr "Send inn"
-
-#: root/adm/core/forgottenpw.html:31
-msgid "Enter Your Email Address"
-msgstr "Skriv inn e-postadressa di"
-
-#: root/adm/core/menu.html:34 root/source-js/core/createArticle.js:71
-msgid "New article"
-msgstr "Opprett artikkel"
-
-#: root/adm/core/menu.html:50
-msgid "New category"
-msgstr "Opprett kategori"
-
-#: root/adm/core/menu.html:61 root/adm/dictionary/left.html:19
-msgid "Add a new word"
-msgstr "Legg til eit nytt ord"
-
-#: root/adm/core/menu.html:72
-msgid "Upload files"
+#: root/adm/articles/files_right.html:20 root/adm/files/left.html:22
+#: root/adm/files/left.html:24
+msgid "Upload new files"
 msgstr "Last opp filer"
 
-#: root/adm/core/menu.html:76
-msgid "File classes"
-msgstr "Filklassar"
+#: root/adm/articles/liveComments_right.html:19
+msgid "Enable live comments"
+msgstr "Slå på kommentarar på nett"
 
-#: root/adm/core/menu.html:82 root/adm/core/fields/tags.html:19
-msgid "Tags"
-msgstr "Emneord"
-
-#: root/adm/core/menu.html:87
-msgid "RSS Import"
-msgstr "RSS import"
-
-#: root/adm/core/menu.html:90
-msgid "Updating feeds..."
-msgstr "Oppdaterer kjelder …"
-
-#: root/adm/core/menu.html:98
-msgid "Send a manual newsletter"
-msgstr "Send eit manuelt nyheitsbrev"
-
-#: root/adm/core/menu.html:114
-msgid "New user"
-msgstr "Opprett brukar"
-
-#: root/adm/core/menu.html:122
-msgid "New role"
-msgstr "Opprett rolle"
-
-#: root/adm/core/menu.html:145
-msgid "Empty memcached"
-msgstr "Tøm memcached"
-
-#: root/adm/core/searchAndFilter.html:39
-#: root/source-js/utils/objectSelector.js:173
-msgid "(any)"
-msgstr "(kva som helst)"
-
-#: root/adm/core/footer.html:23
-msgid "Lixuz version %(VERSION)"
-msgstr "Lixuz versjon %(VERSION)"
-
-#: root/adm/core/header.html:158
-msgid "Log out"
-msgstr "Logg ut"
-
-#: root/adm/core/header.html:164 root/adm/core/header.html:167
-msgid "Start"
-msgstr "Start"
-
-#: root/adm/core/header.html:169
-msgid "Stop"
-msgstr "Stopp"
-
-#: root/adm/core/listnavigation.html:34 root/adm/core/listnavigation.html:38
-msgid "First"
-msgstr "Første"
-
-#: root/adm/core/listnavigation.html:36 root/adm/core/listnavigation.html:38
-#: root/source-js/utils/objectSelector.js:491
-msgid "Previous"
-msgstr "Førre"
-
-#: root/adm/core/listnavigation.html:46
-msgid "Page %(PAGER) of %(PAGES)"
-msgstr "Side %(PAGER) av %(PAGES)"
-
-#: root/adm/core/listnavigation.html:50 root/adm/core/listnavigation.html:54
-#: root/source-js/utils/objectSelector.js:502
-msgid "Next"
-msgstr "Neste"
-
-#: root/adm/core/listnavigation.html:52 root/adm/core/listnavigation.html:54
-msgid "Last"
-msgstr "Siste"
-
-#: root/adm/core/suppressedInfo.html:24
-msgid "Note: Suppressed display of %(NUMBER) unreadable %(OBJECT_NAME_PLURAL)"
-msgstr "Merk: Hindra vising av %(NUMBER) ulesbare %(OBJECT_NAME_PLURAL)"
-
-#: root/adm/core/fields/tags.html:25
-#: root/source-js/newsletter/newsletter.js:299 root/source-js/tags/ui.js:21
-msgid "Add"
-msgstr "Legg til"
-
-#: root/adm/core/fields/multi-select.html:55
-msgid "select"
-msgstr "vel"
-
-#: root/adm/core/fields/multi-select.html:55
-#: root/source-js/core/objPermEditor.js:262
-msgid "Select"
-msgstr "Vel"
-
-#: root/adm/articles/workflow_newcomments.html:19
-#: root/adm/newsletter/send.html:30
-#: root/adm/dashboard/widget_recentComments.html:21
-#: root/source-js/newsletter/newsletter.js:154
-#: root/source-js/newsletter/newsletter.js:183
-#: root/source-js/articles-previewUI/previewUI.js:173
-msgid "Subject"
-msgstr "Emne"
-
-#: root/adm/articles/workflow_newcomments.html:23
-msgid "Comment"
-msgstr "Kommenter"
-
-#: root/adm/articles/workflow_newcomments.html:26
-#: root/source-js/articles-previewUI/previewUI.js:175
-msgid "Submit new comment"
-msgstr "Send inn kommentar"
-
-#: root/adm/articles/form_save.html:20 root/adm/files/edit.html:139
-#: root/adm/settings/admin/adfields/adfieldedit.html:68
-msgid "Save"
-msgstr "Lagra"
-
-#: root/adm/articles/form_save.html:21 root/adm/files/edit.html:141
-#: root/adm/files/classes/edit.html:39
-#: root/adm/settings/admin/adfields/adfieldedit.html:69
-#: root/source-js/newsletter/newsletter.js:112
-#: root/source-js/newsletter/newsletter.js:448
-#: root/source-js/newsletter/newsletter.js:506
-#: root/source-js/rssimport/rssimport.js:111
-#: root/source-js/utils/arrangableList.js:101
-#: root/source-js/core/objPermEditor.js:175
-msgid "Save and close"
-msgstr "Lagra og lukk"
+#: root/adm/articles/liveComments_right.html:21
+msgid "Nobody has commented on this article yet"
+msgstr "Inga har kommentert på denne artikkelen"
 
 #: root/adm/articles/rightside.html:21
 #: root/adm/articles/read/rightread.html:20
@@ -1703,24 +1595,130 @@ msgstr "Ekstramapper"
 msgid "Additional elements"
 msgstr "Tilleggselement"
 
-#: root/adm/articles/editform.html:21 root/adm/files/classes/edit.html:27
-#: root/adm/users/edit/index.html:21
-msgid "Edit fields"
-msgstr "Rediger felt"
+#: root/adm/articles/relationships_right.html:18
+msgid "Create new relationships"
+msgstr "Opprett nye relasjonar"
 
-#: root/adm/articles/editform.html:53
 #: root/adm/articles/relationships_right.html:31
-#: root/adm/articles/list.html:38
+#: root/adm/articles/editform.html:53 root/adm/articles/list.html:38
 #: root/adm/articles/read/relationshipsread.html:22
 #: root/source-js/articles/relationships.js:76
 #: root/source-js/articles/articles.js:117
 msgid "Article ID"
 msgstr "Artikkel ID"
 
+#: root/adm/articles/relationships_right.html:32
+#: root/adm/articles/list.html:39
+#: root/adm/articles/read/relationshipsread.html:23
+msgid "Article title"
+msgstr "Artikkel tittel"
+
+#: root/adm/articles/relationships_right.html:43
+#: root/adm/articles/relationships_right.html:56
+#: root/adm/articles/list.html:217 root/adm/newsletter/send.html:44
+#: root/adm/timetracker/listview/list.html:46
+#: root/adm/timetracker/listview/list.html:73
+msgid "Preview"
+msgstr "Førehandsvis"
+
+#: root/adm/articles/workflow_newcomments.html:19
+#: root/adm/newsletter/send.html:30
+#: root/adm/dashboard/widget_recentComments.html:21
+#: root/source-js/timetracker/timetracker.js:58
+#: root/source-js/newsletter/newsletter.js:154
+#: root/source-js/newsletter/newsletter.js:183
+#: root/source-js/articles-previewUI/previewUI.js:173
+msgid "Subject"
+msgstr "Emne"
+
+#: root/adm/articles/workflow_newcomments.html:23
+#: root/source-js/timetracker/timetracker.js:59
+msgid "Comment"
+msgstr "Kommenter"
+
+#: root/adm/articles/workflow_newcomments.html:26
+#: root/source-js/articles-previewUI/previewUI.js:175
+msgid "Submit new comment"
+msgstr "Send inn kommentar"
+
+#: root/adm/articles/editform.html:21 root/adm/files/classes/edit.html:27
+#: root/adm/users/edit/index.html:21
+msgid "Edit fields"
+msgstr "Rediger felt"
+
 #: root/adm/articles/editform.html:53 root/adm/articles/editform.html:55
 #: root/adm/articles/read/workflow_read.html:28
 msgid "(not saved)"
 msgstr "(ikkje lagra)"
+
+#: root/adm/articles/list.html:27
+msgid "Save Changes"
+msgstr "Lagra endringar"
+
+#: root/adm/articles/list.html:41 root/adm/categories/list.html:30
+msgid "Parent"
+msgstr "Forelder"
+
+#: root/adm/articles/list.html:73 root/adm/articles/list.html:231
+msgid "Locked by %(USER)"
+msgstr "Låst av %(USER)"
+
+#: root/adm/articles/list.html:79
+msgid "Full title: %(TITLE)"
+msgstr "Full tittel: %(TITLE)"
+
+#: root/adm/articles/list.html:157
+msgid "You don't have permission to change the status of this article"
+msgstr "Du har ikkje tilgang til å endre statusen til denne artikkelen"
+
+#: root/adm/articles/list.html:200
+msgid "You don't have permission to reassign this article"
+msgstr "Du har ikkje tilgang til å tildele denne artikkelen til nokon andre"
+
+#: root/adm/articles/list.html:212 root/adm/timetracker/listview/list.html:72
+msgid "Read"
+msgstr "Les"
+
+#: root/adm/articles/list.html:223
+msgid "Restore"
+msgstr "Gjenopprett"
+
+#: root/adm/articles/list.html:251
+msgid "Move to trash"
+msgstr "Flytt til papirkorga"
+
+#: root/adm/articles/list.html:251 root/adm/articles/left.html:22
+#: root/adm/core/menu.html:39
+msgid "Trash"
+msgstr "Papirkurv"
+
+#: root/adm/articles/list.html:265
+msgid "articles"
+msgstr "artiklar"
+
+#: root/adm/articles/left.html:20
+msgid "New Article"
+msgstr "Opprett artikkel"
+
+#: root/adm/articles/left.html:25
+msgid "Folder actions"
+msgstr "Mappehandlingar"
+
+#: root/adm/articles/left.html:27 root/source-js/dragdrop/lixuzdd.js:321
+msgid "New folder"
+msgstr "Opprett mappe"
+
+#: root/adm/articles/left.html:29
+msgid "Edit folder"
+msgstr "Rediger mappe"
+
+#: root/adm/articles/left.html:32
+msgid "Delete a folder"
+msgstr "Slett ei mappe"
+
+#: root/adm/articles/left.html:35
+msgid "Rename a folder"
+msgstr "Gje nytt namn til ei mappe"
 
 #: root/adm/articles/workflow_comments.html:37
 #: root/adm/articles/read/workflowread_comments.html:37
@@ -1740,34 +1738,15 @@ msgstr ""
 "<span class=\"lite\"><i>%(AUTHOR)</i> %(DATETIME) på revisjon %(REVISION)</"
 "span>"
 
-#: root/adm/articles/files_right.html:19
-msgid "Attach a file to this article"
-msgstr "Legg ei fil til denne artikkelen"
-
-#: root/adm/articles/files_right.html:20 root/adm/files/left.html:22
-#: root/adm/files/left.html:24
-msgid "Upload new files"
-msgstr "Last opp filer"
-
-#: root/adm/articles/relationships_right.html:18
-msgid "Create new relationships"
-msgstr "Opprett nye relasjonar"
-
-#: root/adm/articles/relationships_right.html:32
-#: root/adm/articles/list.html:39
-#: root/adm/articles/read/relationshipsread.html:23
-msgid "Article title"
-msgstr "Artikkel tittel"
-
-#: root/adm/articles/relationships_right.html:44
-#: root/adm/articles/relationships_right.html:57
-#: root/adm/articles/additionalElements_right.html:44
-#: root/adm/articles/additionalElements_right.html:56
-#: root/source-js/articles/articles.js:277
-#: root/source-js/articles/filesAPI.js:66
-#: root/source-js/files/multiUpload.js:38
-msgid "Remove"
-msgstr "Fjern"
+#: root/adm/articles/secondaryFolders_right.html:18
+msgid ""
+"Click on a folder to toggle if this article should be in that folder or not. "
+"Secondary folders are hilighted. Your selections will be saved when you save "
+"the article."
+msgstr ""
+"Trykk på ei mappe for å velja om artikkelen skal vera i den mappa eller "
+"ikkje. Mapper som er vald er uthevet. Endringane dine vert lagra når du "
+"lagrar artikkelen."
 
 #: root/adm/articles/workflow.html:25
 msgid "Accept this assignment"
@@ -1806,67 +1785,9 @@ msgstr "Sjå lista over revisjonar"
 msgid "Submit changes"
 msgstr "Lagra endringane"
 
-#: root/adm/articles/list.html:27
-msgid "Save Changes"
-msgstr "Lagra endringar"
-
-#: root/adm/articles/list.html:73 root/adm/articles/list.html:231
-msgid "Locked by %(USER)"
-msgstr "Låst av %(USER)"
-
-#: root/adm/articles/list.html:79
-msgid "Full title: %(TITLE)"
-msgstr "Full tittel: %(TITLE)"
-
-#: root/adm/articles/list.html:157
-msgid "You don't have permission to change the status of this article"
-msgstr "Du har ikkje tilgang til å endre statusen til denne artikkelen"
-
-#: root/adm/articles/list.html:200
-msgid "You don't have permission to reassign this article"
-msgstr "Du har ikkje tilgang til å tildele denne artikkelen til nokon andre"
-
-#: root/adm/articles/list.html:223
-msgid "Restore"
-msgstr "Gjenopprett"
-
-#: root/adm/articles/list.html:251
-msgid "Move to trash"
-msgstr "Flytt til papirkorga"
-
-#: root/adm/articles/list.html:265
-msgid "articles"
-msgstr "artiklar"
-
-#: root/adm/articles/liveComments_right.html:19
-msgid "Enable live comments"
-msgstr "Slå på kommentarar på nett"
-
-#: root/adm/articles/liveComments_right.html:21
-msgid "Nobody has commented on this article yet"
-msgstr "Inga har kommentert på denne artikkelen"
-
-#: root/adm/articles/additionalElements_right.html:18
-msgid "Add new elements"
-msgstr "Legg til nye elementer"
-
-#: root/adm/articles/additionalElements_right.html:20
-msgid "Create a new element"
-msgstr "Opprett eit element"
-
-#: root/adm/articles/secondaryFolders_right.html:18
-msgid ""
-"Click on a folder to toggle if this article should be in that folder or not. "
-"Secondary folders are hilighted. Your selections will be saved when you save "
-"the article."
-msgstr ""
-"Trykk på ei mappe for å velja om artikkelen skal vera i den mappa eller "
-"ikkje. Mapper som er vald er uthevet. Endringane dine vert lagra når du "
-"lagrar artikkelen."
-
-#: root/adm/articles/read/read.html:26
-msgid "Edit Article"
-msgstr "Rediger artikkel"
+#: root/adm/articles/read/workflow_read.html:23
+msgid "Article Id"
+msgstr "Artikkel ID"
 
 #: root/adm/articles/read/filesread.html:31
 #: root/source-js/articles-previewUI/previewUI.js:193
@@ -1885,95 +1806,188 @@ msgstr "Filnamn: "
 msgid "File Size: "
 msgstr "Fil-storleik: "
 
-#: root/adm/articles/read/workflow_read.html:23
-msgid "Article Id"
-msgstr "Artikkel ID"
+#: root/adm/articles/read/read.html:26
+msgid "Edit Article"
+msgstr "Rediger artikkel"
 
-#: root/adm/files/multiUploadFinalFrame.html:20
-msgid "Finalizing upload..."
-msgstr "Gjer ferdig opplastning …"
+#: root/adm/newsletter/send.html:20
+#: root/source-js/newsletter/newsletter.js:284
+#: root/source-js/newsletter/newsletter.js:285
+msgid "Add recipients"
+msgstr "Legg til mottakarar"
 
-#: root/adm/files/edit.html:21
-msgid "Saved"
-msgstr "Lagra"
+#: root/adm/newsletter/send.html:20
+msgid "from database"
+msgstr "frå database"
 
-#: root/adm/files/edit.html:51 root/source-js/articles/filesAPI.js:137
-msgid "Folder"
-msgstr "Mappe"
+#: root/adm/newsletter/send.html:21
+msgid "from group"
+msgstr "frå gruppe"
 
-#: root/adm/files/edit.html:51 root/source-js/files/fileFormLogic.js:58
-msgid "Additional folder"
-msgstr "Tilleggsmappe"
+#: root/adm/newsletter/send.html:21
+msgid "or"
+msgstr "eller"
 
-#: root/adm/files/edit.html:106 root/adm/files/selectClass.html:20
-msgid "File class"
-msgstr "Filklasse"
+#: root/adm/newsletter/send.html:22
+msgid "manually"
+msgstr "manuelt"
 
-#: root/adm/files/edit.html:172
-msgid "File metadata"
-msgstr "Fil metadata"
+#: root/adm/newsletter/send.html:24
+msgid "Recipients"
+msgstr "Mottakarar"
 
-#: root/adm/files/edit.html:175 root/source-js/articles/filesAPI.js:136
-msgid "File ID"
-msgstr "Fil ID"
+#: root/adm/newsletter/send.html:25
+msgid "no recipients added"
+msgstr "inga mottakarar er lagt til"
 
-#: root/adm/files/edit.html:185
-msgid "Original file size"
-msgstr "Original filstorleik"
+#: root/adm/newsletter/send.html:27 root/source-js/timetracker/listview.js:15
+#: root/source-js/timetracker/timetracker.js:36
+#: root/source-js/newsletter/newsletter.js:153
+msgid "From"
+msgstr "Frå"
 
-#: root/adm/files/edit.html:188
-msgid "Owner"
-msgstr "Eigar"
-
-#: root/adm/files/edit.html:189
-msgid "nobody"
-msgstr "inga"
-
-#: root/adm/files/edit.html:191
-msgid "Uploaded on"
-msgstr "Lasta opp"
-
-#: root/adm/files/edit.html:194
-msgid "Last edited on"
-msgstr "Sist redigert"
-
-#: root/adm/files/edit.html:197 root/adm/newsletter/send.html:33
+#: root/adm/newsletter/send.html:33 root/adm/files/edit.html:197
 #: root/source-js/newsletter/newsletter.js:502
 msgid "Format"
 msgstr "Format"
 
-#: root/adm/files/edit.html:200
-msgid "image"
-msgstr "bilete"
+#: root/adm/newsletter/send.html:36
+#: root/source-js/newsletter/newsletter.js:502
+msgid "Text"
+msgstr "Tekst"
 
-#: root/adm/files/edit.html:202
-msgid "flash"
-msgstr "flash"
+#: root/adm/newsletter/send.html:37
+#: root/source-js/newsletter/newsletter.js:502
+msgid "HTML"
+msgstr "HTML"
 
-#: root/adm/files/edit.html:204
-msgid "video - FLV will be used"
-msgstr "video - FLV vil verta brukt"
+#: root/adm/newsletter/send.html:40
+#: root/source-js/newsletter/newsletter.js:164
+msgid "Message"
+msgstr "Melding"
 
-#: root/adm/files/edit.html:209
-msgid "Width"
-msgstr "Breidd"
+#: root/adm/newsletter/send.html:43
+msgid "Send"
+msgstr "Send"
 
-#: root/adm/files/edit.html:212
-#: root/adm/settings/admin/adfields/adfieldedit.html:55
-msgid "Height"
-msgstr "Høgd"
+#: root/adm/newsletter/list.html:25
+msgid "Subscription ID"
+msgstr "Abonnements-ID"
 
-#: root/adm/files/edit.html:216
-msgid "FLV file size"
-msgstr "FLV-storleik"
+#: root/adm/newsletter/list.html:28
+#: root/source-js/newsletter/newsletter.js:503
+msgid "Interval"
+msgstr "Intervall"
 
-#: root/adm/files/multiUpload.html:25
-msgid "Upload more"
-msgstr "Last opp fleire"
+#: root/adm/newsletter/list.html:29
+msgid "Preferred format"
+msgstr "Foretrukket format"
 
-#: root/adm/files/multiUpload.html:33
-msgid "Upload"
-msgstr "Last opp"
+#: root/adm/newsletter/list.html:50
+#: root/source-js/newsletter/newsletter.js:503
+msgid "Monthly"
+msgstr "Månadleg"
+
+#: root/adm/newsletter/list.html:55
+#: root/source-js/newsletter/newsletter.js:503
+msgid "Weekly"
+msgstr "Vekentleg"
+
+#: root/adm/newsletter/list.html:60
+#: root/source-js/newsletter/newsletter.js:503
+msgid "Daily"
+msgstr "Dagleg"
+
+#: root/adm/newsletter/list.html:65
+#: root/source-js/newsletter/newsletter.js:503
+msgid "None"
+msgstr "Inga"
+
+#: root/adm/newsletter/list.html:74
+msgid "Assign to Group"
+msgstr "Tildel til gruppe"
+
+#: root/adm/newsletter/left.html:19
+msgid "Send newsletter"
+msgstr "Send nyheitsbrev"
+
+#: root/adm/newsletter/left.html:20
+msgid "View sent mails"
+msgstr "Vis sendte e-postar"
+
+#: root/adm/newsletter/left.html:21
+msgid "Add a group"
+msgstr "Legg til gruppe"
+
+#: root/adm/newsletter/left.html:22
+msgid "Edit groups"
+msgstr "Rediger grupper"
+
+#: root/adm/newsletter/left.html:23
+msgid "Add Subscribers"
+msgstr "Legg til abonnenter"
+
+#: root/adm/newsletter/left.html:24
+#: root/source-js/newsletter/newsletter.js:584
+msgid "Import Subscribers"
+msgstr "Importer abonnenter"
+
+#: root/adm/rssimport/index.html:20
+msgid "Add new entry"
+msgstr "Legg til oppføring"
+
+#: root/adm/rssimport/list.html:24
+msgid "RSS ID"
+msgstr "RSS ID"
+
+#: root/adm/rssimport/list.html:25
+msgid "Title/content"
+msgstr "Tittel/innhald"
+
+#: root/adm/rssimport/list.html:26 root/adm/categories/list.html:31
+#: root/source-js/rssimport/rssimport.js:107
+msgid "Link"
+msgstr "Lenkje"
+
+#: root/adm/rssimport/list.html:27 root/source-js/rssimport/rssimport.js:108
+msgid "Source"
+msgstr "Kjelde"
+
+#: root/adm/dashboard/main.html:18
+msgid "Welcome to Lixuz, %(NAME) (%(USERNAME))"
+msgstr "Velkomen til Lixuz, %(NAME) (%(USERNAME))"
+
+#: root/adm/dashboard/main.html:66
+msgid "Available assignments"
+msgstr "Tilgjengelege oppgåver"
+
+#: root/adm/dashboard/main.html:67
+msgid "My assignments"
+msgstr "Mine oppgåver"
+
+#: root/adm/dashboard/main.html:74
+msgid "Recent \"%(STATUS_NAME)\" articles"
+msgstr "Nyeste «%(STATUS_NAME)» artiklar"
+
+#: root/adm/dashboard/main.html:77
+msgid "Recent comments"
+msgstr "Nylige kommentarar"
+
+#: root/adm/dashboard/widget_recentComments.html:22
+msgid "Article"
+msgstr "Artiklar"
+
+#: root/adm/dashboard/widgetHelper_articleList.html:33
+msgid "Accept?"
+msgstr "Godta?"
+
+#: root/adm/dashboard/widgetHelper_articleList.html:98
+msgid "Accept"
+msgstr "Godta"
+
+#: root/adm/files/multiUploadFinalFrame.html:20
+msgid "Finalizing upload..."
+msgstr "Gjer ferdig opplastning …"
 
 #: root/adm/files/cropping.html:20
 msgid "Tools"
@@ -2043,6 +2057,83 @@ msgstr "Mapper:"
 msgid "files"
 msgstr "filer"
 
+#: root/adm/files/multiUpload.html:25
+msgid "Upload more"
+msgstr "Last opp fleire"
+
+#: root/adm/files/multiUpload.html:33
+msgid "Upload"
+msgstr "Last opp"
+
+#: root/adm/files/edit.html:21
+msgid "Saved"
+msgstr "Lagra"
+
+#: root/adm/files/edit.html:51 root/source-js/articles/filesAPI.js:137
+msgid "Folder"
+msgstr "Mappe"
+
+#: root/adm/files/edit.html:51 root/source-js/files/fileFormLogic.js:58
+msgid "Additional folder"
+msgstr "Tilleggsmappe"
+
+#: root/adm/files/edit.html:106 root/adm/files/selectClass.html:20
+msgid "File class"
+msgstr "Filklasse"
+
+#: root/adm/files/edit.html:172
+msgid "File metadata"
+msgstr "Fil metadata"
+
+#: root/adm/files/edit.html:175 root/source-js/articles/filesAPI.js:136
+msgid "File ID"
+msgstr "Fil ID"
+
+#: root/adm/files/edit.html:178 root/adm/timetracker/listview/pdf_data.html:43
+#: root/adm/timetracker/listview/list.html:57
+msgid "Path"
+msgstr "Stig"
+
+#: root/adm/files/edit.html:185
+msgid "Original file size"
+msgstr "Original filstorleik"
+
+#: root/adm/files/edit.html:188
+msgid "Owner"
+msgstr "Eigar"
+
+#: root/adm/files/edit.html:189
+msgid "nobody"
+msgstr "inga"
+
+#: root/adm/files/edit.html:191
+msgid "Uploaded on"
+msgstr "Lasta opp"
+
+#: root/adm/files/edit.html:194
+msgid "Last edited on"
+msgstr "Sist redigert"
+
+#: root/adm/files/edit.html:200
+msgid "image"
+msgstr "bilete"
+
+#: root/adm/files/edit.html:202
+msgid "flash"
+msgstr "flash"
+
+#: root/adm/files/edit.html:204
+msgid "video - FLV will be used"
+msgstr "video - FLV vil verta brukt"
+
+#: root/adm/files/edit.html:209
+msgid "Width"
+msgstr "Breidd"
+
+#: root/adm/files/edit.html:216
+msgid "FLV file size"
+msgstr "FLV-storleik"
+
 #: root/adm/files/selectClass.html:19
 msgid ""
 "Lixuz has multiple file classes available. Select the class that best fits "
@@ -2055,6 +2146,10 @@ msgstr ""
 msgid "Continue"
 msgstr "Fortsett"
 
+#: root/adm/files/classes/left.html:18
+msgid "Add new class"
+msgstr "Opprett ny klasse"
+
 #: root/adm/files/classes/edit.html:27
 msgid "Define the fields to use for this file class"
 msgstr "Definert feltene som skal brukast for denne filklassen"
@@ -2063,260 +2158,128 @@ msgstr "Definert feltene som skal brukast for denne filklassen"
 msgid "Create class and edit fields"
 msgstr "Opprett klasse og rediger felt"
 
-#: root/adm/files/classes/left.html:18
-msgid "Add new class"
-msgstr "Opprett ny klasse"
+#: root/adm/tags/list.html:38
+msgid "Tag ID"
+msgstr "Emneord-ID"
 
-#: root/adm/newsletter/left.html:19
-msgid "Send newsletter"
-msgstr "Send nyheitsbrev"
+#: root/adm/tags/list.html:39
+msgid "Tag name"
+msgstr "Emneord"
 
-#: root/adm/newsletter/left.html:20
-msgid "View sent mails"
-msgstr "Vis sendte e-postar"
+#: root/adm/tags/left.html:19
+msgid "New tag"
+msgstr "Opprett emneord"
 
-#: root/adm/newsletter/left.html:21
-msgid "Add a group"
-msgstr "Legg til gruppe"
+#: root/adm/timetracker/timetracker_comments.html:29
+msgid "by %(AUTHOR) at %(DATETIME)"
+msgstr "av %(AUTHOR) på %(DATETIME)"
 
-#: root/adm/newsletter/left.html:22
-msgid "Edit groups"
-msgstr "Rediger grupper"
+#: root/adm/timetracker/timetracker_comments.html:36
+msgid "%(AUTHOR) at %(DATETIME)"
+msgstr "%(AUTHOR) på %(DATETIME)"
 
-#: root/adm/newsletter/left.html:23
-msgid "Add Subscribers"
-msgstr "Legg til abonnenter"
+#: root/adm/timetracker/list.html:9
+msgid "User Name"
+msgstr "Brukarnamn"
 
-#: root/adm/newsletter/left.html:24
-#: root/source-js/newsletter/newsletter.js:584
-msgid "Import Subscribers"
-msgstr "Importer abonnenter"
+#: root/adm/timetracker/list.html:10
+msgid "Start date/time"
+msgstr "Startdato/tid"
 
-#: root/adm/newsletter/list.html:25
-msgid "Subscription ID"
-msgstr "Abonnements-ID"
+#: root/adm/timetracker/list.html:11
+msgid "End date/time"
+msgstr "Sluttdato/tid"
 
-#: root/adm/newsletter/list.html:28
-#: root/source-js/newsletter/newsletter.js:503
-msgid "Interval"
-msgstr "Intervall"
+#: root/adm/timetracker/list.html:12 root/adm/timetracker/pdf_report.html:7
+#: root/adm/timetracker/listview/pdf_data.html:21
+#: root/adm/timetracker/listview/list.html:28
+msgid "Duration"
+msgstr "Varighet"
 
-#: root/adm/newsletter/list.html:29
-msgid "Preferred format"
-msgstr "Foretrukket format"
+#: root/adm/timetracker/list.html:13
+msgid "IP in"
+msgstr "IP-inn"
 
-#: root/adm/newsletter/list.html:50
-#: root/source-js/newsletter/newsletter.js:503
-msgid "Monthly"
-msgstr "Månadleg"
+#: root/adm/timetracker/list.html:14 root/source-js/timetracker/listview.js:18
+#: root/source-js/timetracker/timetracker.js:44
+msgid "IP Out"
+msgstr "IP-ut"
 
-#: root/adm/newsletter/list.html:55
-#: root/source-js/newsletter/newsletter.js:503
-msgid "Weekly"
-msgstr "Vekentleg"
+#: root/adm/timetracker/list.html:15
+#: root/adm/timetracker/listview/list.html:29
+msgid "Entry type"
+msgstr "Oppføringstype"
 
-#: root/adm/newsletter/list.html:60
-#: root/source-js/newsletter/newsletter.js:503
-msgid "Daily"
-msgstr "Dagleg"
+#: root/adm/timetracker/list.html:49
+#: root/adm/timetracker/listview/list.html:41
+msgid "Manual entry"
+msgstr "Manuell oppføring"
 
-#: root/adm/newsletter/list.html:65
-#: root/source-js/newsletter/newsletter.js:503
-msgid "None"
-msgstr "Inga"
+#: root/adm/timetracker/list.html:51
+#: root/adm/timetracker/listview/list.html:43
+msgid "Automatic entry"
+msgstr "Automatisk oppføring"
 
-#: root/adm/newsletter/list.html:74
-msgid "Assign to Group"
-msgstr "Tildel til gruppe"
+#: root/adm/timetracker/list.html:55
+msgid "Edit or view"
+msgstr "Rediger eller vis"
 
-#: root/adm/newsletter/send.html:20
-#: root/source-js/newsletter/newsletter.js:284
-#: root/source-js/newsletter/newsletter.js:285
-msgid "Add recipients"
-msgstr "Legg til mottakarar"
+#: root/adm/timetracker/left.html:20
+#: root/adm/timetracker/listview/left.html:20
+msgid "Add an entry"
+msgstr "Legg til oppføring"
 
-#: root/adm/newsletter/send.html:20
-msgid "from database"
-msgstr "frå database"
+#: root/adm/timetracker/left.html:22
+#: root/adm/timetracker/listview/left.html:22
+msgid "Export as PDF"
+msgstr "Eksporter som PDF"
 
-#: root/adm/newsletter/send.html:21
-msgid "from group"
-msgstr "frå gruppe"
+#: root/adm/timetracker/left.html:24
+msgid "Show articles edited"
+msgstr "Vis redigerte artiklar"
 
-#: root/adm/newsletter/send.html:21
-msgid "or"
-msgstr "eller"
+#: root/adm/timetracker/pdf_report.html:5
+#, fuzzy
+msgid "Start Date"
+msgstr "Startdato"
 
-#: root/adm/newsletter/send.html:22
-msgid "manually"
-msgstr "manuelt"
+#: root/adm/timetracker/pdf_report.html:6
+#, fuzzy
+msgid "End Date"
+msgstr "Sluttdato/tid"
 
-#: root/adm/newsletter/send.html:24
-msgid "Recipients"
-msgstr "Mottakarar"
-
-#: root/adm/newsletter/send.html:25
-msgid "no recipients added"
-msgstr "inga mottakarar er lagt til"
-
-#: root/adm/newsletter/send.html:27
-#: root/source-js/newsletter/newsletter.js:153
-msgid "From"
-msgstr "Frå"
-
-#: root/adm/newsletter/send.html:36
-#: root/source-js/newsletter/newsletter.js:502
-msgid "Text"
-msgstr "Tekst"
-
-#: root/adm/newsletter/send.html:37
-#: root/source-js/newsletter/newsletter.js:502
-msgid "HTML"
-msgstr "HTML"
-
-#: root/adm/newsletter/send.html:40
-#: root/source-js/newsletter/newsletter.js:164
-msgid "Message"
-msgstr "Melding"
-
-#: root/adm/newsletter/send.html:43
-msgid "Send"
-msgstr "Send"
-
-#: root/adm/settings/menu.html:19
-msgid "User settings"
-msgstr "Brukarinnstillingar"
-
-#: root/adm/settings/menu.html:20
-msgid "Admin settings"
-msgstr "Administrative innstillingar"
-
-#: root/adm/settings/admin.html:20
-#: root/source-js/articles-previewUI/previewUI.js:197
-msgid "Additional fields"
-msgstr "Tilleggsfelt"
-
-#: root/adm/settings/admin.html:21
-msgid "Statuses"
-msgstr "Statuser"
-
-#: root/adm/settings/admin.html:22
-msgid "Config widgets"
-msgstr "Set opp skjermelementer"
-
-#: root/adm/settings/admin/statuslist.html:27
-msgid "Status ID"
-msgstr "Status ID"
-
-#: root/adm/settings/admin/statuslist.html:28
-msgid "Status name"
-msgstr "Statusnamn"
-
-#: root/adm/settings/admin/statuslist.html:43
-msgid "Mandatory system status"
-msgstr "Obligatorisk systemstatus"
-
-#: root/adm/settings/admin/statuslist.html:48
-msgid "Are you sure you want to delete the status \"%(STATUSNAME)\"?"
-msgstr "Er du viss på at du vil seltte statusen «%(STATUSNAME)»?"
-
-#: root/adm/settings/admin/status_left.html:18
-msgid "Add new status"
-msgstr "Legg til ny status"
-
-#: root/adm/settings/admin/widget_index.html:18
-msgid "Configure defaults for the \"My Assignments\" widget"
-msgstr "Set opp standardverdiane for «mine oppgåver» elementet"
-
-#: root/adm/settings/admin/statuses/edit.html:37
-msgid "Status Name"
-msgstr "Statusnamn"
-
-#: root/adm/settings/admin/adfields/adfieldlist.html:27
-msgid "Field ID"
-msgstr "Felt ID"
-
-#: root/adm/settings/admin/adfields/adfieldlist.html:28
-#: root/adm/settings/admin/adfields/adfieldedit.html:22
-msgid "Field name"
-msgstr "Feltnamn"
-
-#: root/adm/settings/admin/adfields/adfieldlist.html:29
-#: root/adm/settings/admin/adfields/adfieldedit.html:29
-msgid "Field type"
-msgstr "Felt type"
-
-#: root/adm/settings/admin/adfields/adfieldlist.html:30
-msgid "Module"
-msgstr "Modul"
-
-#: root/adm/settings/admin/adfields/adfieldlist.html:52
-msgid "(all/any)"
-msgstr "(kva som helst)"
-
-#: root/adm/settings/admin/adfields/adfieldlist.html:57
-msgid "Metadata fields can not be edited or deleted"
-msgstr "Metadata-felt kan ikkje redigerast eller slettast"
-
-#: root/adm/settings/admin/adfields/adfieldlist.html:59
-msgid "Inline fields can not be edited or deleted"
-msgstr "Innebygde felt kan ikkje redigerast eller slettast"
-
-#: root/adm/settings/admin/adfields/adfieldlist.html:62
-msgid ""
-"Are you sure you want to delete the additional field \"%(FIELDNAME)\" and "
-"all values entered into it? This action can not be undone."
+#: root/adm/timetracker/pdf_report.html:8
+msgid "Ip In"
 msgstr ""
-"Er du viss på at du vil sletta tilleggsfeltet «%(FIELDNAME)» og alle verdiar "
-"det har? Denne handlinga kan ikkje angrast."
 
-#: root/adm/settings/admin/adfields/adfieldedit.html:48
-msgid "Values, separated by a comma followed by an optional space"
-msgstr "Verdiar, separert med eit komma etterfulgt av eit valfritt mellomrom"
+#: root/adm/timetracker/pdf_report.html:9
+#, fuzzy
+msgid "Ip Out"
+msgstr "IP-ut"
 
-#: root/adm/settings/admin/adfields/adfieldedit.html:62
-msgid "Use the rich text editor on this field"
-msgstr "Bruk det grafiske skriveprogrammet på dette feltet"
-
-#: root/adm/settings/admin/adfields/adfieldedit.html:91
-msgid "Single line input"
-msgstr "Ein linje"
-
-#: root/adm/settings/admin/adfields/adfieldedit.html:96
-msgid "Multi line input"
-msgstr "Fleire linjer"
-
-#: root/adm/settings/admin/adfields/adfieldedit.html:106
-msgid "Multiple-choice checkbox"
-msgstr "Avkryssningsboks med fleire val"
-
-#: root/adm/settings/admin/adfields/adfieldedit.html:121
-msgid "Predefined pulldown"
-msgstr "Intervall-definert nedtrekksmeny"
-
-#: root/adm/settings/admin/adfields/adfieldedit.html:131
-msgid "Date and time"
+#: root/adm/timetracker/pdf_report.html:39
+#, fuzzy
+msgid "Total time"
 msgstr "Dato og tid"
 
-#: root/adm/settings/admin/adfields/adfieldedit.html:136
-msgid "Date"
-msgstr "Dato"
+#: root/adm/timetracker/listview/pdf_data.html:20
+#: root/adm/timetracker/listview/list.html:27
+msgid "From-To"
+msgstr "Frå - Til"
 
-#: root/adm/settings/admin/adfields/adfieldedit.html:141
-msgid "Date and time range"
-msgstr "Dato og tids-område"
+#: root/adm/timetracker/listview/pdf_data.html:33
+#, fuzzy
+msgid "Total duration"
+msgstr "Mappehandlingar"
 
-#: root/adm/settings/admin/adfields/adfields_left.html:18
-msgid "Add a new field"
-msgstr "Legg til eit nytt felt"
+#: root/adm/timetracker/listview/pdf_data.html:45
+#: root/adm/timetracker/listview/list.html:59
+msgid "Wordcount"
+msgstr "Tal på ord"
 
-#: root/adm/users/left.html:18
-msgid "Add new user"
-msgstr "Opprett brukar"
-
-#: root/adm/users/left.html:20
-msgid "Add new role"
-msgstr "Opprett rolle"
+#: root/adm/timetracker/listview/left.html:23
+msgid "Show basic list"
+msgstr "Vis enkel liste"
 
 #: root/adm/users/list.html:27
 msgid "User ID"
@@ -2337,6 +2300,14 @@ msgstr "E-post"
 #: root/adm/users/list.html:49
 msgid "Are you sure you want to delete the user \"%(USERNAME)\"?"
 msgstr "Er du viss på at du vil sletta brukaren «%(USERNAME)»?"
+
+#: root/adm/users/left.html:18
+msgid "Add new user"
+msgstr "Opprett brukar"
+
+#: root/adm/users/left.html:20
+msgid "Add new role"
+msgstr "Opprett rolle"
 
 #: root/adm/users/roles/list.html:24
 msgid "Role ID"
@@ -2380,61 +2351,150 @@ msgstr "Ditt nye passord er for kort, det må vera minst 5 teikn langt"
 msgid "Your old password (only required when changing your password)"
 msgstr "Ditt gamle passord (berre påkrevd når du endrar passordet ditt)"
 
+#: root/adm/users/edit/index.html:114 root/adm/core/change_password.html:16
+msgid "Confirm password"
+msgstr "Stadfest passord"
+
 #: root/adm/users/edit/index.html:124
 msgid "(autodetect)"
 msgstr "(oppdag automatisk)"
 
-#: root/adm/dashboard/main.html:18
-msgid "Welcome to Lixuz, %(NAME) (%(USERNAME))"
-msgstr "Velkomen til Lixuz, %(NAME) (%(USERNAME))"
+#: root/adm/core/header.html:161
+msgid "Log out"
+msgstr "Logg ut"
 
-#: root/adm/dashboard/main.html:66
-msgid "Available assignments"
-msgstr "Tilgjengelege oppgåver"
+#: root/adm/core/header.html:167 root/adm/core/header.html:170
+msgid "Start"
+msgstr "Start"
 
-#: root/adm/dashboard/main.html:67
-msgid "My assignments"
-msgstr "Mine oppgåver"
+#: root/adm/core/header.html:172
+msgid "Stop"
+msgstr "Stopp"
 
-#: root/adm/dashboard/main.html:74
-msgid "Recent \"%(STATUS_NAME)\" articles"
-msgstr "Nyeste «%(STATUS_NAME)» artiklar"
+#: root/adm/core/forgottenpw.html:31
+msgid "Enter Your Email Address"
+msgstr "Skriv inn e-postadressa di"
 
-#: root/adm/dashboard/main.html:77
-msgid "Recent comments"
-msgstr "Nylige kommentarar"
+#: root/adm/core/forgottenpw.html:37 root/adm/core/change_password.html:22
+msgid "Submit"
+msgstr "Send inn"
 
-#: root/adm/dashboard/widgetHelper_articleList.html:33
-msgid "Accept?"
-msgstr "Godta?"
+#: root/adm/core/footer.html:23
+msgid "Lixuz version %(VERSION)"
+msgstr "Lixuz versjon %(VERSION)"
 
-#: root/adm/dashboard/widgetHelper_articleList.html:98
-msgid "Accept"
-msgstr "Godta"
+#: root/adm/core/menu.html:34 root/source-js/core/createArticle.js:71
+msgid "New article"
+msgstr "Opprett artikkel"
 
-#: root/adm/dashboard/widget_recentComments.html:22
-msgid "Article"
-msgstr "Artiklar"
+#: root/adm/core/menu.html:50
+msgid "New category"
+msgstr "Opprett kategori"
 
-#: root/adm/tags/left.html:19
-msgid "New tag"
-msgstr "Opprett emneord"
+#: root/adm/core/menu.html:72
+msgid "Upload files"
+msgstr "Last opp filer"
 
-#: root/adm/tags/list.html:38
-msgid "Tag ID"
-msgstr "Emneord-ID"
+#: root/adm/core/menu.html:76
+msgid "File classes"
+msgstr "Filklassar"
 
-#: root/adm/tags/list.html:39
-msgid "Tag name"
+#: root/adm/core/menu.html:82 root/adm/core/fields/tags.html:19
+msgid "Tags"
 msgstr "Emneord"
 
-#: root/adm/dictionary/list.html:27
-msgid "Word ID"
-msgstr "Ord ID"
+#: root/adm/core/menu.html:87
+msgid "RSS Import"
+msgstr "RSS import"
 
-#: root/adm/dictionary/list.html:53
-msgid "Are you sure you want to delete the definition of the word \"%(WORD)\"?"
-msgstr "Er du viss på at du vil sletta definisjonen av ordet «%(WORD)»?"
+#: root/adm/core/menu.html:90
+msgid "Updating feeds..."
+msgstr "Oppdaterer kjelder …"
+
+#: root/adm/core/menu.html:98
+msgid "Send a manual newsletter"
+msgstr "Send eit manuelt nyheitsbrev"
+
+#: root/adm/core/menu.html:114
+msgid "New user"
+msgstr "Opprett brukar"
+
+#: root/adm/core/menu.html:122
+msgid "New role"
+msgstr "Opprett rolle"
+
+#: root/adm/core/menu.html:145
+msgid "Empty memcached"
+msgstr "Tøm memcached"
+
+#: root/adm/core/searchAndFilter.html:57
+#: root/source-js/utils/objectSelector.js:173
+msgid "(any)"
+msgstr "(kva som helst)"
+
+#: root/adm/core/listnavigation.html:34 root/adm/core/listnavigation.html:38
+msgid "First"
+msgstr "Første"
+
+#: root/adm/core/listnavigation.html:36 root/adm/core/listnavigation.html:38
+#: root/source-js/utils/objectSelector.js:491
+msgid "Previous"
+msgstr "Førre"
+
+#: root/adm/core/listnavigation.html:46
+msgid "Page %(PAGER) of %(PAGES)"
+msgstr "Side %(PAGER) av %(PAGES)"
+
+#: root/adm/core/listnavigation.html:50 root/adm/core/listnavigation.html:54
+#: root/source-js/utils/objectSelector.js:502
+msgid "Next"
+msgstr "Neste"
+
+#: root/adm/core/listnavigation.html:52 root/adm/core/listnavigation.html:54
+msgid "Last"
+msgstr "Siste"
+
+#: root/adm/core/suppressedInfo.html:24
+msgid "Note: Suppressed display of %(NUMBER) unreadable %(OBJECT_NAME_PLURAL)"
+msgstr "Merk: Hindra vising av %(NUMBER) ulesbare %(OBJECT_NAME_PLURAL)"
+
+#: root/adm/core/fields/tags.html:25
+#: root/source-js/newsletter/newsletter.js:299 root/source-js/tags/ui.js:21
+msgid "Add"
+msgstr "Legg til"
+
+#: root/adm/core/fields/multi-select.html:55
+msgid "select"
+msgstr "vel"
+
+#: root/adm/core/fields/multi-select.html:55
+#: root/source-js/core/objPermEditor.js:262
+msgid "Select"
+msgstr "Vel"
+
+#: root/adm/categories/editform.html:43
+msgid "Parent category"
+msgstr "Forelderkategori"
+
+#: root/adm/categories/editform.html:64
+msgid "External link"
+msgstr "Ekstern lenkje"
+
+#: root/adm/categories/list.html:27
+msgid "Category ID"
+msgstr "Kategor-ID"
+
+#: root/adm/categories/list.html:32
+msgid "Display type"
+msgstr "Visingstype"
+
+#: root/adm/categories/list.html:62
+msgid "Are you sure you want to delete the category \"%(CATEGORYNAME)\"?"
+msgstr "Er du viss på at du vil sletta kategorien «%(CATEGORYNAME)»?"
+
+#: root/adm/categories/left.html:19
+msgid "New Category"
+msgstr "Opprett kategori"
 
 #: root/source-js/articles/articleSubmit.js:81
 msgid "Saving article..."
@@ -2528,6 +2588,35 @@ msgstr "Du må lagra artikkelen først."
 msgid "Loading folders..."
 msgstr "Lastar mapper …"
 
+#: root/source-js/timetracker/listview.js:5
+#: root/source-js/timetracker/timetracker.js:177
+msgid "Loading time entry information..."
+msgstr "Lastar informasjon om tidsoppføring …"
+
+#: root/source-js/timetracker/listview.js:12
+msgid "Preview time entry"
+msgstr "Førehandsvis oppføring"
+
+#: root/source-js/timetracker/listview.js:16
+#: root/source-js/timetracker/timetracker.js:37
+msgid "To"
+msgstr "Til"
+
+#: root/source-js/timetracker/listview.js:17
+#: root/source-js/timetracker/timetracker.js:40
+msgid "IP In"
+msgstr "IP-inn"
+
+#: root/source-js/timetracker/listview.js:22
+#: root/source-js/timetracker/timetracker.js:49
+#: root/source-js/articles-previewUI/previewUI.js:170
+msgid "Comments"
+msgstr "Kommentarar"
+
+#: root/source-js/timetracker/listview.js:33
+msgid "close"
+msgstr "lukk"
+
 #: root/source-js/articles/relationships.js:60
 #: root/source-js/articles/relationships.js:187
 msgid "Add relationships"
@@ -2611,6 +2700,7 @@ msgid "Moving to trash..."
 msgstr "Flytter til papirkorga …"
 
 #: root/source-js/articles/articles.js:77
+#: root/source-js/timetracker/timetracker.js:193
 #: root/source-js/newsletter/newsletter.js:50
 #: root/source-js/newsletter/newsletter.js:471
 #: root/source-js/rssimport/rssimport.js:182
@@ -2620,6 +2710,7 @@ msgid "Deleting..."
 msgstr "Sletter …"
 
 #: root/source-js/articles/articles.js:86
+#: root/source-js/timetracker/timetracker.js:209
 msgid "Failed to delete: "
 msgstr "Kunne ikkje sletta: "
 
@@ -2694,6 +2785,43 @@ msgstr "Last ned"
 #: root/source-js/utils/editorHelper.js:188
 msgid "TINYMCE_LANGUAGE"
 msgstr "nn"
+
+#: root/source-js/timetracker/tickingTimeTracker.js:4
+msgid "Loading..."
+msgstr "Lastar …"
+
+#: root/source-js/timetracker/tickingTimeTracker.js:31
+#: root/source-js/timetracker/timetracker.js:151
+#: root/source-js/core/asyncHelper.js:92
+msgid "An error occurred with the request that was submitted."
+msgstr "Ein feil oppstod med forespørselen som vart sendt inn."
+
+#: root/source-js/timetracker/tickingTimeTracker.js:35
+#: root/source-js/timetracker/timetracker.js:155
+msgid "You do not have permission to change any of the data."
+msgstr "Du har ikkje tilgang til å endra noko"
+
+#: root/source-js/timetracker/tickingTimeTracker.js:39
+msgid "Failed to start timetracker."
+msgstr "Klarte ikkje starte tidtakaren."
+
+#: root/source-js/timetracker/tickingTimeTracker.js:58
+#: root/source-js/timetracker/tickingTimeTracker.js:64
+msgid ""
+"The timetracker will keep running even after you close Lixuz. If you don't "
+"want this, please stay on the page and stop it before proceeding"
+msgstr ""
+"Tidtakaren vil fortsette å ta tida sjølv etter du lukkar Lixuz. Om du ikkje "
+"ynskjer dette, bli på sida og stopp den før du fortsetter."
+
+#: root/source-js/timetracker/tickingTimeTracker.js:124
+msgid "Would you like to start the timetracker?"
+msgstr ""
+
+#: root/source-js/timetracker/tickingTimeTracker.js:125
+#, fuzzy
+msgid "Start timetracker?"
+msgstr "Timeliste"
 
 #: root/source-js/core/folders.js:29
 msgid "Select the folder that you want to rename."
@@ -2797,6 +2925,39 @@ msgstr "Ok"
 msgid "You must select at least one folder"
 msgstr "Du må velje minst èi mappe"
 
+#: root/source-js/timetracker/timetracker.js:27
+msgid "Add time entry"
+msgstr "Legg til tidsoppføring"
+
+#: root/source-js/timetracker/timetracker.js:31
+msgid "View / edit time entry"
+msgstr "Vis / rediger tidsoppføring"
+
+#: root/source-js/timetracker/timetracker.js:134
+#: root/source-js/newsletter/newsletter.js:131
+#: root/source-js/newsletter/newsletter.js:480
+#: root/source-js/newsletter/newsletter.js:531
+#: root/source-js/rssimport/rssimport.js:50
+#: root/source-js/rssimport/rssimport.js:134
+#: root/source-js/utils/elementEditor.js:78
+#: root/source-js/admin/ADFieldsEdit.js:82
+#: root/source-js/utils/ModuleFieldEditor.js:98
+#: root/source-js/roles/roles.js:131
+msgid "Saving..."
+msgstr "Lagrar …"
+
+#: root/source-js/timetracker/timetracker.js:159
+msgid "Failed to submit time entry data."
+msgstr "Kunne ikkje sende inn tidsdoppføringsata."
+
+#: root/source-js/timetracker/timetracker.js:185
+msgid "Are you sure you wish to delete this time entry?"
+msgstr "Er du viss på at du vil sletta denne oppføringa?"
+
+#: root/source-js/timetracker/timetracker.js:201
+msgid "Time entry deleted."
+msgstr "Tidsoppføring sletta."
+
 #: root/source-js/utils/objectSelector.js:140
 msgid "Loading filtering rules..."
 msgstr "Lastar filterregler …"
@@ -2825,6 +2986,35 @@ msgstr "Inga oppføringar som passa med desse filterene kunna verta funne"
 msgid "of"
 msgstr "av"
 
+#: root/source-js/core/createArticle.js:27
+msgid "Loading folder and template data ..."
+msgstr "Lastar mappe- og maldata …"
+
+#: root/source-js/core/createArticle.js:48
+msgid ""
+"Select the folder you wish to create the article in, and optionally a "
+"template, then click on create"
+msgstr ""
+"Vel mappa du vil oppretta artikkelen i, og ein mal (valfritt), og så trykk "
+"på opprett."
+
+#: root/source-js/core/createArticle.js:52
+msgid "Template:"
+msgstr "Mal:"
+
+#: root/source-js/core/createArticle.js:54
+msgid "(use default)"
+msgstr "(bruk standard)"
+
+#: root/source-js/core/createArticle.js:65
+#: root/source-js/dragdrop/lixuzdd.js:310
+msgid "Create"
+msgstr "Opprett"
+
+#: root/source-js/core/createArticle.js:89
+msgid "Creating article ..."
+msgstr "Opprettar artikkel …"
+
 #: root/source-js/newsletter/newsletter.js:42
 msgid "Are you sure you wish to cancel this users subscription?"
 msgstr "Er du sikker på at du vil avslutte abonnementet til denne brukaren?"
@@ -2832,18 +3022,6 @@ msgstr "Er du sikker på at du vil avslutte abonnementet til denne brukaren?"
 #: root/source-js/newsletter/newsletter.js:88
 msgid "Loading group data..."
 msgstr "Lastar gruppedata …"
-
-#: root/source-js/newsletter/newsletter.js:131
-#: root/source-js/newsletter/newsletter.js:480
-#: root/source-js/newsletter/newsletter.js:531
-#: root/source-js/rssimport/rssimport.js:50
-#: root/source-js/rssimport/rssimport.js:134
-#: root/source-js/utils/elementEditor.js:78
-#: root/source-js/admin/ADFieldsEdit.js:82
-#: root/source-js/utils/ModuleFieldEditor.js:98
-#: root/source-js/roles/roles.js:131
-msgid "Saving..."
-msgstr "Lagrar …"
 
 #: root/source-js/newsletter/newsletter.js:170
 msgid "Loading list..."
@@ -2956,47 +3134,6 @@ msgstr "Importer CSV"
 msgid "Upload and close"
 msgstr "Last opp og lukk"
 
-#: root/source-js/core/createArticle.js:27
-msgid "Loading folder and template data ..."
-msgstr "Lastar mappe- og maldata …"
-
-#: root/source-js/core/createArticle.js:48
-msgid ""
-"Select the folder you wish to create the article in, and optionally a "
-"template, then click on create"
-msgstr ""
-"Vel mappa du vil oppretta artikkelen i, og ein mal (valfritt), og så trykk "
-"på opprett."
-
-#: root/source-js/core/createArticle.js:52
-msgid "Template:"
-msgstr "Mal:"
-
-#: root/source-js/core/createArticle.js:54
-msgid "(use default)"
-msgstr "(bruk standard)"
-
-#: root/source-js/core/createArticle.js:65
-#: root/source-js/dragdrop/lixuzdd.js:310
-msgid "Create"
-msgstr "Opprett"
-
-#: root/source-js/core/createArticle.js:89
-msgid "Creating article ..."
-msgstr "Opprettar artikkel …"
-
-#: root/source-js/articles/additionalElements.js:58
-msgid "Loading list of additional elements..."
-msgstr "Lastar lista over tilleggselement …"
-
-#: root/source-js/articles/additionalElements.js:60
-msgid "Add selected elements"
-msgstr "Legg til dei valde elementa"
-
-#: root/source-js/articles/additionalElements.js:61
-msgid "Add additional elements"
-msgstr "Legg til tilleggselement"
-
 #: root/source-js/articles-previewUI/previewUI.js:52
 #: root/source-js/articles-previewUI/previewUI.js:112
 msgid "Show Lixuz sidebar"
@@ -3078,10 +3215,6 @@ msgstr "Startdato:"
 msgid "Deadline:"
 msgstr "Tidsfrist:"
 
-#: root/source-js/articles-previewUI/previewUI.js:170
-msgid "Comments"
-msgstr "Kommentarar"
-
 #: root/source-js/articles-previewUI/previewUI.js:191
 msgid "View caption"
 msgstr "Vis bilettekst"
@@ -3098,6 +3231,18 @@ msgstr "Feil"
 msgid "You must enter a comment"
 msgstr "Du må skriva inn ein kommentar"
 
+#: root/source-js/articles/additionalElements.js:58
+msgid "Loading list of additional elements..."
+msgstr "Lastar lista over tilleggselement …"
+
+#: root/source-js/articles/additionalElements.js:60
+msgid "Add selected elements"
+msgstr "Legg til dei valde elementa"
+
+#: root/source-js/articles/additionalElements.js:61
+msgid "Add additional elements"
+msgstr "Legg til tilleggselement"
+
 #: root/source-js/files/cropping.js:65
 msgid "Saving cropped image..."
 msgstr "Lagrar beskjært bilete …"
@@ -3105,10 +3250,6 @@ msgstr "Lagrar beskjært bilete …"
 #: root/source-js/files/cropping.js:89
 msgid "Show original"
 msgstr "Vis original"
-
-#: root/source-js/articles/backup.js:30 root/source-js/core/backup.js:178
-msgid "Restoring backup..."
-msgstr "Gjenoppretter sikkerhetskopi …"
 
 #: root/source-js/rssimport/rssimport.js:27
 msgid "Nothing to submit"
@@ -3134,6 +3275,10 @@ msgstr "Lastar på nytt …"
 #: root/source-js/rssimport/rssimport.js:172
 msgid "Are you sure you wish to permanently delete this entry?"
 msgstr "Er du viss på at du vil sletta denne oppføringa permanent?"
+
+#: root/source-js/articles/backup.js:30 root/source-js/core/backup.js:178
+msgid "Restoring backup..."
+msgstr "Gjenoppretter sikkerhetskopi …"
 
 #: root/source-js/utils/elementEditor.js:27
 msgid "Loading element data..."
@@ -3360,10 +3505,6 @@ msgid ""
 "Please try again soon."
 msgstr ""
 "Tenaren misforstod forespørselen og returnerte ugyldig data. Prøv att snart."
-
-#: root/source-js/core/asyncHelper.js:92
-msgid "An error occurred with the request that was submitted."
-msgstr "Ein feil oppstod med forespørselen som vart sendt inn."
 
 #: root/source-js/admin/ADFieldsEdit.js:37
 msgid "The range is invalid. It must be in the form: FROM-TO (ie. 20-40)"
@@ -3682,6 +3823,10 @@ msgstr "Hentar filinformasjon …"
 msgid "Retrieving file spots"
 msgstr "Hentar lista over filområde …"
 
+#: root/source-js/core/datetimerange.js:27
+msgid "The start date must be before the end date."
+msgstr "Start-datoen må vere før sluttdatoen"
+
 #: root/source-js/articles/commentSubmit.js:82
 msgid ""
 "Refusing to submit empty comment, please enter a comment, then re-submit."
@@ -3763,9 +3908,6 @@ msgstr "Klarte ikkje godta"
 #~ msgid "View articles"
 #~ msgstr "Se på artiklar"
 
-#~ msgid "Access the new article form"
-#~ msgstr "Opprette nye artiklar"
-
 #~ msgid "Access article data"
 #~ msgstr "Få tilgang til artikkeldata"
 
@@ -3781,9 +3923,6 @@ msgstr "Klarte ikkje godta"
 
 #~ msgid "Delete an article from the trash"
 #~ msgstr "Slette en artikkel fra papirkurven"
-
-#~ msgid "Preview articles"
-#~ msgstr "Se forhåndsvisning av artiklar"
 
 #~ msgid "Submit article data"
 #~ msgstr "Sende inn artikkeldata"
@@ -4044,3 +4183,28 @@ msgstr "Klarte ikkje godta"
 
 #~ msgid "Reassign file"
 #~ msgstr "Tildel fil"
+
+#~ msgid "Article ordering"
+#~ msgstr "Artikkelsortering"
+
+#, fuzzy
+#~ msgid "Article Ordering"
+#~ msgstr "Artikkel ID"
+
+#, fuzzy
+#~ msgid "Edit or View"
+#~ msgstr "Rediger filer til andre brukere"
+
+#, fuzzy
+#~ msgid "Manually time entry"
+#~ msgstr "Manuelt nyheitsbrev"
+
+#, fuzzy
+#~ msgid "Auto time entry"
+#~ msgstr "Legg til oppføring"
+
+#~ msgid "Access the new article form"
+#~ msgstr "Opprette nye artiklar"
+
+#~ msgid "Preview articles"
+#~ msgstr "Se forhåndsvisning av artiklar"
