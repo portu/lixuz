@@ -611,7 +611,7 @@ sub preview : Local Args
 
     my $includes = '<!-- Lixuz preview includes -->'."\n";
     $includes .= '<link rel="stylesheet" type="text/css" href="/css/jqueryui/jquery-ui.css" /> ';
-    my @scripts = qw( /jquery.plugins.lib.js /core.js /articles-previewUI.js);
+    my @scripts = qw( /core.lib.js /core.js /articles-previewUI.js);
     if ($c->stash->{lixuzLang})
     {
         push(@scripts,'/i18n/'.$c->stash->{lixuzLang}.'.js');

@@ -49,15 +49,16 @@ __PACKAGE__->config->{namespace} = 'newsletter';
 sub subscribe : Local
 {
     my ($self,$c) = @_;
-    my $email = $c->req->param('email');
+    my $email      = $c->req->param('email');
     my @categories = $c->req->param('categories');
-    my $name = $c->req->param('name');
-    my $format = $c->req->param('format');
-    my $interval = $c->req->param('interval');
-    my $language = $c->req->param('language');
+    my $name       = $c->req->param('name');
+    my $format     = $c->req->param('format');
+    my $interval   = $c->req->param('interval');
+    my $language   = $c->req->param('language');
 
-    my $captcha = $c->req->param('captcha');
+    my $captcha    = $c->req->param('captcha');
     my $captcha_id = $c->req->param('captcha_id');
+
     if(not validate_captcha($c,$captcha_id,$captcha))
     {  
         $self->message($c,'Invalid captcha. Press the back button in your web browser and try again.');

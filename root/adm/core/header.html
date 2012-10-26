@@ -52,7 +52,7 @@ if($jsIncl)
 }
 # The order of these can be important, therefore they are unshifted onto the array
 # here, rather than added with add_jsIncl().
-foreach my $baseIncl (qw(core.js jquery.plugins.lib.js modernizr.lib.js))
+foreach my $baseIncl (reverse qw(modernizr.lib.js core.lib.js core.js))
 {
     unshift(@jsFiles,$c->uri_for('/js/'.$baseIncl));
 }

@@ -87,9 +87,17 @@ sub main
     if (-x $installTarget.'/tools/lixuzctl')
     {
         print 'Packing up plugins...';
-        lixuzctl($installTarget,'packup',$packup);
-        print "done\n";
-        logAction('Packed up plugins');
+        if(lixuzctl($installTarget,'packup',$packup) == 0)
+        {
+            print "done\n";
+            logAction('Packed up plugins');
+        }
+        else
+        {
+            print "no plugins found\n";
+            logAction('Installation has no plugins');
+            $packup = undef;
+        }
     }
     else
     {

@@ -1,12 +1,29 @@
+# #-#-#-#-#  lixuz.pot (LIXUZ (Fri Oct  5 11:33:00 2012))  #-#-#-#-#
 # LIXUZ translation file
 # Copyright (C) 2012 Portu media & communications
+#
+# #-#-#-#-#  lixuz-js.pot (Lixuz)  #-#-#-#-#
+# LIXUZ translation file
+# Copyright (C) 2012 Portu
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: LIXUZ (Fri Sep  7 13:14:06 2012)\n"
+"#-#-#-#-#  lixuz.pot (LIXUZ (Fri Oct  5 11:33:00 2012))  #-#-#-#-#\n"
+"Project-Id-Version: LIXUZ (Fri Oct  5 11:33:00 2012)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2012-09-07 13:14+0200\n"
+"POT-Creation-Date: 2012-10-05 11:33+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  lixuz-js.pot (Lixuz)  #-#-#-#-#\n"
+"Project-Id-Version: Lixuz\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-10-05 11:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,11 +36,11 @@ msgstr ""
 msgid "This account has been deactivated."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin.pm:78 lib/LIXUZ/Controller/Admin.pm:88
-#: lib/LIXUZ/Controller/Admin/Articles.pm:377
-#: lib/LIXUZ/Controller/Admin/Articles.pm:381
-#: lib/LIXUZ/Controller/Admin/Articles.pm:566
-#: lib/LIXUZ/Controller/Admin/Articles.pm:570
+#: lib/LIXUZ/Controller/Admin.pm:76 lib/LIXUZ/Controller/Admin.pm:86
+#: lib/LIXUZ/Controller/Admin/Articles.pm:379
+#: lib/LIXUZ/Controller/Admin/Articles.pm:383
+#: lib/LIXUZ/Controller/Admin/Articles.pm:574
+#: lib/LIXUZ/Controller/Admin/Articles.pm:578
 msgid "Permission denied"
 msgstr ""
 
@@ -46,9 +63,10 @@ msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Files.pm:92
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:37
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:361 root/adm/core/menu.html:67
-#: root/adm/articles/rightside.html:30
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:366 root/adm/core/menu.html:67
+#: root/adm/articles/rightside.html:33
 #: root/adm/articles/read/rightread.html:30
+#: root/source-js/articles-previewUI/previewUI.js:179
 msgid "Files"
 msgstr ""
 
@@ -71,7 +89,7 @@ msgstr ""
 #: lib/LIXUZ/Controller/Admin/Users.pm:144
 #: lib/LIXUZ/Controller/Admin/Users.pm:310
 #: lib/LIXUZ/Controller/Admin/Categories.pm:175
-#: lib/LIXUZ/Controller/Admin/Categories.pm:345
+#: lib/LIXUZ/Controller/Admin/Categories.pm:344
 #: lib/LIXUZ/Controller/Admin/RSSImport.pm:349
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:130
 #: lib/LIXUZ/Schema/LzStatus.pm:119 root/adm/files/edit.html:101
@@ -92,8 +110,8 @@ msgstr ""
 #: lib/LIXUZ/Controller/Admin/Users.pm:141
 #: lib/LIXUZ/Controller/Admin/Categories.pm:172
 #: lib/LIXUZ/Controller/Admin/RSSImport.pm:354
-#: lib/LIXUZ/Controller/Admin/Articles.pm:902
-#: lib/LIXUZ/Controller/Admin/Articles.pm:973 lib/LIXUZ/Schema/LzField.pm:229
+#: lib/LIXUZ/Controller/Admin/Articles.pm:911
+#: lib/LIXUZ/Controller/Admin/Articles.pm:981 lib/LIXUZ/Schema/LzField.pm:226
 #: root/adm/categories/editform.html:70 root/adm/categories/list.html:33
 #: root/adm/articles/relationships_right.html:34
 #: root/adm/articles/list.html:42
@@ -102,6 +120,8 @@ msgstr ""
 #: root/adm/users/roles/list.html:26 root/adm/users/roles/edit/index.html:36
 #: root/adm/users/edit/index.html:133
 #: root/adm/dashboard/widgetHelper_articleList.html:25
+#: root/source-js/articles/relationships.js:76
+#: root/source-js/articles/viewArticleRevisions.js:119
 msgid "Status"
 msgstr ""
 
@@ -112,8 +132,8 @@ msgstr ""
 #: lib/LIXUZ/Controller/Admin/Categories.pm:133
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:57
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:119
-#: lib/LIXUZ/Controller/Admin/Articles.pm:736
-#: lib/LIXUZ/Controller/Admin/Articles.pm:790
+#: lib/LIXUZ/Controller/Admin/Articles.pm:745
+#: lib/LIXUZ/Controller/Admin/Articles.pm:799
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:42
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:146
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:204
@@ -176,7 +196,7 @@ msgstr ""
 #: lib/LIXUZ/Controller/Admin/Users.pm:166
 #: lib/LIXUZ/Controller/Admin/Categories.pm:193
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:178
-#: root/adm/rssimport/list.html:82
+#: root/adm/rssimport/list.html:82 root/source-js/utils/elementEditor.js:66
 msgid "Save changes"
 msgstr ""
 
@@ -258,8 +278,8 @@ msgid "Folders"
 msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Categories.pm:180
-#: lib/LIXUZ/Controller/Admin/Articles.pm:901
-#: lib/LIXUZ/Controller/Admin/Articles.pm:981 lib/LIXUZ/Schema/LzField.pm:237
+#: lib/LIXUZ/Controller/Admin/Articles.pm:910
+#: lib/LIXUZ/Controller/Admin/Articles.pm:989 lib/LIXUZ/Schema/LzField.pm:234
 #: root/adm/categories/editform.html:53 root/adm/categories/list.html:29
 #: root/adm/articles/list.html:40
 msgid "Template"
@@ -278,7 +298,7 @@ msgstr ""
 msgid "No parent"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Categories.pm:391
+#: lib/LIXUZ/Controller/Admin/Categories.pm:390
 msgid "Category data saved"
 msgstr ""
 
@@ -315,6 +335,7 @@ msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:165
 #: root/adm/dictionary/editform.html:44 root/adm/dictionary/list.html:29
+#: root/source-js/utils/elementEditor.js:53
 msgid "Definition"
 msgstr ""
 
@@ -347,7 +368,7 @@ msgstr ""
 msgid "Invalid username or password"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Login.pm:118 root/adm/core/header.html:173
+#: lib/LIXUZ/Controller/Admin/Login.pm:118 root/adm/core/header.html:160
 #: root/adm/core/login.html:37
 msgid "Log in"
 msgstr ""
@@ -485,50 +506,49 @@ msgstr ""
 msgid "(unknown)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:281
-#: lib/LIXUZ/Controller/Admin/Articles.pm:286
+#: lib/LIXUZ/Controller/Admin/Articles.pm:283
+#: lib/LIXUZ/Controller/Admin/Articles.pm:288
 msgid "(user)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:294
-#: lib/LIXUZ/Controller/Admin/Articles.pm:299
-#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:237
+#: lib/LIXUZ/Controller/Admin/Articles.pm:296
+#: lib/LIXUZ/Controller/Admin/Articles.pm:301
+#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:233
 msgid "(role)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:326
+#: lib/LIXUZ/Controller/Admin/Articles.pm:328
 #: root/adm/articles/workflow.html:43 root/adm/articles/list.html:44
 #: root/adm/articles/read/workflow_read.html:39
 #: root/adm/dashboard/widgetHelper_articleList.html:37
 msgid "Assigned to"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:330
+#: lib/LIXUZ/Controller/Admin/Articles.pm:332
 msgid "(any user or role)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:333
+#: lib/LIXUZ/Controller/Admin/Articles.pm:335
 msgid "In status"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:369
-#: lib/LIXUZ/Controller/Admin/Articles.pm:556
+#: lib/LIXUZ/Controller/Admin/Articles.pm:371
+#: lib/LIXUZ/Controller/Admin/Articles.pm:564
 msgid "Error: Failed to locate revision %(REVISION) of the article %(UID)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:371
-#: lib/LIXUZ/Controller/Admin/Articles.pm:558
-#: lib/LIXUZ/Controller/Admin/Articles.pm:745
+#: lib/LIXUZ/Controller/Admin/Articles.pm:373
+#: lib/LIXUZ/Controller/Admin/Articles.pm:566
+#: lib/LIXUZ/Controller/Admin/Articles.pm:754
 msgid "Error: Failed to locate a article with the UID %(UID)."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:479
+#: lib/LIXUZ/Controller/Admin/Articles.pm:487
 msgid "Default Template"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:507
-#: lib/LIXUZ/Controller/Admin/Articles.pm:512
-#: lib/LIXUZ/Controller/Admin/TimeTracker/Listview.pm:139
+#: lib/LIXUZ/Controller/Admin/Articles.pm:515
+#: lib/LIXUZ/Controller/Admin/Articles.pm:520
 #: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:720
 #: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:782
 #: lib/LIXUZ/Schema/LzFile.pm:883 root/adm/timetracker/pdf_report.html:16
@@ -537,114 +557,118 @@ msgstr ""
 #: root/adm/dashboard/widgetHelper_articleList.html:93
 #: root/adm/dashboard/widgetHelper_articleList.html:112
 #: root/adm/dashboard/widget_recentComments.html:54
+#: root/source-js/articles-previewUI/previewUI.js:270
 msgid "(none)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:757
+#: lib/LIXUZ/Controller/Admin/Articles.pm:766
 msgid "You have stolen the edit lock for this article."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:810
+#: lib/LIXUZ/Controller/Admin/Articles.pm:819
 msgid "Article deleted"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:874
-#: lib/LIXUZ/Controller/Admin/Articles.pm:878
+#: lib/LIXUZ/Controller/Admin/Articles.pm:883
+#: lib/LIXUZ/Controller/Admin/Articles.pm:887
 msgid "Editing article %(ARTICLE_ID)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:882
+#: lib/LIXUZ/Controller/Admin/Articles.pm:891
 msgid "Creating article"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:894
-#: lib/LIXUZ/Controller/Admin/Articles.pm:974
+#: lib/LIXUZ/Controller/Admin/Articles.pm:903
+#: lib/LIXUZ/Controller/Admin/Articles.pm:982
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:126
-#: lib/LIXUZ/Schema/LzField.pm:230 root/adm/timetracker/listview/list.html:58
-#: root/adm/timetracker/listview/pdf_data.html:40 root/adm/files/edit.html:72
+#: lib/LIXUZ/Schema/LzField.pm:227 root/adm/files/edit.html:72
 #: root/adm/dashboard/widgetHelper_articleList.html:22
+#: root/source-js/articles/relationships.js:76
+#: root/source-js/articles/articles.js:117
+#: root/source-js/rssimport/rssimport.js:105
+#: root/source-js/articles/viewArticleRevisions.js:119
 msgid "Title"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:895
-#: lib/LIXUZ/Controller/Admin/Articles.pm:976 lib/LIXUZ/Schema/LzField.pm:232
+#: lib/LIXUZ/Controller/Admin/Articles.pm:904
+#: lib/LIXUZ/Controller/Admin/Articles.pm:984 lib/LIXUZ/Schema/LzField.pm:229
 msgid "Lead"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:896
-#: lib/LIXUZ/Controller/Admin/Articles.pm:977 lib/LIXUZ/Schema/LzField.pm:233
+#: lib/LIXUZ/Controller/Admin/Articles.pm:905
+#: lib/LIXUZ/Controller/Admin/Articles.pm:985 lib/LIXUZ/Schema/LzField.pm:230
 #: root/adm/articles/list.html:43
 msgid "Author"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:897
-#: lib/LIXUZ/Controller/Admin/Articles.pm:975 lib/LIXUZ/Schema/LzField.pm:231
+#: lib/LIXUZ/Controller/Admin/Articles.pm:906
+#: lib/LIXUZ/Controller/Admin/Articles.pm:983 lib/LIXUZ/Schema/LzField.pm:228
 msgid "Body"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:898
-#: lib/LIXUZ/Controller/Admin/Articles.pm:978 lib/LIXUZ/Schema/LzField.pm:234
+#: lib/LIXUZ/Controller/Admin/Articles.pm:907
+#: lib/LIXUZ/Controller/Admin/Articles.pm:986 lib/LIXUZ/Schema/LzField.pm:231
 #: root/adm/articles/read/workflow_read.html:31
 msgid "Publish time"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:899
+#: lib/LIXUZ/Controller/Admin/Articles.pm:908
 msgid "Expires at"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:900
+#: lib/LIXUZ/Controller/Admin/Articles.pm:909
 msgid "Order"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:979 lib/LIXUZ/Schema/LzField.pm:235
+#: lib/LIXUZ/Controller/Admin/Articles.pm:987 lib/LIXUZ/Schema/LzField.pm:232
 #: root/adm/articles/read/workflow_read.html:35
 msgid "Expiry time"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:980 lib/LIXUZ/Schema/LzField.pm:236
+#: lib/LIXUZ/Controller/Admin/Articles.pm:988 lib/LIXUZ/Schema/LzField.pm:233
 msgid "Primary folder"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:1076
+#: lib/LIXUZ/Controller/Admin/Articles.pm:1084
 #: lib/LIXUZ/HelperModules/Forms.pm:159
 #: root/adm/core/fields/rangepulldown.html:21
-#: root/adm/core/fields/userpulldown.html:55
+#: root/adm/core/fields/userpulldown.html:55 root/source-js/core/chosen.js:9
 msgid "-select-"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:1083
+#: lib/LIXUZ/Controller/Admin/Articles.pm:1091
 msgid "(Default template)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:292
+#: lib/LIXUZ/Controller/Admin/Services.pm:248
 msgid "Unsorted (files that are not in any folder yet)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:810 root/adm/articles/list.html:67
+#: lib/LIXUZ/Controller/Admin/Services.pm:759 root/adm/articles/list.html:67
 msgid "(unnamed)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:873 root/adm/templates/list.html:27
-#: root/adm/timetracker/listview/list.html:56
-#: root/adm/timetracker/listview/pdf_data.html:38
+#: lib/LIXUZ/Controller/Admin/Services.pm:822 root/adm/templates/list.html:27
 #: root/adm/articles/additionalElements_right.html:33
 #: root/adm/files/classes/list.html:27
 #: root/adm/dashboard/widgetHelper_articleList.html:21
 #: root/adm/dashboard/widget_recentComments.html:20
+#: root/source-js/articles-previewUI/previewUI.js:202
 msgid "ID"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:873
+#: lib/LIXUZ/Controller/Admin/Services.pm:822
 #: root/adm/articles/additionalElements_right.html:34
 msgid "Element"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:873
+#: lib/LIXUZ/Controller/Admin/Services.pm:822
 #: root/adm/articles/additionalElements_right.html:35
+#: root/source-js/articles-previewUI/previewUI.js:202
 msgid "Value"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:1015
+#: lib/LIXUZ/Controller/Admin/Services.pm:964
 msgid "In folder"
 msgstr ""
 
@@ -682,10 +706,12 @@ msgstr ""
 #: root/adm/templates/list.html:28 root/adm/files/edit.html:63
 #: root/adm/files/classes/edit.html:22 root/adm/files/classes/list.html:28
 #: root/adm/newsletter/list.html:27 root/adm/users/roles/list.html:25
+#: root/source-js/newsletter/newsletter.js:501
 msgid "Name"
 msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:127 root/adm/files/edit.html:80
+#: root/source-js/articles-previewUI/previewUI.js:212
 msgid "Caption"
 msgstr ""
 
@@ -749,131 +775,111 @@ msgstr ""
 msgid "Restore trashed articles"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:312
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:311
+msgid "Set permissions on folders/objects for roles/users"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:317
 msgid "Manage categories"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:320
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:325
 msgid "Access the dashboard"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:323
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:328
 msgid "Access dictionaries"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:325
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:330
 msgid "Add/remove dictionary entries"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:333
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:338
 msgid "Access essential Lixuz services"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:345
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:350
 msgid "Edit permissions on folders"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:351
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:356
 msgid "Delete folders"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:356
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:361
 msgid "Rename folders"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:366
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:371
 msgid "Upload or edit files"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:376
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:381
 msgid "Delete files"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:381
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:386
 msgid "Crop images"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:388
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:393
 msgid "View other users files"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:391
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:396
 msgid "Edit other users files"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:394
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:399
 msgid "Manage file classes"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:403 root/adm/core/menu.html:93
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:408 root/adm/core/menu.html:93
 msgid "Newsletter"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:407
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:412
 msgid "Send, delete and edit"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:423
-msgid "Access the timetracker"
-msgstr ""
-
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:428
-msgid "Add and edit time entries"
-msgstr ""
-
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:435
-msgid "Delete others users time entries"
-msgstr ""
-
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:440
-msgid "Add comments on others users time entries"
-msgstr ""
-
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:445
-msgid "View other users time entries"
-msgstr ""
-
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:450
-msgid "Generate time entry reports"
-msgstr ""
-
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:456
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:427
 msgid "Access tags"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:461
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:432
 msgid "Create new tags"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:463
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:434
 msgid "Manage tags"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:468
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:439
 msgid "RSSImport"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:471 root/adm/core/menu.html:133
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:442 root/adm/core/menu.html:128
 msgid "Administrative settings"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:478
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:449
 msgid "Edit additional fields"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:489
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:460
 msgid "Edit statuses"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:497 root/adm/users/left.html:19
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:468 root/adm/users/left.html:19
 msgid "Manage users"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:504 root/adm/users/left.html:21
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:475 root/adm/users/left.html:21
 msgid "Manage roles"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:514 root/adm/core/menu.html:137
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:485 root/adm/core/menu.html:132
 msgid "Manage templates"
 msgstr ""
 
@@ -975,10 +981,10 @@ msgstr ""
 msgid "(you do not have permission to set this value)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:258
-#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:273
-#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:308
-#: lib/LIXUZ/Schema/LzWorkflow.pm:178 lib/LIXUZ/Schema/LzWorkflow.pm:191
+#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:254
+#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:269
+#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:304
+#: lib/LIXUZ/Schema/LzWorkflow.pm:201 lib/LIXUZ/Schema/LzWorkflow.pm:218
 #: root/adm/articles/list.html:209
 #: root/adm/dashboard/widgetHelper_articleList.html:103
 msgid "(nobody)"
@@ -1102,19 +1108,20 @@ msgstr ""
 msgid "Template uploaded"
 msgstr ""
 
-#: lib/LIXUZ/HelperModules/List.pm:328
+#: lib/LIXUZ/HelperModules/List.pm:339
+#: root/source-js/utils/objectSelector.js:208
 msgid "Search"
 msgstr ""
 
-#: lib/LIXUZ/HelperModules/List.pm:331
+#: lib/LIXUZ/HelperModules/List.pm:342
 msgid "Filter"
 msgstr ""
 
-#: lib/LIXUZ/HelperModules/DragDrop.pm:575
+#: lib/LIXUZ/HelperModules/DragDrop.pm:574
 msgid "All"
 msgstr ""
 
-#: lib/LIXUZ/HelperModules/DragDrop.pm:682
+#: lib/LIXUZ/HelperModules/DragDrop.pm:681
 msgid "Maximum depth of nodes reached"
 msgstr ""
 
@@ -1187,15 +1194,15 @@ msgstr ""
 msgid "(unknown - \"%(FIELDNAME)\")"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:252
+#: lib/LIXUZ/Schema/LzField.pm:249
 msgid "Unknown"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzWorkflow.pm:157
+#: lib/LIXUZ/Schema/LzWorkflow.pm:169
 msgid "(user not found)"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzWorkflow.pm:174
+#: lib/LIXUZ/Schema/LzWorkflow.pm:190
 msgid "%(ROLE_NAME) (role)"
 msgstr ""
 
@@ -1203,7 +1210,8 @@ msgstr ""
 msgid "File ID:"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzFile.pm:890 lib/LIXUZ/Schema/LzFile.pm:895
+#: lib/LIXUZ/Schema/LzFile.pm:871 lib/LIXUZ/Schema/LzFile.pm:876
+#: root/source-js/core/createArticle.js:49
 msgid "Folder:"
 msgstr ""
 
@@ -1219,7 +1227,7 @@ msgstr ""
 msgid "Reassign an article to the role \"%(ROLE)\""
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzAction.pm:240
+#: lib/LIXUZ/Schema/LzAction.pm:232
 msgid "Assign articles to users"
 msgstr ""
 
@@ -1237,7 +1245,38 @@ msgstr ""
 
 #: lib/LIXUZ/Schema/LzStatus.pm:118 root/adm/articles/editform.html:55
 #: root/adm/articles/read/workflow_read.html:27
+#: root/source-js/articles/viewArticleRevisions.js:119
 msgid "Revision"
+msgstr ""
+
+#: root/adm/articles2/left.html:3 root/adm/articles/left.html:20
+msgid "New Article"
+msgstr ""
+
+#: root/adm/articles2/left.html:5 root/adm/core/menu.html:39
+#: root/adm/articles/left.html:22 root/adm/articles/list.html:251
+msgid "Trash"
+msgstr ""
+
+#: root/adm/articles2/left.html:8 root/adm/articles/left.html:25
+msgid "Folder actions"
+msgstr ""
+
+#: root/adm/articles2/left.html:10 root/adm/articles/left.html:27
+#: root/source-js/dragdrop/lixuzdd.js:321
+msgid "New folder"
+msgstr ""
+
+#: root/adm/articles2/left.html:12 root/adm/articles/left.html:29
+msgid "Edit folder"
+msgstr ""
+
+#: root/adm/articles2/left.html:15 root/adm/articles/left.html:32
+msgid "Delete a folder"
+msgstr ""
+
+#: root/adm/articles2/left.html:18 root/adm/articles/left.html:35
+msgid "Rename a folder"
 msgstr ""
 
 #: root/adm/templates/left.html:25
@@ -1263,6 +1302,7 @@ msgstr ""
 #: root/adm/articles/relationships_right.html:33
 #: root/adm/articles/additionalElements_right.html:36
 #: root/adm/articles/read/relationshipsread.html:24
+#: root/source-js/articles-previewUI/previewUI.js:202
 msgid "Type"
 msgstr ""
 
@@ -1270,7 +1310,7 @@ msgstr ""
 msgid "default"
 msgstr ""
 
-#: root/adm/templates/list.html:52
+#: root/adm/templates/list.html:52 root/source-js/newsletter/newsletter.js:183
 msgid "Action"
 msgstr ""
 
@@ -1284,6 +1324,7 @@ msgstr ""
 #: root/adm/settings/admin/adfields/adfieldlist.html:62
 #: root/adm/users/list.html:49 root/adm/users/roles/list.html:39
 #: root/adm/tags/list.html:53 root/adm/dictionary/list.html:53
+#: root/source-js/core/folders.js:92
 msgid "Delete"
 msgstr ""
 
@@ -1411,10 +1452,11 @@ msgid "Title/content"
 msgstr ""
 
 #: root/adm/rssimport/list.html:26 root/adm/categories/list.html:31
+#: root/source-js/rssimport/rssimport.js:107
 msgid "Link"
 msgstr ""
 
-#: root/adm/rssimport/list.html:27
+#: root/adm/rssimport/list.html:27 root/source-js/rssimport/rssimport.js:108
 msgid "Source"
 msgstr ""
 
@@ -1458,13 +1500,8 @@ msgstr ""
 msgid "Enter Your Email Address"
 msgstr ""
 
-#: root/adm/core/menu.html:34
+#: root/adm/core/menu.html:34 root/source-js/core/createArticle.js:71
 msgid "New article"
-msgstr ""
-
-#: root/adm/core/menu.html:39 root/adm/articles/left.html:23
-#: root/adm/articles/list.html:251
-msgid "Trash"
 msgstr ""
 
 #: root/adm/core/menu.html:50
@@ -1511,7 +1548,8 @@ msgstr ""
 msgid "Empty memcached"
 msgstr ""
 
-#: root/adm/core/searchAndFilter.html:57
+#: root/adm/core/searchAndFilter.html:39
+#: root/source-js/utils/objectSelector.js:173
 msgid "(any)"
 msgstr ""
 
@@ -1536,6 +1574,7 @@ msgid "First"
 msgstr ""
 
 #: root/adm/core/listnavigation.html:36 root/adm/core/listnavigation.html:38
+#: root/source-js/utils/objectSelector.js:491
 msgid "Previous"
 msgstr ""
 
@@ -1544,6 +1583,7 @@ msgid "Page %(PAGER) of %(PAGES)"
 msgstr ""
 
 #: root/adm/core/listnavigation.html:50 root/adm/core/listnavigation.html:54
+#: root/source-js/utils/objectSelector.js:502
 msgid "Next"
 msgstr ""
 
@@ -1556,6 +1596,7 @@ msgid "Note: Suppressed display of %(NUMBER) unreadable %(OBJECT_NAME_PLURAL)"
 msgstr ""
 
 #: root/adm/core/fields/tags.html:25
+#: root/source-js/newsletter/newsletter.js:299 root/source-js/tags/ui.js:21
 msgid "Add"
 msgstr ""
 
@@ -1564,12 +1605,16 @@ msgid "select"
 msgstr ""
 
 #: root/adm/core/fields/multi-select.html:55
+#: root/source-js/core/objPermEditor.js:262
 msgid "Select"
 msgstr ""
 
 #: root/adm/articles/workflow_newcomments.html:19
 #: root/adm/newsletter/send.html:30
 #: root/adm/dashboard/widget_recentComments.html:21
+#: root/source-js/newsletter/newsletter.js:154
+#: root/source-js/newsletter/newsletter.js:183
+#: root/source-js/articles-previewUI/previewUI.js:173
 msgid "Subject"
 msgstr ""
 
@@ -1578,6 +1623,7 @@ msgid "Comment"
 msgstr ""
 
 #: root/adm/articles/workflow_newcomments.html:26
+#: root/source-js/articles-previewUI/previewUI.js:175
 msgid "Submit new comment"
 msgstr ""
 
@@ -1589,54 +1635,37 @@ msgstr ""
 #: root/adm/articles/form_save.html:21 root/adm/files/edit.html:141
 #: root/adm/files/classes/edit.html:39
 #: root/adm/settings/admin/adfields/adfieldedit.html:69
+#: root/source-js/newsletter/newsletter.js:112
+#: root/source-js/newsletter/newsletter.js:448
+#: root/source-js/newsletter/newsletter.js:506
+#: root/source-js/rssimport/rssimport.js:111
+#: root/source-js/utils/arrangableList.js:101
+#: root/source-js/core/objPermEditor.js:175
 msgid "Save and close"
 msgstr ""
 
-#: root/adm/articles/rightside.html:20
+#: root/adm/articles/rightside.html:21
 #: root/adm/articles/read/rightread.html:20
 msgid "Workflow"
 msgstr ""
 
-#: root/adm/articles/rightside.html:36
+#: root/adm/articles/rightside.html:41
 #: root/adm/articles/read/rightread.html:36
 msgid "Relationships"
 msgstr ""
 
-#: root/adm/articles/rightside.html:42
+#: root/adm/articles/rightside.html:49
 msgid "Live comments"
 msgstr ""
 
-#: root/adm/articles/rightside.html:48
+#: root/adm/articles/rightside.html:57
 msgid "Secondary folders"
 msgstr ""
 
-#: root/adm/articles/rightside.html:54
+#: root/adm/articles/rightside.html:65
 #: root/adm/articles/read/rightread.html:42
+#: root/source-js/articles-previewUI/previewUI.js:202
 msgid "Additional elements"
-msgstr ""
-
-#: root/adm/articles/left.html:21
-msgid "New Article"
-msgstr ""
-
-#: root/adm/articles/left.html:26
-msgid "Folder actions"
-msgstr ""
-
-#: root/adm/articles/left.html:28
-msgid "New folder"
-msgstr ""
-
-#: root/adm/articles/left.html:30
-msgid "Edit folder"
-msgstr ""
-
-#: root/adm/articles/left.html:33
-msgid "Delete a folder"
-msgstr ""
-
-#: root/adm/articles/left.html:36
-msgid "Rename a folder"
 msgstr ""
 
 #: root/adm/articles/editform.html:21 root/adm/files/classes/edit.html:27
@@ -1648,6 +1677,8 @@ msgstr ""
 #: root/adm/articles/relationships_right.html:31
 #: root/adm/articles/list.html:38
 #: root/adm/articles/read/relationshipsread.html:22
+#: root/source-js/articles/relationships.js:76
+#: root/source-js/articles/articles.js:117
 msgid "Article ID"
 msgstr ""
 
@@ -1693,6 +1724,9 @@ msgstr ""
 #: root/adm/articles/relationships_right.html:57
 #: root/adm/articles/additionalElements_right.html:44
 #: root/adm/articles/additionalElements_right.html:56
+#: root/source-js/articles/articles.js:277
+#: root/source-js/articles/filesAPI.js:66
+#: root/source-js/files/multiUpload.js:38
 msgid "Remove"
 msgstr ""
 
@@ -1792,19 +1826,20 @@ msgstr ""
 msgid "Edit Article"
 msgstr ""
 
-#: root/adm/articles/read/filesread.html:30
+#: root/adm/articles/read/filesread.html:31
+#: root/source-js/articles-previewUI/previewUI.js:193
 msgid "(no caption set)"
 msgstr ""
 
-#: root/adm/articles/read/filesread.html:32
+#: root/adm/articles/read/filesread.html:34
 msgid "File Id: "
 msgstr ""
 
-#: root/adm/articles/read/filesread.html:33
+#: root/adm/articles/read/filesread.html:35
 msgid "File Name: "
 msgstr ""
 
-#: root/adm/articles/read/filesread.html:34
+#: root/adm/articles/read/filesread.html:36
 msgid "File Size: "
 msgstr ""
 
@@ -1820,11 +1855,11 @@ msgstr ""
 msgid "Saved"
 msgstr ""
 
-#: root/adm/files/edit.html:51
+#: root/adm/files/edit.html:51 root/source-js/articles/filesAPI.js:137
 msgid "Folder"
 msgstr ""
 
-#: root/adm/files/edit.html:51
+#: root/adm/files/edit.html:51 root/source-js/files/fileFormLogic.js:58
 msgid "Additional folder"
 msgstr ""
 
@@ -1836,7 +1871,7 @@ msgstr ""
 msgid "File metadata"
 msgstr ""
 
-#: root/adm/files/edit.html:175
+#: root/adm/files/edit.html:175 root/source-js/articles/filesAPI.js:136
 msgid "File ID"
 msgstr ""
 
@@ -1861,6 +1896,7 @@ msgid "Last edited on"
 msgstr ""
 
 #: root/adm/files/edit.html:197 root/adm/newsletter/send.html:33
+#: root/source-js/newsletter/newsletter.js:502
 msgid "Format"
 msgstr ""
 
@@ -1909,7 +1945,7 @@ msgstr ""
 msgid "Save crop"
 msgstr ""
 
-#: root/adm/files/cropping.html:23
+#: root/adm/files/cropping.html:23 root/source-js/files/cropping.js:84
 msgid "Hide original"
 msgstr ""
 
@@ -2008,6 +2044,7 @@ msgid "Add Subscribers"
 msgstr ""
 
 #: root/adm/newsletter/left.html:24
+#: root/source-js/newsletter/newsletter.js:584
 msgid "Import Subscribers"
 msgstr ""
 
@@ -2016,6 +2053,7 @@ msgid "Subscription ID"
 msgstr ""
 
 #: root/adm/newsletter/list.html:28
+#: root/source-js/newsletter/newsletter.js:503
 msgid "Interval"
 msgstr ""
 
@@ -2024,18 +2062,22 @@ msgid "Preferred format"
 msgstr ""
 
 #: root/adm/newsletter/list.html:50
+#: root/source-js/newsletter/newsletter.js:503
 msgid "Monthly"
 msgstr ""
 
 #: root/adm/newsletter/list.html:55
+#: root/source-js/newsletter/newsletter.js:503
 msgid "Weekly"
 msgstr ""
 
 #: root/adm/newsletter/list.html:60
+#: root/source-js/newsletter/newsletter.js:503
 msgid "Daily"
 msgstr ""
 
 #: root/adm/newsletter/list.html:65
+#: root/source-js/newsletter/newsletter.js:503
 msgid "None"
 msgstr ""
 
@@ -2044,6 +2086,8 @@ msgid "Assign to Group"
 msgstr ""
 
 #: root/adm/newsletter/send.html:20
+#: root/source-js/newsletter/newsletter.js:284
+#: root/source-js/newsletter/newsletter.js:285
 msgid "Add recipients"
 msgstr ""
 
@@ -2072,18 +2116,22 @@ msgid "no recipients added"
 msgstr ""
 
 #: root/adm/newsletter/send.html:27
+#: root/source-js/newsletter/newsletter.js:153
 msgid "From"
 msgstr ""
 
 #: root/adm/newsletter/send.html:36
+#: root/source-js/newsletter/newsletter.js:502
 msgid "Text"
 msgstr ""
 
 #: root/adm/newsletter/send.html:37
+#: root/source-js/newsletter/newsletter.js:502
 msgid "HTML"
 msgstr ""
 
 #: root/adm/newsletter/send.html:40
+#: root/source-js/newsletter/newsletter.js:164
 msgid "Message"
 msgstr ""
 
@@ -2100,6 +2148,7 @@ msgid "Admin settings"
 msgstr ""
 
 #: root/adm/settings/admin.html:20
+#: root/source-js/articles-previewUI/previewUI.js:197
 msgid "Additional fields"
 msgstr ""
 
@@ -2235,7 +2284,7 @@ msgstr ""
 msgid "Lastname"
 msgstr ""
 
-#: root/adm/users/list.html:31
+#: root/adm/users/list.html:31 root/source-js/newsletter/newsletter.js:500
 msgid "Email"
 msgstr ""
 
@@ -2253,6 +2302,10 @@ msgstr ""
 
 #: root/adm/users/roles/edit/index.html:29
 msgid "Role name"
+msgstr ""
+
+#: root/adm/users/roles/edit/index.html:83
+msgid "Additional rights (ie. from plugins)"
 msgstr ""
 
 #: root/adm/users/edit/index.html:28
@@ -2332,4 +2385,1210 @@ msgstr ""
 
 #: root/adm/dictionary/list.html:53
 msgid "Are you sure you want to delete the definition of the word \"%(WORD)\"?"
+msgstr ""
+
+#: root/source-js/articles/articleSubmit.js:81
+msgid "Saving article..."
+msgstr ""
+
+#: root/source-js/articles/articleSubmit.js:136
+msgid "<b><i>Changes saved at %(date)<b></i>"
+msgstr ""
+
+#: root/source-js/articles/articleSubmit.js:170
+msgid "You don't have permission to set the article to the attempted status"
+msgstr ""
+
+#: root/source-js/articles/articleSubmit.js:174
+msgid ""
+"Failed to save the article, it is currently locked for editing by <i>%(USER)"
+"</i>."
+msgstr ""
+
+#: root/source-js/articles/articleSubmit.js:178
+msgid ""
+"You are neither the assigner nor the assignee of this article, so you can "
+"not change any of the data."
+msgstr ""
+
+#: root/source-js/articles/articleSubmit.js:221
+msgid ""
+"There are files that live in the same directory as this article, do you want "
+"to move them to the new folder as well?"
+msgstr ""
+
+#: root/source-js/articles/articleSubmit.js:244
+msgid ""
+"You have an unsaved comment. Do you want to save it now? If you choose not "
+"to save it, the comment will be lost."
+msgstr ""
+
+#: root/source-js/articles/articleSubmit.js:246
+msgid "You have an unsaved comment. Do you want to save it too?"
+msgstr ""
+
+#: root/source-js/articles/articleSubmit.js:298
+msgid ""
+"You have reassigned this article. This will result in the article being "
+"automatically closed after saving. Do you want to save it now?"
+msgstr ""
+
+#: root/source-js/articles/workflow.js:49
+msgid "Accepting assingment ..."
+msgstr ""
+
+#: root/source-js/articles/workflow.js:59
+msgid "You have accepted this assignment"
+msgstr ""
+
+#: root/source-js/articles/workflow.js:73
+msgid "You were denied access to accepting this assignment"
+msgstr ""
+
+#: root/source-js/articles/workflow.js:77
+msgid "Failed to accept assignment."
+msgstr ""
+
+#: root/source-js/articles/workflow.js:78
+#: root/source-js/dashboard/dashboard.js:66
+msgid "Failed to accept assignment: "
+msgstr ""
+
+#: root/source-js/articles/workflow.js:98
+msgid ""
+"You have unsaved changes. If you move away from this page, those changes "
+"will be lost."
+msgstr ""
+
+#: root/source-js/articles/secondaryFolders.js:38
+msgid "You must first save the article."
+msgstr ""
+
+#: root/source-js/articles/secondaryFolders.js:42
+msgid "Loading folders..."
+msgstr ""
+
+#: root/source-js/articles/relationships.js:60
+#: root/source-js/articles/relationships.js:187
+msgid "Add relationships"
+msgstr ""
+
+#: root/source-js/articles/relationships.js:62
+msgid "Add article relationships"
+msgstr ""
+
+#: root/source-js/articles/relationships.js:158
+msgid ""
+"The following articles already has relationships with this article: "
+"%(ARTICLES)\n"
+"\n"
+"You will have to remove the existing relationship(s) first."
+msgstr ""
+
+#: root/source-js/articles/relationships.js:174
+msgid ""
+"Which type of relationship does the article \"%(ARTICLE_TITLE)\" have with "
+"this article?"
+msgstr ""
+
+#: root/source-js/articles/relationships.js:178
+msgid "Which type of relationship does these articles have with this article?"
+msgstr ""
+
+#: root/source-js/articles/relationships.js:184
+msgid "Related"
+msgstr ""
+
+#: root/source-js/articles/relationships.js:185
+msgid "Previous article"
+msgstr ""
+
+#: root/source-js/articles/relationships.js:192
+#: root/source-js/core/folders.js:53 root/source-js/core/folders.js:103
+#: root/source-js/core/dialogHelpers.js:275
+#: root/source-js/core/dialogHelpers.js:309
+#: root/source-js/core/createArticle.js:76
+#: root/source-js/rssimport/rssimport.js:117
+#: root/source-js/utils/elementEditor.js:67
+#: root/source-js/articles/viewArticleRevisions.js:106
+#: root/source-js/utils/arrangableList.js:263
+#: root/source-js/core/objPermEditor.js:174
+#: root/source-js/core/objPermEditor.js:274
+#: root/source-js/articles/files.js:87
+msgid "Cancel"
+msgstr ""
+
+#: root/source-js/articles/relationships.js:193
+msgid "Select relationship type"
+msgstr ""
+
+#: root/source-js/core/chosen.js:11
+msgid "No results matched"
+msgstr ""
+
+#: root/source-js/articles/articles.js:43
+msgid ""
+"Are you sure that you want to move the article \"%(NAME)\" to trash? This "
+"will permanently change the status of the article from \"Live\" to \"Inactive"
+"\" (if you restore it, you will need to manually set the article Live again)."
+msgstr ""
+
+#: root/source-js/articles/articles.js:47
+msgid "Are you sure that you want to move the article \"%(NAME)\" to trash?"
+msgstr ""
+
+#: root/source-js/articles/articles.js:57
+msgid "Moving to trash..."
+msgstr ""
+
+#: root/source-js/articles/articles.js:77
+#: root/source-js/newsletter/newsletter.js:50
+#: root/source-js/newsletter/newsletter.js:471
+#: root/source-js/rssimport/rssimport.js:182
+#: root/source-js/templates/templates.js:70 root/source-js/tags/ui.js:96
+#: root/source-js/articles/trash.js:32
+msgid "Deleting..."
+msgstr ""
+
+#: root/source-js/articles/articles.js:86
+msgid "Failed to delete: "
+msgstr ""
+
+#: root/source-js/articles/articles.js:98
+msgid "Backup deleted."
+msgstr ""
+
+#: root/source-js/articles/articles.js:105
+msgid "Backups found on server, loading information..."
+msgstr ""
+
+#: root/source-js/articles/articles.js:114
+msgid ""
+"An error occurred, we recieved a message from the server saying that there "
+"was backups available for restoration. Now it says there aren't any. "
+"Something is not quite right somewhere"
+msgstr ""
+
+#: root/source-js/articles/articles.js:138
+msgid "Delete backup"
+msgstr ""
+
+#: root/source-js/articles/articles.js:141
+msgid ""
+"Backups of some of your articles was found. You may choose to restore these "
+"now, delete them, or postpone any action until later. Click on the title of "
+"an article to restore it"
+msgstr ""
+
+#: root/source-js/articles/articles.js:144
+msgid "Backups found"
+msgstr ""
+
+#: root/source-js/articles/articles.js:147
+msgid "Later"
+msgstr ""
+
+#: root/source-js/articles/articles.js:222
+msgid ""
+"If you do not save this article within ten minutes, you will lose the edit "
+"lock on it."
+msgstr ""
+
+#: root/source-js/articles/articles.js:231
+msgid "Edit lock lost"
+msgstr ""
+
+#: root/source-js/articles/articles.js:234
+msgid ""
+"You have lost the edit lock for this article, it is now locked by <i>%(USER)"
+"</i>. Your data has been backed up, but you will not be able to save or "
+"restore the backup until the article has been unlocked."
+msgstr ""
+
+#: root/source-js/articles/articles.js:277
+#: root/source-js/articles/filesAPI.js:66
+msgid "Download"
+msgstr ""
+
+#: root/source-js/utils/editorHelper.js:188
+msgid "TINYMCE_LANGUAGE"
+msgstr ""
+
+#: root/source-js/core/folders.js:29
+msgid "Select the folder that you want to rename."
+msgstr ""
+
+#: root/source-js/core/folders.js:33
+msgid "Rename to"
+msgstr ""
+
+#: root/source-js/core/folders.js:36
+msgid "Rename"
+msgstr ""
+
+#: root/source-js/core/folders.js:40
+msgid "Please enter a folder name"
+msgstr ""
+
+#: root/source-js/core/folders.js:48
+msgid "Rename folder"
+msgstr ""
+
+#: root/source-js/core/folders.js:60
+msgid "Renaming..."
+msgstr ""
+
+#: root/source-js/core/folders.js:69 root/source-js/core/objPermEditor.js:246
+#: root/source-js/dragdrop/lixuzdd.js:285
+msgid "Loading folder data ..."
+msgstr ""
+
+#: root/source-js/core/folders.js:85
+msgid "Select the folder that you want to delete."
+msgstr ""
+
+#: root/source-js/core/folders.js:89
+msgid "Note: This action is permanent, there is no undo"
+msgstr ""
+
+#: root/source-js/core/folders.js:98
+msgid "Delete folder"
+msgstr ""
+
+#: root/source-js/core/folders.js:110
+msgid ""
+"<b>WARNING:</b> This action is permanent and can NOT be undone.<br /><br /"
+">Are you sure you want to delete the folder %(folder) and ALL OF ITS "
+"SUBFOLDERS?<br /><br />Any articles or files whose primary folder is the "
+"folder you are deleting will be moved to the first folder that can be "
+"located."
+msgstr ""
+
+#: root/source-js/core/folders.js:111
+msgid "Confirm deletion"
+msgstr ""
+
+#: root/source-js/core/folders.js:120
+msgid "Deleting...<br />This is a heavy operation and may take a while"
+msgstr ""
+
+#: root/source-js/core/dialogHelpers.js:56
+msgid ""
+"The operation has timed out. This is caused by an unknown error that "
+"occurred while performing this operation. Please try again. If the problem "
+"persists, contact your system administrator with the information at the "
+"bottom of this message."
+msgstr ""
+
+#: root/source-js/core/dialogHelpers.js:85
+msgid "Done any second now..."
+msgstr ""
+
+#: root/source-js/core/dialogHelpers.js:142
+msgid "Please wait..."
+msgstr ""
+
+#: root/source-js/core/dialogHelpers.js:208
+#: root/source-js/core/dialogHelpers.js:230
+msgid "No"
+msgstr ""
+
+#: root/source-js/core/dialogHelpers.js:211
+#: root/source-js/core/dialogHelpers.js:231
+msgid "Yes"
+msgstr ""
+
+#: root/source-js/core/dialogHelpers.js:267
+#: root/source-js/core/dialogHelpers.js:293
+#: root/source-js/articles/files.js:86
+msgid "Ok"
+msgstr ""
+
+#: root/source-js/files/fileFormLogic.js:73
+msgid "You must select at least one folder"
+msgstr ""
+
+#: root/source-js/utils/objectSelector.js:140
+msgid "Loading filtering rules..."
+msgstr ""
+
+#: root/source-js/utils/objectSelector.js:225
+msgid "Loading data..."
+msgstr ""
+
+#: root/source-js/utils/objectSelector.js:350
+msgid "Filtering..."
+msgstr ""
+
+#: root/source-js/utils/objectSelector.js:381
+msgid "No files found matching the current filters"
+msgstr ""
+
+#: root/source-js/utils/objectSelector.js:385
+msgid "No articles found matching the current filters"
+msgstr ""
+
+#: root/source-js/utils/objectSelector.js:389
+msgid "No entries found matching the current filters"
+msgstr ""
+
+#: root/source-js/utils/objectSelector.js:496
+msgid "of"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:42
+msgid "Are you sure you wish to cancel this users subscription?"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:88
+msgid "Loading group data..."
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:131
+#: root/source-js/newsletter/newsletter.js:480
+#: root/source-js/newsletter/newsletter.js:531
+#: root/source-js/rssimport/rssimport.js:50
+#: root/source-js/rssimport/rssimport.js:134
+#: root/source-js/utils/elementEditor.js:78
+#: root/source-js/admin/ADFieldsEdit.js:82
+#: root/source-js/utils/ModuleFieldEditor.js:98
+#: root/source-js/roles/roles.js:131
+msgid "Saving..."
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:170
+msgid "Loading list..."
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:179
+msgid "There are no saved newsletters."
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:183
+msgid "Sent at"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:184
+msgid "Select newsletter"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:197
+msgid "Loading message..."
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:217
+msgid "You need to add some recipients first"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:222
+msgid "You need to enter a subject"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:227
+msgid "The message can not be empty"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:232
+msgid "The from e-mail can not be empty"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:249
+msgid "Sending..."
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:299
+msgid "Enter e-mail addresses here, separated by commas."
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:340
+msgid "Group:"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:342
+msgid "remove"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:364
+#: root/source-js/newsletter/newsletter.js:401
+msgid "Loading group list..."
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:384
+msgid "Select the group(s) to add"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:420
+msgid "Select the group to edit"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:420
+#: root/source-js/files/asyncUpload.js:35
+#: root/source-js/articles/viewArticleRevisions.js:137
+msgid "Close"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:427
+msgid "Loading group information..."
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:445
+msgid "Group name"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:446
+msgid "Internal only"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:451
+msgid "Delete group"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:455
+msgid "Newsletter group editor"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:463
+msgid "Are you sure you wish to delete this group?"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:510
+msgid "Add Subscriber"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:547
+msgid "Loading subscriber information..."
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:577
+msgid "Import CSV"
+msgstr ""
+
+#: root/source-js/newsletter/newsletter.js:580
+msgid "Upload and close"
+msgstr ""
+
+#: root/source-js/core/createArticle.js:27
+msgid "Loading folder and template data ..."
+msgstr ""
+
+#: root/source-js/core/createArticle.js:48
+msgid ""
+"Select the folder you wish to create the article in, and optionally a "
+"template, then click on create"
+msgstr ""
+
+#: root/source-js/core/createArticle.js:52
+msgid "Template:"
+msgstr ""
+
+#: root/source-js/core/createArticle.js:54
+msgid "(use default)"
+msgstr ""
+
+#: root/source-js/core/createArticle.js:65
+#: root/source-js/dragdrop/lixuzdd.js:310
+msgid "Create"
+msgstr ""
+
+#: root/source-js/core/createArticle.js:89
+msgid "Creating article ..."
+msgstr ""
+
+#: root/source-js/articles/additionalElements.js:58
+msgid "Loading list of additional elements..."
+msgstr ""
+
+#: root/source-js/articles/additionalElements.js:60
+msgid "Add selected elements"
+msgstr ""
+
+#: root/source-js/articles/additionalElements.js:61
+msgid "Add additional elements"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:52
+#: root/source-js/articles-previewUI/previewUI.js:112
+msgid "Show Lixuz sidebar"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:54
+msgid "Working..."
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:76
+msgid "This article is currently locked for editing by <i>%(USER)</i>."
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:77
+msgid ""
+"<br /><br />This is a read-only preview of the article. You can steal this "
+"lock from the user by pressing the \"Steal lock\" button below. Use this "
+"function with care, if you steal a lock from a user that is currently "
+"working on this article, that user may not be able to save their changes"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:96
+msgid "Locked"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:124
+msgid "Hide Lixuz sidebar"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:132
+msgid "Loading data ..."
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:157
+msgid "Edit article"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:160
+msgid "Article ID:"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:161
+msgid "Publish time:"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:162
+msgid "Expiry time:"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:163
+msgid "Folder path:"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:164
+msgid "Status:"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:165
+msgid "Assigned to:"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:166
+msgid "Assigned by:"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:167
+msgid "Priority:"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:168
+msgid "Start date:"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:169
+msgid "Deadline:"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:170
+msgid "Comments"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:191
+msgid "View caption"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:202
+msgid "Key"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:247
+msgid "Error"
+msgstr ""
+
+#: root/source-js/articles-previewUI/previewUI.js:247
+msgid "You must enter a comment"
+msgstr ""
+
+#: root/source-js/files/cropping.js:65
+msgid "Saving cropped image..."
+msgstr ""
+
+#: root/source-js/files/cropping.js:89
+msgid "Show original"
+msgstr ""
+
+#: root/source-js/articles/backup.js:30 root/source-js/core/backup.js:178
+msgid "Restoring backup..."
+msgstr ""
+
+#: root/source-js/rssimport/rssimport.js:27
+msgid "Nothing to submit"
+msgstr ""
+
+#: root/source-js/rssimport/rssimport.js:77
+msgid "Retrieveing data..."
+msgstr ""
+
+#: root/source-js/rssimport/rssimport.js:106
+msgid "Content"
+msgstr ""
+
+#: root/source-js/rssimport/rssimport.js:114
+msgid "Edit RSS entry"
+msgstr ""
+
+#: root/source-js/rssimport/rssimport.js:157
+#: root/source-js/rssimport/rssimport.js:193
+msgid "Reloading..."
+msgstr ""
+
+#: root/source-js/rssimport/rssimport.js:172
+msgid "Are you sure you wish to permanently delete this entry?"
+msgstr ""
+
+#: root/source-js/utils/elementEditor.js:27
+msgid "Loading element data..."
+msgstr ""
+
+#: root/source-js/utils/elementEditor.js:52
+msgid "Word/phrase"
+msgstr ""
+
+#: root/source-js/files/asyncUpload.js:37
+msgid "Upload file"
+msgstr ""
+
+#: root/source-js/files/asyncUpload.js:43
+msgid "Loading form..."
+msgstr ""
+
+#: root/source-js/core/XHR.js:104
+msgid ""
+"The connection to the server has timed out. Please retry the request soon."
+msgstr ""
+
+#: root/source-js/core/XHR.js:111
+msgid ""
+"The server returned invalid JSON data. This is either a temporary server "
+"problem, or a bug in Lixuz. If the problem persists, contact your system "
+"administrator with the information listed below."
+msgstr ""
+
+#: root/source-js/core/XHR.js:118
+msgid "An unhandled error occurred during the request to the server"
+msgstr ""
+
+#: root/source-js/core/XHR.js:122
+msgid ""
+"An unknown and unhandled error occurred during the request to the server"
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:35
+msgid "This article has not been saved so there are no revisions to list"
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:38
+msgid "Fetching revisions..."
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:54
+msgid "Loading statuses..."
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:72
+msgid "(current)"
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:84
+msgid ""
+"Select which status you want to change this revision to. Changing a new "
+"revision to \"Live\" will result in the current live revision being changed "
+"to \"Inactive\"."
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:84
+msgid "Change it to:"
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:88
+msgid "Change it"
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:93
+msgid "Changing status..."
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:111
+msgid "Change the status of revision %(REVISION)"
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:119
+msgid "Saved by"
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:119
+msgid "Saved at"
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:128
+msgid "View this revision of the article"
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:129
+msgid "Change the status of this revision"
+msgstr ""
+
+#: root/source-js/articles/viewArticleRevisions.js:136
+msgid "Revisions of %(ARTID)"
+msgstr ""
+
+#: root/source-js/utils/FieldHelper.js:207
+msgid "The field \"%(field)\" must be filled in."
+msgstr ""
+
+#: root/source-js/utils/FieldHelper.js:224
+msgid "The field \"%(field)\" contains an invalid date."
+msgstr ""
+
+#: root/source-js/utils/FieldHelper.js:291
+msgid ""
+"The value for the field \"%(FIELD)\" must be within the range %(MIN)-%(MAX)"
+msgstr ""
+
+#: root/source-js/articles/articleStatus.js:41
+msgid "(Unsaved)"
+msgstr ""
+
+#: root/source-js/articles/articleStatus.js:118
+msgid ""
+"You have unsaved status changes, those changes will be lost if you leave "
+"without saving."
+msgstr ""
+
+#: root/source-js/utils/arrangableList.js:100
+msgid "Enabled?"
+msgstr ""
+
+#: root/source-js/articles/filesAPI.js:147
+msgid "Spot:"
+msgstr ""
+
+#: root/source-js/articles/filesAPI.js:355
+msgid "Fetching list of file spots..."
+msgstr ""
+
+#: root/source-js/articles/filesAPI.js:467
+msgid ""
+"A file named \"%(NAME)\" (id %(ID)) is already assigned to this spot. Do you "
+"want to replace it with the file \"%(NEWNAME)\"?"
+msgstr ""
+
+#: root/source-js/articles/filesAPI.js:494
+msgid ""
+"Are you sure you wish to remove that file from this article? The file will "
+"not be deleted."
+msgstr ""
+
+#: root/source-js/core/asyncHelper.js:53
+msgid ""
+"If the problem persists please contact your system administrator and include "
+"the information at the bottom of this message."
+msgstr ""
+
+#: root/source-js/core/asyncHelper.js:58
+msgid ""
+"Failed to submit data, you have been logged out of Lixuz. Please open the "
+"Dashboard page in another tab or window and log in there, and then try to "
+"save your data again"
+msgstr ""
+
+#: root/source-js/core/asyncHelper.js:62
+msgid "You do not have access to save or access this data"
+msgstr ""
+
+#: root/source-js/core/asyncHelper.js:66
+msgid ""
+"The data returned from the server was not safe, this is a bug. Your data may "
+"not have been saved."
+msgstr ""
+
+#: root/source-js/core/asyncHelper.js:70
+msgid ""
+"The data returned from the server was missing essential fields, this is a "
+"bug. Your data may not have been saved."
+msgstr ""
+
+#: root/source-js/core/asyncHelper.js:74
+msgid ""
+"The server did not reply with any data, this is a bug. Your data may not "
+"have been saved."
+msgstr ""
+
+#: root/source-js/core/asyncHelper.js:78
+msgid ""
+"A failure occurred while talking to the database server, this is most likely "
+"a bug. Your data has probably not been saved."
+msgstr ""
+
+#: root/source-js/core/asyncHelper.js:82
+msgid ""
+"An internal server error occurred while the server was processing your "
+"request. Please try again soon."
+msgstr ""
+
+#: root/source-js/core/asyncHelper.js:86
+msgid ""
+"The server misunderstood our request and attempted to return invalid data. "
+"Please try again soon."
+msgstr ""
+
+#: root/source-js/core/asyncHelper.js:92
+msgid "An error occurred with the request that was submitted."
+msgstr ""
+
+#: root/source-js/admin/ADFieldsEdit.js:37
+msgid "The range is invalid. It must be in the form: FROM-TO (ie. 20-40)"
+msgstr ""
+
+#: root/source-js/admin/ADFieldsEdit.js:44
+msgid "The minimum range can not be higher than the maximum range"
+msgstr ""
+
+#: root/source-js/admin/ADFieldsEdit.js:113
+msgid "All fields must be filled in."
+msgstr ""
+
+#: root/source-js/admin/ADFieldsEdit.js:148
+msgid "Failed to submit field data: "
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:83
+msgid "Editing permissions for "
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:87
+msgid "the folder "
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:98
+msgid "user"
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:98
+msgid "role"
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:129
+msgid "Override existing permissions on subfolders"
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:177
+msgid "Permissions editor"
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:185
+msgid "Retrieving permissions data..."
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:206
+msgid "Applying permissions..."
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:212
+msgid "You have to select which permission you want to grant."
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:256
+msgid "Select the folder that you want to edit permissions for."
+msgstr ""
+
+#: root/source-js/core/objPermEditor.js:269
+msgid "Select folder"
+msgstr ""
+
+#: root/source-js/templates/templates.js:62
+msgid ""
+"Are you sure you wish to delete this template? If there are no other "
+"templates of the same type the website might crash when rendering pages that "
+"used to use this template."
+msgstr ""
+
+#: root/source-js/templates/templates.js:79
+msgid "Are you sure you wish to set this template as the default for its type?"
+msgstr ""
+
+#: root/source-js/templates/templates.js:87
+msgid "Setting as default..."
+msgstr ""
+
+#: root/source-js/articles/liveComments.js:39
+msgid ""
+"Are you sure you wish to delete that comment? It will be permanently lost."
+msgstr ""
+
+#: root/source-js/articles/liveComments.js:47
+msgid "Deleting comment ..."
+msgstr ""
+
+#: root/source-js/articles/liveComments.js:90
+msgid "By: "
+msgstr ""
+
+#: root/source-js/articles/liveComments.js:94
+msgid "Delete this comment"
+msgstr ""
+
+#: root/source-js/articles/liveComments.js:109
+msgid ""
+"You do not have the sufficient priviliges required to retrieve the live "
+"comment list"
+msgstr ""
+
+#: root/source-js/articles/liveComments.js:113
+msgid "Failed to retrieve the live comment list"
+msgstr ""
+
+#: root/source-js/articles/liveComments.js:123
+msgid "You must save the article before you can view comments made to it"
+msgstr ""
+
+#: root/source-js/articles/liveComments.js:128
+msgid "Loading comment list ..."
+msgstr ""
+
+#: root/source-js/dragdrop/lixuzdd.js:73
+msgid "Refreshing..."
+msgstr ""
+
+#: root/source-js/dragdrop/lixuzdd.js:305
+msgid "Parent folder"
+msgstr ""
+
+#: root/source-js/dragdrop/lixuzdd.js:308
+msgid "Folder name"
+msgstr ""
+
+#: root/source-js/dragdrop/lixuzdd.js:340
+msgid "You have to enter a name for the folder"
+msgstr ""
+
+#: root/source-js/dragdrop/lixuzdd.js:351
+msgid "Creating folder..."
+msgstr ""
+
+#: root/source-js/dragdrop/lixuzdd.js:367
+msgid "Failed to create a new folder"
+msgstr ""
+
+#: root/source-js/utils/tags.js:123
+msgid "The tag \"%(TAGNAME)\" does not exist. Do you want to create this tag?"
+msgstr ""
+
+#: root/source-js/utils/tags.js:127
+msgid ""
+"The tag \"%(TAGNAME)\" does not exist, and you do not have permission to "
+"create new tags"
+msgstr ""
+
+#: root/source-js/utils/tags.js:133
+msgid "Refusing to add empty tag."
+msgstr ""
+
+#: root/source-js/utils/tags.js:141
+msgid "Creating tag..."
+msgstr ""
+
+#: root/source-js/utils/ModuleFieldEditor.js:35
+msgid ""
+"You must save the article before you can edit the fields for its folder. "
+"Please save this article then try again."
+msgstr ""
+
+#: root/source-js/utils/ModuleFieldEditor.js:38
+msgid "Loading field list..."
+msgstr ""
+
+#: root/source-js/utils/ModuleFieldEditor.js:59
+msgid "Add/remove additional fields"
+msgstr ""
+
+#: root/source-js/utils/ModuleFieldEditor.js:71
+msgid ""
+"A fatal error occurred when creating the edit dialog. Unable to continue."
+msgstr ""
+
+#: root/source-js/utils/ModuleFieldEditor.js:80
+msgid ""
+"The folder associated with this article was not found, you need to set a new "
+"folder"
+msgstr ""
+
+#: root/source-js/utils/ModuleFieldEditor.js:84
+msgid ""
+"This article does not have an associated folder, you need to place the "
+"article into a folder before you can add additional fields"
+msgstr ""
+
+#: root/source-js/utils/ModuleFieldEditor.js:88
+msgid ""
+"The article must be saved and added to a folder before you can edit "
+"additional fields"
+msgstr ""
+
+#: root/source-js/roles/roles.js:149
+msgid "A name for the role is required. Please enter one."
+msgstr ""
+
+#: root/source-js/core/backup.js:74
+msgid "Last backed up at %(date)"
+msgstr ""
+
+#: root/source-js/core/backup.js:267
+msgid ""
+"The backup has been fully restored. Note that any changes made by other "
+"users since this backup was created (other than comments) will be lost if "
+"you save it."
+msgstr ""
+
+#: root/source-js/core/backup.js:334
+msgid "No backup data was found on the server that matched this dataset."
+msgstr ""
+
+#: root/source-js/core/backup.js:338
+msgid "Failed to retrieve backup data: "
+msgstr ""
+
+#: root/source-js/files/fileSelector.js:33
+#: root/source-js/files/fileSelector.js:46
+msgid "File selector"
+msgstr ""
+
+#: root/source-js/files/fileSelector.js:45
+msgid "Add files"
+msgstr ""
+
+#: root/source-js/tags/ui.js:21
+msgid "Enter the name of the tag you wish to add"
+msgstr ""
+
+#: root/source-js/tags/ui.js:28
+msgid "Adding..."
+msgstr ""
+
+#: root/source-js/tags/ui.js:45
+msgid "Tags may not contain commas"
+msgstr ""
+
+#: root/source-js/tags/ui.js:57
+msgid "That tag already exists."
+msgstr ""
+
+#: root/source-js/tags/ui.js:69
+msgid "Enter the new name for this tag"
+msgstr ""
+
+#: root/source-js/tags/ui.js:73
+msgid "Change"
+msgstr ""
+
+#: root/source-js/tags/ui.js:80
+msgid "Changing..."
+msgstr ""
+
+#: root/source-js/tags/ui.js:93
+msgid "Are you sure you want to delete the tag \"%(TAGNAME)\" (%(TAGID))?"
+msgstr ""
+
+#: root/source-js/articles/files.js:29
+msgid ""
+"The video file with file_id %(FILEID) has not been converted to the FLV "
+"format used to serve video through Lixuz yet, the process is still running, "
+"please reload and try again in a few minutes.\\n\\nIf the conversion takes "
+"more than an hour, please contact your system administrator"
+msgstr ""
+
+#: root/source-js/articles/files.js:33
+msgid ""
+"The conversion of this file (%(FILEID)) to the FLV format failed. Please "
+"contact your system administrator."
+msgstr ""
+
+#: root/source-js/articles/files.js:61 root/source-js/files/multiUpload.js:38
+msgid "File"
+msgstr ""
+
+#: root/source-js/articles/files.js:72
+msgid "Change the caption to:"
+msgstr ""
+
+#: root/source-js/articles/files.js:78
+msgid "Add to the lead"
+msgstr ""
+
+#: root/source-js/articles/files.js:79 root/source-js/articles/files.js:83
+msgid "Add to the body"
+msgstr ""
+
+#: root/source-js/articles/files.js:156
+msgid "Fetching file information..."
+msgstr ""
+
+#: root/source-js/articles/files.js:178
+msgid "Retrieving file spots"
+msgstr ""
+
+#: root/source-js/articles/commentSubmit.js:82
+msgid ""
+"Refusing to submit empty comment, please enter a comment, then re-submit."
+msgstr ""
+
+#: root/source-js/articles/commentSubmit.js:86
+msgid "Submitting comment..."
+msgstr ""
+
+#: root/source-js/articles/commentSubmit.js:94
+msgid "You have to save the article before you can comment on it"
+msgstr ""
+
+#: root/source-js/articles/commentSubmit.js:133
+msgid "Failed to submit comment: "
+msgstr ""
+
+#: root/source-js/articles/trash.js:23
+msgid ""
+"Are you sure that you want to permanently delete the article \"%(NAME)\"? "
+"This operation can not be reversed."
+msgstr ""
+
+#: root/source-js/articles/trash.js:44
+msgid "Are you sure that you want to restore the article \"%(NAME)\"?"
+msgstr ""
+
+#: root/source-js/articles/trash.js:53
+msgid "Restoring..."
+msgstr ""
+
+#: root/source-js/files/multiUpload.js:90
+msgid "You haven't selected any file(s) to upload"
+msgstr ""
+
+#: root/source-js/files/multiUpload.js:99
+#: root/source-js/files/multiUpload.js:103
+msgid "Uploading..."
+msgstr ""
+
+#: root/source-js/dashboard/dashboard.js:35
+msgid ""
+"Please wait until the other article has been accepted before accepting "
+"another"
+msgstr ""
+
+#: root/source-js/dashboard/dashboard.js:38
+msgid "Accepting..."
+msgstr ""
+
+#: root/source-js/dashboard/dashboard.js:48
+msgid "Accepted!"
+msgstr ""
+
+#: root/source-js/dashboard/dashboard.js:61
+msgid "Acceptance denied"
+msgstr ""
+
+#: root/source-js/dashboard/dashboard.js:65
+msgid "Acceptance failed"
 msgstr ""

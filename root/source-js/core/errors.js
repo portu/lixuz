@@ -34,7 +34,7 @@ function displayErrorBox (title,message)
             },
         title: title,
         modal: true,
-        width: 580,
+        width: 680,
         close: function ()
         {
             try
@@ -51,29 +51,18 @@ function displayErrorBox (title,message)
  * Get the file and line number that caused the exception if
  * possible. Returns null if it isn't possible.
  */
-function getBacktraceFromException (exception)
+function getExceptionLocation (backtrace)
 {
-    var fileAndLine = null;
-
-    try
+    var bt = backtrace[0];
+    if(! /https?:/.test(bt))
     {
-        var line = null,
-            file = null;
-        // Some browsers use lineNumber, other use line.
-        try { line = exception.lineNumber }
-        catch(e) { try { line = exception.line } catch(e1) {} };
-        try { file = exception.fileName; } catch(e2) {};
-        try { file = file.replace(/^http:\/\/[^\/]+/,''); } catch(e2) {};
-        if(line != null || file != null)
-        {
-            if(line == null) { line = '(unknown)'; }
-            if(file == null) { file = '(unknown)'; }
-
-            fileAndLine = file+' line '+line;
-        }
-    } catch(e) { fileAndLine = null; }
-
-    return fileAndLine;
+        bt = backtrace[1];
+    }
+    if(! /https?:/.test(bt))
+    {
+        return;
+    }
+    return bt;
 }
 
 function getLzErrInfo (add)
@@ -99,7 +88,16 @@ function getLzErrInfo (add)
     // Get the current username+user id
     try { user = $('#currentUsername').val(); user = user +'/'+$('#currentUserId').val(); } catch(e) { }
     // Generate the actual message string
-    var message = '<code class="errorInformation">';
+    var message = '<code class="errorInformation"';
+    try
+    {
+        if(/git\//.test($('#lixuz_version').val()))
+        {
+            message = message+' style="color:black"';
+        }
+    }
+    catch(e) { }
+    message = message +'>';
     message = message+add;
     message = message+'User&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '+user+'<br />';
     message = message+'On page&nbsp;&nbsp;&nbsp;: '+URL+'<br />';
@@ -139,6 +137,10 @@ function lzException(exception,error)
         if(caller === undefined || caller == '(unknown)')
         {
             caller = getCallerName(arguments);
+            if(caller)
+            {
+                caller = caller.replace(/^\s*at\s*/,'');
+            }
         }
 
     } catch(e) {}
@@ -215,13 +217,14 @@ function lzException(exception,error)
     {
         return;
     }
-    var fileAndLine = getBacktraceFromException(exception),
+    var backtrace = printStackTrace({e: exception});
+    var exceptionLocation = getExceptionLocation(backtrace);
         extraInfo = '';
 
     extraInfo = extraInfo+'Exception : '+exceptMsg+"<br />";
-    if(fileAndLine != null)
+    if(exceptionLocation != null)
     {
-        extraInfo = extraInfo+'At&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '+fileAndLine+'<br />';
+        extraInfo = extraInfo+'At&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '+exceptionLocation+'<br />';
     }
     extraInfo = extraInfo+'Caught by : '+caller+"<br />";
     if($.browser.ie && /JSON/.match(caller))
@@ -261,16 +264,8 @@ function lzException(exception,error)
     try { PI_noSoonMessage = PI_currProgress; } catch(e) { }
 
     message = message +'</small>';
+    lzelog(exception,backtrace);
 
-    if(fileAndLine != null)
-    {
-        lzelog(exception,true);
-    }
-    else
-    {
-        lzlog('Exception: "'+exceptMsg+'" caught by '+caller);
-        LIXUZ.errorLog.send('Exception: "'+exceptMsg+'" caught by '+caller);
-    }
     // Display our message
     try
     {
@@ -314,16 +309,15 @@ function lzException(exception,error)
  * Summary: Lixuz javascript exception logger
  * Arguments: exception: exception object
  */
-function lzelog (exception)
+function lzelog (exception,backtrace)
 {
     try
     {
-        var backtrace = null,
-            funcname = null;
-        try
+        var funcname = null;
+        if(backtrace == null)
         {
-            backtrace = getBacktraceFromException(exception);
-        } catch(e) { }
+            backtrace = printStackTrace({ e: exception });
+        }
         try 
         {
             funcname = getCallerName(exception.stack);
@@ -334,20 +328,16 @@ function lzelog (exception)
         {
             output = output + ' in '+funcname;
         }
-        if(backtrace != null)
-        {
-            output = output + ' at '+backtrace;
-        }
         if(progIndicatorDisplayed && arguments.length != 2)
         {
             PI_exceptions.push(output);
         }
         lzlog('Exception: '+output);
-        if (backtrace.stack)
+        if (backtrace)
         {
-            lzlog("Stack trace of above exception:\n"+backtrace.stack);
+            lzlog("Stack trace of above exception:\n"+backtrace.join("\n"));
         }
-        LIXUZ.errorLog.send(output,backtrace.stack);
+        LIXUZ.errorLog.send(output);
     } catch(e) { }
 }
 
@@ -418,8 +408,7 @@ LIXUZ.addNamespace('error',
     log: lzErrLog,
     message: lzError,
     exception: lzException,
-    getInfo: getLzErrInfo,
-    getBacktrace: getBacktraceFromException
+    getInfo: getLzErrInfo
 });
 LIXUZ.extendNamespace('message',
 {
