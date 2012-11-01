@@ -26,6 +26,7 @@ use JSON::XS;
 use Try::Tiny;
 use LIXUZ::HelperModules::Search qw(perform_search);
 use LIXUZ::HelperModules::Cache qw(get_ckey CT_24H);
+use LIXUZ::HelperModules::RevisionHelpers qw(get_latest_article);
 use constant {
     TYPE_PREFORMATTED => 1,
     TYPE_HASH => 2,
@@ -575,7 +576,7 @@ sub poll : Local
     my $r = {};
     if(defined $c->req->param('article_id') && length $c->req->param('article_id'))
     {
-        my $art = $c->model('LIXUZDB::LzArticle')->find({article_id => $c->req->param('article_id')});
+        my $art = get_latest_article($c,$c->req->param('article_id'));
         if(not $art or not $art->lock($c))
         {
             $r->{keepLock} = 'failed';
