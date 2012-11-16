@@ -209,7 +209,7 @@ tryRun
     $dbh->do('UPDATE lz_article SET status_id=4 WHERE status_id IS NULL;');
 };
 
-# Folders without a single field
+# Folders without a single field, and folders missing essential fields
 tryRun
 {
     die('SUB_SKIPPED') if $onlyIndex;
@@ -222,19 +222,36 @@ tryRun
         my $content = $dbh->selectall_arrayref('SELECT object_id from lz_field_module WHERE object_id='.$folder.' AND module="folders"');
         if ($content && @{$content})
         {
-            next;
-        }
-        my @fields = qw(title lead author body publish_time expiry_time status_id folder template_id);
-        my $fno = 0;
-        foreach my $field (@fields)
-        {
-            $fno++;
+            # Verify that the essential folder and template_id fields are present
+            my @fields = qw(folder template_id);
+            my $fno = 20;
+            foreach my $field (@fields)
+            {
+                $fno++;
 
-            my $id = $dbh->selectall_arrayref('SELECT field_id FROM lz_field WHERE inline="'.$field.'"');
-            next if (not $id or not $id->[0]);
-            $id = $id->[0]->[0];
-            next if (not defined $id or not length $id);
-            $dbh->do('INSERT INTO lz_field_module (field_id,module,object_id,position,enabled) VALUES ('.$id.',"folders",'.$folder.','.$fno.',1)');
+                my $id = $dbh->selectall_arrayref('SELECT field_id FROM lz_field WHERE inline="'.$field.'"');
+                next if (not $id or not $id->[0]);
+                $id = $id->[0]->[0];
+                next if (not defined $id or not length $id);
+                my $existingID = $dbh->selectall_arrayref('SELECT field_id FROM lz_field_module WHERE module="folders" AND object_id='.$folder.' AND field_id='.$id);
+                next if ($existingID and defined $existingID->[0]);
+                $dbh->do('INSERT INTO lz_field_module (field_id,module,object_id,position,enabled) VALUES ('.$id.',"folders",'.$folder.','.$fno.',1)');
+            }
+        }
+        else
+        {
+            my @fields = qw(title lead author body publish_time expiry_time status_id folder template_id);
+            my $fno = 0;
+            foreach my $field (@fields)
+            {
+                $fno++;
+
+                my $id = $dbh->selectall_arrayref('SELECT field_id FROM lz_field WHERE inline="'.$field.'"');
+                next if (not $id or not $id->[0]);
+                $id = $id->[0]->[0];
+                next if (not defined $id or not length $id);
+                $dbh->do('INSERT INTO lz_field_module (field_id,module,object_id,position,enabled) VALUES ('.$id.',"folders",'.$folder.','.$fno.',1)');
+            }
         }
     }
 };
