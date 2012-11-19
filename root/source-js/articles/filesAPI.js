@@ -270,7 +270,7 @@ var articleFiles = {
     getFileCaption: function (file)
     {
         file = articleFiles.getFileFromVar(file);
-        if(file.caption)
+        if(file.caption != null)
             return file.caption;
         return file.file.caption;
     },

@@ -953,7 +953,7 @@ sub get_caption
             $search->{revision} = $revision;
         }
         my $rel = $c->model('LIXUZDB::LzArticleFile')->find($search);
-        if (defined $rel && $rel->caption)
+        if (defined $rel && defined $rel->caption)
         {
             return $rel->caption;
         }
