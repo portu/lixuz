@@ -21,7 +21,7 @@ use warnings;
 use Exporter qw(import);
 use Carp qw(croak);
 use constant { true => 1, false => 0 };
-our @EXPORT_OK = qw(get_latest_article article_latest_revisions get_live_or_latest_article set_other_articles_inactive);
+our @EXPORT_OK = qw(get_latest_article article_latest_revisions get_live_or_latest_article set_other_articles_inactive get_latest_articles_from_rs);
 
 sub set_other_articles_inactive
 {
@@ -42,6 +42,24 @@ sub get_latest_article
     croak('$c missing') if not defined $c or not ref($c);
     my $art = $c->model('LIXUZDB::LzArticle')->find({ article_id => $artid, 'revisionMeta.is_latest' => 1 }, { join => 'revisionMeta' });
     return $art;
+}
+
+sub get_latest_articles_from_rs
+{
+    my $c = shift;
+    my $rs = shift;
+    croak('$c missing') if not defined $c or not ref($c) or not defined $rs or not ref($rs);
+    my %seen;
+    my @articles;
+    while(my $art = $rs->next)
+    {
+        my $artid = $art->article_id;
+        next if $seen{$artid};
+        $seen{$artid} = 1;
+        my $latest = get_latest_article($c,$artid) // $art;
+        push(@articles, $latest);
+    }
+    return \@articles;
 }
 
 sub get_live_or_latest_article

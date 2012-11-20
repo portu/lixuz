@@ -31,7 +31,7 @@ use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::Fields;
 use LIXUZ::HelperModules::HTMLFilter qw(filter_string);
 use LIXUZ::HelperModules::TemplateRenderer;
-use LIXUZ::HelperModules::RevisionHelpers qw(article_latest_revisions get_latest_article set_other_articles_inactive);
+use LIXUZ::HelperModules::RevisionHelpers qw(get_latest_articles_from_rs);
 use LIXUZ::HelperModules::Files qw(lixuz_serve_scalar_file);
 use constant { true => 1, false => 0};
 use HTML::HTMLDoc;
@@ -190,11 +190,11 @@ sub index : Path Args(0) Form('/core/search')
                     'DATE(revisionMeta.created_at)' => $record_date
                 }, 
                 { join => 'revisionMeta' });
-            $articledata = article_latest_revisions($articledata);
+            $articledata = get_latest_articles_from_rs($c,$articledata);
 
-            if ($articledata)
+            if ($articledata && @{$articledata})
             {
-                while(my $artdt = $articledata->next)
+                foreach my $artdt (@{$articledata})
                 {
                     my $wordcount;
                     if(defined $artdt->body && length $artdt->body)
