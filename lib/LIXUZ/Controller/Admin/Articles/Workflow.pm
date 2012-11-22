@@ -367,7 +367,7 @@ sub notifyRoleMembers
     my $article = $workflow->article;
     my $i18n = $c->stash->{i18n};
     my $subject = $i18n->get_advanced('A new article (%(ARTICLE_NAME) (%(ARTICLE_ID)) is available',{ ARTICLE_NAME => $article->title, ARTICLE_ID => $article->article_id});
-    my $message = $i18n->get_advanced("An article has just been reassigned to the role that you belong to.\n\nYou may accept this assignment on its page, %(PAGE),\nor your Lixuz dashboard.",{PAGE => $c->uri_for('/admin/edit/'.$article->article_id) });
+    my $message = $i18n->get_advanced("An article has just been reassigned to the role that you belong to.\n\nYou may accept this assignment on its page, %(PAGE),\nor your Lixuz dashboard.",{PAGE => $c->uri_for('/admin/articles/edit/'.$article->article_id) });
     my $users = $role->users;
     my @recipients;
     while(my $user = $users->next)
