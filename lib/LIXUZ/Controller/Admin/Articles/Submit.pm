@@ -596,7 +596,7 @@ sub notifyNewAssignee
             USER         => $assignedBy->name
         });
     my $message = $i18n->get_advanced('The article "%(ARTICLE_NAME)" (%(ARTICLE_ID)) has been'."\n".'assigned to you by %(USER). You may now edit'."\n".'and manage this article in Lixuz at %(PAGE).', {
-            PAGE         => $c->uri_for('/admin/edit/'.$article->article_id),
+            PAGE         => $c->uri_for('/admin/articles/edit/'.$article->article_id),
             ARTICLE_NAME => $article->title,
             ARTICLE_ID   => $article->article_id,
             USER         => $assignedBy->verboseName
