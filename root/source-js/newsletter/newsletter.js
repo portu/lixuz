@@ -248,7 +248,7 @@ function submitManualNewsletter ()
     data = data + 'from='+encodeURIComponent(getFieldData('mail_from'))+'&';
     showPI(i18n.get('Sending...'));
     // TODO: Add error handler
-    XHR.JSON.POST('/admin/newsletter/submitManual',data,manualNewsletterSent);
+    XHR.Form.POST('/admin/newsletter/submitManual',data,manualNewsletterSent);
 }
 
 // The newsletter was successfully sent, let the user know
