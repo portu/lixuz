@@ -1043,6 +1043,8 @@ sub get_url
 # Usage: url = obj->get_url_aspect($c, height,width);
 #          OR
 #        (url,height,width) = obj->get_url_aspect($c, height,width);
+#
+# NOTE: When used from HTML::Mason within <% %> you MUST enforce scalar context.
 sub get_url_aspect
 {
     my($self, $c, $height, $width) = @_;

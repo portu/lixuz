@@ -52,7 +52,16 @@ var XHR = {
     {
         POST: function (url,data,onSuccess,onFailure)
         {
-            data = $.param(data);
+            if(! _.isString(data))
+            {
+                data = $.param(data);
+            }
+            else
+            {
+                var calledBy = '(unknown)';
+                try { calledBy = getFuncNameFromOutput(arguments.callee.caller.toString()); } catch (e) {}
+                lzlog('Use of deprecated string syntax for XHR.Form.POST by '+calledBy);
+            }
             XHR._private.submit({
                 url          : url,
                 submitString : data,
