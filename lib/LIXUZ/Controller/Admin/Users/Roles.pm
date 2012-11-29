@@ -363,6 +363,11 @@ sub get_groups : Private
                 '/services/renamefolder'
             ]
         },
+        $i18n->get('Move folders') => {
+            paths => [
+                '/services/moveFolder',
+            ]
+        },
         $i18n->get('Files') => {
             paths => [ 
                 '/files',

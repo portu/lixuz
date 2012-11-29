@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2012-11-29 14:22+0100\n"
-"PO-Revision-Date: 2012-11-29 14:26+0100\n"
+"POT-Creation-Date: 2012-11-29 14:36+0100\n"
+"PO-Revision-Date: 2012-11-29 14:36+0100\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
 "Language: \n"
@@ -64,7 +64,7 @@ msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Files.pm:92
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:37
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:366 root/adm/core/menu.html:67
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:371 root/adm/core/menu.html:67
 #: root/adm/articles/rightside.html:33
 #: root/adm/articles/read/rightread.html:30
 #: root/source-js/articles-previewUI/previewUI.js:179
@@ -788,75 +788,79 @@ msgstr "Slett mapper"
 msgid "Rename folders"
 msgstr "Endre mappenavn"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:371
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:366
+msgid "Move folders"
+msgstr "Flytte mapper"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:376
 msgid "Upload or edit files"
 msgstr "Last opp eller rediger filer"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:381
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:386
 msgid "Delete files"
 msgstr "Slett filer"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:386
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:391
 msgid "Crop images"
 msgstr "Beskjær bilder"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:393
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:398
 msgid "View other users files"
 msgstr "Se på filer til andre brukere"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:396
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:401
 msgid "Edit other users files"
 msgstr "Rediger filer til andre brukere"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:399
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:404
 msgid "Manage file classes"
 msgstr "Håndter filklasser"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:408 root/adm/core/menu.html:93
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:413 root/adm/core/menu.html:93
 msgid "Newsletter"
 msgstr "Nyhetsbrev"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:412
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:417
 msgid "Send, delete and edit"
 msgstr "Send, slett og rediger"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:427
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:432
 msgid "Access tags"
 msgstr "Få tilgang til emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:432
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:437
 msgid "Create new tags"
 msgstr "Opprett emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:434
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:439
 msgid "Manage tags"
 msgstr "Håndter emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:439
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:444
 msgid "RSSImport"
 msgstr "RSS importering"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:442 root/adm/core/menu.html:128
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:447 root/adm/core/menu.html:128
 msgid "Administrative settings"
 msgstr "Administrative innstillinger"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:449
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:454
 msgid "Edit additional fields"
 msgstr "Rediger tilleggsfelt"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:460
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:465
 msgid "Edit statuses"
 msgstr "Rediger statuser"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:468 root/adm/users/left.html:19
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:473 root/adm/users/left.html:19
 msgid "Manage users"
 msgstr "Håndter brukere"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:475 root/adm/users/left.html:21
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:480 root/adm/users/left.html:21
 msgid "Manage roles"
 msgstr "Håndter roller"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:485 root/adm/core/menu.html:132
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:490 root/adm/core/menu.html:132
 msgid "Manage templates"
 msgstr "Håndter maler"
 
@@ -1353,6 +1357,30 @@ msgstr "Rediger"
 msgid "Are you sure you want to delete the category \"%(CATEGORYNAME)\"?"
 msgstr "Er du sikker på at du vil slette kategorien «%(CATEGORYNAME)»?"
 
+#: root/adm/core/folderActions.html:2
+msgid "Folder actions"
+msgstr "Mappehandlinger"
+
+#: root/adm/core/folderActions.html:4 root/source-js/dragdrop/lixuzdd.js:321
+msgid "New folder"
+msgstr "Opprett mappe"
+
+#: root/adm/core/folderActions.html:6
+msgid "Edit folder"
+msgstr "Rediger mappe"
+
+#: root/adm/core/folderActions.html:9
+msgid "Delete a folder"
+msgstr "Slett en mappe"
+
+#: root/adm/core/folderActions.html:12
+msgid "Rename a folder"
+msgstr "Endre mappenavn"
+
+#: root/adm/core/folderActions.html:15
+msgid "Move a folder"
+msgstr "Flytt en mappe"
+
 #: root/adm/core/change_password.html:16 root/adm/users/edit/index.html:114
 msgid "Confirm password"
 msgstr "Bekreft passord"
@@ -1534,30 +1562,6 @@ msgstr "Tilleggselement"
 msgid "New Article"
 msgstr "Opprett artikkel"
 
-#: root/adm/articles/left.html:25
-msgid "Folder actions"
-msgstr "Mappehandlinger"
-
-#: root/adm/articles/left.html:27 root/source-js/dragdrop/lixuzdd.js:321
-msgid "New folder"
-msgstr "Opprett mappe"
-
-#: root/adm/articles/left.html:29
-msgid "Edit folder"
-msgstr "Rediger mappe"
-
-#: root/adm/articles/left.html:32
-msgid "Delete a folder"
-msgstr "Slett en mappe"
-
-#: root/adm/articles/left.html:35
-msgid "Rename a folder"
-msgstr "Endre mappenavn"
-
-#: root/adm/articles/left.html:38
-msgid "Move a folder"
-msgstr "Flytt en mappe"
-
 #: root/adm/articles/editform.html:21 root/adm/files/classes/edit.html:27
 #: root/adm/users/edit/index.html:21
 msgid "Edit fields"
@@ -1599,8 +1603,8 @@ msgstr ""
 msgid "Attach a file to this article"
 msgstr "Legg en fil til denne artikkelen"
 
-#: root/adm/articles/files_right.html:20 root/adm/files/left.html:22
-#: root/adm/files/left.html:24
+#: root/adm/articles/files_right.html:20 root/adm/files/left.html:23
+#: root/adm/files/left.html:25
 msgid "Upload new files"
 msgstr "Last opp filer"
 
@@ -2594,7 +2598,9 @@ msgstr "Endrer navn …"
 
 #: root/source-js/core/folders.js:83
 msgid "Move failed: Unable to move a folder to a subfolder of itself"
-msgstr "Flyttingen var mislykket: Kan ikke flytt en mappe til en undermappe av seg selv"
+msgstr ""
+"Flyttingen var mislykket: Kan ikke flytt en mappe til en undermappe av seg "
+"selv"
 
 #: root/source-js/core/folders.js:103
 msgid "Select the folder that you want to rename."
