@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2012-10-05 11:30+0200\n"
-"PO-Revision-Date: 2012-09-07 11:20+0200\n"
+"POT-Creation-Date: 2012-11-29 14:22+0100\n"
+"PO-Revision-Date: 2012-11-29 14:26+0100\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
 "Language: \n"
@@ -614,15 +614,15 @@ msgstr "-velg-"
 msgid "(Default template)"
 msgstr "(standardmal)"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:248
+#: lib/LIXUZ/Controller/Admin/Services.pm:249
 msgid "Unsorted (files that are not in any folder yet)"
 msgstr "Usortert (filer som ikke er i ei mappe)"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:759 root/adm/articles/list.html:67
+#: lib/LIXUZ/Controller/Admin/Services.pm:760 root/adm/articles/list.html:67
 msgid "(unnamed)"
 msgstr "(uten navn)"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:822 root/adm/templates/list.html:27
+#: lib/LIXUZ/Controller/Admin/Services.pm:823 root/adm/templates/list.html:27
 #: root/adm/articles/additionalElements_right.html:33
 #: root/adm/files/classes/list.html:27
 #: root/adm/dashboard/widgetHelper_articleList.html:21
@@ -631,18 +631,18 @@ msgstr "(uten navn)"
 msgid "ID"
 msgstr "ID"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:822
+#: lib/LIXUZ/Controller/Admin/Services.pm:823
 #: root/adm/articles/additionalElements_right.html:34
 msgid "Element"
 msgstr "Element"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:822
+#: lib/LIXUZ/Controller/Admin/Services.pm:823
 #: root/adm/articles/additionalElements_right.html:35
 #: root/source-js/articles-previewUI/previewUI.js:202
 msgid "Value"
 msgstr "Verdi"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:964
+#: lib/LIXUZ/Controller/Admin/Services.pm:965
 msgid "In folder"
 msgstr "I mappe"
 
@@ -969,7 +969,7 @@ msgstr "(du har ikke tilgang til å redigere denne verdien)"
 #: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:254
 #: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:269
 #: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:304
-#: lib/LIXUZ/Schema/LzWorkflow.pm:201 lib/LIXUZ/Schema/LzWorkflow.pm:218
+#: lib/LIXUZ/Schema/LzWorkflow.pm:178 lib/LIXUZ/Schema/LzWorkflow.pm:191
 #: root/adm/articles/list.html:209
 #: root/adm/dashboard/widgetHelper_articleList.html:103
 msgid "(nobody)"
@@ -1103,12 +1103,12 @@ msgstr "Malfila har blitt lastet opp"
 msgid "Template uploaded"
 msgstr "Malfila har blitt lastet opp"
 
-#: lib/LIXUZ/HelperModules/List.pm:339
+#: lib/LIXUZ/HelperModules/List.pm:335
 #: root/source-js/utils/objectSelector.js:208
 msgid "Search"
 msgstr "Søk"
 
-#: lib/LIXUZ/HelperModules/List.pm:342
+#: lib/LIXUZ/HelperModules/List.pm:338
 msgid "Filter"
 msgstr "Filtre"
 
@@ -1189,11 +1189,11 @@ msgstr "(ukjent - «%(FIELDNAME»)"
 msgid "Unknown"
 msgstr "Ukjent"
 
-#: lib/LIXUZ/Schema/LzWorkflow.pm:169
+#: lib/LIXUZ/Schema/LzWorkflow.pm:157
 msgid "(user not found)"
 msgstr "(bruker ikke funnet)"
 
-#: lib/LIXUZ/Schema/LzWorkflow.pm:190
+#: lib/LIXUZ/Schema/LzWorkflow.pm:174
 msgid "%(ROLE_NAME) (role)"
 msgstr "%(ROLE_NAME) (rolle)"
 
@@ -1239,36 +1239,6 @@ msgstr "Live (på nett)"
 #: root/source-js/articles/viewArticleRevisions.js:119
 msgid "Revision"
 msgstr "Revisjon"
-
-#: root/adm/articles2/left.html:3 root/adm/articles/left.html:20
-msgid "New Article"
-msgstr "Opprett artikkel"
-
-#: root/adm/articles2/left.html:5 root/adm/core/menu.html:39
-#: root/adm/articles/left.html:22 root/adm/articles/list.html:251
-msgid "Trash"
-msgstr "Papirkurv"
-
-#: root/adm/articles2/left.html:8 root/adm/articles/left.html:25
-msgid "Folder actions"
-msgstr "Mappehandlinger"
-
-#: root/adm/articles2/left.html:10 root/adm/articles/left.html:27
-#: root/source-js/dragdrop/lixuzdd.js:321
-msgid "New folder"
-msgstr "Opprett mappe"
-
-#: root/adm/articles2/left.html:12 root/adm/articles/left.html:29
-msgid "Edit folder"
-msgstr "Rediger mappe"
-
-#: root/adm/articles2/left.html:15 root/adm/articles/left.html:32
-msgid "Delete a folder"
-msgstr "Slett en mappe"
-
-#: root/adm/articles2/left.html:18 root/adm/articles/left.html:35
-msgid "Rename a folder"
-msgstr "Endre mappenavn"
 
 #: root/adm/templates/left.html:25
 msgid "Empty cache"
@@ -1318,7 +1288,7 @@ msgstr "Erstatt"
 #: root/adm/settings/admin/adfields/adfieldlist.html:62
 #: root/adm/users/list.html:49 root/adm/users/roles/list.html:39
 #: root/adm/tags/list.html:53 root/adm/dictionary/list.html:53
-#: root/source-js/core/folders.js:92
+#: root/source-js/core/folders.js:166
 msgid "Delete"
 msgstr "Slett"
 
@@ -1398,6 +1368,11 @@ msgstr "Skriv inn e-postadressa di"
 #: root/adm/core/menu.html:34 root/source-js/core/createArticle.js:71
 msgid "New article"
 msgstr "Opprett artikkel"
+
+#: root/adm/core/menu.html:39 root/adm/articles/left.html:22
+#: root/adm/articles/list.html:251
+msgid "Trash"
+msgstr "Papirkurv"
 
 #: root/adm/core/menu.html:50
 msgid "New category"
@@ -1554,6 +1529,34 @@ msgstr "Ekstramapper"
 #: root/source-js/articles-previewUI/previewUI.js:202
 msgid "Additional elements"
 msgstr "Tilleggselement"
+
+#: root/adm/articles/left.html:20
+msgid "New Article"
+msgstr "Opprett artikkel"
+
+#: root/adm/articles/left.html:25
+msgid "Folder actions"
+msgstr "Mappehandlinger"
+
+#: root/adm/articles/left.html:27 root/source-js/dragdrop/lixuzdd.js:321
+msgid "New folder"
+msgstr "Opprett mappe"
+
+#: root/adm/articles/left.html:29
+msgid "Edit folder"
+msgstr "Rediger mappe"
+
+#: root/adm/articles/left.html:32
+msgid "Delete a folder"
+msgstr "Slett en mappe"
+
+#: root/adm/articles/left.html:35
+msgid "Rename a folder"
+msgstr "Endre mappenavn"
+
+#: root/adm/articles/left.html:38
+msgid "Move a folder"
+msgstr "Flytt en mappe"
 
 #: root/adm/articles/editform.html:21 root/adm/files/classes/edit.html:27
 #: root/adm/users/edit/index.html:21
@@ -2218,7 +2221,7 @@ msgstr "Rollenavn"
 
 #: root/adm/users/roles/edit/index.html:83
 msgid "Additional rights (ie. from plugins)"
-msgstr ""
+msgstr "Ekstra tilgangsrettigheter (f.eks. fra programtillegg)"
 
 #: root/adm/users/edit/index.html:28
 msgid ""
@@ -2435,8 +2438,8 @@ msgid "Previous article"
 msgstr "Forrige artikkel"
 
 #: root/source-js/articles/relationships.js:192
-#: root/source-js/core/folders.js:53 root/source-js/core/folders.js:103
-#: root/source-js/core/dialogHelpers.js:275
+#: root/source-js/core/folders.js:67 root/source-js/core/folders.js:127
+#: root/source-js/core/folders.js:177 root/source-js/core/dialogHelpers.js:275
 #: root/source-js/core/dialogHelpers.js:309
 #: root/source-js/core/createArticle.js:76
 #: root/source-js/rssimport/rssimport.js:117
@@ -2561,48 +2564,76 @@ msgstr "Last ned"
 msgid "TINYMCE_LANGUAGE"
 msgstr "nb"
 
-#: root/source-js/core/folders.js:29
-msgid "Select the folder that you want to rename."
-msgstr "Velg mappen du vil endre navnet til."
+#: root/source-js/core/folders.js:29 root/source-js/core/folders.js:39
+msgid "Move"
+msgstr "Flytt"
 
 #: root/source-js/core/folders.js:33
-msgid "Rename to"
-msgstr "Endre navn til"
+msgid "to"
+msgstr "til"
 
-#: root/source-js/core/folders.js:36
-msgid "Rename"
-msgstr "Endre navn"
+#: root/source-js/core/folders.js:44
+msgid "Please select a target folder"
+msgstr "Velg en målmappe"
 
-#: root/source-js/core/folders.js:40
-msgid "Please enter a folder name"
-msgstr "Skriv inn et mappenavn"
+#: root/source-js/core/folders.js:49
+msgid "Please select a source folder"
+msgstr "Velg mappa du vil flytte"
 
-#: root/source-js/core/folders.js:48
-msgid "Rename folder"
-msgstr "Endre navn på mappe"
+#: root/source-js/core/folders.js:54
+msgid "A folder can not be moved to itself"
+msgstr "En mappe kan ikke flyttes til seg selv"
 
-#: root/source-js/core/folders.js:60
+#: root/source-js/core/folders.js:62
+msgid "Move folder"
+msgstr "Flytt mappe"
+
+#: root/source-js/core/folders.js:74 root/source-js/core/folders.js:134
 msgid "Renaming..."
 msgstr "Endrer navn …"
 
-#: root/source-js/core/folders.js:69 root/source-js/core/objPermEditor.js:246
+#: root/source-js/core/folders.js:83
+msgid "Move failed: Unable to move a folder to a subfolder of itself"
+msgstr "Flyttingen var mislykket: Kan ikke flytt en mappe til en undermappe av seg selv"
+
+#: root/source-js/core/folders.js:103
+msgid "Select the folder that you want to rename."
+msgstr "Velg mappen du vil endre navnet til."
+
+#: root/source-js/core/folders.js:107
+msgid "Rename to"
+msgstr "Endre navn til"
+
+#: root/source-js/core/folders.js:110
+msgid "Rename"
+msgstr "Endre navn"
+
+#: root/source-js/core/folders.js:114
+msgid "Please enter a folder name"
+msgstr "Skriv inn et mappenavn"
+
+#: root/source-js/core/folders.js:122
+msgid "Rename folder"
+msgstr "Endre navn på mappe"
+
+#: root/source-js/core/folders.js:143 root/source-js/core/objPermEditor.js:246
 #: root/source-js/dragdrop/lixuzdd.js:285
 msgid "Loading folder data ..."
 msgstr "Laster mapperdata …"
 
-#: root/source-js/core/folders.js:85
+#: root/source-js/core/folders.js:159
 msgid "Select the folder that you want to delete."
 msgstr "Velg mappen du vil slette."
 
-#: root/source-js/core/folders.js:89
+#: root/source-js/core/folders.js:163
 msgid "Note: This action is permanent, there is no undo"
 msgstr "Merg: Denne handlingen er permanent, du kan ikke angre"
 
-#: root/source-js/core/folders.js:98
+#: root/source-js/core/folders.js:172
 msgid "Delete folder"
 msgstr "Slett mappe"
 
-#: root/source-js/core/folders.js:110
+#: root/source-js/core/folders.js:184
 msgid ""
 "<b>WARNING:</b> This action is permanent and can NOT be undone.<br /><br /"
 ">Are you sure you want to delete the folder %(folder) and ALL OF ITS "
@@ -2615,11 +2646,11 @@ msgstr ""
 "><br />Artikler eller filer som har denne mappen som hovedmappe vil bli "
 "flyttet til første tilgjengelige mappe."
 
-#: root/source-js/core/folders.js:111
+#: root/source-js/core/folders.js:185
 msgid "Confirm deletion"
 msgstr "Bekreft sletting"
 
-#: root/source-js/core/folders.js:120
+#: root/source-js/core/folders.js:194
 msgid "Deleting...<br />This is a heavy operation and may take a while"
 msgstr "Sletter …<br />Dette er en tung operasjon og kan ta en stund"
 
@@ -3017,12 +3048,12 @@ msgstr "Last opp fil"
 msgid "Loading form..."
 msgstr "Laster skjema …"
 
-#: root/source-js/core/XHR.js:104
+#: root/source-js/core/XHR.js:113
 msgid ""
 "The connection to the server has timed out. Please retry the request soon."
 msgstr "Tilkoblingen til tjeneren har hatt et tidsavbrukk. Prøv igjen snart."
 
-#: root/source-js/core/XHR.js:111
+#: root/source-js/core/XHR.js:120
 msgid ""
 "The server returned invalid JSON data. This is either a temporary server "
 "problem, or a bug in Lixuz. If the problem persists, contact your system "
@@ -3033,11 +3064,11 @@ msgstr ""
 "systemadministrator med informasjonen som er listet opp under denne "
 "meldingen."
 
-#: root/source-js/core/XHR.js:118
+#: root/source-js/core/XHR.js:127
 msgid "An unhandled error occurred during the request to the server"
 msgstr "En ukjent feil oppstod under forespørselen til tjeneren."
 
-#: root/source-js/core/XHR.js:122
+#: root/source-js/core/XHR.js:131
 msgid ""
 "An unknown and unhandled error occurred during the request to the server"
 msgstr "En ukjent feil oppstod under forespørselen til tjeneren."
