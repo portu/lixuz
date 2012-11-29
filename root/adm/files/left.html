@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </%perl>
+<div>
 <div class="buttonHolder">
 % my $fid = $c->req->param('folder');
 %if(defined $fid and not $fid =~ /\D/)
@@ -24,7 +25,10 @@
 <a href="/admin/files/upload"><img src="/static/images/icons/files-upload.png" border="0" align="left" />&nbsp;<%$i18n->get('Upload new files')%></a>
 %}
 </div>
-<br /><br />
+<& ../core/folderActions.html, %ARGS &>
+<div style="clear:both;"></div>
+</div>
+<br />
 <% $dragdrop |n %>
 
 <%args>
