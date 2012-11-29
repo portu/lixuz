@@ -34,6 +34,9 @@
 %if($c->user->can_access('/admin/services/renameFolder')) {
 <div class="buttonHolder"><a href="#" onclick="lixuzFolders.renameDialog(); return false;"><img src="/static/images/icons/folder-rename.png" border="0" align="left" />&nbsp;<% $i18n->get('Rename a folder') |n %></a></div>
 %}
+%if($c->user->can_access('/admin/services/moveFolder')) {
+<div class="buttonHolder"><a href="#" onclick="lixuzFolders.moveDialog(); return false;"><img src="/static/images/icons/folder-move.png" border="0" align="left" />&nbsp;<% $i18n->get('Move a folder') |n %></a></div>
+%}
 </div>
 </div>
 <br clear="both" /><br/>

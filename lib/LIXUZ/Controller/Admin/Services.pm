@@ -1037,5 +1037,40 @@ sub renameFolder: Local
     return json_response($c, {} );
 }
 
+# Summary: Moves a folder
+sub moveFolder: Local
+{
+    my ($self,$c) = @_;
+    my $folder_id = $c->req->param('folder_id');
+    my $newParentID = $c->req->param('parent_id');
+    my $folder = $c->model('LIXUZDB::LzFolder')->find({ folder_id => $folder_id });
+    if(not defined $folder_id or $folder_id =~ /\D/ or not length $folder_id or not $folder)
+    {
+        return json_error($c,'INVALID_FOLDER_ID');
+    }
+
+    if (!defined $newParentID || $newParentID ne 'root')
+    {
+        my $parent = $c->model('LIXUZDB::LzFolder')->find({ folder_id => $newParentID });
+        if(not defined $newParentID or $newParentID =~ /\D/ or not length $newParentID or not $parent)
+        {
+            return json_error($c,'INVALID_PARENT_ID');
+        }
+
+        if ($folder->has_child($parent))
+        {
+            return json_error($c,'RECURSIVE_PARENT');
+        }
+    }
+    else
+    {
+        $newParentID = undef;
+    }
+
+    $folder->set_column('parent',$newParentID);
+    $folder->update();
+    return json_response($c, {} );
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
