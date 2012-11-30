@@ -788,7 +788,7 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:248
+#: lib/LIXUZ/Controller/Admin/Services.pm:249
 msgid "Unsorted (files that are not in any folder yet)"
 msgstr ""
 
@@ -923,35 +923,39 @@ msgstr ""
 msgid "Rename folders"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:371
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:366
+msgid "Move folders"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:376
 msgid "Upload or edit files"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:381
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:386
 msgid "Delete files"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:386
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:391
 msgid "Crop images"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:393
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:398
 msgid "View other users files"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:396
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:401
 msgid "Edit other users files"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:399
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:404
 msgid "Manage file classes"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:408 root/adm/core/menu.html:93
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:413 root/adm/core/menu.html:93
 msgid "Newsletter"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:412
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:417
 msgid "Send, delete and edit"
 msgstr ""
 
@@ -2588,8 +2592,8 @@ msgid "Previous article"
 msgstr ""
 
 #: root/source-js/articles/relationships.js:192
-#: root/source-js/core/folders.js:53 root/source-js/core/folders.js:103
-#: root/source-js/core/dialogHelpers.js:275
+#: root/source-js/core/folders.js:67 root/source-js/core/folders.js:127
+#: root/source-js/core/folders.js:177 root/source-js/core/dialogHelpers.js:275
 #: root/source-js/core/dialogHelpers.js:309
 #: root/source-js/core/createArticle.js:76
 #: root/source-js/rssimport/rssimport.js:117
@@ -2739,43 +2743,71 @@ msgid "Select the folder that you want to rename."
 msgstr ""
 
 #: root/source-js/core/folders.js:33
-msgid "Rename to"
+msgid "to"
 msgstr ""
 
-#: root/source-js/core/folders.js:36
-msgid "Rename"
+#: root/source-js/core/folders.js:44
+msgid "Please select a target folder"
 msgstr ""
 
-#: root/source-js/core/folders.js:40
-msgid "Please enter a folder name"
+#: root/source-js/core/folders.js:49
+msgid "Please select a source folder"
 msgstr ""
 
-#: root/source-js/core/folders.js:48
-msgid "Rename folder"
+#: root/source-js/core/folders.js:54
+msgid "A folder can not be moved to itself"
 msgstr ""
 
-#: root/source-js/core/folders.js:60
+#: root/source-js/core/folders.js:62
+msgid "Move folder"
+msgstr ""
+
+#: root/source-js/core/folders.js:74 root/source-js/core/folders.js:134
 msgid "Renaming..."
 msgstr ""
 
-#: root/source-js/core/folders.js:69 root/source-js/core/objPermEditor.js:246
+#: root/source-js/core/folders.js:83
+msgid "Move failed: Unable to move a folder to a subfolder of itself"
+msgstr ""
+
+#: root/source-js/core/folders.js:103
+msgid "Select the folder that you want to rename."
+msgstr ""
+
+#: root/source-js/core/folders.js:107
+msgid "Rename to"
+msgstr ""
+
+#: root/source-js/core/folders.js:110
+msgid "Rename"
+msgstr ""
+
+#: root/source-js/core/folders.js:114
+msgid "Please enter a folder name"
+msgstr ""
+
+#: root/source-js/core/folders.js:122
+msgid "Rename folder"
+msgstr ""
+
+#: root/source-js/core/folders.js:143 root/source-js/core/objPermEditor.js:246
 #: root/source-js/dragdrop/lixuzdd.js:285
 msgid "Loading folder data ..."
 msgstr ""
 
-#: root/source-js/core/folders.js:85
+#: root/source-js/core/folders.js:159
 msgid "Select the folder that you want to delete."
 msgstr ""
 
-#: root/source-js/core/folders.js:89
+#: root/source-js/core/folders.js:163
 msgid "Note: This action is permanent, there is no undo"
 msgstr ""
 
-#: root/source-js/core/folders.js:98
+#: root/source-js/core/folders.js:172
 msgid "Delete folder"
 msgstr ""
 
-#: root/source-js/core/folders.js:110
+#: root/source-js/core/folders.js:184
 msgid ""
 "<b>WARNING:</b> This action is permanent and can NOT be undone.<br /><br /"
 ">Are you sure you want to delete the folder %(folder) and ALL OF ITS "
@@ -2784,11 +2816,11 @@ msgid ""
 "located."
 msgstr ""
 
-#: root/source-js/core/folders.js:111
+#: root/source-js/core/folders.js:185
 msgid "Confirm deletion"
 msgstr ""
 
-#: root/source-js/core/folders.js:120
+#: root/source-js/core/folders.js:194
 msgid "Deleting...<br />This is a heavy operation and may take a while"
 msgstr ""
 
@@ -3193,23 +3225,23 @@ msgstr ""
 msgid "Loading form..."
 msgstr ""
 
-#: root/source-js/core/XHR.js:104
+#: root/source-js/core/XHR.js:113
 msgid ""
 "The connection to the server has timed out. Please retry the request soon."
 msgstr ""
 
-#: root/source-js/core/XHR.js:111
+#: root/source-js/core/XHR.js:120
 msgid ""
 "The server returned invalid JSON data. This is either a temporary server "
 "problem, or a bug in Lixuz. If the problem persists, contact your system "
 "administrator with the information listed below."
 msgstr ""
 
-#: root/source-js/core/XHR.js:118
+#: root/source-js/core/XHR.js:127
 msgid "An unhandled error occurred during the request to the server"
 msgstr ""
 
-#: root/source-js/core/XHR.js:122
+#: root/source-js/core/XHR.js:131
 msgid ""
 "An unknown and unhandled error occurred during the request to the server"
 msgstr ""

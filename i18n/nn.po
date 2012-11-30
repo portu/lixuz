@@ -799,7 +799,7 @@ msgstr "Brukarnamn"
 msgid "Dashboard"
 msgstr "Dashbord"
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:248
+#: lib/LIXUZ/Controller/Admin/Services.pm:249
 msgid "Unsorted (files that are not in any folder yet)"
 msgstr "Usortert (filer som ikkje er i ei mappe)"
 
@@ -935,35 +935,39 @@ msgstr "Slette mapper"
 msgid "Rename folders"
 msgstr "Gje nytt namn til mapper"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:371
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:366
+msgid "Move folders"
+msgstr "Flytte mapper"
+
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:376
 msgid "Upload or edit files"
 msgstr "Last opp eller rediger filer"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:381
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:386
 msgid "Delete files"
 msgstr "Slette filer"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:386
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:391
 msgid "Crop images"
 msgstr "Beskjær bilete"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:393
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:398
 msgid "View other users files"
 msgstr "Sjå på filer til andre brukarar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:396
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:401
 msgid "Edit other users files"
 msgstr "Rediger filer til andre brukarar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:399
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:404
 msgid "Manage file classes"
 msgstr "Handter filklassar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:408 root/adm/core/menu.html:93
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:413 root/adm/core/menu.html:93
 msgid "Newsletter"
 msgstr "Nyheitsbrev"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:412
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:417
 msgid "Send, delete and edit"
 msgstr "Send, slett og rediger"
 
@@ -2323,7 +2327,7 @@ msgstr "Rollenamn"
 
 #: root/adm/users/roles/edit/index.html:83
 msgid "Additional rights (ie. from plugins)"
-msgstr ""
+msgstr "Ekstra tilgongsrettar (t.d. frå programtillegg)"
 
 #: root/adm/users/edit/index.html:28
 msgid ""
@@ -2658,8 +2662,8 @@ msgid "Previous article"
 msgstr "Førre artikkel"
 
 #: root/source-js/articles/relationships.js:192
-#: root/source-js/core/folders.js:53 root/source-js/core/folders.js:103
-#: root/source-js/core/dialogHelpers.js:275
+#: root/source-js/core/folders.js:67 root/source-js/core/folders.js:127
+#: root/source-js/core/folders.js:177 root/source-js/core/dialogHelpers.js:275
 #: root/source-js/core/dialogHelpers.js:309
 #: root/source-js/core/createArticle.js:76
 #: root/source-js/rssimport/rssimport.js:117
@@ -2827,44 +2831,40 @@ msgstr "Timeliste"
 msgid "Select the folder that you want to rename."
 msgstr "Vel mappa du vil endra namnet til."
 
-#: root/source-js/core/folders.js:33
+#: root/source-js/core/folders.js:107
 msgid "Rename to"
 msgstr "Endra namn til"
 
-#: root/source-js/core/folders.js:36
+#: root/source-js/core/folders.js:110
 msgid "Rename"
 msgstr "Endra namn"
 
-#: root/source-js/core/folders.js:40
+#: root/source-js/core/folders.js:114
 msgid "Please enter a folder name"
 msgstr "Skriv inn eit mappenamn"
 
-#: root/source-js/core/folders.js:48
+#: root/source-js/core/folders.js:122
 msgid "Rename folder"
 msgstr "Endra namn på mappe"
 
-#: root/source-js/core/folders.js:60
-msgid "Renaming..."
-msgstr "Endrar namn …"
-
-#: root/source-js/core/folders.js:69 root/source-js/core/objPermEditor.js:246
+#: root/source-js/core/folders.js:143 root/source-js/core/objPermEditor.js:246
 #: root/source-js/dragdrop/lixuzdd.js:285
 msgid "Loading folder data ..."
 msgstr "Lastar mapperdata …"
 
-#: root/source-js/core/folders.js:85
+#: root/source-js/core/folders.js:159
 msgid "Select the folder that you want to delete."
 msgstr "Vel mappa du vil sletta."
 
-#: root/source-js/core/folders.js:89
+#: root/source-js/core/folders.js:163
 msgid "Note: This action is permanent, there is no undo"
 msgstr "Merg: Denne handlinga er permanent, du kan ikkje angra"
 
-#: root/source-js/core/folders.js:98
+#: root/source-js/core/folders.js:172
 msgid "Delete folder"
 msgstr "Slett mappe"
 
-#: root/source-js/core/folders.js:110
+#: root/source-js/core/folders.js:184
 msgid ""
 "<b>WARNING:</b> This action is permanent and can NOT be undone.<br /><br /"
 ">Are you sure you want to delete the folder %(folder) and ALL OF ITS "
@@ -2877,11 +2877,11 @@ msgstr ""
 "<br /><br />Artikler eller filer som har denne mappa som hovudmappe vil "
 "verta flytta til første tilgjengelege mappe."
 
-#: root/source-js/core/folders.js:111
+#: root/source-js/core/folders.js:185
 msgid "Confirm deletion"
 msgstr "Stadfest sletting"
 
-#: root/source-js/core/folders.js:120
+#: root/source-js/core/folders.js:194
 msgid "Deleting...<br />This is a heavy operation and may take a while"
 msgstr "Sletter …<br />Dette er ein tung operasjon og kan ta ein stund"
 
@@ -3296,12 +3296,12 @@ msgstr "Last opp fil"
 msgid "Loading form..."
 msgstr "Lastar skjema …"
 
-#: root/source-js/core/XHR.js:104
+#: root/source-js/core/XHR.js:113
 msgid ""
 "The connection to the server has timed out. Please retry the request soon."
 msgstr "Tilkoplinga til tenaren har hatt eit tidsavbrot. Prøv att snart."
 
-#: root/source-js/core/XHR.js:111
+#: root/source-js/core/XHR.js:120
 msgid ""
 "The server returned invalid JSON data. This is either a temporary server "
 "problem, or a bug in Lixuz. If the problem persists, contact your system "
@@ -3311,11 +3311,11 @@ msgstr ""
 "tenarproblem, eller ein feil i Lixuz. Viss problemet fortsetter, kontakt din "
 "systemadministrator med informasjonen som er lista opp under denne meldinga."
 
-#: root/source-js/core/XHR.js:118
+#: root/source-js/core/XHR.js:127
 msgid "An unhandled error occurred during the request to the server"
 msgstr "Ein ukjend feil oppstod under forespørselen til tenaren."
 
-#: root/source-js/core/XHR.js:122
+#: root/source-js/core/XHR.js:131
 msgid ""
 "An unknown and unhandled error occurred during the request to the server"
 msgstr "Ein ukjend feil oppstod under forespørselen til tenaren."
