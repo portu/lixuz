@@ -691,7 +691,7 @@ sub reconstructPackage
         die($pluginName.': is not installed, unable to reconstruct package'."\n");
     }
 
-    print 'Reconstructing '.$pluginName.'... ';
+    printv('Reconstructing '.$pluginName.'... ');
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-reconstructpkg.XXXXXXX');
     mkpath($dir.'/plugin/');
@@ -985,7 +985,7 @@ sub plumbing
         {
             my $dir = shift(@ARGV);
             my $meta = loadMetaFile();
-            if ($meta->{plugins} && scalar(@{$meta->{plugins}}))
+            if ($meta->{plugins} && scalar(%{$meta->{plugins}}))
             {
                 foreach my $p (keys %{$meta->{plugins}})
                 {
