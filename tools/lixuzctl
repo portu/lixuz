@@ -56,6 +56,9 @@ sub main
         'v|verbose' => sub {
             $verbosity++
         },
+        'debug' => sub {
+            $verbosity = 99;
+        },
         'logfile=s' => sub {
             shift;
             $logfile = shift;
@@ -71,6 +74,9 @@ sub main
         # This is not used anywhere yet, but it is supported for use later
         # (and already supplied by the upgrade script)
         'lixuz-upgrade' => sub {},
+        # This is not used anywhere yet, but is supported for use later
+        # (and is already supplied by us when using selfRun)
+        'chained' => sub {},
     );
     
     $lixuzDir //= realpath(dirname(realpath($0)).'/../');
@@ -301,6 +307,19 @@ sub printv
     }
 }
 
+# Purpose: Output something when in debug mode
+# Usage: printd('text')
+# Adds a newline to each message and a debug prefix
+sub printd
+{
+    if ($verbosity >= 99)
+    {
+        print 'Debug: ';
+        print @_;
+        print "\n";
+    }
+}
+
 # ---
 # Database functions
 # ---
@@ -493,6 +512,10 @@ sub runPackageTrigger
 sub checkPackageOwners
 {
     my $mode = shift;
+    if (scalar(@_) == 0)
+    {
+        die('Missing parameters: Which files to check ownership of'."\n");
+    }
     foreach my $checkFile (@_)
     {
         my $meta = loadMetaFile();
@@ -957,8 +980,10 @@ sub plumbing
 {
     my $subcommand = $ARGV[0];
 
-    my $supportedApiLevel = 2;
-    $verbosity = -1;
+    if ($verbosity < 99)
+    {
+        $verbosity = -1;
+    }
 
     # These are used internally, for enforcing an api compatibility layer if
     # required. In most cases the caller is responsible for handling the
@@ -1048,7 +1073,7 @@ sub usagePlumbing
 # Usage: selfRun(options);
 sub selfRun
 {
-    my @command = ($0,'--lixuzdir',$lixuzDir);
+    my @command = ($0,'--lixuzdir',$lixuzDir,'--chained');
     if ($verbosity == -1)
     {
         push(@command,'--quiet');
@@ -1057,9 +1082,14 @@ sub selfRun
     {
         push(@command,'--verbose');
     }
+    if ($verbosity >= 99)
+    {
+        push(@command,'--debug');
+    }
     if ($logfile)
     {
         push(@command,'--logfile',$logfile);
     }
+    printd('Running self: '.join(' ',@command,@_));
     return system(@command,@_);
 }
