@@ -423,6 +423,11 @@ sub plugins
             listPackages();
         }
 
+        when('listfiles')
+        {
+            listPluginFiles();
+        }
+
         when('build')
         {
             buildPackage($subcommand,@ARGV);
@@ -467,6 +472,7 @@ sub usagePlugins
     printHelp('','build X?','Build a plugin package using data at X (where X defaults to ./)');
     printHelp('','buildinstall X','Runs build X, and then installs the package generated');
     printHelp('','owner X Y ..','Output which plugin (if any) owns the files specified');
+    printHelp('','listfiles','List all files installed by plugins, along with which plugin installed the file');
     printHelp('','watch X','Runs buildinstall X whenever a file in the plugins subdirectory changes');
     printHelp('','reconstruct X Y','Reconstruct a plugin package from an installed plugin (X), saving the package to Y');
     printHelp('','create X','Create a new plugin named "X" in ./X');
@@ -551,6 +557,26 @@ sub checkPackageOwners
                 exit(1);
             }
         }
+    }
+}
+
+# Purpose: List all installed plugin files
+sub listPluginFiles
+{
+    my $meta = loadMetaFile();
+    if (%{$meta->{plugins}})
+    {
+        foreach my $plugin (keys %{$meta->{plugins}})
+        {
+            foreach my $pkgFile (@{$meta->{plugins}->{$plugin}->{files}})
+            {
+                print "$plugin: $pkgFile\n";
+            }
+        }
+    }
+    else
+    {
+        print '(there are no plugins installed)'."\n";
     }
 }
 
