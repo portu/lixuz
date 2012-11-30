@@ -733,7 +733,8 @@ sub reconstructPackage
     }
     foreach my $file (@{$meta->{plugins}->{$pluginName}->{files}})
     {
-        copy($lixuzDir.'/'.$file,$dir.'/plugin');
+        mkpath($dir.'/plugin/'.dirname($file));
+        copy($lixuzDir.'/'.$file,$dir.'/plugin/'.dirname($file));
     }
 
     buildPackage('reconstruct',$dir,$targetDir,1);
