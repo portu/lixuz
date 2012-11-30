@@ -32,7 +32,13 @@ use constant (
     true => 1,
     false => 0
 );
-my $verbosity = 0;
+my $verbosity                = 0;
+# The revision of the data format that we write
+my $dataFormatRevision       = 1;
+# The minimum supported api level of plumbing commands
+my $minSupportedApiLevel     = 2;
+# The real (latest) supported api level of plumbing commands
+my $currentSupportedApiLevel = 3;
 my $logOut;
 my $logfile;
 my $lixuzDir;
@@ -213,7 +219,7 @@ sub loadMetaFile
     $metaFile->{lastWritten} //= time,
     $metaFile->{plugins} //= {};
 
-    if ($metaFile->{formatRevision} ne 1)
+    if ($metaFile->{formatRevision} != $dataFormatRevision)
     {
         die("ERROR: Unknown .lixuzctl.data format revision: ".$metaFile->{formatRevision}."\n");
     }
@@ -225,7 +231,8 @@ sub writeMetaFile
 {
     my $metaFile = shift;
     $metaFile->{lastWritten} = time;
-    $metaFile->{formatRevision} = 1;
+    $metaFile->{formatRevision} = $dataFormatRevision;
+    $metaFile->{lastAPI} = $currentSupportedApiLevel.'/'.$minSupportedApiLevel.'/'.$dataFormatRevision;
     open(my $out,'>',$lixuzDir.'/.lixuzctl.data');
     print {$out} encode_json($metaFile);
     close($out);
@@ -416,6 +423,7 @@ sub plugins
         {
             checkPackageOwners('output',@ARGV);
         }
+
         when('create')
         {
             createPluginTree(@ARGV);
@@ -958,11 +966,11 @@ sub plumbing
     if (defined($subcommand) && $subcommand =~ s/^v(\d+)/$1/)
     {
         my $levelNo = int($subcommand);
-        if ($levelNo > $supportedApiLevel)
+        if ($levelNo > $currentSupportedApiLevel)
         {
             die('ERROR: UNKNOWN API LEVEL: '.$subcommand."\n");
         }
-        elsif($levelNo < $supportedApiLevel)
+        elsif($levelNo < $minSupportedApiLevel)
         {
             die('ERROR: TOO OLD API LEVEL: '.$subcommand."\n");
         }
@@ -971,7 +979,7 @@ sub plumbing
     }
     elsif(defined($subcommand) && $subcommand eq 'getlevel')
     {
-        print "$supportedApiLevel\n";
+        print "$currentSupportedApiLevel/$minSupportedApiLevel/$dataFormatRevision\n";
         exit(0);
     }
 
