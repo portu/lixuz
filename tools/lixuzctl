@@ -1088,11 +1088,14 @@ sub usagePlumbing
     print "WARNING: Plumbing commands can be potentionally dangerous.\n";
     print "Use with care.\n";
     print "\n";
+    print "These commands are not meant for public use. They may have backwards-incompatible\n";
+    print "changes between versions, and any command may be removed at any time\n";
+    print "\n";
     print "Available subcommands:\n";
     printHelp('','packup X','Reconstruct a dump of all packages into X');
     printHelp('','reinject X Y ..','Re-inject the packages specified into the Lixuz tree (similar to an upgrade, but runs lixuzUpgrade instead of upgrade triggers, and ignores all conflicts)');
     printHelp('','checkowner X Y ..','Check if files X, Y, .. are owned by a plugin. Exits with exit status 0 if all the files are owned by plugins, 1 if not');
-    printHelp('','getlevel','Output the API level supported by this version of lixuzctl');
+    printHelp('','getlevel','Output the plumbing API level supported by this version of lixuzctl');
     exit(shift);
 }
 
