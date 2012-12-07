@@ -19,7 +19,7 @@ use strict;
 use warnings;
 use 5.010;
 use File::Temp qw(tempdir);
-use File::Copy qw(copy);
+use File::Copy qw(copy move);
 use File::Path qw(mkpath);
 use File::Find qw(find);
 use File::Basename qw(basename dirname);
@@ -34,7 +34,7 @@ use constant (
 );
 my $verbosity                = 0;
 # The revision of the data format that we write
-my $dataFormatRevision       = 1;
+my $dataFormatRevision       = 2;
 # The minimum supported api level of plumbing commands
 my $minSupportedApiLevel     = 2;
 # The real (latest) supported api level of plumbing commands
@@ -42,7 +42,7 @@ my $currentSupportedApiLevel = 4;
 my $logOut;
 my $logfile;
 my $lixuzDir;
-my @pluginMetaFiles = qw(plugin.yml triggers.pl COPYING README);
+my @packageMetaFiles = qw(plugin.yml package.yml triggers.pl COPYING README);
 # Boolean flag, set to true once LIXUZ:: modules have been loaded
 # to avoid loading them multiple times.
 my $loadedModules;
@@ -87,7 +87,10 @@ sub main
     {
         die($lixuzDir.': does not exist'."\n");
     }
-    outLog('Lixuz directory: '.$lixuzDir);
+    if ($verbosity >= 0)
+    {
+        outLog('Lixuz directory: '.$lixuzDir);
+    }
     unshift(@INC,$lixuzDir.'/lib');
     my $action = shift(@ARGV);
 
@@ -218,6 +221,7 @@ sub usage
 # Purpose: Reads and parses our meta file and returns it
 sub loadMetaFile
 {
+    my $force = shift;
     my $metaFile;
     if (-e $lixuzDir.'/.lixuzctl.data')
     {
@@ -226,11 +230,12 @@ sub loadMetaFile
     $metaFile //= {};
     $metaFile->{formatRevision} //= 1;
     $metaFile->{lastWritten} //= time,
-    $metaFile->{plugins} //= {};
+    $metaFile->{packages} //= {};
 
-    if ($metaFile->{formatRevision} != $dataFormatRevision)
+    if ($metaFile->{formatRevision} != $dataFormatRevision && !$force)
     {
-        die("ERROR: Unknown .lixuzctl.data format revision: ".$metaFile->{formatRevision}."\n");
+        die("ERROR: Unknown .lixuzctl.data format revision: ".$metaFile->{formatRevision}."\n".
+        "A version upgrade is required\n");
     }
     return $metaFile;
 }
@@ -337,6 +342,30 @@ sub loadLixuzModules
     eval('use LIXUZ::HelperModules::Templates qw(parse_templatefile);1') or die;
     printd('Dependencies loaded');
     $loadedModules = 1;
+}
+
+# Purpose: Load a meta file
+sub performVersionUpgrade
+{
+    printd('Performing version upgrade');
+    my $metaFile = loadMetaFile(1);
+    if ($metaFile->{formatRevision} == 1)
+    {
+        $metaFile->{formatRevision} = 2;
+        $metaFile->{packages} = $metaFile->{plugins};
+        delete($metaFile->{plugins});
+        printd('Upgraded meta format revision from 1 to 2');
+    }
+    if (-e $lixuzDir.'/.pluginMeta')
+    {
+        printd('Migrated .pluginMeta to .packageMeta');
+        move($lixuzDir.'/.pluginMeta',$lixuzDir.'/.packageMeta');
+    }
+    if ($metaFile->{formatRevision} > $dataFormatRevision)
+    {
+        die('Unable to downgrade from '.$dataFormatRevision." safely\n");
+    }
+    writeMetaFile();
 }
 
 # ---
@@ -511,7 +540,7 @@ sub runPackageTrigger
     }
     else
     {
-        $file = $lixuzDir.'/.pluginMeta/'.$package.'/triggers.pl';
+        $file = $lixuzDir.'/.packageMeta/'.$package.'/triggers.pl';
     }
     if (-e $file)
     {
@@ -546,9 +575,9 @@ sub checkPackageOwners
         my $meta = loadMetaFile();
         my $file = realpath($checkFile);
         my $owner;
-        foreach my $plugin (keys %{$meta->{plugins}})
+        foreach my $plugin (keys %{$meta->{packages}})
         {
-            foreach my $pkgFile (@{$meta->{plugins}->{$plugin}->{files}})
+            foreach my $pkgFile (@{$meta->{packages}->{$plugin}->{files}})
             {
                 if ($file eq realpath($lixuzDir.'/'.$pkgFile))
                 {
@@ -583,11 +612,11 @@ sub checkPackageOwners
 sub listPluginFiles
 {
     my $meta = loadMetaFile();
-    if (%{$meta->{plugins}})
+    if (%{$meta->{packages}})
     {
-        foreach my $plugin (keys %{$meta->{plugins}})
+        foreach my $plugin (keys %{$meta->{packages}})
         {
-            foreach my $pkgFile (@{$meta->{plugins}->{$plugin}->{files}})
+            foreach my $pkgFile (@{$meta->{packages}->{$plugin}->{files}})
             {
                 print "$plugin: $pkgFile\n";
             }
@@ -595,7 +624,7 @@ sub listPluginFiles
     }
     else
     {
-        print '(there are no plugins installed)'."\n";
+        print '(there are no packages installed)'."\n";
     }
 }
 
@@ -614,26 +643,20 @@ sub createPluginTree
 
     mkdir($path);
 
-    open(my $yml,'>',$path.'/plugin.yml');
-    print {$yml} '# Lixuz plugin metadata'."\n\n";
+    open(my $yml,'>',$path.'/package.yml');
+    print {$yml} '# Lixuz package metadata'."\n\n";
     print {$yml} '# Plugin name'."\n";
     print {$yml} 'name: '.$path."\n";
     print {$yml} '# Plugin version number'."\n";
     print {$yml} 'version: 0.1'."\n";
     print {$yml} '# The lowest Lixuz API version supported'."\n";
     print {$yml} 'apiversion: 1'."\n";
-    print {$yml} '# A short description of the plugin'."\n";
-    print {$yml} 'description: I did not edit plugin.yml'."\n";
-    print {$yml} '# The license of the plugin'."\n";
+    print {$yml} '# A short description of the package'."\n";
+    print {$yml} 'description: I did not edit package.yml'."\n";
+    print {$yml} '# The license of the package'."\n";
     print {$yml} 'license: GPLv3'."\n";
-    print {$yml} '# A YAML list of file paths that should be treated as live templates.'."\n";
-    print {$yml} '# They will be installed as a live template in Lixuz, and will'."\n";
-    print {$yml} '# not be installed into the Lixuz tree (may be left empty)'."\n";
-    print {$yml} '# Note: liveTemplates are still treated as part of the plugin, and'."\n";
-    print {$yml} '#       will be removed if the plugin is removed.'."\n";
-    print {$yml} 'liveTemplates:'."\n";
     close($yml);
-    print 'Create: '.$path.'/plugin.yml'."\n";
+    print 'Create: '.$path.'/package.yml'."\n";
 
     open(my $triggers,'>',$path.'/triggers.pl');
     print {$triggers} 'use strict;
@@ -642,19 +665,19 @@ use 5.010;
 use LIXUZ::HelperModules::Scripts qw(getDBIC);
 
 my $triggers = {
-    # Triggered on plugin upgrade
+    # Triggered on package upgrade
     upgrade => sub {
     },
-    # Triggered on plugin install
+    # Triggered on package install
     install => sub {
     },
-    # Triggered on plugin removal
+    # Triggered on package removal
     removal => sub {
     },
     # Triggered on a Lixuz upgrade
     lixuzUpgrade => sub {
     },
-    # Triggered during build of the plugin
+    # Triggered during build of the package
     build => sub
     {
     },
@@ -662,12 +685,15 @@ my $triggers = {
     close($triggers);
     print 'Create: '.$path.'/triggers.pl'."\n";
 
-    mkdir($path.'/plugin');
+    mkdir($path.'/content');
     foreach my $sub (qw(lib root))
     {
-        mkdir($path.'/plugin/'.$sub);
-        print 'Create: '.$path.'/plugin/'.$sub."\n";
+        mkdir($path.'/content/'.$sub);
+        print 'Create: '.$path.'/content/'.$sub."\n";
     }
+
+    mkdir($path.'/liveTemplates/');
+    print 'Create: '.$path.'/liveTemplates'."\n";
     exit(0);
 }
 
@@ -696,19 +722,24 @@ sub buildPackage
         die('Neither '.$target.'/ or '.$srcdir.' is writeable, giving up'."\n");
     }
 
-    if (! -e $srcdir.'/plugin.yml')
+    if (! -e $srcdir.'/package.yml')
     {
-        die($srcdir.'/plugin.yml is missing'."\n");
+        if (-e $srcdir.'/plugin.yml')
+        {
+            die('Plugin is using plugin.yml instead of package.yml. It is outdated.'."\n".
+                'Rename plugin.yml to package.yml and update apiversion to 2 and try again.'."\n");
+        }
+        die($srcdir.'/package.yml is missing'."\n");
     }
 
-    my $meta = Config::Any->load_files({ files => [ $srcdir.'/plugin.yml' ], use_ext => 1});
-    $meta = $meta->[0]->{$srcdir.'/plugin.yml'};
+    my $meta = Config::Any->load_files({ files => [ $srcdir.'/package.yml' ], use_ext => 1});
+    $meta = $meta->[0]->{$srcdir.'/package.yml'};
 
     foreach my $setting (qw(name version apiversion license))
     {
         if (!defined $meta->{$setting} || !length($meta->{$setting}))
         {
-            die('Required setting "'.$setting.'" missing from plugin.yml'."\n");
+            die('Required setting "'.$setting.'" missing from package.yml'."\n");
         }
     }
 
@@ -730,11 +761,12 @@ sub buildPackage
     mkpath($dir.'/lzplugin/');
     $dir = $dir.'/lzplugin/';
 
-    foreach my $copy (@pluginMetaFiles)
+    foreach my $copy (@packageMetaFiles)
     {
         if (-e $srcdir.'/'.$copy)
         {
             copy($srcdir.'/'.$copy,$dir);
+            printd($copy.' added to package');
         }
     }
 
@@ -743,22 +775,26 @@ sub buildPackage
         die($srcdir.'/plugin does not exist. Cowardly refusing to create empty package'."\n");
     }
 
-    find({ 
-            no_chdir => 1,
-            wanted => sub
-            {
-                my $path = substr($_,length($srcdir));
-                return if /(\.swp|~)$/;
-                if (-d $_)
+    foreach my $tree (qw(plugin liveTemplates))
+    {
+        find({
+                no_chdir => 1,
+                wanted => sub
                 {
-                    mkpath($dir.'/'.$path);
-                }
-                else
-                {
-                    copy($_,$dir.'/'.$path);
-                }
-            },
-        }, $srcdir.'/plugin');
+                    my $path = substr($_,length($srcdir));
+                    return if /(\.swp|~)$/;
+                    if (-d $_)
+                    {
+                        mkpath($dir.'/'.$path);
+                    }
+                    else
+                    {
+                        copy($_,$dir.'/'.$path);
+                        printd($path.' added to package');
+                    }
+                },
+            }, $srcdir.'/'.$tree);
+    }
     my $targetFile = $target.'/'.$fname;
     $targetFile =~ s{/+}{/}g;
     system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzplugin');
@@ -774,7 +810,7 @@ sub reconstructPackage
     my $targetDir = shift;
     my $meta = loadMetaFile();
 
-    if(! $meta->{plugins}->{$pluginName})
+    if(! $meta->{packages}->{$pluginName})
     {
         die($pluginName.': is not installed, unable to reconstruct package'."\n");
     }
@@ -784,11 +820,11 @@ sub reconstructPackage
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-reconstructpkg.XXXXXXX');
     mkpath($dir.'/plugin/');
 
-    foreach my $meta (@{$meta->{plugins}->{$pluginName}->{metaFiles}})
+    foreach my $meta (@{$meta->{packages}->{$pluginName}->{metaFiles}})
     {
-        copy($lixuzDir.'/.pluginMeta/'.$pluginName.'/'.$meta,$dir);
+        copy($lixuzDir.'/.packageMeta/'.$pluginName.'/'.$meta,$dir);
     }
-    foreach my $file (@{$meta->{plugins}->{$pluginName}->{files}})
+    foreach my $file (@{$meta->{packages}->{$pluginName}->{files}})
     {
         mkpath($dir.'/plugin/'.dirname($file));
         copy($lixuzDir.'/'.$file,$dir.'/plugin/'.dirname($file));
@@ -825,21 +861,29 @@ sub installPackage
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-installpkg.XXXXXXX');
     system('tar','-C',$dir,'-xf',$package);
-    if (! -d $dir.'/lzplugin' || ! -e $dir.'/lzplugin/plugin.yml')
+    if (! -d $dir.'/lzplugin' || ( ! -e $dir.'/lzplugin/package.yml' && ! -e $dir.'/lzplugin/plugin.yml'))
     {
         die($package.': does not appear to be a Lixuz plugin package'."\n");
     }
     $dir = $dir.'/lzplugin/';
 
-    my $pluginMeta = readYML($dir.'/plugin.yml');
-    my $pluginName = getPluginSystemName($pluginMeta);
+    my $packageMeta;
+    if (-e $dir.'/package.yml')
+    {
+        $packageMeta = readYML($dir.'/package.yml');
+    }
+    else
+    {
+        $packageMeta = readYML($dir.'/plugin.yml');
+    }
+    my $pluginName = getPluginSystemName($packageMeta);
     $| = 1;
-    if($mode eq 'install' && defined $meta->{plugins}->{$pluginName})
+    if($mode eq 'install' && defined $meta->{packages}->{$pluginName})
     {
         warn($pluginName.': was already installed, assuming you wanted to upgrade instead.'."\n");
         $mode = 'upgrade';
     }
-    elsif($mode eq 'upgrade' && ! $meta->{plugins}->{$pluginName})
+    elsif($mode eq 'upgrade' && ! $meta->{packages}->{$pluginName})
     {
         warn($pluginName.': is not installed, assuming you wanted to install instead.'."\n");
         $mode = 'install';
@@ -853,18 +897,18 @@ sub installPackage
     {
         $action = 'Re-injecting';
     }
-    printv($action.' '.$pluginMeta->{name}.' '.$pluginMeta->{version}.' ['.basename($package).']...');
+    printv($action.' '.$packageMeta->{name}.' '.$packageMeta->{version}.' ['.basename($package).']...');
     my @copy;
     my %upgradeMap;
     if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
-        foreach my $file (@{ $meta->{plugins}->{$pluginName}->{files} })
+        foreach my $file (@{ $meta->{packages}->{$pluginName}->{files} })
         {
             $upgradeMap{$file} = 1;
         }
     }
 
-    find({ 
+    find({
             no_chdir => 1,
             wanted => sub
             {
@@ -888,34 +932,67 @@ sub installPackage
                 }
             },
         }, $dir.'/plugin');
+
+    printv('.');
+
+    my @templateIDs;
+    if (-e $dir.'/liveTemplates/')
+    {
+        my @templateFiles;
+        find({ 
+            no_chdir => 1,
+            wanted => sub
+            {
+                if (!-d $_ && !/~$/ && !/\.swp$/)
+                {
+                    push(@templateFiles,realpath($_));
+                }
+            },
+            }, $dir.'/liveTemplates');
+        if (@templateFiles)
+        {
+            foreach my $templateFile (@templateFiles)
+            {
+                if (-e $templateFile)
+                {
+                    push(@templateIDs,installTemplateFile($templateFile));
+                }
+            }
+        }
+    }
+
     printv('.');
     foreach my $f (@copy)
     {
         mkpath($lixuzDir.'/'.dirname($f));
         copy($dir.'/plugin/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
+        printd('Copied '.$f.' into tree');
     }
     printv('.');
     my @metaFiles;
-    mkpath($lixuzDir.'/.pluginMeta/'.$pluginName);
+    mkpath($lixuzDir.'/.packageMeta/'.$pluginName);
     if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
         printv('.');
         foreach my $oldFile (keys %upgradeMap)
         {
             unlink($lixuzDir.'/'.$oldFile);
+            printd('Removed '.$oldFile);
         }
         printv('.');
-        foreach my $oldFile (@{ $meta->{plugins}->{$pluginName}->{metaFiles} })
+        foreach my $oldFile (@{ $meta->{packages}->{$pluginName}->{metaFiles} })
         {
-            unlink($lixuzDir.'/.pluginMeta/'.$pluginName.'/'.$oldFile);
+            unlink($lixuzDir.'/.packageMeta/'.$pluginName.'/'.$oldFile);
+            printd('Removed old '.$oldFile.' from plugin meta storage');
         }
     }
-    foreach my $copy (@pluginMetaFiles)
+    foreach my $copy (@packageMetaFiles)
     {
         if (-e $dir.'/'.$copy)
         {
             push(@metaFiles,$copy);
-            copy($dir.'/'.$copy,$lixuzDir.'/.pluginMeta/'.$pluginName);
+            copy($dir.'/'.$copy,$lixuzDir.'/.packageMeta/'.$pluginName);
+            printd('Copied '.$copy.' into plugin meta storage');
         }
     }
     if ($mode eq 'upgrade' || $mode eq 'reinject')
@@ -924,6 +1001,7 @@ sub installPackage
         foreach my $oldFile (keys %upgradeMap)
         {
             unlink($lixuzDir.'/'.$oldFile);
+            printd('Removed '.$oldFile);
             my $checkDir = $lixuzDir.'/'.$oldFile;
             while($checkDir = dirname($checkDir))
             {
@@ -932,6 +1010,7 @@ sub installPackage
                     last;
                 }
                 rmdir($checkDir);
+                printd('Empty directory '.$checkDir.' removed');
             }
         }
     }
@@ -952,19 +1031,21 @@ sub installPackage
             open(my $out,'>>',$lixuzDir.'/.git/info/exclude');
             foreach my $file (@append)
             {
-                print {$out} '# Added by lixuzctl for plugin '.$pluginName."\n";
+                print {$out} '# Added by lixuzctl for package '.$pluginName."\n";
                 print {$out} $file."\n";
             }
+            printd('Exclusions added to .git/info/exclude');
             close($out);
         }
     }
-    $meta->{plugins}->{$pluginName}->{meta} = $pluginMeta;
-    $meta->{plugins}->{$pluginName}->{files} = \@copy;
-    $meta->{plugins}->{$pluginName}->{metaFiles} = \@metaFiles;
-    $meta->{plugins}->{$pluginName}->{lastModified} = time;
+    $meta->{packages}->{$pluginName}->{meta} = $packageMeta;
+    $meta->{packages}->{$pluginName}->{files} = \@copy;
+    $meta->{packages}->{$pluginName}->{metaFiles} = \@metaFiles;
+    $meta->{packages}->{$pluginName}->{templateIDs} = \@templateIDs;
+    $meta->{packages}->{$pluginName}->{lastModified} = time;
     if ($mode eq 'install')
     {
-        $meta->{plugins}->{$pluginName}->{installed} = time;
+        $meta->{packages}->{$pluginName}->{installed} = time;
         runPackageTrigger($pluginName,'install');
     }
     elsif ($mode eq 'reinject')
@@ -989,7 +1070,7 @@ sub removePackage
     my $pluginName = shift;
     my $meta = loadMetaFile();
 
-    if(! $meta->{plugins}->{$pluginName})
+    if(! $meta->{packages}->{$pluginName})
     {
         die($pluginName.': is not installed, unable to remove package'."\n");
     }
@@ -998,15 +1079,21 @@ sub removePackage
 
     runPackageTrigger($pluginName,'removal');
 
-    foreach my $meta (@{$meta->{plugins}->{$pluginName}->{metaFiles}})
+    foreach my $meta (@{$meta->{packages}->{$pluginName}->{metaFiles}})
     {
-        unlink($lixuzDir.'/.pluginMeta/'.$pluginName.'/'.$meta);
+        unlink($lixuzDir.'/.packageMeta/'.$pluginName.'/'.$meta);
+        printd('Removed meta file: '.$meta);
     }
-    foreach my $file (@{$meta->{plugins}->{$pluginName}->{files}})
+    foreach my $file (@{$meta->{packages}->{$pluginName}->{files}})
     {
         unlink($lixuzDir.'/'.$file);
+        printd('Removed file: '.$file);
     }
-    delete($meta->{plugins}->{$pluginName});
+    if ($meta->{packages}->{$pluginName}->{templateIDs})
+    {
+        selfRun('plumbing','templateremove',@{$meta->{packages}->{$pluginName}->{templateIDs}});
+    }
+    delete($meta->{packages}->{$pluginName});
     writeMetaFile($meta);
     printv('done'."\n");
 }
@@ -1015,18 +1102,18 @@ sub removePackage
 sub listPackages
 {
     my $meta = loadMetaFile();
-    if (%{$meta->{plugins}})
+    if (%{$meta->{packages}})
     {
         my $fmt = '%-30s %-6s'."\n";
         printf($fmt,'Name','Version');
-        foreach my $p (keys %{$meta->{plugins}})
+        foreach my $p (keys %{$meta->{packages}})
         {
-            printf($fmt,$p,$meta->{plugins}->{$p}->{meta}->{version});
+            printf($fmt,$p,$meta->{packages}->{$p}->{meta}->{version});
         }
     }
     else
     {
-        print '(there are no plugins installed)'."\n";
+        print '(there are no packages installed)'."\n";
     }
 }
 
@@ -1134,6 +1221,7 @@ sub installTemplateFile
         die($errorPrefix.' Failed to copy file into place: '.$error);
     }
     printd('Template '.$file.' injection complete');
+    return $info->{TEMPLATE_UNIQUEID};
 }
 
 # Purpose: Remove a live template from a package from Lixuz
@@ -1214,9 +1302,9 @@ sub plumbing
         {
             my $dir = shift(@ARGV);
             my $meta = loadMetaFile();
-            if ($meta->{plugins} && scalar(%{$meta->{plugins}}))
+            if ($meta->{packages} && scalar(%{$meta->{packages}}))
             {
-                foreach my $p (keys %{$meta->{plugins}})
+                foreach my $p (keys %{$meta->{packages}})
                 {
                     selfRun('plugins','reconstruct',$p,$dir);
                 }
@@ -1261,6 +1349,11 @@ sub plumbing
             checkPackageOwners('plumbing',@ARGV);
         }
 
+        when('upgrade')
+        {
+            performVersionUpgrade();
+        }
+
         default
         {
             die('Unknown subcommand for plumbing: '.$subcommand."\n");
@@ -1286,6 +1379,7 @@ sub usagePlumbing
     printHelp('','getlevel','Output the plumbing API level supported by this version of lixuzctl');
     printHelp('','templateinject X','Install or upgrade the supplied live template file');
     printHelp('','templateremove X','Remove the template identified by the supplied unique ID X');
+    printHelp('','upgrade','Upgrade lixuzctl metadata');
     exit(shift);
 }
 
