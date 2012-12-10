@@ -534,7 +534,7 @@ sub runPackageTrigger
     my $trigger = shift;
 
     my $file;
-    if ($trigger eq 'build')
+    if ($trigger eq 'build' || $trigger eq 'buildCleanup')
     {
         $file = shift;
     }
@@ -653,7 +653,8 @@ sub createPackageTree
     print {$yml} 'name: '.$path."\n";
     print {$yml} '# Package version number'."\n";
     print {$yml} 'version: 0.1'."\n";
-    print {$yml} '# The lowest Lixuz API version supported'."\n";
+    print {$yml} '# The lowest Lixuz core API version supported'."\n";
+    print {$yml} '# (note: core API version is distinct from template API version)'."\n";
     print {$yml} 'apiversion: 1'."\n";
     print {$yml} '# A short description of the package'."\n";
     print {$yml} 'description: I did not edit package.yml'."\n";
@@ -681,8 +682,15 @@ my $triggers = {
     # Triggered on a Lixuz upgrade
     lixuzUpgrade => sub {
     },
-    # Triggered during build of the package
+    # Triggered during build of the package. Here you can ie. build CSS/JS files
+    # and perform other actions to prepare for packaging. Build triggers
+    # are run before package construction begins.
     build => sub
+    {
+    },
+    # Triggered after the package has been built. You may use this to
+    # clean up after the build trigger if needed.
+    buildCleanup => sub
     {
     },
 };';
@@ -821,6 +829,13 @@ sub buildPackage
     $targetFile =~ s{/+}{/}g;
     system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage');
     printv('done'."\n");
+
+    if (!$disableTriggers)
+    {
+        printv('Running build cleanup triggers...');
+        runPackageTrigger($packageName,'buildCleanup',$srcdir.'/triggers.pl');
+        printv('done'."\n");
+    }
     printv('Wrote package to '.realpath($targetFile)."\n");
     return realpath($targetFile);
 }
