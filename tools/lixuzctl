@@ -338,7 +338,7 @@ sub loadLixuzModules
     printd('Loading LIXUZ:: namespace dependencies');
     unshift(@INC,$lixuzDir.'/lib');
     # FIXME: Improved errors
-    eval('use LIXUZ::HelperModules::Scripts qw(getDBIC getConfig fakeC);1;') or die;
+    eval('use LIXUZ::HelperModules::Scripts qw(getDBIC getConfig mockC fakeC);1;') or die;
     eval('use LIXUZ::HelperModules::Templates qw(parse_templatefile);1') or die;
     printd('Dependencies loaded');
     $loadedModules = 1;
@@ -521,7 +521,7 @@ sub usagePackages
     printHelp('','buildinstall X','Runs build X, and then installs the package generated');
     printHelp('','owner X Y ..','Output which package (if any) owns the files specified');
     printHelp('','listfiles','List all files installed by packages, along with which package installed the file');
-    printHelp('','watch X','Runs buildinstall X whenever a file in the plugins subdirectory changes');
+    printHelp('','watch X','Runs buildinstall X whenever a file in the plugin subdirectory changes');
     printHelp('','reconstruct X Y','Reconstruct a package (X) from its installed data, saving the package to Y');
     printHelp('','create X','Create a new package named "X" in ./X');
     exit(shift);
@@ -619,6 +619,10 @@ sub listPackageFiles
             foreach my $pkgFile (@{$meta->{packages}->{$package}->{files}})
             {
                 print "$package: $pkgFile\n";
+            }
+            foreach my $templateID (@{$meta->{packages}->{$package}->{templateIDs}})
+            {
+                print "$package: (live template) $templateID\n";
             }
         }
     }
@@ -726,10 +730,20 @@ sub buildPackage
     {
         if (-e $srcdir.'/plugin.yml')
         {
-            die('Package is using plugin.yml instead of package.yml. It is outdated.'."\n".
-                'Rename plugin.yml to package.yml and update apiversion to 2 and try again.'."\n");
+            if ($mode eq 'reconstruct')
+            {
+                move($srcdir.'/plugin.yml',$srcdir.'/package.yml');
+            }
+            else
+            {
+                die('Package is using plugin.yml instead of package.yml. It is outdated.'."\n".
+                    'Rename plugin.yml to package.yml and update apiversion to 2 and try again.'."\n");
+            }
         }
-        die($srcdir.'/package.yml is missing'."\n");
+        else
+        {
+            die($srcdir.'/package.yml is missing'."\n");
+        }
     }
 
     my $meta = Config::Any->load_files({ files => [ $srcdir.'/package.yml' ], use_ext => 1});
@@ -770,30 +784,33 @@ sub buildPackage
         }
     }
 
-    if (! -d $srcdir.'/plugin')
+    if (! -d $srcdir.'/plugin' && ! -d $srcdir.'/liveTemplates')
     {
-        die($srcdir.'/plugin does not exist. Cowardly refusing to create empty package'."\n");
+        die('Neither of plugin or liveTemplates exist in '.$srcdir.'. Cowardly refusing to create empty package'."\n");
     }
 
     foreach my $tree (qw(plugin liveTemplates))
     {
-        find({
-                no_chdir => 1,
-                wanted => sub
-                {
-                    my $path = substr($_,length($srcdir));
-                    return if /(\.swp|~)$/;
-                    if (-d $_)
+        if (-e $srcdir.'/'.$tree)
+        {
+            find({
+                    no_chdir => 1,
+                    wanted => sub
                     {
-                        mkpath($dir.'/'.$path);
-                    }
-                    else
-                    {
-                        copy($_,$dir.'/'.$path);
-                        printd($path.' added to package');
-                    }
-                },
-            }, $srcdir.'/'.$tree);
+                        my $path = substr($_,length($srcdir));
+                        return if /(\.swp|~)$/;
+                        if (-d $_)
+                        {
+                            mkpath($dir.'/'.$path);
+                        }
+                        else
+                        {
+                            copy($_,$dir.'/'.$path);
+                            printd($path.' added to package');
+                        }
+                    },
+                }, $srcdir.'/'.$tree);
+        }
     }
     my $targetFile = $target.'/'.$fname;
     $targetFile =~ s{/+}{/}g;
@@ -820,14 +837,37 @@ sub reconstructPackage
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-reconstructpkg.XXXXXXX');
     mkpath($dir.'/plugin/');
 
-    foreach my $meta (@{$meta->{packages}->{$packageName}->{metaFiles}})
+    my $pkgMeta = $meta->{packages}->{$packageName};
+
+    foreach my $meta (@{$pkgMeta->{metaFiles}})
     {
         copy($lixuzDir.'/.packageMeta/'.$packageName.'/'.$meta,$dir);
     }
-    foreach my $file (@{$meta->{packages}->{$packageName}->{files}})
+    if ($pkgMeta->{files})
     {
-        mkpath($dir.'/plugin/'.dirname($file));
-        copy($lixuzDir.'/'.$file,$dir.'/plugin/'.dirname($file));
+        foreach my $file (@{$pkgMeta->{files}})
+        {
+            mkpath($dir.'/plugin/'.dirname($file));
+            copy($lixuzDir.'/'.$file,$dir.'/plugin/'.dirname($file));
+        }
+    }
+    if ($pkgMeta->{templateIDs})
+    {
+        loadLixuzModules();
+        my $fakeC = mockC();
+        my $dbic = getDBIC();
+        foreach my $ID (@{$pkgMeta->{templateIDs}})
+        {
+            my $template = $dbic->resultset('LzTemplate')->find({
+                    uniqueid => $ID
+                });
+            if (!$template)
+            {
+                die('Unable to reconstruct: Failed to locate template with ID '.$ID."\n");
+            }
+            mkpath($dir.'/liveTemplates/');
+            copy($template->path_to_template_file($fakeC),$dir.'/liveTemplates/'.$ID.'.html');
+        }
     }
 
     buildPackage('reconstruct',$dir,$targetDir,1);
@@ -915,36 +955,41 @@ sub installPackage
         }
     }
 
-    find({
-            no_chdir => 1,
-            wanted => sub
-            {
-                my $path = substr($_,length($dir.'/plugin'));
-                if (!-d $_ && !/~$/ && !/\.swp$/)
+    if (-e $dir.'/plugin')
+    {
+        printd('Package has plugin data');
+        find({
+                no_chdir => 1,
+                wanted => sub
                 {
-                    if (-e $lixuzDir.'/'.$path && !$upgradeMap{$path})
+                    my $path = substr($_,length($dir.'/plugin'));
+                    if (!-d $_ && !/~$/ && !/\.swp$/)
                     {
-                        $path =~ s{^/}{};
-                        if ($mode eq 'upgrade')
+                        if (-e $lixuzDir.'/'.$path && !$upgradeMap{$path})
                         {
-                            die("failed\n".$path.': already exists in Lixuz tree and does not belong to this package.'."\n".'Refusing to overwrite.'."\n");
+                            $path =~ s{^/}{};
+                            if ($mode eq 'upgrade')
+                            {
+                                die("failed\n".$path.': already exists in Lixuz tree and does not belong to this package.'."\n".'Refusing to overwrite.'."\n");
+                            }
+                            elsif($mode ne 'reinject')
+                            {
+                                die("failed\n".$path.': already exists in Lixuz tree. Refusing to overwrite.'."\n");
+                            }
                         }
-                        elsif($mode ne 'reinject')
-                        {
-                            die("failed\n".$path.': already exists in Lixuz tree. Refusing to overwrite.'."\n");
-                        }
+                        delete($upgradeMap{$path});
+                        push(@copy,$path);
                     }
-                    delete($upgradeMap{$path});
-                    push(@copy,$path);
-                }
-            },
-        }, $dir.'/plugin');
+                },
+            }, $dir.'/plugin');
+    }
 
     printv('.');
 
     my @templateIDs;
     if (-e $dir.'/liveTemplates/')
     {
+        printd('Package has template data');
         my @templateFiles;
         find({ 
             no_chdir => 1,
