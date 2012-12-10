@@ -101,9 +101,9 @@ sub main
 
     given($action)
     {
-        when(/^plugins?$/)
+        when(/^(package|plugin)s?$/)
         {
-            plugins();
+            packages();
         }
 
         when('database')
@@ -209,7 +209,7 @@ sub usage
     print "USAGE: lixuzctl [category] [subcommand] [parameters]\n";
     print "\n";
     print "Available categories:\n";
-    printHelp('','plugins','Plugin actions (install, remove, upgrade, list etc.)');
+    printHelp('','packages','Package actions (install, remove, upgrade, list etc.)');
     printHelp('','database','Database actions (upgrade)');
     printHelp('','plumbing','Plumbing actions, used internally by Lixuz (not meant for public use)');
     print "\n";
@@ -410,10 +410,10 @@ sub usageDatabase
 # Generic package functions
 # ---
 
-# Purpose: Handler for plugins-section subcommands
-sub plugins
+# Purpose: Handler for packages-section subcommands
+sub packages
 {
-    checkForHelpParam(sub { usagePlugins(0) });
+    checkForHelpParam(sub { usagePackages(0) });
 
     my $subcommand = shift(@ARGV);
 
@@ -473,7 +473,7 @@ sub plugins
 
         when('listfiles')
         {
-            listPluginFiles();
+            listPackageFiles();
         }
 
         when('build')
@@ -498,32 +498,32 @@ sub plugins
 
         when('create')
         {
-            createPluginTree(@ARGV);
+            createPackageTree(@ARGV);
         }
 
         default
         {
-            die('Unknown subcommand for plugins: '.$subcommand."\nSee \"plugins --help\" for more information\n");
+            die('Unknown subcommand for packages: '.$subcommand."\nSee \"packages --help\" for more information\n");
         }
     }
 }
 
-# Purpose: Displays usage information for plugins subcommands
-sub usagePlugins
+# Purpose: Displays usage information for packages subcommands
+sub usagePackages
 {
-    print "USAGE: lixuzctl plugins [subcommand] [parameters]\n";
+    print "USAGE: lixuzctl packages [subcommand] [parameters]\n";
     print "\n";
     print "Available subcommands:\n";
-    printHelp('','install X','Install a new plugin package, located at X');
-    printHelp('','remove X','Remove the plugin X');
-    printHelp('','upgrade X','Upgrade a plugin using the package located at X');
-    printHelp('','build X?','Build a plugin package using data at X (where X defaults to ./)');
+    printHelp('','install X','Install a new package, located at X');
+    printHelp('','remove X','Remove the package X');
+    printHelp('','upgrade X','Upgrade a package using the package located at X');
+    printHelp('','build X?','Build a package using data at X (where X defaults to ./)');
     printHelp('','buildinstall X','Runs build X, and then installs the package generated');
-    printHelp('','owner X Y ..','Output which plugin (if any) owns the files specified');
-    printHelp('','listfiles','List all files installed by plugins, along with which plugin installed the file');
+    printHelp('','owner X Y ..','Output which package (if any) owns the files specified');
+    printHelp('','listfiles','List all files installed by packages, along with which package installed the file');
     printHelp('','watch X','Runs buildinstall X whenever a file in the plugins subdirectory changes');
-    printHelp('','reconstruct X Y','Reconstruct a plugin package from an installed plugin (X), saving the package to Y');
-    printHelp('','create X','Create a new plugin named "X" in ./X');
+    printHelp('','reconstruct X Y','Reconstruct a package (X) from its installed data, saving the package to Y');
+    printHelp('','create X','Create a new package named "X" in ./X');
     exit(shift);
 }
 
@@ -575,13 +575,13 @@ sub checkPackageOwners
         my $meta = loadMetaFile();
         my $file = realpath($checkFile);
         my $owner;
-        foreach my $plugin (keys %{$meta->{packages}})
+        foreach my $package (keys %{$meta->{packages}})
         {
-            foreach my $pkgFile (@{$meta->{packages}->{$plugin}->{files}})
+            foreach my $pkgFile (@{$meta->{packages}->{$package}->{files}})
             {
                 if ($file eq realpath($lixuzDir.'/'.$pkgFile))
                 {
-                    $owner = $plugin;
+                    $owner = $package;
                     last;
                 }
             }
@@ -595,7 +595,7 @@ sub checkPackageOwners
             }
             else
             {
-                print "$checkFile is not owned by any plugin\n";
+                print "$checkFile is not owned by any package\n";
             }
         }
         elsif($mode eq 'plumbing')
@@ -608,17 +608,17 @@ sub checkPackageOwners
     }
 }
 
-# Purpose: List all installed plugin files
-sub listPluginFiles
+# Purpose: List all installed package files
+sub listPackageFiles
 {
     my $meta = loadMetaFile();
     if (%{$meta->{packages}})
     {
-        foreach my $plugin (keys %{$meta->{packages}})
+        foreach my $package (keys %{$meta->{packages}})
         {
-            foreach my $pkgFile (@{$meta->{packages}->{$plugin}->{files}})
+            foreach my $pkgFile (@{$meta->{packages}->{$package}->{files}})
             {
-                print "$plugin: $pkgFile\n";
+                print "$package: $pkgFile\n";
             }
         }
     }
@@ -628,13 +628,13 @@ sub listPluginFiles
     }
 }
 
-# Purpose: Create a new plugin tree
-sub createPluginTree
+# Purpose: Create a new package tree
+sub createPackageTree
 {
     my $path = shift;
     if (!defined $path)
     {
-        die('Usage: lixuzctl plugins create NAME'."\n");
+        die('Usage: lixuzctl packages create NAME'."\n");
     }
     if (-e $path)
     {
@@ -645,9 +645,9 @@ sub createPluginTree
 
     open(my $yml,'>',$path.'/package.yml');
     print {$yml} '# Lixuz package metadata'."\n\n";
-    print {$yml} '# Plugin name'."\n";
+    print {$yml} '# Package name'."\n";
     print {$yml} 'name: '.$path."\n";
-    print {$yml} '# Plugin version number'."\n";
+    print {$yml} '# Package version number'."\n";
     print {$yml} 'version: 0.1'."\n";
     print {$yml} '# The lowest Lixuz API version supported'."\n";
     print {$yml} 'apiversion: 1'."\n";
@@ -701,7 +701,7 @@ my $triggers = {
 # Package construction functions
 # ---
 
-# Purpose: Builds a new Lixuz plugin package
+# Purpose: Builds a new Lixuz package
 sub buildPackage
 {
     my $mode = shift;
@@ -726,7 +726,7 @@ sub buildPackage
     {
         if (-e $srcdir.'/plugin.yml')
         {
-            die('Plugin is using plugin.yml instead of package.yml. It is outdated.'."\n".
+            die('Package is using plugin.yml instead of package.yml. It is outdated.'."\n".
                 'Rename plugin.yml to package.yml and update apiversion to 2 and try again.'."\n");
         }
         die($srcdir.'/package.yml is missing'."\n");
@@ -743,23 +743,23 @@ sub buildPackage
         }
     }
 
-    my $pluginName = getPluginSystemName($meta);
+    my $packageName = getPackageSystemName($meta);
     printv('done'."\n");
 
     if (!$disableTriggers)
     {
         printv('Running build triggers...');
-        runPackageTrigger($pluginName,'build',$srcdir.'/triggers.pl');
+        runPackageTrigger($packageName,'build',$srcdir.'/triggers.pl');
         printv('done'."\n");
     }
 
     printv('Constructing package...');
-    my $fname = $pluginName.'-'.$meta->{version}.'.lpp';
+    my $fname = $packageName.'-'.$meta->{version}.'.lpp';
     $fname =~ s/\s+/-/g;
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-buildpkg.XXXXXXX');
-    mkpath($dir.'/lzplugin/');
-    $dir = $dir.'/lzplugin/';
+    mkpath($dir.'/lzpackage/');
+    $dir = $dir.'/lzpackage/';
 
     foreach my $copy (@packageMetaFiles)
     {
@@ -797,34 +797,34 @@ sub buildPackage
     }
     my $targetFile = $target.'/'.$fname;
     $targetFile =~ s{/+}{/}g;
-    system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzplugin');
+    system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage');
     printv('done'."\n");
     printv('Wrote package to '.realpath($targetFile)."\n");
     return realpath($targetFile);
 }
 
-# Purpose: Reconstructs an installed Lixuz plugin package
+# Purpose: Reconstructs an installed Lixuz package
 sub reconstructPackage
 {
-    my $pluginName = shift;
+    my $packageName = shift;
     my $targetDir = shift;
     my $meta = loadMetaFile();
 
-    if(! $meta->{packages}->{$pluginName})
+    if(! $meta->{packages}->{$packageName})
     {
-        die($pluginName.': is not installed, unable to reconstruct package'."\n");
+        die($packageName.': is not installed, unable to reconstruct package'."\n");
     }
 
-    printv('Reconstructing '.$pluginName.'... ');
+    printv('Reconstructing '.$packageName.'... ');
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-reconstructpkg.XXXXXXX');
     mkpath($dir.'/plugin/');
 
-    foreach my $meta (@{$meta->{packages}->{$pluginName}->{metaFiles}})
+    foreach my $meta (@{$meta->{packages}->{$packageName}->{metaFiles}})
     {
-        copy($lixuzDir.'/.packageMeta/'.$pluginName.'/'.$meta,$dir);
+        copy($lixuzDir.'/.packageMeta/'.$packageName.'/'.$meta,$dir);
     }
-    foreach my $file (@{$meta->{packages}->{$pluginName}->{files}})
+    foreach my $file (@{$meta->{packages}->{$packageName}->{files}})
     {
         mkpath($dir.'/plugin/'.dirname($file));
         copy($lixuzDir.'/'.$file,$dir.'/plugin/'.dirname($file));
@@ -838,16 +838,16 @@ sub reconstructPackage
 # ---
 
 # Purpose: Generate a "system name" (normalized name) from a package meta-file
-sub getPluginSystemName
+sub getPackageSystemName
 {
     my $meta = shift;
-    my $pluginName = $meta->{name};
-    $pluginName =~ s/ /-/g;
-    $pluginName = lc($pluginName);
-    return $pluginName;
+    my $packageName = $meta->{name};
+    $packageName =~ s/ /-/g;
+    $packageName = lc($packageName);
+    return $packageName;
 }
 
-# Purpose: Installs or upgrades a Lixuz plugin package
+# Purpose: Installs or upgrades a Lixuz package package
 sub installPackage
 {
     my $mode = shift;
@@ -861,11 +861,18 @@ sub installPackage
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-installpkg.XXXXXXX');
     system('tar','-C',$dir,'-xf',$package);
-    if (! -d $dir.'/lzplugin' || ( ! -e $dir.'/lzplugin/package.yml' && ! -e $dir.'/lzplugin/plugin.yml'))
+    if (-d $dir.'/lzpackage')
     {
-        die($package.': does not appear to be a Lixuz plugin package'."\n");
+        $dir = $dir.'/lzpackage';
     }
-    $dir = $dir.'/lzplugin/';
+    else
+    {
+        $dir = $dir.'/lzplugin';
+    }
+    if (! -d $dir || ( ! -e $dir.'/package.yml' && ! -e $dir.'/plugin.yml'))
+    {
+        die($package.': does not appear to be a Lixuz package'."\n");
+    }
 
     my $packageMeta;
     if (-e $dir.'/package.yml')
@@ -876,16 +883,16 @@ sub installPackage
     {
         $packageMeta = readYML($dir.'/plugin.yml');
     }
-    my $pluginName = getPluginSystemName($packageMeta);
+    my $packageName = getPackageSystemName($packageMeta);
     $| = 1;
-    if($mode eq 'install' && defined $meta->{packages}->{$pluginName})
+    if($mode eq 'install' && defined $meta->{packages}->{$packageName})
     {
-        warn($pluginName.': was already installed, assuming you wanted to upgrade instead.'."\n");
+        warn($packageName.': was already installed, assuming you wanted to upgrade instead.'."\n");
         $mode = 'upgrade';
     }
-    elsif($mode eq 'upgrade' && ! $meta->{packages}->{$pluginName})
+    elsif($mode eq 'upgrade' && ! $meta->{packages}->{$packageName})
     {
-        warn($pluginName.': is not installed, assuming you wanted to install instead.'."\n");
+        warn($packageName.': is not installed, assuming you wanted to install instead.'."\n");
         $mode = 'install';
     }
     my $action = 'Installing';
@@ -902,7 +909,7 @@ sub installPackage
     my %upgradeMap;
     if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
-        foreach my $file (@{ $meta->{packages}->{$pluginName}->{files} })
+        foreach my $file (@{ $meta->{packages}->{$packageName}->{files} })
         {
             $upgradeMap{$file} = 1;
         }
@@ -920,7 +927,7 @@ sub installPackage
                         $path =~ s{^/}{};
                         if ($mode eq 'upgrade')
                         {
-                            die("failed\n".$path.': already exists in Lixuz tree and does not belong to this plugin.'."\n".'Refusing to overwrite.'."\n");
+                            die("failed\n".$path.': already exists in Lixuz tree and does not belong to this package.'."\n".'Refusing to overwrite.'."\n");
                         }
                         elsif($mode ne 'reinject')
                         {
@@ -970,7 +977,7 @@ sub installPackage
     }
     printv('.');
     my @metaFiles;
-    mkpath($lixuzDir.'/.packageMeta/'.$pluginName);
+    mkpath($lixuzDir.'/.packageMeta/'.$packageName);
     if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
         printv('.');
@@ -980,10 +987,10 @@ sub installPackage
             printd('Removed '.$oldFile);
         }
         printv('.');
-        foreach my $oldFile (@{ $meta->{packages}->{$pluginName}->{metaFiles} })
+        foreach my $oldFile (@{ $meta->{packages}->{$packageName}->{metaFiles} })
         {
-            unlink($lixuzDir.'/.packageMeta/'.$pluginName.'/'.$oldFile);
-            printd('Removed old '.$oldFile.' from plugin meta storage');
+            unlink($lixuzDir.'/.packageMeta/'.$packageName.'/'.$oldFile);
+            printd('Removed old '.$oldFile.' from package meta storage');
         }
     }
     foreach my $copy (@packageMetaFiles)
@@ -991,8 +998,8 @@ sub installPackage
         if (-e $dir.'/'.$copy)
         {
             push(@metaFiles,$copy);
-            copy($dir.'/'.$copy,$lixuzDir.'/.packageMeta/'.$pluginName);
-            printd('Copied '.$copy.' into plugin meta storage');
+            copy($dir.'/'.$copy,$lixuzDir.'/.packageMeta/'.$packageName);
+            printd('Copied '.$copy.' into package meta storage');
         }
     }
     if ($mode eq 'upgrade' || $mode eq 'reinject')
@@ -1031,30 +1038,30 @@ sub installPackage
             open(my $out,'>>',$lixuzDir.'/.git/info/exclude');
             foreach my $file (@append)
             {
-                print {$out} '# Added by lixuzctl for package '.$pluginName."\n";
+                print {$out} '# Added by lixuzctl for package '.$packageName."\n";
                 print {$out} $file."\n";
             }
             printd('Exclusions added to .git/info/exclude');
             close($out);
         }
     }
-    $meta->{packages}->{$pluginName}->{meta} = $packageMeta;
-    $meta->{packages}->{$pluginName}->{files} = \@copy;
-    $meta->{packages}->{$pluginName}->{metaFiles} = \@metaFiles;
-    $meta->{packages}->{$pluginName}->{templateIDs} = \@templateIDs;
-    $meta->{packages}->{$pluginName}->{lastModified} = time;
+    $meta->{packages}->{$packageName}->{meta} = $packageMeta;
+    $meta->{packages}->{$packageName}->{files} = \@copy;
+    $meta->{packages}->{$packageName}->{metaFiles} = \@metaFiles;
+    $meta->{packages}->{$packageName}->{templateIDs} = \@templateIDs;
+    $meta->{packages}->{$packageName}->{lastModified} = time;
     if ($mode eq 'install')
     {
-        $meta->{packages}->{$pluginName}->{installed} = time;
-        runPackageTrigger($pluginName,'install');
+        $meta->{packages}->{$packageName}->{installed} = time;
+        runPackageTrigger($packageName,'install');
     }
     elsif ($mode eq 'reinject')
     {
-        runPackageTrigger($pluginName,'lixuzUpgrade');
+        runPackageTrigger($packageName,'lixuzUpgrade');
     }
     elsif($mode eq 'upgrade')
     {
-        runPackageTrigger($pluginName,'upgrade');
+        runPackageTrigger($packageName,'upgrade');
     }
     else
     {
@@ -1064,41 +1071,41 @@ sub installPackage
     printv("done\n");
 }
 
-# Purpose: Removes a Lixuz plugin package
+# Purpose: Removes a Lixuz package
 sub removePackage 
 {
-    my $pluginName = shift;
+    my $packageName = shift;
     my $meta = loadMetaFile();
 
-    if(! $meta->{packages}->{$pluginName})
+    if(! $meta->{packages}->{$packageName})
     {
-        die($pluginName.': is not installed, unable to remove package'."\n");
+        die($packageName.': is not installed, unable to remove package'."\n");
     }
 
-    printv('Removing '.$pluginName.'... ');
+    printv('Removing '.$packageName.'... ');
 
-    runPackageTrigger($pluginName,'removal');
+    runPackageTrigger($packageName,'removal');
 
-    foreach my $meta (@{$meta->{packages}->{$pluginName}->{metaFiles}})
+    foreach my $meta (@{$meta->{packages}->{$packageName}->{metaFiles}})
     {
-        unlink($lixuzDir.'/.packageMeta/'.$pluginName.'/'.$meta);
+        unlink($lixuzDir.'/.packageMeta/'.$packageName.'/'.$meta);
         printd('Removed meta file: '.$meta);
     }
-    foreach my $file (@{$meta->{packages}->{$pluginName}->{files}})
+    foreach my $file (@{$meta->{packages}->{$packageName}->{files}})
     {
         unlink($lixuzDir.'/'.$file);
         printd('Removed file: '.$file);
     }
-    if ($meta->{packages}->{$pluginName}->{templateIDs})
+    if ($meta->{packages}->{$packageName}->{templateIDs})
     {
-        selfRun('plumbing','templateremove',@{$meta->{packages}->{$pluginName}->{templateIDs}});
+        selfRun('plumbing','templateremove',@{$meta->{packages}->{$packageName}->{templateIDs}});
     }
-    delete($meta->{packages}->{$pluginName});
+    delete($meta->{packages}->{$packageName});
     writeMetaFile($meta);
     printv('done'."\n");
 }
 
-# Purpose: Lists all installed Lixuz plugin packages
+# Purpose: Lists all installed Lixuz packages
 sub listPackages
 {
     my $meta = loadMetaFile();
@@ -1306,7 +1313,7 @@ sub plumbing
             {
                 foreach my $p (keys %{$meta->{packages}})
                 {
-                    selfRun('plugins','reconstruct',$p,$dir);
+                    selfRun('packages','reconstruct',$p,$dir);
                 }
             }
             else
@@ -1375,7 +1382,7 @@ sub usagePlumbing
     print "Available subcommands:\n";
     printHelp('','packup X','Reconstruct a dump of all packages into X');
     printHelp('','reinject X Y ..','Re-inject the packages specified into the Lixuz tree (similar to an upgrade, but runs lixuzUpgrade instead of upgrade triggers, and ignores all conflicts)');
-    printHelp('','checkowner X Y ..','Check if files X, Y, .. are owned by a plugin. Exits with exit status 0 if all the files are owned by plugins, 1 if not');
+    printHelp('','checkowner X Y ..','Check if files X, Y, .. are owned by a package. Exits with exit status 0 if all the files are owned by packages, 1 if not');
     printHelp('','getlevel','Output the plumbing API level supported by this version of lixuzctl');
     printHelp('','templateinject X','Install or upgrade the supplied live template file');
     printHelp('','templateremove X','Remove the template identified by the supplied unique ID X');
