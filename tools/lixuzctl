@@ -28,10 +28,10 @@ use Cwd qw(realpath);
 use Config::Any;
 use JSON qw(encode_json decode_json);
 use Try::Tiny;
-use constant (
+use constant {
     true => 1,
-    false => 0
-);
+    false => 0,
+};
 my $verbosity                = 0;
 # The revision of the data format that we write
 my $dataFormatRevision       = 2;
@@ -39,6 +39,7 @@ my $dataFormatRevision       = 2;
 my $minSupportedApiLevel     = 2;
 # The real (latest) supported api level of plumbing commands
 my $currentSupportedApiLevel = 4;
+my $force = false;
 my $logOut;
 my $logfile;
 my $lixuzDir;
@@ -74,6 +75,7 @@ sub main
             shift;
             $lixuzDir = shift;
         },
+        'force' => \$force,
         # This is not used anywhere yet, but it is supported for use later
         # (and already supplied by the upgrade script)
         'lixuz-upgrade' => sub {},
@@ -413,6 +415,7 @@ sub usageDatabase
 # Purpose: Handler for packages-section subcommands
 sub packages
 {
+    $| = 1;
     checkForHelpParam(sub { usagePackages(0) });
 
     my $subcommand = shift(@ARGV);
@@ -640,9 +643,9 @@ sub createPackageTree
     {
         die('Usage: lixuzctl packages create NAME'."\n");
     }
-    if (-e $path)
+    if (-e $path && !$force)
     {
-        die($path.': already exists');
+        die($path.': already exists. Use --force if you\'re sure you want to create a tree there.'."\n");
     }
 
     mkdir($path);
@@ -723,7 +726,7 @@ sub buildPackage
     $target //= '.';
     my $disableTriggers = shift;
 
-    printv('Performing package sanity checks...');
+    printv('Performing sanity checks...');
     if (! -w $target && -w $srcdir)
     {
         warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
@@ -903,6 +906,7 @@ sub getPackageSystemName
     my $meta = shift;
     my $packageName = $meta->{name};
     $packageName =~ s/ /-/g;
+    $packageName =~ s/\./-/g;
     $packageName = lc($packageName);
     return $packageName;
 }
@@ -930,7 +934,6 @@ sub installPackage
 
     my $packageMeta = readYML($dir.'/package.yml');
     my $packageName = getPackageSystemName($packageMeta);
-    $| = 1;
     if($mode eq 'install' && defined $meta->{packages}->{$packageName})
     {
         warn($packageName.': was already installed, assuming you wanted to upgrade instead.'."\n");
@@ -974,7 +977,12 @@ sub installPackage
                         if (-e $lixuzDir.'/'.$path && !$upgradeMap{$path})
                         {
                             $path =~ s{^/}{};
-                            if ($mode eq 'upgrade')
+                            if ($force)
+                            {
+                                warn('WARNING: '.$path.' already exists in Lixuz tree. It will be overwritten due to --force'."\n");
+                                $path = '/'.$path;
+                            }
+                            elsif ($mode eq 'upgrade')
                             {
                                 die("failed\n".$path.': already exists in Lixuz tree and does not belong to this package.'."\n".'Refusing to overwrite.'."\n");
                             }
