@@ -42,7 +42,7 @@ my $currentSupportedApiLevel = 4;
 my $logOut;
 my $logfile;
 my $lixuzDir;
-my @packageMetaFiles = qw(plugin.yml package.yml triggers.pl COPYING README);
+my @packageMetaFiles = qw(package.yml triggers.pl COPYING README);
 # Boolean flag, set to true once LIXUZ:: modules have been loaded
 # to avoid loading them multiple times.
 my $loadedModules;
@@ -521,7 +521,7 @@ sub usagePackages
     printHelp('','buildinstall X','Runs build X, and then installs the package generated');
     printHelp('','owner X Y ..','Output which package (if any) owns the files specified');
     printHelp('','listfiles','List all files installed by packages, along with which package installed the file');
-    printHelp('','watch X','Runs buildinstall X whenever a file in the plugin subdirectory changes');
+    printHelp('','watch X','Runs buildinstall X whenever a file in the content subdirectory changes');
     printHelp('','reconstruct X Y','Reconstruct a package (X) from its installed data, saving the package to Y');
     printHelp('','create X','Create a new package named "X" in ./X');
     exit(shift);
@@ -745,6 +745,11 @@ sub buildPackage
             die($srcdir.'/package.yml is missing'."\n");
         }
     }
+    if (-e $srcdir.'/plugin' && ! -e $srcdir.'/content')
+    {
+        die('Package is using plugin/ instead of content/. It is outdated.'."\n".
+            'Rename plugin/ to content/ and try again.'."\n");
+    }
 
     my $meta = Config::Any->load_files({ files => [ $srcdir.'/package.yml' ], use_ext => 1});
     $meta = $meta->[0]->{$srcdir.'/package.yml'};
@@ -784,12 +789,12 @@ sub buildPackage
         }
     }
 
-    if (! -d $srcdir.'/plugin' && ! -d $srcdir.'/liveTemplates')
+    if (! -d $srcdir.'/content' && ! -d $srcdir.'/liveTemplates')
     {
-        die('Neither of plugin or liveTemplates exist in '.$srcdir.'. Cowardly refusing to create empty package'."\n");
+        die('Neither of content or liveTemplates exist in '.$srcdir.'. Cowardly refusing to create empty package'."\n");
     }
 
-    foreach my $tree (qw(plugin liveTemplates))
+    foreach my $tree (qw(content liveTemplates))
     {
         if (-e $srcdir.'/'.$tree)
         {
@@ -835,7 +840,7 @@ sub reconstructPackage
     printv('Reconstructing '.$packageName.'... ');
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-reconstructpkg.XXXXXXX');
-    mkpath($dir.'/plugin/');
+    mkpath($dir.'/content/');
 
     my $pkgMeta = $meta->{packages}->{$packageName};
 
@@ -847,8 +852,8 @@ sub reconstructPackage
     {
         foreach my $file (@{$pkgMeta->{files}})
         {
-            mkpath($dir.'/plugin/'.dirname($file));
-            copy($lixuzDir.'/'.$file,$dir.'/plugin/'.dirname($file));
+            mkpath($dir.'/content/'.dirname($file));
+            copy($lixuzDir.'/'.$file,$dir.'/content/'.dirname($file));
         }
     }
     if ($pkgMeta->{templateIDs})
@@ -901,28 +906,14 @@ sub installPackage
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-installpkg.XXXXXXX');
     system('tar','-C',$dir,'-xf',$package);
-    if (-d $dir.'/lzpackage')
-    {
-        $dir = $dir.'/lzpackage';
-    }
-    else
-    {
-        $dir = $dir.'/lzplugin';
-    }
-    if (! -d $dir || ( ! -e $dir.'/package.yml' && ! -e $dir.'/plugin.yml'))
+
+    $dir = $dir.'/lzpackage';
+    if (! -d $dir || ! -e $dir.'/package.yml')
     {
         die($package.': does not appear to be a Lixuz package'."\n");
     }
 
-    my $packageMeta;
-    if (-e $dir.'/package.yml')
-    {
-        $packageMeta = readYML($dir.'/package.yml');
-    }
-    else
-    {
-        $packageMeta = readYML($dir.'/plugin.yml');
-    }
+    my $packageMeta = readYML($dir.'/package.yml');
     my $packageName = getPackageSystemName($packageMeta);
     $| = 1;
     if($mode eq 'install' && defined $meta->{packages}->{$packageName})
@@ -955,14 +946,14 @@ sub installPackage
         }
     }
 
-    if (-e $dir.'/plugin')
+    if (-e $dir.'/content')
     {
-        printd('Package has plugin data');
+        printd('Package has content data');
         find({
                 no_chdir => 1,
                 wanted => sub
                 {
-                    my $path = substr($_,length($dir.'/plugin'));
+                    my $path = substr($_,length($dir.'/content'));
                     if (!-d $_ && !/~$/ && !/\.swp$/)
                     {
                         if (-e $lixuzDir.'/'.$path && !$upgradeMap{$path})
@@ -981,7 +972,7 @@ sub installPackage
                         push(@copy,$path);
                     }
                 },
-            }, $dir.'/plugin');
+            }, $dir.'/content');
     }
 
     printv('.');
@@ -1017,7 +1008,7 @@ sub installPackage
     foreach my $f (@copy)
     {
         mkpath($lixuzDir.'/'.dirname($f));
-        copy($dir.'/plugin/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
+        copy($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
         printd('Copied '.$f.' into tree');
     }
     printv('.');
