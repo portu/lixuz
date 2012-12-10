@@ -32,7 +32,13 @@ use constant (
     true => 1,
     false => 0
 );
-my $verbosity = 0;
+my $verbosity                = 0;
+# The revision of the data format that we write
+my $dataFormatRevision       = 1;
+# The minimum supported api level of plumbing commands
+my $minSupportedApiLevel     = 2;
+# The real (latest) supported api level of plumbing commands
+my $currentSupportedApiLevel = 3;
 my $logOut;
 my $logfile;
 my $lixuzDir;
@@ -50,6 +56,9 @@ sub main
         'v|verbose' => sub {
             $verbosity++
         },
+        'debug' => sub {
+            $verbosity = 99;
+        },
         'logfile=s' => sub {
             shift;
             $logfile = shift;
@@ -65,6 +74,9 @@ sub main
         # This is not used anywhere yet, but it is supported for use later
         # (and already supplied by the upgrade script)
         'lixuz-upgrade' => sub {},
+        # This is not used anywhere yet, but is supported for use later
+        # (and is already supplied by us when using selfRun)
+        'chained' => sub {},
     );
     
     $lixuzDir //= realpath(dirname(realpath($0)).'/../');
@@ -213,7 +225,7 @@ sub loadMetaFile
     $metaFile->{lastWritten} //= time,
     $metaFile->{plugins} //= {};
 
-    if ($metaFile->{formatRevision} ne 1)
+    if ($metaFile->{formatRevision} != $dataFormatRevision)
     {
         die("ERROR: Unknown .lixuzctl.data format revision: ".$metaFile->{formatRevision}."\n");
     }
@@ -225,7 +237,8 @@ sub writeMetaFile
 {
     my $metaFile = shift;
     $metaFile->{lastWritten} = time;
-    $metaFile->{formatRevision} = 1;
+    $metaFile->{formatRevision} = $dataFormatRevision;
+    $metaFile->{lastAPI} = $currentSupportedApiLevel.'/'.$minSupportedApiLevel.'/'.$dataFormatRevision;
     open(my $out,'>',$lixuzDir.'/.lixuzctl.data');
     print {$out} encode_json($metaFile);
     close($out);
@@ -291,6 +304,19 @@ sub printv
     if($verbosity > -1)
     {
         print @_;
+    }
+}
+
+# Purpose: Output something when in debug mode
+# Usage: printd('text')
+# Adds a newline to each message and a debug prefix
+sub printd
+{
+    if ($verbosity >= 99)
+    {
+        print 'Debug: ';
+        print @_;
+        print "\n";
     }
 }
 
@@ -397,6 +423,11 @@ sub plugins
             listPackages();
         }
 
+        when('listfiles')
+        {
+            listPluginFiles();
+        }
+
         when('build')
         {
             buildPackage($subcommand,@ARGV);
@@ -416,6 +447,7 @@ sub plugins
         {
             checkPackageOwners('output',@ARGV);
         }
+
         when('create')
         {
             createPluginTree(@ARGV);
@@ -440,6 +472,7 @@ sub usagePlugins
     printHelp('','build X?','Build a plugin package using data at X (where X defaults to ./)');
     printHelp('','buildinstall X','Runs build X, and then installs the package generated');
     printHelp('','owner X Y ..','Output which plugin (if any) owns the files specified');
+    printHelp('','listfiles','List all files installed by plugins, along with which plugin installed the file');
     printHelp('','watch X','Runs buildinstall X whenever a file in the plugins subdirectory changes');
     printHelp('','reconstruct X Y','Reconstruct a plugin package from an installed plugin (X), saving the package to Y');
     printHelp('','create X','Create a new plugin named "X" in ./X');
@@ -485,6 +518,10 @@ sub runPackageTrigger
 sub checkPackageOwners
 {
     my $mode = shift;
+    if (scalar(@_) == 0)
+    {
+        die('Missing parameters: Which files to check ownership of'."\n");
+    }
     foreach my $checkFile (@_)
     {
         my $meta = loadMetaFile();
@@ -520,6 +557,26 @@ sub checkPackageOwners
                 exit(1);
             }
         }
+    }
+}
+
+# Purpose: List all installed plugin files
+sub listPluginFiles
+{
+    my $meta = loadMetaFile();
+    if (%{$meta->{plugins}})
+    {
+        foreach my $plugin (keys %{$meta->{plugins}})
+        {
+            foreach my $pkgFile (@{$meta->{plugins}->{$plugin}->{files}})
+            {
+                print "$plugin: $pkgFile\n";
+            }
+        }
+    }
+    else
+    {
+        print '(there are no plugins installed)'."\n";
     }
 }
 
@@ -691,7 +748,7 @@ sub reconstructPackage
         die($pluginName.': is not installed, unable to reconstruct package'."\n");
     }
 
-    print 'Reconstructing '.$pluginName.'... ';
+    printv('Reconstructing '.$pluginName.'... ');
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-reconstructpkg.XXXXXXX');
     mkpath($dir.'/plugin/');
@@ -702,7 +759,8 @@ sub reconstructPackage
     }
     foreach my $file (@{$meta->{plugins}->{$pluginName}->{files}})
     {
-        copy($lixuzDir.'/'.$file,$dir.'/plugin');
+        mkpath($dir.'/plugin/'.dirname($file));
+        copy($lixuzDir.'/'.$file,$dir.'/plugin/'.dirname($file));
     }
 
     buildPackage('reconstruct',$dir,$targetDir,1);
@@ -949,8 +1007,10 @@ sub plumbing
 {
     my $subcommand = $ARGV[0];
 
-    my $supportedApiLevel = 2;
-    $verbosity = -1;
+    if ($verbosity < 99)
+    {
+        $verbosity = -1;
+    }
 
     # These are used internally, for enforcing an api compatibility layer if
     # required. In most cases the caller is responsible for handling the
@@ -958,11 +1018,11 @@ sub plumbing
     if (defined($subcommand) && $subcommand =~ s/^v(\d+)/$1/)
     {
         my $levelNo = int($subcommand);
-        if ($levelNo > $supportedApiLevel)
+        if ($levelNo > $currentSupportedApiLevel)
         {
             die('ERROR: UNKNOWN API LEVEL: '.$subcommand."\n");
         }
-        elsif($levelNo < $supportedApiLevel)
+        elsif($levelNo < $minSupportedApiLevel)
         {
             die('ERROR: TOO OLD API LEVEL: '.$subcommand."\n");
         }
@@ -971,7 +1031,7 @@ sub plumbing
     }
     elsif(defined($subcommand) && $subcommand eq 'getlevel')
     {
-        print "$supportedApiLevel\n";
+        print "$currentSupportedApiLevel/$minSupportedApiLevel/$dataFormatRevision\n";
         exit(0);
     }
 
@@ -985,7 +1045,7 @@ sub plumbing
         {
             my $dir = shift(@ARGV);
             my $meta = loadMetaFile();
-            if ($meta->{plugins} && scalar(@{$meta->{plugins}}))
+            if ($meta->{plugins} && scalar(%{$meta->{plugins}}))
             {
                 foreach my $p (keys %{$meta->{plugins}})
                 {
@@ -1040,7 +1100,7 @@ sub usagePlumbing
 # Usage: selfRun(options);
 sub selfRun
 {
-    my @command = ($0,'--lixuzdir',$lixuzDir);
+    my @command = ($0,'--lixuzdir',$lixuzDir,'--chained');
     if ($verbosity == -1)
     {
         push(@command,'--quiet');
@@ -1049,9 +1109,14 @@ sub selfRun
     {
         push(@command,'--verbose');
     }
+    if ($verbosity >= 99)
+    {
+        push(@command,'--debug');
+    }
     if ($logfile)
     {
         push(@command,'--logfile',$logfile);
     }
+    printd('Running self: '.join(' ',@command,@_));
     return system(@command,@_);
 }
