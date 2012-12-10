@@ -114,6 +114,9 @@ sub main
         print 'Re-injecting plugins...';
         lixuzctl($installTarget,'reinject',glob($packup.'/*.lpp'));
         print "done\n";
+        print 'Running lixuzctl upgrade..';
+        lixuzctl($installTarget,'upgrade');
+        print "done\n";
     }
     dualPrint("All is done and appears to have gone well.\n\n");
     dualPrint("Note that you may need to upgrade the database. The recommended way to do this\n");
