@@ -587,7 +587,15 @@ sub runPackageTrigger
         }
         catch
         {
-            warn('Warning: '.$trigger.' trigger for '.$package.' failed: '.$_."\n");
+            my $error = $trigger.' trigger for '.$package.' failed: '.$_;
+            if ($trigger eq 'build')
+            {
+                die($error);
+            }
+            else
+            {
+                warn('Warning: '.$error."\n");
+            }
         };
     }
     else
