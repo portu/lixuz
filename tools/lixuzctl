@@ -430,7 +430,7 @@ sub packages
             printv('Watching '.$dir.' for changes'."\n");
             while(1)
             {
-                if(system(qw(inotifywait -q -q -e modify -e create -e delete -e moved_to),'--excludei','\.(ipp|swp)$','--excludei','~$','-r',$dir.'/') != 0)
+                if(system(qw(inotifywait -q -q -e modify -e create -e delete -e moved_to),'--excludei','\.(ipk|swp)$','--excludei','~$','-r',$dir.'/') != 0)
                 {
                     return;
                 }
@@ -524,7 +524,7 @@ sub usagePackages
     printHelp('','buildinstall X','Runs build X, and then installs the package generated');
     printHelp('','owner X Y ..','Output which package (if any) owns the files specified');
     printHelp('','listfiles','List all files installed by packages, along with which package installed the file');
-    printHelp('','watch X','Runs buildinstall X whenever a file in the content subdirectory changes');
+    printHelp('','watch X','Runs buildinstall X whenever a file in the supplied directory changes');
     printHelp('','reconstruct X Y','Reconstruct a package (X) from its installed data, saving the package to Y');
     printHelp('','create X','Create a new package named "X" in ./X');
     exit(shift);
