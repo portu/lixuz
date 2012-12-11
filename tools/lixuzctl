@@ -556,7 +556,7 @@ sub runPackageTrigger
         $ns = 'CtlTriggers::'.$package.'::r'.time.'::'.int(rand(9999999));
         try
         {
-            eval('package '.$ns.';'.slurp($file).'; if ($triggers->{"'.$trigger.'"}) { $triggers->{"'.$trigger.'"}->(); };1;') or die($@);
+            eval('package '.$ns.'; my $lixuzctlManaged = 1;'.slurp($file).'; if ($triggers->{"'.$trigger.'"}) { $triggers->{"'.$trigger.'"}->(); };1;') or die($@);
         }
         catch
         {
@@ -675,7 +675,8 @@ sub createPackageTree
     print 'Create: '.$path.'/package.yml'."\n";
 
     open(my $triggers,'>',$path.'/triggers.pl');
-    print {$triggers} 'use strict;
+    print {$triggers} 'die(\'Used by "lixuzctl", not to be executed directly\') if (!$lixuzctlManaged);
+use strict;
 use warnings;
 use 5.010;
 use LIXUZ::HelperModules::Scripts qw(getDBIC);
