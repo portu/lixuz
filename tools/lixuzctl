@@ -1166,6 +1166,7 @@ sub removePackage
         unlink($lixuzDir.'/.packageMeta/'.$packageName.'/'.$meta);
         printd('Removed meta file: '.$meta);
     }
+    rmdir($lixuzDir.'/.packageMeta/'.$packageName);
     foreach my $file (@{$meta->{packages}->{$packageName}->{files}})
     {
         unlink($lixuzDir.'/'.$file);
