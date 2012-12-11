@@ -1000,7 +1000,7 @@ sub installPackage
 
     printv('.');
 
-    my @templateIDs;
+    my %templateIDs;
     if (-e $dir.'/liveTemplates/')
     {
         printd('Package has template data');
@@ -1021,7 +1021,7 @@ sub installPackage
             {
                 if (-e $templateFile)
                 {
-                    push(@templateIDs,installTemplateFile($templateFile));
+                    $templateIDs{ installTemplateFile($templateFile) } = 1;
                 }
             }
         }
@@ -1046,10 +1046,26 @@ sub installPackage
             printd('Removed '.$oldFile);
         }
         printv('.');
-        foreach my $oldFile (@{ $meta->{packages}->{$packageName}->{metaFiles} })
+        my $existingMeta = $meta->{packages}->{$packageName};
+        if ($existingMeta->{metaFiles})
         {
-            unlink($lixuzDir.'/.packageMeta/'.$packageName.'/'.$oldFile);
-            printd('Removed old '.$oldFile.' from package meta storage');
+            foreach my $oldFile (@{ $meta->{packages}->{$packageName}->{metaFiles} })
+            {
+                unlink($lixuzDir.'/.packageMeta/'.$packageName.'/'.$oldFile);
+                printd('Removed old '.$oldFile.' from package meta storage');
+            }
+            printv('.');
+        }
+        if ($existingMeta->{templateIDs})
+        {
+            foreach my $currentTemplate (@{ $existingMeta->{templateIDs} })
+            {
+                if (!$templateIDs{$currentTemplate})
+                {
+                    removeTemplate($currentTemplate);
+                }
+            }
+            printv('.');
         }
     }
     foreach my $copy (@packageMetaFiles)
@@ -1107,7 +1123,7 @@ sub installPackage
     $meta->{packages}->{$packageName}->{meta} = $packageMeta;
     $meta->{packages}->{$packageName}->{files} = \@copy;
     $meta->{packages}->{$packageName}->{metaFiles} = \@metaFiles;
-    $meta->{packages}->{$packageName}->{templateIDs} = \@templateIDs;
+    $meta->{packages}->{$packageName}->{templateIDs} = [ keys %templateIDs ];
     $meta->{packages}->{$packageName}->{lastModified} = time;
     if ($mode eq 'install')
     {
@@ -1319,7 +1335,7 @@ sub removeTemplate
     unlink($file) or die($errorPrefix.': Failed to unlink '.$file.': '.$!."\n");
     printd('Removed '.$file);
     $template->delete;
-    printd('Removed database entry');
+    printd('Removed database entry for '.$id);
 }
 
 # ---
