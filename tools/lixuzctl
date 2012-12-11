@@ -701,9 +701,9 @@ my $triggers = {
     print 'Create: '.$path.'/triggers.pl'."\n";
 
     mkdir($path.'/content');
-    foreach my $sub (qw(lib root))
+    foreach my $sub (qw(lib/LIXUZ/Controller root))
     {
-        mkdir($path.'/content/'.$sub);
+        mkpath($path.'/content/'.$sub);
         print 'Create: '.$path.'/content/'.$sub."\n";
     }
 
