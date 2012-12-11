@@ -672,7 +672,7 @@ use warnings;
 use 5.010;
 use LIXUZ::HelperModules::Scripts qw(getDBIC);
 
-my $triggers = {
+my $triggers; $triggers = {
     # Triggered on package upgrade
     upgrade => sub {
     },
@@ -690,6 +690,9 @@ my $triggers = {
     # are run before package construction begins.
     build => sub
     {
+        # Run buildCleanup first, to ensure our environment is clean
+        # (you may remove this if you don\'t need it)
+        $triggers->{buildCleanup}->(@_);
     },
     # Triggered after the package has been built. You may use this to
     # clean up after the build trigger if needed.
