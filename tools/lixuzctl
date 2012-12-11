@@ -765,7 +765,7 @@ sub buildPackage
     $target //= '.';
     my $disableTriggers = shift;
 
-    printStatus('Performing sanity checks...');
+    printStatus('Performing sanity checks... ');
     if (! -w $target && -w $srcdir)
     {
         warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
