@@ -103,7 +103,7 @@ sub main
 
     given($action)
     {
-        when(/^(package|plugin)s?$/)
+        when(/^(package|pkg|plugin)s?$/)
         {
             packages();
         }
