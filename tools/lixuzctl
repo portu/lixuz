@@ -784,7 +784,7 @@ sub buildPackage
     }
 
     printv('Constructing package...');
-    my $fname = $packageName.'-'.$meta->{version}.'.lpp';
+    my $fname = $packageName.'-'.$meta->{version}.'.lpk';
     $fname =~ s/\s+/-/g;
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-buildpkg.XXXXXXX');

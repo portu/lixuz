@@ -21,8 +21,8 @@ lib/LIXUZ/Controller/SiteHacks/
 .packageMeta
 root/source-js/handlebartemplates
 
-# Lixuz plugin packages
-*.lpp
+# Lixuz packages
+*.lpk
 # Built JS files
 root/js
 # Built CSS
