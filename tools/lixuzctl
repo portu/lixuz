@@ -331,6 +331,33 @@ sub printd
     }
 }
 
+# Purpose: Output a status message
+# Usage: printStatus(STATUS);
+# Does "the right thing"(tm) depending on if we're in verbose, silent or debug modes
+sub printStatus
+{
+    my $message = join('',@_);
+    if ($verbosity >= 99)
+    {
+        if ($message =~ /\n/)
+        {
+            return;
+        }
+        $message .= "\n";
+    }
+    printv($message);
+}
+
+# Purpose: Output something when NOT in debug mode or silent mode
+# Usage: same as print
+sub printnd
+{
+    if ($verbosity < 99 && $verbosity > -1)
+    {
+        print @_;
+    }
+}
+
 # Purpose: Load LIXUZ:: namespaced modules
 sub loadLixuzModules
 {
@@ -738,7 +765,7 @@ sub buildPackage
     $target //= '.';
     my $disableTriggers = shift;
 
-    printv('Performing sanity checks...');
+    printStatus('Performing sanity checks...');
     if (! -w $target && -w $srcdir)
     {
         warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
@@ -786,16 +813,16 @@ sub buildPackage
     }
 
     my $packageName = getPackageSystemName($meta);
-    printv('done'."\n");
+    printStatus('done'."\n");
 
     if (!$disableTriggers)
     {
-        printv('Running build triggers...');
+        printStatus('Running build triggers...');
         runPackageTrigger($packageName,'build',$srcdir.'/triggers.pl');
-        printv('done'."\n");
+        printStatus('done'."\n");
     }
 
-    printv('Constructing package...');
+    printStatus('Constructing package...');
     my $fname = $packageName.'-'.$meta->{version}.'.lpk';
     $fname =~ s/\s+/-/g;
 
@@ -843,13 +870,13 @@ sub buildPackage
     my $targetFile = $target.'/'.$fname;
     $targetFile =~ s{/+}{/}g;
     system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage');
-    printv('done'."\n");
+    printStatus('done'."\n");
 
     if (!$disableTriggers)
     {
-        printv('Running build cleanup triggers...');
+        printStatus('Running build cleanup triggers...');
         runPackageTrigger($packageName,'buildCleanup',$srcdir.'/triggers.pl');
-        printv('done'."\n");
+        printStatus('done'."\n");
     }
     printv('Wrote package to '.realpath($targetFile)."\n");
     return realpath($targetFile);
@@ -867,7 +894,7 @@ sub reconstructPackage
         die($packageName.': is not installed, unable to reconstruct package'."\n");
     }
 
-    printv('Reconstructing '.$packageName.'... ');
+    printStatus('Reconstructing '.$packageName.'... ');
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-reconstructpkg.XXXXXXX');
     mkpath($dir.'/content/');
@@ -965,7 +992,7 @@ sub installPackage
     {
         $action = 'Re-injecting';
     }
-    printv($action.' '.$packageMeta->{name}.' '.$packageMeta->{version}.' ['.basename($package).']...');
+    printStatus($action.' '.$packageMeta->{name}.' '.$packageMeta->{version}.' ['.basename($package).']...');
     my @copy;
     my %upgradeMap;
     if ($mode eq 'upgrade' || $mode eq 'reinject')
@@ -1010,7 +1037,7 @@ sub installPackage
             }, $dir.'/content');
     }
 
-    printv('.');
+    printnd('.');
 
     my %templateIDs;
     if (-e $dir.'/liveTemplates/')
@@ -1039,25 +1066,25 @@ sub installPackage
         }
     }
 
-    printv('.');
+    printnd('.');
     foreach my $f (@copy)
     {
         mkpath($lixuzDir.'/'.dirname($f));
         copy($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
         printd('Copied '.$f.' into tree');
     }
-    printv('.');
+    printnd('.');
     my @metaFiles;
     mkpath($lixuzDir.'/.packageMeta/'.$packageName);
     if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
-        printv('.');
+        printnd('.');
         foreach my $oldFile (keys %upgradeMap)
         {
             unlink($lixuzDir.'/'.$oldFile);
             printd('Removed '.$oldFile);
         }
-        printv('.');
+        printnd('.');
         my $existingMeta = $meta->{packages}->{$packageName};
         if ($existingMeta->{metaFiles})
         {
@@ -1066,7 +1093,7 @@ sub installPackage
                 unlink($lixuzDir.'/.packageMeta/'.$packageName.'/'.$oldFile);
                 printd('Removed old '.$oldFile.' from package meta storage');
             }
-            printv('.');
+            printnd('.');
         }
         if ($existingMeta->{templateIDs})
         {
@@ -1077,7 +1104,7 @@ sub installPackage
                     removeTemplate($currentTemplate);
                 }
             }
-            printv('.');
+            printnd('.');
         }
     }
     foreach my $copy (@packageMetaFiles)
@@ -1091,7 +1118,7 @@ sub installPackage
     }
     if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
-        printv('.');
+        printnd('.');
         foreach my $oldFile (keys %upgradeMap)
         {
             unlink($lixuzDir.'/'.$oldFile);
@@ -1155,7 +1182,7 @@ sub installPackage
         outLog('Not running post-"install" triggers, unknown mode: '.$mode);
     }
     writeMetaFile($meta);
-    printv("done\n");
+    printStatus("done\n");
 }
 
 # Purpose: Removes a Lixuz package
@@ -1169,7 +1196,7 @@ sub removePackage
         die($packageName.': is not installed, unable to remove package'."\n");
     }
 
-    printv('Removing '.$packageName.'... ');
+    printStatus('Removing '.$packageName.'... ');
 
     runPackageTrigger($packageName,'removal');
 
@@ -1190,7 +1217,7 @@ sub removePackage
     }
     delete($meta->{packages}->{$packageName});
     writeMetaFile($meta);
-    printv('done'."\n");
+    printStatus('done'."\n");
 }
 
 # Purpose: Lists all installed Lixuz packages
