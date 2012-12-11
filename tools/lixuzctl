@@ -1474,13 +1474,17 @@ sub selfRun
     {
         push(@command,'--quiet');
     }
-    elsif($verbosity > 0)
+    elsif($verbosity > 0 && $verbosity < 99)
     {
         push(@command,'--verbose');
     }
     if ($verbosity >= 99)
     {
         push(@command,'--debug');
+    }
+    if ($force)
+    {
+        push(@command,'--force');
     }
     if ($logfile)
     {
