@@ -29,6 +29,7 @@ use Config::Any;
 use JSON qw(encode_json decode_json);
 use Try::Tiny;
 use Cwd qw(getcwd);
+use POSIX qw(strftime);
 use constant {
     true => 1,
     false => 0,
@@ -456,14 +457,20 @@ sub packages
         {
             my $dir = shift // '.';
             printv('Watching '.$dir.' for changes'."\n");
+            my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp)$ --excludei .*~$};
+            if ($verbosity < 99)
+            {
+                push(@inotifyCommand,qw(-q -q));
+            }
             while(1)
             {
-                if(system(qw(inotifywait -q -q -e modify -e create -e delete -e moved_to),'--excludei','\.(ipk|swp)$','--excludei','~$','-r',$dir.'/') != 0)
+                if(system(@inotifyCommand,$dir.'/') != 0)
                 {
                     return;
                 }
-                my $package = buildPackage('build',$dir);
-                installPackage('upgrade',$package);
+                printv('['.strftime('%H:%M:%S',localtime).'] Change detected, running buildinstall'."\n");
+                selfRun('packages','buildinstall');
+                printv('['.strftime('%H:%M:%S',localtime).'] buildinstall complete'."\n");
             }
         }
 
@@ -971,6 +978,7 @@ sub installPackage
     my $meta = loadMetaFile();
 
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-installpkg.XXXXXXX');
+    printd('Reading package '.$package);
     system('tar','-C',$dir,'-xf',$package);
 
     $dir = $dir.'/lzpackage';
