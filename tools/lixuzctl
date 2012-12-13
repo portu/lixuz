@@ -376,7 +376,7 @@ sub loadLixuzModules
     $loadedModules = 1;
 }
 
-# Purpose: Load a meta file
+# Purpose: Perform a lixuzctl upgrade
 sub performVersionUpgrade
 {
     printd('Performing version upgrade');
@@ -1288,13 +1288,9 @@ sub installTemplateFile
 
     loadLixuzModules();
 
-    printd('Fetching DBIC');
+    printd('Fetching DBIC, fake $c and config');
     my $dbic = getDBIC();
-
-    printd('Fetching a fake $c');
     my $fakeC = fakeC();
-
-    printd('Loading config');
     my $config = getConfig();
 
     printd('Parsing '.$file);
