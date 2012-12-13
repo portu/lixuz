@@ -23,6 +23,7 @@ use File::Copy qw(copy move);
 use File::Path qw(mkpath);
 use File::Find qw(find);
 use File::Basename qw(basename dirname);
+use Digest::SHA qw(sha512_hex);
 use Getopt::Long;
 use Cwd qw(realpath);
 use Config::Any;
@@ -397,6 +398,22 @@ sub performVersionUpgrade
         die('Unable to downgrade from '.$dataFormatRevision." safely\n");
     }
     writeMetaFile();
+}
+
+# Purpose: Check if two files differ
+sub filesDiffer
+{
+    my $file1 = shift;
+    my $file2 = shift;
+    if (-s $file1 != -s $file2)
+    {
+        return 1;
+    }
+    if(sha512_hex(slurp($file1)) ne sha512_hex(slurp($file2)))
+    {
+        return 1;
+    }
+    return 0;
 }
 
 # ---
@@ -1086,8 +1103,15 @@ sub installPackage
     foreach my $f (@copy)
     {
         mkpath($lixuzDir.'/'.dirname($f));
-        copy($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
-        printd('Copied '.$f.' into tree');
+        if (! -e $lixuzDir.'/'.$f || filesDiffer($dir.'/content/'.$f,$lixuzDir.'/'.$f))
+        {
+            copy($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
+            printd('Copied '.$f.' into tree');
+        }
+        else
+        {
+            printd('Skipped copying of '.$f.': identical version already in tree');
+        }
     }
     printnd('.');
     my @metaFiles;
@@ -1351,7 +1375,15 @@ sub installTemplateFile
     $template->update();
 
     my $error;
-    copy($file,$config->{LIXUZ}->{template_path}.'/'.$fnam) or $error = $!;
+    if (! -e $config->{LIXUZ}->{template_path}.'/'.$fnam || filesDiffer($file,$config->{LIXUZ}->{template_path}.'/'.$fnam))
+    {
+        printd('Wrote updated template to '.$config->{LIXUZ}->{template_path}.'/'.$fnam);
+        copy($file,$config->{LIXUZ}->{template_path}.'/'.$fnam) or $error = $!;
+    }
+    else
+    {
+        printd('Skipped copying of template data for '.$fnam.': identical version already present');
+    }
 
     if ($error)
     {
