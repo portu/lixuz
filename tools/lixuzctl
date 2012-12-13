@@ -405,14 +405,22 @@ sub filesDiffer
 {
     my $file1 = shift;
     my $file2 = shift;
+    # If one of the files doesn't exist then of course they differ
+    if (! -e $file1 || ! -e $file2)
+    {
+        return 1;
+    }
+    # If their filesizes are different, then they differ
     if (-s $file1 != -s $file2)
     {
         return 1;
     }
+    # Finally, if their sha512 checksums differ, the files differ
     if(sha512_hex(slurp($file1)) ne sha512_hex(slurp($file2)))
     {
         return 1;
     }
+    # The files are identical
     return 0;
 }
 
