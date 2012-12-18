@@ -249,7 +249,18 @@ sub savedata_article
                     $secondary->delete;
                 }
                 my $primary = $file->primary_folder;
-                $primary->set_column('folder_id',$newPrimaryFolder);
+                if ($primary)
+                {
+                    $primary->set_column('folder_id',$newPrimaryFolder);
+                }
+                else
+                {
+                    $primary = $c->model('LIXUZDB::LzFileFolder')->create({
+                            file_id => $file->file_id,
+                            folder_id => $newPrimaryFolder,
+                            primary_folder => 1
+                        });
+                }
                 $primary->update;
             }
         }
