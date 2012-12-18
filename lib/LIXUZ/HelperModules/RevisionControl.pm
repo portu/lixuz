@@ -277,7 +277,6 @@ sub _commit
     {
         return $retVal;
     }
-    warn('Revision '.$self->newRevision.' committed');
     $self->_root($newRoot);
     $self->_objects(\%newObjs);
     $self->revision($self->newRevision);
