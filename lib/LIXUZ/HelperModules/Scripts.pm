@@ -62,6 +62,11 @@ sub fakeC
 
 sub mockC
 {
+    local *STDERR;
+    local *STDOUT;
+    open(STDERR,'>','/dev/null');
+    open(STDOUT,'>','/dev/null');
+
     my $mockLog = Test::MockClass->new('LIXUZ::HelperModules::Log');
     foreach my $type (qw(debug info warn _log))
     {

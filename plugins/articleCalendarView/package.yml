@@ -1,0 +1,5 @@
+name: Article Calendar View
+version: 0.1
+apiversion: 2
+description: Lists Lixuz articles in a calendar-like view
+license: GPLv3

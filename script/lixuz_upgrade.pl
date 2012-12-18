@@ -112,7 +112,17 @@ sub main
     if ($packup)
     {
         print 'Re-injecting plugins...';
-        lixuzctl($installTarget,'reinject',glob($packup.'/*.lpp'));
+        if(glob($packup.'/*.lpp'))
+        {
+            lixuzctl($installTarget,'reinject',glob($packup.'/*.lpp'));
+        }
+        else
+        {
+            lixuzctl($installTarget,'reinject',glob($packup.'/*.lpk'));
+        }
+        print "done\n";
+        print 'Running lixuzctl upgrade..';
+        lixuzctl($installTarget,'upgrade');
         print "done\n";
     }
     dualPrint("All is done and appears to have gone well.\n\n");

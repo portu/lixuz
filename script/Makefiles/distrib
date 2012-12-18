@@ -55,7 +55,7 @@ installerPackage: mkDistClone distCloneBuildAndMinify
 pluginPackages: mkDistClone distCloneBuildPluginPackages
 distCloneBuildPluginPackages:
 	[ ! -e "$(DIST_TARGET)/plugins/" ] || for plugin in $(DIST_TARGET)/plugins/*; do cd "$$plugin"; perl ../../tools/lixuzctl plugin build || exit 1;done
-	[ ! -e "$(DIST_TARGET)/plugins/" ] || mv "$(DIST_TARGET)/plugins/"*/*.lpp packages
+	[ ! -e "$(DIST_TARGET)/plugins/" ] || mv "$(DIST_TARGET)/plugins/"*/*.lpk packages
 
 buildCleanup:
 	rm -rf "$(DIST_TARGET)"

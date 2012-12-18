@@ -74,6 +74,6 @@ my $triggers = {
     build => sub
     {
         # Minify the CSS
-        system(qw(java -jar),$ENV{HOME}.'/.local/yuiminify/yuicompressor.jar','plugin/root/css/articleCalendarView.src.css','-o','plugin/root/css/articleCalendarView.css');
+        system(qw(java -jar),$ENV{HOME}.'/.local/yuiminify/yuicompressor.jar','content/root/css/articleCalendarView.src.css','-o','content/root/css/articleCalendarView.css');
     },
 };
