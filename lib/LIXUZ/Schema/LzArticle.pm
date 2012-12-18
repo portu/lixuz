@@ -845,7 +845,7 @@ sub getFieldRaw
 # replaced by "K".
 #
 # As a rule, the primary folder is the one used to resolve the category.
-# If the primary isn't in any folder, then it will process each secondary folder
+# If the primary isn't in any category, then it will process each secondary folder
 # until it finds one that is.
 
 # Summary: Get the name of the best category
