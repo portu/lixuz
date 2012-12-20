@@ -156,6 +156,13 @@ sub renderImg
     # Find the tag that we will insert our image into
     my $placeholder = $template->find('.lzImagePlaceholder')->first;
 
+    # If there's no placeholder, assume that it was done on purpose and
+    # return an empty string.
+    if (!defined $placeholder)
+    {
+        return '';
+    }
+
     $attrs       = merge($placeholder->attrs, $attrs);
     # Set src to the generated url, instead of the one that's already there
     $attrs->{src} = $src;
@@ -210,9 +217,9 @@ sub templateString
     my $float;
 
     my $templateFile;
-    if ($self->template)
+    if ($self->_template)
     {
-        $templateFile = $self->template->file;
+        $templateFile = $self->_template->file;
     }
     else
     {
@@ -338,6 +345,23 @@ sub _detectTemplate
 
     my $template = $self->c->model('LIXUZDB::LzTemplate')->search({ type => 'media' });
     return $template->first;
+}
+
+sub _template
+{
+    my $self = shift;
+
+    my $ret = $self->template(@_);
+    if (!@_)
+    {
+        if(ref($ret) eq '')
+        {
+            my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ uniqueid => $ret });
+            $self->template($template);
+            $ret = $template;
+        }
+    }
+    return $ret;
 }
 
 __PACKAGE__->meta->make_immutable;
