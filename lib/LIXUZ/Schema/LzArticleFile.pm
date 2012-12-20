@@ -141,6 +141,74 @@ sub autoAssignToSpot
         return;
     }
 }
+
+# This retrieves the caption. Either from this object, or if we don't have one,
+# from the parent LzFile object
+sub get_caption
+{
+    my $self = shift;
+    if (defined $self->caption)
+    {
+        return $self->caption;
+    }
+    return $self->file->caption;
+}
+
+# These are proxies for methods on LzFile
+sub height
+{
+    my $self = shift;
+    return $self->file->height(@_);
+}
+
+sub width
+{
+    my $self = shift;
+    return $self->file->width(@_);
+}
+
+sub get_url_aspect
+{
+    my $self = shift;
+    return $self->file->get_url_aspect(@_);
+}
+
+sub get_url
+{
+    my $self = shift;
+    return $self->file->get_url(@_);
+}
+
+sub getFieldContents
+{
+    my $self = shift;
+    return $self->file->getFieldContents(@_);
+}
+
+sub is_image
+{
+    my $self = shift;
+    return $self->file->is_image(@_);
+}
+
+sub is_flash
+{
+    my $self = shift;
+    return $self->file->is_flash(@_);
+}
+
+sub is_video
+{
+    my $self = shift;
+    return $self->file->is_video(@_);
+}
+
+sub is_audio
+{
+    my $self = shift;
+    return $self->file->is_audio(@_);
+}
+
 1;
 
 
