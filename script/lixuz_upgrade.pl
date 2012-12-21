@@ -109,6 +109,9 @@ sub main
     backupOldData($dataTarget);
     installNewData($tempDir,$dataTarget);
     upgradeConfig($dataTarget);
+    print 'Running lixuzctl upgrade..';
+    lixuzctl($installTarget,'upgrade');
+    print "done\n";
     if ($packup)
     {
         print 'Re-injecting plugins...';
@@ -120,9 +123,6 @@ sub main
         {
             lixuzctl($installTarget,'reinject',glob($packup.'/*.lpk'));
         }
-        print "done\n";
-        print 'Running lixuzctl upgrade..';
-        lixuzctl($installTarget,'upgrade');
         print "done\n";
     }
     dualPrint("All is done and appears to have gone well.\n\n");
