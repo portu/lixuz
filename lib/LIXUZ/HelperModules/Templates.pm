@@ -450,6 +450,11 @@ sub get_parsed_template_info
             push(@spots,parse_squareParams($spot));
         }
     }
+    my $size = $info->{template_info}->{TEMPLATE_MEDIASETTINGS};
+    if ($size)
+    {
+        $info->{mediasettings} = parse_squareParams($size);
+    }
     $info->{spots_parsed} = \@spots;
 
     my %needinfoParsed;
