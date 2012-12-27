@@ -156,6 +156,30 @@ are using an old api version. It accepts a single integer and is required.
 This option determines which type of template it is, and thus also what Lixuz
 will use it for. For media templates it should be set to "media".
 
+=item B<TEMPLATE_MEDIASETTINGS>
+
+This option lets you change some parameters of how Lixuz will treat the images
+that will be used. It takes a set of parameters surrounded by square-brackets
+([ ]).
+
+The settings it permits you to set are (all optional):
+
+=over
+
+=item maxWidth, maxHeight
+
+These specify the maximum height and width of an image that will be rendered
+with this template. You will never get an image that has dimensions that are
+larger than this. This is equivalent to the parameters that can be supplied to
+the LIXUZ::HelperModules::HTMLRenderer object within Lixuz.
+
+=item noFloat
+
+This can be set to true to force Lixuz not to honor or add float styles to
+images.
+
+=back
+
 =back
 
 =head1 EXAMPLES
@@ -173,6 +197,7 @@ The simplest template possible could be written like this:
     # TEMPLATE_APIVERSION=1
     # TEMPLATE_TYPE=media
     # TEMPLATE_UNIQUEID=org.example.media
+    # TEMPLATE_MEDIASETTINGS=maxWidth=400,maxHeight=400,noFloat=true
     # END LIXUZ_INFOBLOCK
     </%once>
 

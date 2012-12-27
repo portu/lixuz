@@ -83,25 +83,25 @@ sub main
     {
         dualPrint("Upgrading $installTarget from Lixuz version $oldVer to $newVer\n");
     }
-    my $packup = getTempDir(undef,'Plugin packup directory');
+    my $packup = getTempDir(undef,'Package packup directory');
     if (-x $installTarget.'/tools/lixuzctl')
     {
-        print 'Packing up plugins...';
+        print 'Repackaging installed packages...';
         if(lixuzctl($installTarget,'packup',$packup) == 0)
         {
             print "done\n";
-            logAction('Packed up plugins');
+            logAction('Repackaged packages');
         }
         else
         {
-            print "no plugins found\n";
-            logAction('Installation has no plugins');
+            print "no packages found\n";
+            logAction('Installation has no packages');
             $packup = undef;
         }
     }
     else
     {
-        dualPrint('(upgrading from pluginless Lixuz, skipping plugin tasks)'."\n");
+        dualPrint('(upgrading from packageless Lixuz, skipping package tasks)'."\n");
         $packup = undef;
     }
     createMergeDirectory($dataLocation,$tempDir);
@@ -109,9 +109,12 @@ sub main
     backupOldData($dataTarget);
     installNewData($tempDir,$dataTarget);
     upgradeConfig($dataTarget);
+    print 'Running lixuzctl upgrade..';
+    lixuzctl($installTarget,'upgrade');
+    print "done\n";
     if ($packup)
     {
-        print 'Re-injecting plugins...';
+        print 'Re-injecting packages...';
         if(glob($packup.'/*.lpp'))
         {
             lixuzctl($installTarget,'reinject',glob($packup.'/*.lpp'));
@@ -120,9 +123,6 @@ sub main
         {
             lixuzctl($installTarget,'reinject',glob($packup.'/*.lpk'));
         }
-        print "done\n";
-        print 'Running lixuzctl upgrade..';
-        lixuzctl($installTarget,'upgrade');
         print "done\n";
     }
     dualPrint("All is done and appears to have gone well.\n\n");

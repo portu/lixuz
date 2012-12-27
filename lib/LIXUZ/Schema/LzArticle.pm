@@ -541,7 +541,8 @@ sub renderBody
         processString => $self->body,
         c => $c,
         article_id => $self->article_id,
-        article_rev => $self->revision
+        article_rev => $self->revision,
+        template => $options->{template},
     );
     my $rendered = $HTMLR->render;
 

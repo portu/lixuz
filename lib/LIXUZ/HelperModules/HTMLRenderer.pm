@@ -57,17 +57,26 @@ has 'article_rev' => (
     isa => 'Int',
 );
 
-has 'maxHeight' => (
-    is => 'ro',
+has 'noFloat' => (
+    is => 'rw',
     required => 0,
-    isa => 'Int'
+    isa => 'Int',
+    writer => '_noFloat',
+);
+
+has 'maxHeight' => (
+    is => 'rw',
+    required => 0,
+    isa => 'Int',
+    writer => '_maxHeight',
 );
 
 has 'maxWidth' => (
-    is => 'ro',
+    is => 'rw',
     required => 0,
     isa => 'Int',
     default => 450,
+    writer => '_maxWidth',
 );
 
 # Loop through all images in the DOM and render each of them to our
@@ -156,6 +165,13 @@ sub renderImg
     # Find the tag that we will insert our image into
     my $placeholder = $template->find('.lzImagePlaceholder')->first;
 
+    # If there's no placeholder, assume that it was done on purpose and
+    # return an empty string.
+    if (!defined $placeholder)
+    {
+        return '';
+    }
+
     $attrs       = merge($placeholder->attrs, $attrs);
     # Set src to the generated url, instead of the one that's already there
     $attrs->{src} = $src;
@@ -169,6 +185,10 @@ sub renderImg
     # Set the generated width/height
     $style->{width} = $width.'px';
     $style->{height} = $height.'px';
+    if ($style->{float} && $self->noFloat)
+    {
+        delete($style->{float});
+    }
     # Prepare the style in attrs for insertion of new rules
     if ($attrs->{style})
     {
@@ -210,9 +230,9 @@ sub templateString
     my $float;
 
     my $templateFile;
-    if ($self->template)
+    if ($self->_template)
     {
-        $templateFile = $self->template->file;
+        $templateFile = $self->_template->file;
     }
     else
     {
@@ -235,6 +255,10 @@ sub templateString
             $float = $style->{float};
         }
         $float //= $attrs->{align};
+    }
+    if ($self->noFloat)
+    {
+        $float = '';
     }
 
     my $content = $self->c->view('Mason')->render($self->c, $templateFile, {
@@ -338,6 +362,36 @@ sub _detectTemplate
 
     my $template = $self->c->model('LIXUZDB::LzTemplate')->search({ type => 'media' });
     return $template->first;
+}
+
+sub _template
+{
+    my $self = shift;
+
+    my $ret = $self->template(@_);
+    if (!@_)
+    {
+        if(ref($ret) eq '')
+        {
+            my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ uniqueid => $ret });
+            $self->template($template);
+            $ret = $template;
+        }
+    }
+    if ($ret)
+    {
+        my $info = $ret->get_info($self->c);
+        if ($info->{mediasettings})
+        {
+            $self->_maxHeight($info->{mediasettings}->{maxHeight});
+            $self->_maxWidth($info->{mediasettings}->{maxWidth});
+            if ($info->{mediasettings}->{noFloat})
+            {
+                $self->_noFloat(1);
+            }
+        }
+    }
+    return $ret;
 }
 
 __PACKAGE__->meta->make_immutable;
