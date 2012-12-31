@@ -883,6 +883,40 @@ sub buildPackage
         printStatus('done'."\n");
     }
 
+    # Ensure that we don't have multiple templates with the same unique id
+    if (-d 'liveTemplates')
+    {
+        printStatus('Validating template payload...');
+        my @errors;
+        if(glob('liveTemplates/*'))
+        {
+            my %idMap;
+            loadLixuzModules();
+            my $fakeC = fakeC();
+            printnd('.');
+
+            foreach my $file (glob('liveTemplates/*'))
+            {
+                my $info = parse_templatefile($fakeC,$file);
+                if ( my $existing = $idMap{ $info->{'TEMPLATE_UNIQUEID'} } )
+                {
+                    push(@errors,'Multiple templates are using the unique id "'.$info->{'TEMPLATE_UNIQUEID'}.'": '.basename($file).' '.basename($existing)."\n");
+                }
+                $idMap{ $info->{'TEMPLATE_UNIQUEID'} } = $file;
+            }
+        }
+        if (@errors)
+        {
+            printStatus('failed'."\n\n");
+            foreach my $error (@errors)
+            {
+                warn($error);
+            }
+            exit(1);
+        }
+        printStatus('done'."\n");
+    }
+
     printStatus('Constructing package...');
     my $fname = $packageName.'-'.$meta->{version}.'.lpk';
     $fname =~ s/\s+/-/g;
