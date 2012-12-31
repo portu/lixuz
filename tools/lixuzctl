@@ -897,6 +897,9 @@ sub buildPackage
 
             foreach my $file (glob('liveTemplates/*'))
             {
+                # Ignore temporary files
+                next if $file =~ /(\.swp|~)$/;
+
                 my $info = parse_templatefile($fakeC,$file);
                 if ( my $existing = $idMap{ $info->{'TEMPLATE_UNIQUEID'} } )
                 {
@@ -948,6 +951,7 @@ sub buildPackage
                     wanted => sub
                     {
                         my $path = substr($_,length($srcdir));
+                        # Ignore temporary files
                         return if /(\.swp|~)$/;
                         if (-d $_)
                         {
