@@ -266,6 +266,25 @@ sub secondary_folders
     return $self->{lz_secondary_folders};
 }
 
+# Summary: Check if this article is in the folder supplied
+# Usage: bool = article->in_folder($folder_id);
+# NOTE: This will NOT check if it is in a subfolder of $folder_id. This
+# behaviour is subject to change, however. So if you don't want that then
+# you must do the checks yourself.
+sub in_folder
+{
+    my($self,$folder_id) = @_;
+    my $folders = $self->folders;
+    while(my $folder = $folders->next)
+    {
+        if ($folder->folder_id == $folder_id)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 # Summary: Get all fields from this user in a hash
 # Usage: object->get_everything();
 # Returns: Hash with field => value pairs.
