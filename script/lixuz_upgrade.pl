@@ -115,15 +115,20 @@ sub main
     if ($packup)
     {
         print 'Re-injecting packages...';
-        if(glob($packup.'/*.lpp'))
+        my @packages = ( glob($packup.'/*.lpp'), glob($packup.'/*.lpk') );
+        if(lixuzctl($installTarget,'reinject',@packages) == 0)
         {
-            lixuzctl($installTarget,'reinject',glob($packup.'/*.lpp'));
+            print "done\n";
         }
         else
         {
-            lixuzctl($installTarget,'reinject',glob($packup.'/*.lpk'));
+            print "error\n";
+            move(@packages,$installTarget);
+            dualPrint("Something went wrong during re-injection of packages\n");
+            dualPrint("You may wish to check the logfile for errors.\n");
+            dualPrint("The packages have all been moved to $installTarget\n");
+            dualPrint("for manual processing\n\n");
         }
-        print "done\n";
     }
     dualPrint("All is done and appears to have gone well.\n\n");
     dualPrint("Note that you may need to upgrade the database. The recommended way to do this\n");
