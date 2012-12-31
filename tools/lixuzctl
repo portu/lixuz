@@ -596,6 +596,9 @@ sub usagePackages
     printHelp('','  --beep','Emit a beep (terminal bell) whenever buildinstall gets run by "watch"');
     printHelp('','reconstruct X Y','Reconstruct a package (X) from its installed data, saving the package to Y');
     printHelp('','create X','Create a new package named "X" in ./X');
+    print "\n";
+    print "Parameters for install and upgrade:\n";
+    printHelp('','--force','Force an installation, even if there are conflicts. This parameter is UNSAFE and could break Lixuz, use only if you know what you\'re doing');
     exit(shift);
 }
 
