@@ -46,6 +46,7 @@ my $force = false;
 my $logOut;
 my $logfile;
 my $lixuzDir;
+my $forceRefresh;
 my @packageMetaFiles = qw(package.yml triggers.pl COPYING README);
 # Boolean flag, set to true once LIXUZ:: modules have been loaded
 # to avoid loading them multiple times.
@@ -79,6 +80,7 @@ sub main
             $lixuzDir = shift;
         },
         'force' => \$force,
+        'force-refresh' => \$forceRefresh,
         # This is not used anywhere yet, but it is supported for use later
         # (and already supplied by the upgrade script)
         'lixuz-upgrade' => sub {},
@@ -403,6 +405,11 @@ sub performVersionUpgrade
 # Purpose: Check if two files differ
 sub filesDiffer
 {
+    if ($forceRefresh)
+    {
+        return 1;
+    }
+
     my $file1 = shift;
     my $file2 = shift;
     # If one of the files doesn't exist then of course they differ
@@ -599,6 +606,8 @@ sub usagePackages
     print "\n";
     print "Parameters for install and upgrade:\n";
     printHelp('','--force','Force an installation, even if there are conflicts. This parameter is UNSAFE and could break Lixuz, use only if you know what you\'re doing');
+    print "Parameters for upgrade:\n";
+    printHelp('','--force-refresh','Update all files in the tree when upgrading, even if the files in question are identical to those already installed');
     exit(shift);
 }
 
