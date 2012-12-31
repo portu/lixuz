@@ -715,29 +715,40 @@ sub get_format
 # Usage: mimetype = file->get_mimetype($c);
 sub get_mimetype
 {
-    my($self,$c) = @_;
-    my $ckey = get_ckey('file','mimetype',$self->file_id);
+    my($self,$c,$viewable) = @_;
+    $viewable //= 0;
+
+    my $ckey = get_ckey('file','mimetype',$self->file_id.'-'.$viewable);
     my $type;
     if ($type = $c->cache->get($ckey))
     {
         return $type;
     }
-    eval
+
+    if ($viewable && $self->get_format =~ /tiff?/)
     {
-        my $magic = File::MMagic::XS->new;
-        #my $magic = File::MMagic->new;
-        $type = $magic ->checktype_filename($self->get_path($c));
+        $type = 'image/png; charset=binary';
         $c->cache->set($ckey,$type,CT_24H);
-        1;
     }
-        or do
+    else
     {
-        my $err = $@;
-        $type = 'application/octet-stream';
-        $ckey = undef;
-        $c->log->error('File::MMagic crashed, defaulting to application/octet-stream and refusing to cache info');
-        $c->log->debug('Error from perl: '.$err);
-    };
+        eval
+        {
+            my $magic = File::MMagic::XS->new;
+            #my $magic = File::MMagic->new;
+            $type = $magic ->checktype_filename($self->get_path($c));
+            $c->cache->set($ckey,$type,CT_24H);
+            1;
+        }
+            or do
+        {
+            my $err = $@;
+            $type = 'application/octet-stream';
+            $ckey = undef;
+            $c->log->error('File::MMagic crashed, defaulting to application/octet-stream and refusing to cache info');
+            $c->log->debug('Error from perl: '.$err);
+        };
+    }
     return $type;
 }
 
@@ -998,6 +1009,10 @@ sub get_url
         {
             $params->{width} = $width;
         }
+        if ($self->get_format =~ /tiff?$/)
+        {
+            $params->{viewable} = 1;
+        }
     }
     else
     {
@@ -1124,12 +1139,16 @@ sub get_url_aspect
 }
 
 # Summary: Get a resized version of this file
-# Usage: path = object->get_resized($c,height,width);
-# Both height and width are optional
+# Usage: path = object->get_resized($c,height,width,forceViewable);
+# height, width and forceViewable are optional
 # Returns: String, path to resized file
+#
+# If forceViewable are supplied and the file is a tiff-file then
+# a png will be returned
 sub get_resized
 {
-    my($self, $c, $height, $width) = @_;
+    my($self, $c, $height, $width, $forceViewable) = @_;
+    $forceViewable = $forceViewable ? ($self->get_format =~ /tiff?$/) : 0;
 
     ($height,$width) = $self->_fullSizeSanitize($c,$height,$width);
     # Keep track of if we were supplied both or not
@@ -1144,7 +1163,15 @@ sub get_resized
     }
     elsif(not defined $height and not defined $width)
     {
-        return $self->_path_or_undef($c,$self->get_path($c));
+        if ($forceViewable)
+        {
+            $height = $self->height;
+            $width = $self->width;
+        }
+        else
+        {
+            return $self->_path_or_undef($c,$self->get_path($c));
+        }
     }
 
     if ($had_height and $height =~ /\D/)
@@ -1250,7 +1277,7 @@ sub get_resized
     my $format = $self->get_format;
     # If it's a tiff-file, write a png file, if we don't then browsers
     # can't read it
-    if ($format && $format =~ /tiff?$/)
+    if ($forceViewable || ($format && $format =~ /tiff?$/))
     {
         $gm->Write('png:'.$fname);
     }

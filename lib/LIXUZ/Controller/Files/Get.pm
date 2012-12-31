@@ -93,7 +93,7 @@ sub default : Path(/files/get)
             $self->error($c);
         }
     }
-    if ($c->req->param('width') or $c->req->param('height'))
+    if ($c->req->param('width') || $c->req->param('height') || $c->req->param('viewable'))
     {
         $filePath = $self->get_image($c,$file);
     }
@@ -110,7 +110,7 @@ sub default : Path(/files/get)
         $c->log->error('Requested file with UID '.$uid.': Object existed and was active in the database but on-disk file was not found!');
         $self->error($c);
     }
-    lixuz_serve_static_file($c,$filePath, $file->get_mimetype($c));
+    lixuz_serve_static_file($c,$filePath, $file->get_mimetype($c,$c->req->param('viewable')));
 }
 
 # Summary: Handle the different requests for videos (flv, preview, ..)
@@ -142,9 +142,10 @@ sub get_image: Private
     my ( $self, $c, $file) = @_;
     my $width = $c->req->param('width');
     my $height = $c->req->param('height');
+    my $forceViewable = $c->req->param('viewable');
     if ($file->is_image)
     {
-        return $file->get_resized($c, $height, $width);
+        return $file->get_resized($c, $height, $width,$forceViewable);
     }
     else
     {
