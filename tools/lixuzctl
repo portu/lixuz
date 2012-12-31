@@ -704,6 +704,10 @@ sub checkPackageOwners
                 exit(1);
             }
         }
+        elsif($mode eq 'return')
+        {
+            return $owner;
+        }
     }
 }
 
@@ -1123,7 +1127,14 @@ sub installPackage
                             }
                             elsif ($mode eq 'upgrade')
                             {
-                                die("failed\n".$path.': already exists in Lixuz tree and does not belong to this package.'."\n".'Refusing to overwrite.'."\n");
+                                if (my $owner = checkPackageOwners('return',$lixuzDir.'/'.$path))
+                                {
+                                    die("failed\n".$path.': already exists in Lixuz tree and belongs to another package ('.$owner.') .'."\n".'Refusing to overwrite.'."\n");
+                                }
+                                else
+                                {
+                                    die("failed\n".$path.': already exists in Lixuz tree and does not belong to this (or any other) package.'."\n".'Refusing to overwrite.'."\n");
+                                }
                             }
                             elsif($mode ne 'reinject')
                             {
