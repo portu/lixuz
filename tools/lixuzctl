@@ -42,10 +42,14 @@ my $dataFormatRevision       = 2;
 my $minSupportedApiLevel     = 2;
 # The real (latest) supported api level of plumbing commands
 my $currentSupportedApiLevel = 4;
+# Force an action to complete
 my $force = false;
+# Don't check deps during install
+my $lazyInstall = false;
 my $logOut;
 my $logfile;
 my $lixuzDir;
+my $forceRefresh;
 my @packageMetaFiles = qw(package.yml triggers.pl COPYING README);
 # Boolean flag, set to true once LIXUZ:: modules have been loaded
 # to avoid loading them multiple times.
@@ -79,6 +83,7 @@ sub main
             $lixuzDir = shift;
         },
         'force' => \$force,
+        'force-refresh' => \$forceRefresh,
         # This is not used anywhere yet, but it is supported for use later
         # (and already supplied by the upgrade script)
         'lixuz-upgrade' => sub {},
@@ -403,6 +408,11 @@ sub performVersionUpgrade
 # Purpose: Check if two files differ
 sub filesDiffer
 {
+    if ($forceRefresh)
+    {
+        return 1;
+    }
+
     my $file1 = shift;
     my $file2 = shift;
     # If one of the files doesn't exist then of course they differ
@@ -471,6 +481,11 @@ sub packages
 {
     $| = 1;
     checkForHelpParam(sub { usagePackages(0) });
+    my $beep = 0;
+    GetOptions(
+        'beep' => \$beep,
+        'lazy' => \$lazyInstall,
+    );
 
     my $subcommand = shift(@ARGV);
 
@@ -480,6 +495,7 @@ sub packages
     {
         when('watch')
         {
+            $lazyInstall = 1;
             my $dir = shift // '.';
             printv('Watching '.$dir.' for changes'."\n");
             my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp)$ --excludei .*~$};
@@ -496,6 +512,10 @@ sub packages
                 printv('['.strftime('%H:%M:%S',localtime).'] Change detected, running buildinstall'."\n");
                 selfRun('packages','buildinstall');
                 printv('['.strftime('%H:%M:%S',localtime).'] buildinstall complete'."\n");
+                if ($beep)
+                {
+                    print "\a";
+                }
             }
         }
 
@@ -585,8 +605,15 @@ sub usagePackages
     printHelp('','owner X Y ..','Output which package (if any) owns the files specified');
     printHelp('','listfiles','List all files installed by packages, along with which package installed the file');
     printHelp('','watch X','Runs buildinstall X whenever a file in the supplied directory changes');
+    printHelp('','  --beep','Emit a beep (terminal bell) whenever buildinstall gets run by "watch"');
     printHelp('','reconstruct X Y','Reconstruct a package (X) from its installed data, saving the package to Y');
     printHelp('','create X','Create a new package named "X" in ./X');
+    print "\n";
+    print "Parameters for install and upgrade:\n";
+    printHelp('','--force','Force an installation, even if there are conflicts, unsatisfied dependencies etc. This parameter is UNSAFE and could break Lixuz, use only if you know what you\'re doing');
+    printHelp('','--lazy','Skip dependency checks');
+    print "Parameters for upgrade:\n";
+    printHelp('','--force-refresh','Update all files in the tree when upgrading, even if the files in question are identical to those already installed');
     exit(shift);
 }
 
@@ -683,6 +710,10 @@ sub checkPackageOwners
                 exit(1);
             }
         }
+        elsif($mode eq 'return')
+        {
+            return $owner;
+        }
     }
 }
 
@@ -733,11 +764,13 @@ sub createPackageTree
     print {$yml} 'version: 0.1'."\n";
     print {$yml} '# The lowest Lixuz core API version supported'."\n";
     print {$yml} '# (note: core API version is distinct from template API version)'."\n";
-    print {$yml} 'apiversion: 1'."\n";
+    print {$yml} 'apiversion: 2'."\n";
     print {$yml} '# A short description of the package'."\n";
     print {$yml} 'description: I did not edit package.yml'."\n";
     print {$yml} '# The license of the package'."\n";
     print {$yml} 'license: GPLv3'."\n";
+    print {$yml} '# A YAML-list of required perl modules'."\n";
+    print {$yml} 'perlDependencies:'."\n";
     close($yml);
     print 'Create: '.$path.'/package.yml'."\n";
 
@@ -862,6 +895,43 @@ sub buildPackage
         printStatus('done'."\n");
     }
 
+    # Ensure that we don't have multiple templates with the same unique id
+    if (-d 'liveTemplates')
+    {
+        printStatus('Validating template payload...');
+        my @errors;
+        if(glob('liveTemplates/*'))
+        {
+            my %idMap;
+            loadLixuzModules();
+            my $fakeC = fakeC();
+            printnd('.');
+
+            foreach my $file (glob('liveTemplates/*'))
+            {
+                # Ignore temporary files
+                next if $file =~ /(\.swp|~)$/;
+
+                my $info = parse_templatefile($fakeC,$file);
+                if ( my $existing = $idMap{ $info->{'TEMPLATE_UNIQUEID'} } )
+                {
+                    push(@errors,'Multiple templates are using the unique id "'.$info->{'TEMPLATE_UNIQUEID'}.'": '.basename($file).' '.basename($existing)."\n");
+                }
+                $idMap{ $info->{'TEMPLATE_UNIQUEID'} } = $file;
+            }
+        }
+        if (@errors)
+        {
+            printStatus('failed'."\n\n");
+            foreach my $error (@errors)
+            {
+                warn($error);
+            }
+            exit(1);
+        }
+        printStatus('done'."\n");
+    }
+
     printStatus('Constructing package...');
     my $fname = $packageName.'-'.$meta->{version}.'.lpk';
     $fname =~ s/\s+/-/g;
@@ -893,6 +963,7 @@ sub buildPackage
                     wanted => sub
                     {
                         my $path = substr($_,length($srcdir));
+                        # Ignore temporary files
                         return if /(\.swp|~)$/;
                         if (-d $_)
                         {
@@ -1034,6 +1105,51 @@ sub installPackage
         $action = 'Re-injecting';
     }
     printStatus($action.' '.$packageMeta->{name}.' '.$packageMeta->{version}.' ['.basename($package).']...');
+
+    # Verify apirevision (except for during re-injections)
+    if ($mode ne 'reinject' && ($packageMeta->{apiversion} > 2 || $packageMeta->{apiversion} < 1))
+    {
+        if ($force)
+        {
+            warn('WARNING: Unsupported apiversion: '.$packageMeta->{apiversion}.'. Continuing anyway due to --force'."\n");
+        }
+        else
+        {
+            printStatus("error\n");
+            die('Unsupported apiversion: '.$packageMeta->{apiversion}."\n");
+        }
+    }
+
+    # Check deps
+    if (!$lazyInstall && $packageMeta->{perlDependencies} && ref($packageMeta->{perlDependencies}) eq 'ARRAY')
+    {
+        foreach my $dep (@{ $packageMeta->{perlDependencies} })
+        {
+            try
+            {
+                $dep =~ s/\s+//;
+                $dep =~ s/[^\w:]//g;
+                printd('Checking dependency: '.$dep);
+                eval('package '.$dep.'::lixuzctl::depsresolve; use '.$dep.';1') or die;
+            }
+            catch
+            {
+                if($force)
+                {
+                    warn('WARNING: Unsatisfied dependency: "'.$dep.'". Continuing anyway due to --force'."\n");
+                }
+                else
+                {
+                    printStatus("error\n");
+                    die('Unsatisfied dependency: '.$dep.'. Installation aborted.'."\n");
+                }
+            };
+        }
+    }
+
+    printnd('.');
+
+    # Perform action
     my @copy;
     my %upgradeMap;
     if ($mode eq 'upgrade' || $mode eq 'reinject')
@@ -1054,6 +1170,7 @@ sub installPackage
                     my $path = substr($_,length($dir.'/content'));
                     if (!-d $_ && !/~$/ && !/\.swp$/)
                     {
+                        # TODO: Save existing files to a .conflictbak.$$.time() when conflicts are --force ignored
                         if (-e $lixuzDir.'/'.$path && !$upgradeMap{$path})
                         {
                             $path =~ s{^/}{};
@@ -1064,7 +1181,14 @@ sub installPackage
                             }
                             elsif ($mode eq 'upgrade')
                             {
-                                die("failed\n".$path.': already exists in Lixuz tree and does not belong to this package.'."\n".'Refusing to overwrite.'."\n");
+                                if (my $owner = checkPackageOwners('return',$lixuzDir.'/'.$path))
+                                {
+                                    die("failed\n".$path.': already exists in Lixuz tree and belongs to another package ('.$owner.') .'."\n".'Refusing to overwrite.'."\n");
+                                }
+                                else
+                                {
+                                    die("failed\n".$path.': already exists in Lixuz tree and does not belong to this (or any other) package.'."\n".'Refusing to overwrite.'."\n");
+                                }
                             }
                             elsif($mode ne 'reinject')
                             {
@@ -1490,6 +1614,9 @@ sub plumbing
         }
         when('reinject')
         {
+            # reinject implies --lazy and --force
+            $lazyInstall = 1;
+            $force       = 1;
             foreach my $pkg (@ARGV)
             {
                 if (-e $pkg)
@@ -1548,7 +1675,7 @@ sub usagePlumbing
     print "\n";
     print "Available subcommands:\n";
     printHelp('','packup X','Reconstruct a dump of all packages into X');
-    printHelp('','reinject X Y ..','Re-inject the packages specified into the Lixuz tree (similar to an upgrade, but runs lixuzUpgrade instead of upgrade triggers, and ignores all conflicts)');
+    printHelp('','reinject X Y ..','Re-inject the packages specified into the Lixuz tree (similar to an upgrade, but runs lixuzUpgrade instead of upgrade triggers, and ignores all conflicts/dependencies)');
     printHelp('','checkowner X Y ..','Check if files X, Y, .. are owned by a package. Exits with exit status 0 if all the files are owned by packages, 1 if not');
     printHelp('','getlevel','Output the plumbing API level supported by this version of lixuzctl');
     printHelp('','templateinject X','Install or upgrade the supplied live template file');
@@ -1581,6 +1708,10 @@ sub selfRun
     if ($logfile)
     {
         push(@command,'--logfile',$logfile);
+    }
+    if ($lazyInstall)
+    {
+        push(@command,'--lazy');
     }
     printd('Running self: '.join(' ',@command,@_));
     return system(@command,@_);

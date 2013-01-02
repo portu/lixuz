@@ -231,10 +231,10 @@ sub has_statevar
 sub error
 {
     my $self = shift;
-    my($httpVal,$error,$techReason) = @_;
+    my($httpVal,$error,$techReason,$debugReason) = @_;
     try
     {
-        $self->_error($httpVal,$error,$techReason);
+        $self->_error($httpVal,$error,$techReason,$debugReason);
     }
     catch
     {
@@ -327,7 +327,7 @@ sub refreshTemplate
 sub _error
 {
     my $self = shift;
-    my($httpVal,$error,$techReason) = @_;
+    my($httpVal,$error,$techReason,$debugReason) = @_;
     $self->clearstate();
 
     if (not defined $httpVal or $httpVal =~ /\D/)
@@ -350,6 +350,11 @@ sub _error
             $error = 'Unknown error';
         }
     }
+    if ($self->c->debug)
+    {
+        $techReason .= "\n".$debugReason;
+    }
+
     $self->c->res->status($httpVal);
     $self->message($error, $httpVal,$techReason);
 }
