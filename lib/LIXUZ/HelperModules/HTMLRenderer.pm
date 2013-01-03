@@ -79,6 +79,10 @@ has 'maxWidth' => (
     writer => '_maxWidth',
 );
 
+has '_initialized' => (
+    is => 'rw',
+);
+
 # Loop through all images in the DOM and render each of them to our
 # media template
 sub render
@@ -148,11 +152,8 @@ sub renderImg
     {
         $size->{height} = $self->maxHeight;
     }
-    if (!$size->{height} && !$size->{width} && ( $self->maxHeight || $self->maxWidth) )
-    {
-        $size->{height} = $self->maxHeight;
-        $size->{width}  = $self->maxWidth;
-    }
+    $size->{height} ||= $self->maxHeight;
+    $size->{width}  ||= $self->maxWidth;
 
     my($src,$height,$width) = $image->get_url_aspect($self->c,$size->{height},$size->{width});
 
@@ -378,9 +379,20 @@ sub _template
             $ret = $template;
         }
     }
-    if ($ret)
+    return $ret;
+}
+
+sub _initializeMetadata
+{
+    my($self) = @_;
+    if ($self->_initialized)
     {
-        my $info = $ret->get_info($self->c);
+        return;
+    }
+    my $template = $self->_template;
+    if ($template)
+    {
+        my $info = $template->get_info($self->c);
         if ($info->{mediasettings})
         {
             $self->_maxHeight($info->{mediasettings}->{maxHeight});
@@ -391,8 +403,20 @@ sub _template
             }
         }
     }
-    return $ret;
+    $self->_initialized(1);
+    return;
 }
+
+before 'maxWidth' => sub
+{
+    my $self = shift;
+    $self->_initializeMetadata;
+};
+before 'maxHeight' => sub
+{
+    my $self = shift;
+    $self->_initializeMetadata;
+};
 
 __PACKAGE__->meta->make_immutable;
 1;

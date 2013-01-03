@@ -413,7 +413,7 @@ var articleFiles = {
                 var d = new Date();
                 var identifier = articleFiles.getIdentifierByID(fileID);
                 articleFiles.removeFromSpot(fileID);
-                var image = '<img alt="" title="" style="float:right;" src="/files/get/'+identifier+'?width=210" imgId="'+identifier+'" id="image_'+RTE+identifier+d.getTime()+'" /> ';
+                var image = '<img alt="" title="" style="float:right;" src="/files/get/'+identifier+'?width=240" imgId="'+identifier+'" id="image_'+RTE+identifier+d.getTime()+'" /> ';
                 lixuzRTE.pushContent(RTE,image);
                 articleFiles.buildFileList();
             }
