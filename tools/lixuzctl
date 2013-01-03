@@ -804,7 +804,8 @@ my $triggers; $triggers = {
         $triggers->{buildCleanup}->(@_);
     },
     # Triggered after the package has been built. You may use this to
-    # clean up after the build trigger if needed.
+    # clean up after the build trigger if needed. buildCleanup also gets
+    # triggered if the build fails for some reason.
     buildCleanup => sub
     {
     },
@@ -888,10 +889,36 @@ sub buildPackage
     my $packageName = getPackageSystemName($meta);
     printStatus('done'."\n");
 
+    my $runCleanup = sub
+    {
+        my $error = shift;
+        if (!$disableTriggers)
+        {
+            if ($error)
+            {
+                printStatus('failed - cleaning up ...');
+            }
+            else
+            {
+                printStatus('Running build cleanup triggers...');
+            }
+            runPackageTrigger($packageName,'buildCleanup',$srcdir.'/triggers.pl');
+            printStatus('done'."\n");
+        }
+    };
+
     if (!$disableTriggers)
     {
         printStatus('Running build triggers...');
-        runPackageTrigger($packageName,'build',$srcdir.'/triggers.pl');
+        try
+        {
+            runPackageTrigger($packageName,'build',$srcdir.'/triggers.pl');
+        }
+        catch
+        {
+            $runCleanup->(1);
+            die($_);
+        };
         printStatus('done'."\n");
     }
 
@@ -923,6 +950,7 @@ sub buildPackage
         if (@errors)
         {
             printStatus('failed'."\n\n");
+            $runCleanup->(1);
             foreach my $error (@errors)
             {
                 warn($error);
@@ -951,6 +979,7 @@ sub buildPackage
 
     if (! -d $srcdir.'/content' && ! -d $srcdir.'/liveTemplates')
     {
+        $runCleanup->(1);
         die('Neither of content or liveTemplates exist in '.$srcdir.'. Cowardly refusing to create empty package'."\n");
     }
 
@@ -983,12 +1012,8 @@ sub buildPackage
     system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage');
     printStatus('done'."\n");
 
-    if (!$disableTriggers)
-    {
-        printStatus('Running build cleanup triggers...');
-        runPackageTrigger($packageName,'buildCleanup',$srcdir.'/triggers.pl');
-        printStatus('done'."\n");
-    }
+    $runCleanup->();
+
     printv('Wrote package to '.realpath($targetFile)."\n");
     return realpath($targetFile);
 }
