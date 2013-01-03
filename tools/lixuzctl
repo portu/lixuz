@@ -82,6 +82,7 @@ sub main
             shift;
             $lixuzDir = shift;
         },
+        'lazy' => \$lazyInstall,
         'force' => \$force,
         'force-refresh' => \$forceRefresh,
         # This is not used anywhere yet, but it is supported for use later
@@ -484,7 +485,6 @@ sub packages
     my $beep = 0;
     GetOptions(
         'beep' => \$beep,
-        'lazy' => \$lazyInstall,
     );
 
     my $subcommand = shift(@ARGV);
