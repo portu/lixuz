@@ -764,13 +764,20 @@ sub createPackageTree
     print {$yml} 'version: 0.1'."\n";
     print {$yml} '# The lowest Lixuz core API version supported'."\n";
     print {$yml} '# (note: core API version is distinct from template API version)'."\n";
-    print {$yml} 'apiversion: 2'."\n";
+    print {$yml} 'apiversion: 3'."\n";
     print {$yml} '# A short description of the package'."\n";
     print {$yml} 'description: I did not edit package.yml'."\n";
     print {$yml} '# The license of the package'."\n";
     print {$yml} 'license: GPLv3'."\n";
     print {$yml} '# A YAML-list of required perl modules'."\n";
     print {$yml} 'perlDependencies:'."\n";
+    print {$yml} '# A YAML-list of Lixuz-packages that this package depends upon'."\n";
+    print {$yml} 'lixuzDependencies:'."\n";
+    print {$yml} '# A YAML-list of files that this package requires to be present in'."\n";
+    print {$yml} '# the Lixuz-tree. You can combine this with Lixuz-package deps to'."\n";
+    print {$yml} '# ensure that lixuzctl will complain loudly if a file this package'."\n";
+    print {$yml} '# needs gets removed from a package it depends on'."\n";
+    print {$yml} 'fileDependencies:'."\n";
     close($yml);
     print 'Create: '.$path.'/package.yml'."\n";
 
@@ -1132,7 +1139,7 @@ sub installPackage
     printStatus($action.' '.$packageMeta->{name}.' '.$packageMeta->{version}.' ['.basename($package).']...');
 
     # Verify apirevision (except for during re-injections)
-    if ($mode ne 'reinject' && ($packageMeta->{apiversion} > 2 || $packageMeta->{apiversion} < 1))
+    if ($mode ne 'reinject' && ($packageMeta->{apiversion} > 3 || $packageMeta->{apiversion} < 1))
     {
         if ($force)
         {
@@ -1154,10 +1161,29 @@ sub installPackage
             {
                 $dep =~ s/\s+//;
                 $dep =~ s/[^\w:]//g;
-                printd('Checking dependency: '.$dep);
+                printd('Checking perl dependency: '.$dep);
                 eval('package '.$dep.'::lixuzctl::depsresolve; use '.$dep.';1') or die;
             }
             catch
+            {
+                if($force)
+                {
+                    warn('WARNING: Unsatisfied perl dependency: "'.$dep.'". Continuing anyway due to --force'."\n");
+                }
+                else
+                {
+                    printStatus("error\n");
+                    die('Unsatisfied perl dependency: '.$dep.'. Installation aborted.'."\n");
+                }
+            };
+        }
+    }
+    if (!$lazyInstall && $packageMeta->{lixuzDependencies} && ref($packageMeta->{lixuzDependencies}) eq 'ARRAY')
+    {
+        foreach my $dep (@{ $packageMeta->{lixuzDependencies} })
+        {
+            printd('Checking package dependency: '.$dep);
+            if (!$meta->{packages}->{$dep})
             {
                 if($force)
                 {
@@ -1168,7 +1194,26 @@ sub installPackage
                     printStatus("error\n");
                     die('Unsatisfied dependency: '.$dep.'. Installation aborted.'."\n");
                 }
-            };
+            }
+        }
+    }
+    if (!$lazyInstall && $packageMeta->{fileDependencies} && ref($packageMeta->{fileDependencies}) eq 'ARRAY')
+    {
+        foreach my $dep (@{ $packageMeta->{fileDependencies} })
+        {
+            printd('Checking file dependency: '.$dep);
+            if (! -e $lixuzDir.'/'.$dep)
+            {
+                if($force)
+                {
+                    warn('WARNING: Unsatisfied file dependency: "'.$dep.'". Continuing anyway due to --force'."\n");
+                }
+                else
+                {
+                    printStatus("error\n");
+                    die('The file "'.$dep.'" that is required by this package is not installed. Installation aborted.'."\n");
+                }
+            }
         }
     }
 
@@ -1391,6 +1436,56 @@ sub removePackage
     if(! $meta->{packages}->{$packageName})
     {
         die($packageName.': is not installed, unable to remove package'."\n");
+    }
+
+    printStatus('Preparing to remove...');
+
+    my %files = map { $_ => 1 } @{ $meta->{packages}->{$packageName}->{files} };
+
+    # Verify that no dependencies will go unresolved by this action
+    foreach my $installedPackage (keys %{$meta->{packages}})
+    {
+        next if $installedPackage eq $packageName;
+        my $package = $meta->{packages}->{$installedPackage};
+        if ($package->{meta}->{lixuzDependencies})
+        {
+            foreach my $pkg (@{ $package->{meta}->{lixuzDependencies} })
+            {
+                if ($pkg eq $packageName)
+                {
+                    if($force)
+                    {
+                        warn('WARNING: Package is required by "'.$installedPackage.'". Continuing anyway due to --force'."\n");
+                    }
+                    else
+                    {
+                        printStatus("error\n");
+                        die($packageName.' is required by "'.$installedPackage.'", removal aborted.'."\n");
+                    }
+                }
+            }
+        }
+
+        if ($package->{meta}->{fileDependencies})
+        {
+            foreach my $file (@{ $package->{meta}->{fileDependencies} })
+            {
+                if ($files{$file})
+                {
+                    if($force)
+                    {
+                        warn('WARNING: Package provides the file '.$file.' that is required by required by "'.$installedPackage.'". Continuing anyway due to --force'."\n");
+                    }
+                    else
+                    {
+                        printStatus("error\n");
+                        die('The file "'.$file.'" that is provided by '.$packageName.' is required by "'.$installedPackage.'", removal aborted.'."\n");
+                    }
+                }
+            }
+        }
+
+        printnd('.');
     }
 
     printStatus('Removing '.$packageName.'... ');
