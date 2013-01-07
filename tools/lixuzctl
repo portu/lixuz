@@ -1015,14 +1015,14 @@ sub buildPackage
         }
     }
     my $targetFile = $target.'/'.$fname;
-    $targetFile =~ s{/+}{/}g;
+    $targetFile = realpath($targetFile);
     system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage');
     printStatus('done'."\n");
 
     $runCleanup->();
 
-    printv('Wrote package to '.realpath($targetFile)."\n");
-    return realpath($targetFile);
+    printv('Wrote package to '.$targetFile."\n");
+    return $targetFile;
 }
 
 # Purpose: Reconstructs an installed Lixuz package
