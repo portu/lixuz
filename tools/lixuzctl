@@ -761,6 +761,9 @@ sub createPackageTree
     print {$yml} '# Package name'."\n";
     print {$yml} 'name: '.$path."\n";
     print {$yml} '# Package version number'."\n";
+    print {$yml} '# You may use the {DATE} placeholder in this string to autogenerate'."\n";
+    print {$yml} '# a version number with the build date. Ie. 0.1.{DATE} could become'."\n";
+    print {$yml} '# 0.1.20130101'."\n";
     print {$yml} 'version: 0.1'."\n";
     print {$yml} '# The lowest Lixuz core API version supported'."\n";
     print {$yml} '# (note: core API version is distinct from template API version)'."\n";
@@ -968,6 +971,8 @@ sub buildPackage
     }
 
     printStatus('Constructing package...');
+    my $date = strftime('%Y%m%d',localtime);
+    $meta->{version} =~ s/{DATE}/$date/g;
     my $fname = $packageName.'-'.$meta->{version}.'.lpk';
     $fname =~ s/\s+/-/g;
 
@@ -1014,6 +1019,13 @@ sub buildPackage
                 }, $srcdir.'/'.$tree);
         }
     }
+    # Replace placeholders in package.yml
+    my $packageYML = slurp($dir.'/package.yml');
+    $packageYML =~ s/(version:.+)\{DATE\}/$1$date/g;
+    open(my $yml,'>',$dir.'/package.yml');
+    print {$yml} $packageYML;
+    close($yml);
+
     my $targetFile = $target.'/'.$fname;
     $targetFile = realpath($targetFile);
     system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage');
@@ -1128,15 +1140,26 @@ sub installPackage
         $mode = 'install';
     }
     my $action = 'Installing';
-    if ($mode eq 'upgrade')
-    {
-        $action = 'Upgrading';
-    }
-    elsif($mode eq 'reinject')
+    if($mode eq 'reinject')
     {
         $action = 'Re-injecting';
     }
-    printStatus($action.' '.$packageMeta->{name}.' '.$packageMeta->{version}.' ['.basename($package).']...');
+    if ($mode eq 'upgrade')
+    {
+        if ($meta->{packages}->{$packageName}->{meta}->{version} eq $packageMeta->{version})
+        {
+            printStatus('Upgrading '.$packageMeta->{name}.' to '.$packageMeta->{version}.' ['.basename($package).']...');
+        }
+
+        else
+        {
+            printStatus('Upgrading '.$packageMeta->{name}.' from '.$meta->{packages}->{$packageName}->{meta}->{version}.' to '.$packageMeta->{version}.' ['.basename($package).']...');
+        }
+    }
+    else
+    {
+        printStatus($action.' '.$packageMeta->{name}.' '.$packageMeta->{version}.' ['.basename($package).']...');
+    }
 
     # Verify apirevision (except for during re-injections)
     if ($mode ne 'reinject' && ($packageMeta->{apiversion} > 3 || $packageMeta->{apiversion} < 1))
