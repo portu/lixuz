@@ -19,6 +19,7 @@
 # You will have to supply a template, if not it won't be able to do anything
 # (except use ->message()).
 package LIXUZ::HelperModules::TemplateRenderer;
+use Carp;
 use Moose;
 use LIXUZ::HelperModules::TemplateRenderer::Resolver::Articles;
 use LIXUZ::HelperModules::TemplateRenderer::Resolver::Files;
@@ -362,7 +363,7 @@ sub _error
 sub _getTemplate
 {
     # TODO: Implement
-    die('STUB');
+    confess('_getTemplate: STUB');
 }
 
 sub _getTemplateInfo
