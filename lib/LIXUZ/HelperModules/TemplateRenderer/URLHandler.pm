@@ -19,6 +19,13 @@ use Moose;
 use Try::Tiny;
 extends 'LIXUZ::HelperModules::TemplateRenderer';
 
+has 'forceOverrideTemplate' => (
+    isa => 'Bool',
+    default => 0,
+    is => 'rw',
+    required => 0
+    );
+
 sub handleRequest
 {
     my($self) = @_;
@@ -75,7 +82,10 @@ sub _iHandleRequest
         {
             $template = $self->c->model('LIXUZDB::LzTemplate')->find({ is_default => 1, type => 'article'});
         }
-        $self->template($template);
+        if (! $self->forceOverrideTemplate || ! $self->template)
+        {
+            $self->template($template);
+        }
         $self->set_statevar('primaryArticle',$article);
     }
     elsif ($path[-1] eq '/' || $path[-1] =~ /\D/)
