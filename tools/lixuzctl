@@ -518,7 +518,7 @@ sub packages
             $lazyInstall = 1;
             my $dir = shift // '.';
             printv('Watching '.$dir.' for changes'."\n");
-            my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp)$ --excludei .*~$};
+            my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp)$ --excludei .*~$ --excludei ./.lixuzctl.buildlock};
             if ($verbosity < 99)
             {
                 push(@inotifyCommand,qw(-q -q));
@@ -528,6 +528,12 @@ sub packages
                 if(system(@inotifyCommand,$dir.'/') != 0)
                 {
                     return;
+                }
+                if(lockfile('check'))
+                {
+                    printv('Change detected, but build directory locked. Sleeping for two seconds.'."\n");
+                    sleep(2);
+                    next;
                 }
                 printv('['.strftime('%H:%M:%S',localtime).'] Change detected, running buildinstall'."\n");
                 selfRun('packages','buildinstall');
@@ -917,6 +923,7 @@ sub buildPackage
     }
 
     my $packageName = getPackageSystemName($meta);
+    lockfile('create');
     printStatus('done'."\n");
 
     my $runCleanup = sub
@@ -935,6 +942,7 @@ sub buildPackage
             runPackageTrigger($packageName,'buildCleanup',$srcdir.'/triggers.pl');
             printStatus('done'."\n");
         }
+        lockfile('remove');
     };
 
     if (!$disableTriggers)
@@ -1073,6 +1081,52 @@ sub buildPackage
 
     printv('Wrote package to '.$targetFile."\n");
     return $targetFile;
+}
+
+# Purpose: Check for, create and remove lockfiles
+# Usage:
+#   lockfile('create') - create a lockfile, and die if it is already locked
+#   lockfile('check')  - check if the lockfile is locked by someone else
+#                        returns 1 if it is, 0 if unlocked or locked by us
+#   lockfile('remove') - remove lockfile
+#
+# This function is subject to race-conditions and proper locking is therefore
+# not guaranteed.
+sub lockfile
+{
+    my $action = shift;
+    my $lockFile = './.lixuzctl.buildlock';
+    if ($action eq 'create')
+    {
+        if(lockfile('check'))
+        {
+            die("Build directory is already locked. Aborting.\n");
+        }
+        writeFile($lockFile,$$);
+    }
+    elsif ($action eq 'check')
+    {
+        if (-e $lockFile)
+        {
+            my $pid = slurp($lockFile);
+            if (defined $pid && $pid ne '' && $pid != $$ && kill(0,$pid))
+            {
+                return 1;
+            }
+        }
+        return;
+    }
+    elsif ($action eq 'remove')
+    {
+        if (-e $lockFile)
+        {
+            my $pid = slurp($lockFile);
+            if ($pid == $$)
+            {
+                unlink($lockFile);
+            }
+        }
+    }
 }
 
 # Purpose: Reconstructs an installed Lixuz package
