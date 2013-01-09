@@ -448,6 +448,13 @@ sub filesDiffer
     return 0;
 }
 
+# Purpose: Run system() and debug log the command
+sub runSystem
+{
+    printd('Running: '.join(' ',@_));
+    return system(@_);
+}
+
 # ---
 # Database functions
 # ---
@@ -1054,7 +1061,12 @@ sub buildPackage
 
     my $targetFile = $target.'/'.$fname;
     $targetFile = realpath($targetFile);
-    system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage');
+    if(runSystem('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage') != 0)
+    {
+        printStatus('error - tar exited with nonzero return value'."\n");
+        $runCleanup->();
+        exit(1);
+    }
     printStatus('done'."\n");
 
     $runCleanup->();
