@@ -258,9 +258,7 @@ sub writeMetaFile
     $metaFile->{lastWritten} = time;
     $metaFile->{formatRevision} = $dataFormatRevision;
     $metaFile->{lastAPI} = $currentSupportedApiLevel.'/'.$minSupportedApiLevel.'/'.$dataFormatRevision;
-    open(my $out,'>',$lixuzDir.'/.lixuzctl.data');
-    print {$out} encode_json($metaFile);
-    close($out);
+    writeFile($lixuzDir.'/.lixuzctl.data', encode_json($metaFile));
 }
 
 # Purpose: Reads the entire contents of a file and returns it
@@ -272,6 +270,17 @@ sub slurp
     my $data = <$in>;
     close($in);
     return $data;
+}
+
+# Purpose: Write content to a file
+sub writeFile
+{
+    my $file = shift;
+    my $content = shift;
+    open(my $out,'>',$file) or die("Failed to open $file for writing: $!\n");
+    print {$out} $content or die("Failed to write content to $file: $!\n");
+    close($out) or die("Failed to close $file after writing: $!\n");
+    return true;
 }
 
 # Purpose: Reads a YML file, parses it and returns the datastructure
@@ -1022,9 +1031,7 @@ sub buildPackage
     # Replace placeholders in package.yml
     my $packageYML = slurp($dir.'/package.yml');
     $packageYML =~ s/(version:.+)\{DATE\}/$1$date/g;
-    open(my $yml,'>',$dir.'/package.yml');
-    print {$yml} $packageYML;
-    close($yml);
+    writeFile($dir.'/package.yml',$packageYML);
 
     my $targetFile = $target.'/'.$fname;
     $targetFile = realpath($targetFile);
