@@ -35,13 +35,17 @@ use constant {
     true => 1,
     false => 0,
 };
-my $verbosity                = 0;
+my $verbosity                 = 0;
 # The revision of the data format that we write
-my $dataFormatRevision       = 2;
+my $dataFormatRevision        = 2;
 # The minimum supported api level of plumbing commands
-my $minSupportedApiLevel     = 2;
+my $minSupportedApiLevel      = 2;
 # The real (latest) supported api level of plumbing commands
-my $currentSupportedApiLevel = 4;
+my $currentSupportedApiLevel  = 4;
+# The revision of the package format that we write
+my $packageFormatRevision     = 1;
+# The mimimum supported package format supported
+my $minSupportedPackageFormat = 0;
 # Force an action to complete
 my $force = false;
 # Don't check deps during install
@@ -258,9 +262,7 @@ sub writeMetaFile
     $metaFile->{lastWritten} = time;
     $metaFile->{formatRevision} = $dataFormatRevision;
     $metaFile->{lastAPI} = $currentSupportedApiLevel.'/'.$minSupportedApiLevel.'/'.$dataFormatRevision;
-    open(my $out,'>',$lixuzDir.'/.lixuzctl.data');
-    print {$out} encode_json($metaFile);
-    close($out);
+    writeFile($lixuzDir.'/.lixuzctl.data', encode_json($metaFile));
 }
 
 # Purpose: Reads the entire contents of a file and returns it
@@ -272,6 +274,17 @@ sub slurp
     my $data = <$in>;
     close($in);
     return $data;
+}
+
+# Purpose: Write content to a file
+sub writeFile
+{
+    my $file = shift;
+    my $content = shift;
+    open(my $out,'>',$file) or die("Failed to open $file for writing: $!\n");
+    print {$out} $content or die("Failed to write content to $file: $!\n");
+    close($out) or die("Failed to close $file after writing: $!\n");
+    return true;
 }
 
 # Purpose: Reads a YML file, parses it and returns the datastructure
@@ -435,6 +448,13 @@ sub filesDiffer
     return 0;
 }
 
+# Purpose: Run system() and debug log the command
+sub runSystem
+{
+    printd('Running: '.join(' ',@_));
+    return system(@_);
+}
+
 # ---
 # Database functions
 # ---
@@ -498,7 +518,7 @@ sub packages
             $lazyInstall = 1;
             my $dir = shift // '.';
             printv('Watching '.$dir.' for changes'."\n");
-            my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp)$ --excludei .*~$};
+            my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp)$ --excludei .*~$ --excludei ./.lixuzctl.buildlock};
             if ($verbosity < 99)
             {
                 push(@inotifyCommand,qw(-q -q));
@@ -508,6 +528,12 @@ sub packages
                 if(system(@inotifyCommand,$dir.'/') != 0)
                 {
                     return;
+                }
+                if(lockfile('check'))
+                {
+                    printv('Change detected, but build directory locked. Sleeping for two seconds.'."\n");
+                    sleep(2);
+                    next;
                 }
                 printv('['.strftime('%H:%M:%S',localtime).'] Change detected, running buildinstall'."\n");
                 selfRun('packages','buildinstall');
@@ -767,7 +793,7 @@ sub createPackageTree
     print {$yml} 'version: 0.1'."\n";
     print {$yml} '# The lowest Lixuz core API version supported'."\n";
     print {$yml} '# (note: core API version is distinct from template API version)'."\n";
-    print {$yml} 'apiversion: 3'."\n";
+    print {$yml} 'apiversion: 4'."\n";
     print {$yml} '# A short description of the package'."\n";
     print {$yml} 'description: I did not edit package.yml'."\n";
     print {$yml} '# The license of the package'."\n";
@@ -871,7 +897,7 @@ sub buildPackage
             else
             {
                 die('Package is using plugin.yml instead of package.yml. It is outdated.'."\n".
-                    'Rename plugin.yml to package.yml and update apiversion to 2 and try again.'."\n");
+                    'Rename plugin.yml to package.yml and update apiversion to 4 and try again.'."\n");
             }
         }
         else
@@ -897,6 +923,7 @@ sub buildPackage
     }
 
     my $packageName = getPackageSystemName($meta);
+    lockfile('create');
     printStatus('done'."\n");
 
     my $runCleanup = sub
@@ -915,6 +942,7 @@ sub buildPackage
             runPackageTrigger($packageName,'buildCleanup',$srcdir.'/triggers.pl');
             printStatus('done'."\n");
         }
+        lockfile('remove');
     };
 
     if (!$disableTriggers)
@@ -1022,19 +1050,83 @@ sub buildPackage
     # Replace placeholders in package.yml
     my $packageYML = slurp($dir.'/package.yml');
     $packageYML =~ s/(version:.+)\{DATE\}/$1$date/g;
-    open(my $yml,'>',$dir.'/package.yml');
-    print {$yml} $packageYML;
-    close($yml);
+    writeFile($dir.'/package.yml',$packageYML);
+
+    # Add a format file
+    # Syntax is simple: formatVersion/lowestCompatible
+    # Where:
+    # - formatVersion is the package format version this file is
+    # - lowestCompatible is the lowest package format version this package
+    #   is compatible with
+    #
+    # Ie. a package can be /compatible/ with a lower version if no critical
+    # changes have been made (ie. change of directory tree) and if no critical
+    # additions have been made and are being used by this package (ie. if
+    # changes were made to dependency handling, but this package doesn't use
+    # the new feature, or if use of the new feature is of the "nice to have"
+    # rather than "essential" variety)
+    writeFile($dir.'/lpkversion',$packageFormatRevision.'/0');
 
     my $targetFile = $target.'/'.$fname;
     $targetFile = realpath($targetFile);
-    system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage');
+    if(runSystem('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage') != 0)
+    {
+        printStatus('error - tar exited with nonzero return value'."\n");
+        $runCleanup->();
+        exit(1);
+    }
     printStatus('done'."\n");
 
     $runCleanup->();
 
     printv('Wrote package to '.$targetFile."\n");
     return $targetFile;
+}
+
+# Purpose: Check for, create and remove lockfiles
+# Usage:
+#   lockfile('create') - create a lockfile, and die if it is already locked
+#   lockfile('check')  - check if the lockfile is locked by someone else
+#                        returns 1 if it is, 0 if unlocked or locked by us
+#   lockfile('remove') - remove lockfile
+#
+# This function is subject to race-conditions and proper locking is therefore
+# not guaranteed.
+sub lockfile
+{
+    my $action = shift;
+    my $lockFile = './.lixuzctl.buildlock';
+    if ($action eq 'create')
+    {
+        if(lockfile('check'))
+        {
+            die("Build directory is already locked. Aborting.\n");
+        }
+        writeFile($lockFile,$$);
+    }
+    elsif ($action eq 'check')
+    {
+        if (-e $lockFile)
+        {
+            my $pid = slurp($lockFile);
+            if (defined $pid && $pid ne '' && $pid != $$ && kill(0,$pid))
+            {
+                return 1;
+            }
+        }
+        return;
+    }
+    elsif ($action eq 'remove')
+    {
+        if (-e $lockFile)
+        {
+            my $pid = slurp($lockFile);
+            if ($pid == $$)
+            {
+                unlink($lockFile);
+            }
+        }
+    }
 }
 
 # Purpose: Reconstructs an installed Lixuz package
@@ -1127,6 +1219,28 @@ sub installPackage
         die($package.': does not appear to be a Lixuz package'."\n");
     }
 
+    # Verify package version
+    my @lpkversion = (0,0);
+    if (-e $dir.'/lpkversion')
+    {
+        my $lpkVersionContent = slurp($dir.'/lpkversion');
+        $lpkVersionContent =~ s/^#.\n?//g;
+        @lpkversion = split('/',$lpkVersionContent);
+    }
+    my $packageVersion    = $lpkversion[0] // 0;
+    my $packageCompatible = $lpkversion[1] // 0;
+    printd('Package version: '.$packageVersion.' || Compatible with: '.$packageCompatible);
+    if ($packageCompatible > $packageFormatRevision)
+    {
+        die($package.': is using a package format newer than this version of lixuzctl supports.'."\n".
+            'Please upgrade Lixuz to a newer version, then try again.'."\n");
+    }
+    elsif ($packageCompatible < $minSupportedPackageFormat)
+    {
+        die($package.': is using a package format older than this version of lixuzctl supports.'."\n".
+            'Please rebuild the package with a newer version of lixuzctl or contact the author.'."\n");
+    }
+
     my $packageMeta = readYML($dir.'/package.yml');
     my $packageName = getPackageSystemName($packageMeta);
     if($mode eq 'install' && defined $meta->{packages}->{$packageName})
@@ -1162,7 +1276,7 @@ sub installPackage
     }
 
     # Verify apirevision (except for during re-injections)
-    if ($mode ne 'reinject' && ($packageMeta->{apiversion} > 3 || $packageMeta->{apiversion} < 1))
+    if ($mode ne 'reinject' && ($packageMeta->{apiversion} > 4 || $packageMeta->{apiversion} < 1))
     {
         if ($force)
         {

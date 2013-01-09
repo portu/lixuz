@@ -263,8 +263,25 @@ sub importFromFeed : Private
 
     foreach my $entry ($feed->get_item())
     {
-        my $guid = $entry->guid() ? $entry->guid() : $entry->link();
-        if(not $guid)
+        my $guid = $entry->guid();
+        # Generate a GUID if the feed does not provide one. It must be easily
+        # reproducable, and unique to this entry.
+        if (!defined $guid)
+        {
+            if (defined $entry->link && defined $entry->pubDate)
+            {
+                $guid = $entry->get_pubDate_epoch.'-'.$entry->link;
+            }
+            elsif (defined $entry->link && defined $entry->title)
+            {
+                $guid = $entry->title.'-'.$entry->link;
+            }
+            else
+            {
+                $guid = $entry->link;
+            }
+        }
+        if(!defined $guid)
         {
             $c->log->warn('Error: no guid for an entry in feed from source '.$source.' - skipping entry');
             next;

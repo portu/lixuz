@@ -361,7 +361,12 @@ sub _detectTemplate
 {
     my($self) = @_;
 
-    my $template = $self->c->model('LIXUZDB::LzTemplate')->search({ type => 'media' });
+    my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ type => 'media', is_default => 1 });
+    if ($template)
+    {
+        return $template;
+    }
+    $template = $self->c->model('LIXUZDB::LzTemplate')->search({ type => 'media' });
     return $template->first;
 }
 
@@ -374,7 +379,7 @@ sub _template
     {
         if(ref($ret) eq '')
         {
-            my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ uniqueid => $ret });
+            my $template = $self->_detectTemplate;
             $self->template($template);
             $ret = $template;
         }
