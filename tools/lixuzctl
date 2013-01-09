@@ -35,13 +35,17 @@ use constant {
     true => 1,
     false => 0,
 };
-my $verbosity                = 0;
+my $verbosity                 = 0;
 # The revision of the data format that we write
-my $dataFormatRevision       = 2;
+my $dataFormatRevision        = 2;
 # The minimum supported api level of plumbing commands
-my $minSupportedApiLevel     = 2;
+my $minSupportedApiLevel      = 2;
 # The real (latest) supported api level of plumbing commands
-my $currentSupportedApiLevel = 4;
+my $currentSupportedApiLevel  = 4;
+# The revision of the package format that we write
+my $packageFormatRevision     = 1;
+# The mimimum supported package format supported
+my $minSupportedPackageFormat = 0;
 # Force an action to complete
 my $force = false;
 # Don't check deps during install
@@ -776,7 +780,7 @@ sub createPackageTree
     print {$yml} 'version: 0.1'."\n";
     print {$yml} '# The lowest Lixuz core API version supported'."\n";
     print {$yml} '# (note: core API version is distinct from template API version)'."\n";
-    print {$yml} 'apiversion: 3'."\n";
+    print {$yml} 'apiversion: 4'."\n";
     print {$yml} '# A short description of the package'."\n";
     print {$yml} 'description: I did not edit package.yml'."\n";
     print {$yml} '# The license of the package'."\n";
@@ -880,7 +884,7 @@ sub buildPackage
             else
             {
                 die('Package is using plugin.yml instead of package.yml. It is outdated.'."\n".
-                    'Rename plugin.yml to package.yml and update apiversion to 2 and try again.'."\n");
+                    'Rename plugin.yml to package.yml and update apiversion to 4 and try again.'."\n");
             }
         }
         else
@@ -1033,6 +1037,21 @@ sub buildPackage
     $packageYML =~ s/(version:.+)\{DATE\}/$1$date/g;
     writeFile($dir.'/package.yml',$packageYML);
 
+    # Add a format file
+    # Syntax is simple: formatVersion/lowestCompatible
+    # Where:
+    # - formatVersion is the package format version this file is
+    # - lowestCompatible is the lowest package format version this package
+    #   is compatible with
+    #
+    # Ie. a package can be /compatible/ with a lower version if no critical
+    # changes have been made (ie. change of directory tree) and if no critical
+    # additions have been made and are being used by this package (ie. if
+    # changes were made to dependency handling, but this package doesn't use
+    # the new feature, or if use of the new feature is of the "nice to have"
+    # rather than "essential" variety)
+    writeFile($dir.'/lpkversion',$packageFormatRevision.'/0');
+
     my $targetFile = $target.'/'.$fname;
     $targetFile = realpath($targetFile);
     system('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage');
@@ -1134,6 +1153,28 @@ sub installPackage
         die($package.': does not appear to be a Lixuz package'."\n");
     }
 
+    # Verify package version
+    my @lpkversion = (0,0);
+    if (-e $dir.'/lpkversion')
+    {
+        my $lpkVersionContent = slurp($dir.'/lpkversion');
+        $lpkVersionContent =~ s/^#.\n?//g;
+        @lpkversion = split('/',$lpkVersionContent);
+    }
+    my $packageVersion    = $lpkversion[0] // 0;
+    my $packageCompatible = $lpkversion[1] // 0;
+    printd('Package version: '.$packageVersion.' || Compatible with: '.$packageCompatible);
+    if ($packageCompatible > $packageFormatRevision)
+    {
+        die($package.': is using a package format newer than this version of lixuzctl supports.'."\n".
+            'Please upgrade Lixuz to a newer version, then try again.'."\n");
+    }
+    elsif ($packageCompatible < $minSupportedPackageFormat)
+    {
+        die($package.': is using a package format older than this version of lixuzctl supports.'."\n".
+            'Please rebuild the package with a newer version of lixuzctl or contact the author.'."\n");
+    }
+
     my $packageMeta = readYML($dir.'/package.yml');
     my $packageName = getPackageSystemName($packageMeta);
     if($mode eq 'install' && defined $meta->{packages}->{$packageName})
@@ -1169,7 +1210,7 @@ sub installPackage
     }
 
     # Verify apirevision (except for during re-injections)
-    if ($mode ne 'reinject' && ($packageMeta->{apiversion} > 3 || $packageMeta->{apiversion} < 1))
+    if ($mode ne 'reinject' && ($packageMeta->{apiversion} > 4 || $packageMeta->{apiversion} < 1))
     {
         if ($force)
         {
