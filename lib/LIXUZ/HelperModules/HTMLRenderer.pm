@@ -377,9 +377,15 @@ sub _template
     my $ret = $self->template(@_);
     if (!@_)
     {
-        if(ref($ret) eq '')
+        if(!defined $ret)
         {
             my $template = $self->_detectTemplate;
+            $self->template($template);
+            $ret = $template;
+        }
+        elsif(ref($ret) eq '')
+        {
+            my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ uniqueid => $ret });
             $self->template($template);
             $ret = $template;
         }
