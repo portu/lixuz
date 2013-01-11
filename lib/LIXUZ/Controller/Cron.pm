@@ -41,6 +41,10 @@ sub default : Path('/cron')
     {
         $self->twiceAday($c);
     }
+    elsif($trigger eq 'rss')
+    {
+        $self->fetchRSS($c);
+    }
     else
     {
         $c->res->body('ERR');
