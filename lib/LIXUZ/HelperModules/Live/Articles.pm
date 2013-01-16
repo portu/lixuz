@@ -86,8 +86,19 @@ sub _getLiveSearch
     my @liveStatus = ($primaryLiveStatus);
     push(@liveStatus,@extraStatuses);
 
-    my @liveSearch = map { { $prefix.'status_id' => $_ } } @liveStatus;
-    return -and => [ trashed => \'!= 1', $prefix.publish_time => \'<= now()', -or => [ { $prefix.expiry_time => \'IS NULL' }, { $prefix.expiry_time => \'> now()' } ], -or => \@liveSearch ];
+    return -and => [
+        # Can't be in the trash
+        { trashed => \'!= 1' },
+        # Must be published
+        { $prefix.'publish_time' => \'<= now()' },
+        # Can't be expired
+        { -or => [
+            { $prefix.'expiry_time' => \'IS NULL' },
+            { $prefix.'expiry_time' => \'> now()' }
+        ]},
+        # Must be live
+        { $prefix.'status_id' => { -in => \@liveStatus } }
+    ];
 }
 
 1;
