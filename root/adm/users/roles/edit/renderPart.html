@@ -51,7 +51,7 @@ foreach my $e (sort keys %{$part})
     my $checkedBool = ($checked ? 1 : 0);
     my $super = $value eq 'SUPER_USER' ? 1 : 0;
 </%perl>
-<input type="checkbox" <% $super ? 'id="SUPER_USER"' : '' |n %>childLabel="<%$childId%>" isPermCheckbox="true" name="<% $value %>"<%$checked|n%><%$disabled|n%> parent="<%$parent%>" onchange="recalculateCheckedBoxes(this);" />
+<input type="checkbox" <% $super ? 'id="SUPER_USER"' : '' |n %>childLabel="<%$childId%>" isPermCheckbox="true" name="<% $value %>"<%$checked|n%><%$disabled|n %> parent="<%$parent%>" onchange="recalculateCheckedBoxes(this);" />
 <span id="<%$childId%>">
 <% $parentChecked ? '' : '<i>' |n %>
 <% $super ? '<b>' : '' |n %>

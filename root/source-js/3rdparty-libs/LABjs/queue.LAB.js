@@ -1,48 +1,35 @@
-/*! LAB.js v1.0.3 (c) Kyle Simpson MIT License */
-/* Based on: https://gist.github.com/704226 */
-
-// add some boilerplate "queue" behavior for use with LABjs
-$LAB._queue = [];
-$LAB._queueLoaded = false;
-$LAB._secondQueue = [];
-$LAB.onLoaded = function (run)
+(function($LAB)
 {
-    if($LAB._queueLoaded === true)
+    var queueLoaded = false,
+        secondQueue = [];
+    $LAB.onLoaded = function (run)
     {
-        run();
-    }
-    else
-    {
-        $LAB._secondQueue.push(run);
-    }
-};
-$LAB.queue = function() {
-    Array.prototype.push.apply($LAB._queue,arguments);
-    return this;
-};
-$LAB.executeQueue = function() {
-    var $L = $LAB;
-    for (var i=0, len=$LAB._queue.length; i<len; i++) {
-        if (typeof $LAB._queue[0] == "string") {
-            var entry = $LAB._queue[0];
-            $L = $L.script($LAB._queue[0]);
-        }
-        else if ($LAB._queue[0] === false) {
-            $L = $L.wait();
-        }
-        else {
-            $L = $L.wait($LAB._queue[0]);
-        }
-        $LAB._queue.shift(); // remove first element from the _queue
-    }
-    $L.wait(function ()
-    {
-        $LAB._queueLoaded = true;
-        for (var i=0, len=$LAB._secondQueue.length; i<len; i++)
+        if(queueLoaded === true)
         {
-            $LAB.onLoaded($LAB._secondQueue[0]);
-            $LAB._secondQueue.shift();
+            run();
         }
-    });
-    $LAB._queue = [];
-};
+        else
+        {
+            secondQueue.push(run);
+        }
+    };
+    $LAB.queue = function(fn,ignoredParam) {
+        if(typeof(fn) == 'function')
+        {
+            return $LAB.queueWait(fn);
+        }
+        return $LAB.queueScript(fn).queueWait();
+    };
+    $LAB.executeQueue = function() {
+        $LAB.queueWait(function ()
+        {
+             window.jQuery.each(secondQueue, function (k,v)
+             {
+                 v();
+             });
+            queueLoaded = true;
+            secondQueue = null;
+        });
+        $LAB.runQueue();
+    };
+})($LAB);

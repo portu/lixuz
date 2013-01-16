@@ -47,49 +47,20 @@ function backup_init (dataFunction,type)
     backup_dataFunction = dataFunction;
     dataTrackingFunction = backup_getBackupData;
     backup_sourceType = type;
-    /*
-     * We put this on a timer, so that the initial payload is correct.
-     * It might take the page a few seconds to initialize properly,
-     * so the data can change without that actually meaning anything.
-     *
-     * If we don't do this, then we'll send in empty backup data,
-     * which isn't useful at all.
-     */
-    setTimeout('backup_setInitialPayload()',3000);
-    pollServer_payloadFunction = backup_pollHandler;
-    return true;
-}
 
-/*
- * Set our initial payload data, used for checking if
- * the data has changed since the page was loaded
- */
-function backup_setInitialPayload ()
-{
-    updateTrackPoint('backup',false);
-    updateTrackPoint('save',false);
-}
-
-/*
- * Handles requests from the polling handler
- */
-function backup_pollHandler (response)
-{
-    if(response == POLLSERVER_PAYLOAD_GET)
+    $.subscribe('/polling/getPayload',function(payload)
     {
         var data = backup_getBackupData(),
             artid = $('#lixuzArticleEdit_uid').val();
+
+        payload.article_id = artid;
         if(changedSince('backup'))
         {
             backup_lastSubmittedPayloadData = data;
-            return data+'&article_id='+artid;
+            $.extend(payload,data);
         }
-        else
-        {
-            return 'article_id='+artid;
-        }
-    }
-    else if(response == POLLSERVER_PAYLOAD_SUCCESS)
+    });
+    $.subscribe('/polling/success',function(reply)
     {
         if(backup_lastSubmittedPayloadData != '')
         {
@@ -105,25 +76,36 @@ function backup_pollHandler (response)
                 catch(e) {}
             }
         }
-        if(arguments[1] != null)
+        var reply = arguments[1];
+        if(reply.keepLock)
         {
-            var reply = arguments[1];
-            if(reply.keepLock)
-            {
-                articleKeepLockStatus(reply.keepLock,reply);
-            }
+            articleKeepLockStatus(reply.keepLock,reply);
         }
-        return true;
-    }
-    else if(response == POLLSERVER_PAYLOAD_FAILURE)
+    });
+    $.subscribe('/polling/failure',function(reply)
     {
-        return backup_handleError(arguments[1]);
-    }
-    else
-    {
-        lzError('Unknown parameter to backup_pollHandler(): '+response+' - returning null');
-        return null;
-    }
+        backup_handleError(reply);
+    });
+    /*
+     * We put this on a timer, so that the initial payload is correct.
+     * It might take the page a few seconds to initialize properly,
+     * so the data can change without that actually meaning anything.
+     *
+     * If we don't do this, then we'll send in empty backup data,
+     * which isn't useful at all.
+     */
+    setTimeout('backup_setInitialPayload()',3000);
+    return true;
+}
+
+/*
+ * Set our initial payload data, used for checking if
+ * the data has changed since the page was loaded
+ */
+function backup_setInitialPayload ()
+{
+    updateTrackPoint('backup',false);
+    updateTrackPoint('save',false);
 }
 
 /*
@@ -132,26 +114,29 @@ function backup_pollHandler (response)
 function backup_handleError (reply)
 {
     backup_lastSubmitttedPayloadData = '';
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
 }
 
 /*
- * Function that returns the ready-made JSON+URI-stringified version of the
- * current data
+ * Function that returns a simple data structure that can be submitted to the
+ * server
  */
 function backup_getBackupData ()
 {
     var data,
-        returnData = 'backupSource='+backup_sourceType+'&backupData=';
+    returnData = {
+        backupSource: backup_sourceType,
+        backupData: null,
+    };
     try
     {
         data = backup_dataFunction();
-        returnData = returnData+encodeURIComponent($.toJSON(data));
-        returnData = returnData+'&backupMainUID='+encodeURIComponent(data['primaryID']);
+        returnData.backupData = $.toJSON(data);
+        returnData.backupMainUID = data['primaryID'];
     }
     catch(e)
     {
-        returnData = '';
+        returnData = {};
         lzException(e,'Error while constructing backup payload data.');
     }
     return returnData;
@@ -193,7 +178,7 @@ function backup_restore (layout,type,uid)
     showPI(i18n.get('Restoring backup...'));
     backup_restore_layout = layout;
     var requestURI = '/admin/services/backup?type='+encodeURIComponent(type)+'&uid='+encodeURIComponent(uid);
-    JSON_Request(requestURI,backup_restore_reply,backup_restore_replyError);
+    XHR.GET(requestURI,backup_restore_reply,backup_restore_replyError);
 }
 
 /*
@@ -343,7 +328,7 @@ function backup_restore_valueToObj (value, obj)
  */
 function backup_restore_replyError (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     if(error == 'NODATA')
     {
         userMessage(i18n.get('No backup data was found on the server that matched this dataset.'));
@@ -354,3 +339,4 @@ function backup_restore_replyError (reply)
     }
     destroyPI();
 }
+

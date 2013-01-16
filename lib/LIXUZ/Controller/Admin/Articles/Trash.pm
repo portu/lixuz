@@ -23,6 +23,7 @@ use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl add_jsOnLoad add_gl
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::RevisionHelpers qw(get_latest_article article_latest_revisions);
 
+# Summary: Display the list of articles in the trash
 sub index : Path Args(0) Form('/core/search')
 {
     my($self,$c,$query) = @_;
@@ -34,6 +35,7 @@ sub index : Path Args(0) Form('/core/search')
     $c->stash->{trashMode} = 1;
 }
 
+# Summary: Permanently delete an article
 sub delete : Local Args
 {
     my($self,$c, $artid) = @_;
@@ -73,6 +75,7 @@ sub delete : Local Args
     }
 }
 
+# Summary: "Move" an article to the trash (flag it as 'trashed')
 sub move : Local Args
 {
     my($self,$c, $artid) = @_;
@@ -115,6 +118,7 @@ sub move : Local Args
     }
 }
 
+# Summary: 'restore' an article (remove the trashed flag)
 sub restore : Local Args
 {
     my($self,$c, $artid) = @_;

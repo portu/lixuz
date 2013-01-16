@@ -124,7 +124,7 @@ function LZ_FieldSave ()
         }
         reqData = reqData+'&'+field.name+'='+encodeURIComponent(value);
     }
-    JSON_PostRequest('/admin/settings/admin/additionalfields/submit', reqData, LZ_FieldSaveSuccess, LZ_FieldSaveFailure);
+    XHR.Form.POST('/admin/settings/admin/additionalfields/submit', reqData, LZ_FieldSaveSuccess, LZ_FieldSaveFailure);
 }
 
 function LZ_FieldSaveSuccess (data)

@@ -40,16 +40,12 @@ build: buildjs buildcss buildi18n
 buildi18n:
 	./script/buildlocale.pl buildonly
 	mkdir -p root/js/i18n
-	for file in i18n/*-js.po; do \
-		lang="$$(echo $$file|perl -pi -e 's#.+/##;s#-js.po##;')"; \
+	for file in i18n/*.po; do \
+		lang="$$(echo $$file|perl -pi -e 's#.+/##;s#.po##;')"; \
 		jsmsgfmt root/js/i18n/"$$lang.js" "$$file"; \
-		perl -pi -e "s/\"$$lang-js\"/\"$$lang\"/g" root/js/i18n/"$$lang.js"; \
 	done
 updatepo:
 	./script/buildlocale.pl
-	rm -f ./i18n/lixuz-js.pot
-	jsxgettext --addfunc "i18n.get" --addfunc "i18n.get_advanced" ./i18n/lixuz-js.pot `find ./root/source-js -iname "*.js" |egrep -vi 3rdparty-libs`
-	for f in ./i18n/*-js.po; do msgmerge --sort-by-file -q -U "$$f" ./i18n/lixuz-js.pot;done
 postat:
 	for f in ./i18n/*.po; do printf "%-18s: " "$$f"; msgfmt -o /dev/null --stat "$$f" ;done
 # vim: set ft=make :

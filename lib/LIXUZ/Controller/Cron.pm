@@ -15,23 +15,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package LIXUZ::Controller::Cron;
-
-use strict;
-use warnings;
-use base 'Catalyst::Controller';
+use 5.010;
+use Moose;
+use Try::Tiny;
 use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL datetime_from_unix datetime_to_SQL);
 use LIXUZ::HelperModules::TemplateRenderer::EMail;
 use POSIX qw(strftime);
+BEGIN { extends 'Catalyst::Controller' };
 
 sub default : Path('/cron')
 {
     my($self,$c) = @_;
     my $trigger = $c->req->param('schedule_trigger');
-    if (not defined $trigger)
+    if ($c->req->address ne '127.0.0.1' || !defined($trigger))
     {
         $c->res->body('ERR');
-        return;
+        $c->detach;
     }
+
     if ($trigger eq 'lixuz_daily_cron')
     {
         $self->daily($c);
@@ -39,6 +40,15 @@ sub default : Path('/cron')
     elsif($trigger eq 'lixuz_daily_cron_two')
     {
         $self->twiceAday($c);
+    }
+    elsif($trigger eq 'rss')
+    {
+        $self->fetchRSS($c);
+    }
+    else
+    {
+        $c->res->body('ERR');
+        $c->detach;
     }
     $c->res->body('OK');
     $c->detach;
@@ -48,14 +58,13 @@ sub daily : Private
 {
     my($self,$c) = @_;
 
-    eval
+    try
     {
         $self->_newsletterDaily($c);
-        1;
     }
-        or do
+    catch
     {
-        $c->log->error('Cron: _newsletterDaily crashed: '.$@);
+        $c->log->error('Cron: _newsletterDaily crashed: '.$_);
     };
     $self->twiceAday($c);
 }
@@ -64,22 +73,28 @@ sub twiceAday : Private
 {
     my($self,$c) = @_;
 
-    eval
+    try
     {
-        $self->_rssDaily($c);
-        1;
+        $self->fetchRSS($c);
     }
-        or do
+    catch
     {
-        $c->log->error('Cron: _rssDaily crashed: '.$@);
+        $c->log->error('Cron: twiceAday crashed: '.$_);
     };
 }
 
-sub _rssDaily : Private
+sub fetchRSS : Private
 {
     my($self,$c) = @_;
 
-    $c->forward(qw(LIXUZ::Controller::Admin::RSSImport importAllFeeds));
+    try
+    {
+        $c->forward(qw(LIXUZ::Controller::Admin::RSSImport importAllFeeds));
+    }
+    catch
+    {
+        $c->log->error('Cron: fetchRSS crashed: '.$_);
+    };
 }
 
 sub _newsletterDaily : Private

@@ -117,7 +117,7 @@ sub create_editor
     $js = '$LAB.queue(function () {'."\n";
     $js .= '$(function () {'."\n";
     my $inline = $params->{inline} ? "'".$params->{inline}."'" : 'null';
-    $js .= "\tinitRTE('".$id."',".$inline.");\n";
+    $js .= "\tlixuzRTE.init('".$id."',".$inline.");\n";
     $js .= '})});'."\n";
     $html .= $js;
     $html .= "\n".'</script>';

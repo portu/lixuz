@@ -18,11 +18,11 @@
 <div id="form_edit">
 
 %if($message) {
-<% $message |n%>
+<% $message |n %>
 %}
 <form>
 %if(defined $role_id) {
-<input type="hidden" id="role_id" value="<%$role_id%>" />
+<input type="hidden" id="role_id" value="<%$role_id %>" />
 %}
 
 <div class="label role_name">
@@ -46,6 +46,43 @@
 <b>Access rights:</b><br />
 
 <& renderPart.html, currPart => $groups, %ARGS &>
+<%perl>
+my $paths = {};
+sub generateActionList
+{
+    my $entry = shift;
+    my $paths = shift;
+    foreach my $key (keys %{$entry})
+    {
+        if(ref($entry->{$key}) eq 'ARRAY')
+        {
+            foreach my $entry (@{$entry->{$key}})
+            {
+                $paths->{$entry} = 1;
+            }
+        }
+        else
+        {
+            generateActionList($entry->{$key},$paths);
+        }
+    }
+}
+generateActionList($groups,$paths);
+my $entries = $c->model('LIXUZDB::LzAction');
+my %extra;
+while(my $e = $entries->next)
+{
+    if(! $paths->{ $e->action_path })
+    {
+        $extra{$e->action_path} = { paths => [ $e->action_path ] };
+    }
+}
+if (%extra)
+{
+</%perl>
+<br /><b><% $i18n->get('Additional rights (ie. from plugins)') |n %></b><br />
+<& renderPart.html, currPart => \%extra, %ARGS&>
+%}
 
 <br/><br/>
 <div class="submit"><input id="lixuz_roleEdit_submit" name="_submit" onclick="submitRoleData(); return false;" type="button" value="Save changes" /></div>

@@ -36,7 +36,7 @@ our @EXPORT_OK = qw(get_live_articles_from);
 #   that will be counted as live in addition to the primary one.
 # rows = a limit on rows that gets appended to the search
 # order_by = an order by that gets appended to the search
-sub get_live_articles_from
+sub get_live_articles_from($;$$)
 {
     my($object,$o) = @_;
     $o = defined $o ? $o : {};
@@ -66,6 +66,10 @@ sub get_live_articles_from
         $searchParams->{join} = 'revisionMeta';
         $search->{'revisionMeta.is_latest_in_status'} = 1;
     }
+    if (!ref($object) || !$object->can('search'))
+    {
+        carp('get_live_articles_from(): Got non-searchable object: '.ref($object));
+    }
     return $object->search( $search, $searchParams );
 }
 
@@ -82,8 +86,19 @@ sub _getLiveSearch
     my @liveStatus = ($primaryLiveStatus);
     push(@liveStatus,@extraStatuses);
 
-    my @liveSearch = map { { $prefix.'status_id' => $_ } } @liveStatus;
-    return -and => [$prefix.trashed => \'!= 1', $prefix.publish_time => \'<= now()', -or => [ { $prefix.expiry_time => \'IS NULL' }, { $prefix.expiry_time => \'> now()' } ], -or => \@liveSearch ];
+    return -and => [
+        # Can't be in the trash
+        { trashed => \'!= 1' },
+        # Must be published
+        { $prefix.'publish_time' => \'<= now()' },
+        # Can't be expired
+        { -or => [
+            { $prefix.'expiry_time' => \'IS NULL' },
+            { $prefix.'expiry_time' => \'> now()' }
+        ]},
+        # Must be live
+        { $prefix.'status_id' => { -in => \@liveStatus } }
+    ];
 }
 
 1;

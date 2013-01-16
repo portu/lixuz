@@ -429,6 +429,12 @@ input, select, textarea{
     border:1px solid #7f9db9;
     position:absolute;
 }
+.select_displayed ul
+{
+    max-height:300px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 select ul li.subs {
     background:#f0f0f0;
     color:#333;
@@ -484,4 +490,8 @@ select ul li.subs {
 {
     font-size:18px;
     height:50px;
+}
+.initiallyHidden
+{
+    display:none;
 }

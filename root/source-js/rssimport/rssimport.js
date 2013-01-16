@@ -48,7 +48,7 @@ function submitRSSImportSettings ()
         submit['rssItems'] = $('#rssItems').val();
         submit['rss_submit'] = 1;
         showPI(i18n.get('Saving...'));
-        JSON_HashPostRequest(document.URL, submit, submittedRSSImportSettings);
+        XHR.Form.POST(document.URL, submit, submittedRSSImportSettings);
     } catch(e) { lzException(e); }
 }
 
@@ -75,7 +75,7 @@ var editFormDialog,
 function editRSSEntry (rss_id)
 {
     showPI(i18n.get('Retrieveing data...'));
-    JSON_Request('/admin/rssimport/?getdata='+rss_id,constructRSSEditFormFromData);
+    XHR.GET('/admin/rssimport/?getdata='+rss_id,constructRSSEditFormFromData);
 }
 
 /*
@@ -116,8 +116,7 @@ function constructRSSEditFormFromData (data)
         }, {
             closeButton: i18n.get('Cancel')
         });
-        editorFormEditor = createLixuzRTE('rsseditor');
-        editors['rsseditor'] = editorFormEditor;
+        editorFormEditor = lixuzRTE.init('rsseditor');
     }
     catch(e)
     {
@@ -141,7 +140,7 @@ function saveRSSItemInfo ()
                         'rssedit_id':'rss_id'
                     });
         data.rssEdit_submit = 1;
-        JSON_HashPostRequest('/admin/rssimport', data, saveRSSItemInfo_success);
+        XHR.Form.POST('/admin/rssimport', data, saveRSSItemInfo_success);
     }
     catch(e)
     {
@@ -181,7 +180,7 @@ function reallyDeleteRSSEntry (deleteIt)
     if(deleteIt)
     {
         showPI(i18n.get('Deleting...'));
-        JSON_Request('/admin/rssimport/?delete='+deleteThisEntry,RSS_deletion_success);
+        XHR.GET('/admin/rssimport/?delete='+deleteThisEntry,RSS_deletion_success);
     }
 }
 

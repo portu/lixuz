@@ -19,5 +19,5 @@ __PACKAGE__->load_classes;
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;

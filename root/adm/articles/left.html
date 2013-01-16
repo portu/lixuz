@@ -15,27 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </%perl>
-%# TODO: noFolderList might not be the most useful name for this var as it hides more than folders
 <div>
-%if(not $noFolderList) {
+%if(not $noCreateAction) {
 <div class="buttonHolder"><a href="#" onclick="LZ_NewArticle(); return false"><img src="/static/images/icons/article-create.png" border="0" align="left" />&nbsp;<%$i18n->get('New Article')%></a></div>
 %}
 <div class="buttonHolder"><a href="/admin/articles/trash"><img src="/static/images/icons/trash.png" border="0" align="left" />&nbsp;<%$i18n->get('Trash') %> (<% $trashCount %>)</a></div>
-%if(not $noFolderList) {
-<div style="height:16px; clear:both;">&nbsp;</div>
-<div class="buttonHolder"><a href="#" onclick="$(this).parent().hide(); $('#folderActionsHolder').fadeIn(); return false;"><img src="/static/images/icons/folder.png" border="0" align="left" alt="" /> <% $i18n->get('Folder actions') |n %></a></div>
-<div id="folderActionsHolder" style="display:none;">
-<div class="buttonHolder"><a href="#" onclick="lixuz_DD_NewItem(null,'root'); return false;"><img src="/static/images/icons/folder-add.png" border="0" align="left" />&nbsp;<%$i18n->get('New folder')%></a></div>
-%if($c->user->can_access('/admin/services/setPerm')) {
-<div class="buttonHolder"><a href="#" onclick="new folderPermEditor(); return false;"><img src="/static/images/icons/folder-edit.png" border="0" align="left" />&nbsp;<% $i18n->get('Edit folder') |n %></a></div>
-%}
-%if($c->user->can_access('/admin/services/deleteFolder')) {
-<div class="buttonHolder"><a href="#" onclick="lixuzFolders.deleteDialog(); return false;"><img src="/static/images/icons/folder-delete.png" border="0" align="left" />&nbsp;<% $i18n->get('Delete a folder') |n %></a></div>
-%}
-%if($c->user->can_access('/admin/services/renameFolder')) {
-<div class="buttonHolder"><a href="#" onclick="lixuzFolders.renameDialog(); return false;"><img src="/static/images/icons/folder-rename.png" border="0" align="left" />&nbsp;<% $i18n->get('Rename a folder') |n %></a></div>
-%}
-</div>
+%if(not $noFolderActions) {
+<& ../core/folderActions.html, %ARGS &>
 </div>
 <br clear="both" /><br/>
 %if(not $dragdrop) { die }
@@ -43,7 +29,8 @@
 %}
 
 <%args>
-$noFolderList => 0
+$noFolderActions => 0
+$noCreateAction => 0
 $dragdrop => undef
 $i18n
 </%args>

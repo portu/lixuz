@@ -31,7 +31,7 @@ sub index : Path Args(0) Form('/core/search')
     my ( $self, $c, $query ) = @_;
     my $roles = $c->model('LIXUZDB::LzRole');
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Roles');
-    $self->handleListRequest({
+    $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $roles,
@@ -41,16 +41,6 @@ sub index : Path Args(0) Form('/core/search')
             searchColumns => [qw(role_id role_name role_status)],
             paginate => 1,
         });
-}
-
-# Purpose: Forward the user to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList : Private
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{roleListMessage} = $message;
-    $c->response->redirect('/admin/users/roles');
-    $c->detach();
 }
 
 # Summary: Save form data
@@ -172,6 +162,7 @@ sub edit : Local
     $c->{stash}->{template} = 'adm/users/roles/edit/index.html';
 }
 
+# Purpose: Stash settings for the edit/crete form
 sub buildform : Private
 {
     my ($self, $c, $role) = @_;
@@ -237,6 +228,7 @@ sub delete: Local
     }
 }
 
+# Purpose: Define and return a list of access groups to simplify editing of ACLs
 sub get_groups : Private
 {
     my($self,$c) = @_;
@@ -286,9 +278,10 @@ sub get_groups : Private
                     'EDIT_OTHER_ARTICLES',
                 ],
             },
-            $i18n->get('Preview own articles') => {
+            $i18n->get('Preview and read own articles') => {
                 paths => [ 
-                    '/articles/preview'
+                    '/articles/preview',
+                    '/articles/read'
                 ],
             },
             $i18n->get('Preview others articles') => {
@@ -314,6 +307,11 @@ sub get_groups : Private
                     '/articles/trash',
                     '/articles/trash/restore',
                 ],
+            },
+            $i18n->get('Set permissions on folders/objects for roles/users') => {
+                paths => [
+                    '/services/setperm',
+                ]
             },
         },
         $i18n->get('Manage categories') => {
@@ -363,6 +361,11 @@ sub get_groups : Private
         $i18n->get('Rename folders') => {
             paths => [
                 '/services/renamefolder'
+            ]
+        },
+        $i18n->get('Move folders') => {
+            paths => [
+                '/services/moveFolder',
             ]
         },
         $i18n->get('Files') => {
@@ -422,6 +425,7 @@ sub get_groups : Private
                     '/newsletter/submitManual',
                     '/newsletter/subscriptionGroupEdit',
                     '/newsletter/sentPreviously',
+                    '/newsletter/subscriberInfo',
                 ],
             },
         },

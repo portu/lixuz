@@ -22,7 +22,7 @@ BEGIN { extends 'Catalyst::Controller' };
 use LIXUZ::HelperModules::JSON qw(json_response_raw json_response json_error);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl add_globalJSVar add_jsOnLoad);
 
-# Used to autocomplete entries in forms
+# Summary: Returns data for autocompletion of tags that match a term
 sub complete : Local
 {
     my($self,$c) = @_;
@@ -46,7 +46,8 @@ sub complete : Local
     return json_response_raw($c,\@response);
 }
 
-# Used to check if a tag exists
+# Summary: Checks if a supplied tag exists. If it doesn't it checks if the
+#   current user can create it
 sub exists : Local
 {
     my($self,$c) = @_;
@@ -61,6 +62,7 @@ sub exists : Local
     return json_response($c, { exists => 0, can_add => $can_add });
 }
 
+# Summary: Creates a new tag
 sub create : Local
 {
     my($self,$c) = @_;
@@ -70,6 +72,7 @@ sub create : Local
     return json_response($c, { name => $newTag->name, id => $newTag->tag_id });
 }
 
+# Summary: Deletes a tag
 sub delete : Local
 {
     my($self,$c) = @_;
@@ -93,6 +96,7 @@ sub delete : Local
     return json_response($c);
 }
 
+# Summary: Returns a page listing all tags
 sub list : Local
 {
     my($self,$c) = @_;
@@ -102,6 +106,7 @@ sub list : Local
 	add_jsIncl($c,qw(tags.js));
 }
 
+# Summary: Handles renaming a tag
 sub edit : Local
 {
     my($self,$c) = @_;
@@ -118,6 +123,8 @@ sub edit : Local
     return json_response($c);
 }
 
+# Summary: Validates a tag, returning a (JSON) error to the client if it does not
+#   fit the rules for tag names.
 sub validate_tag : Private
 {
     my ($self,$c,$tag) = @_;

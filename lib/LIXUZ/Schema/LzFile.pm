@@ -194,10 +194,11 @@ __PACKAGE__->set_primary_key("file_id");
 use Graphics::Magick;
 use Carp;
 use LIXUZ::HelperModules::Cache qw(get_ckey CT_24H);
-use LIXUZ::HelperModules::Files qw(get_new_aspect fsize);
+use LIXUZ::HelperModules::Files qw(get_new_aspect get_new_aspect_constrained fsize);
 use File::MMagic::XS qw(:compat);
 use URI::Escape qw(uri_escape);
 use Math::Int2Base qw( int2base );
+use Try::Tiny;
 
 __PACKAGE__->belongs_to('ownerUser' => 'LIXUZ::Schema::LzUser', { 'foreign.user_id' => 'self.owner' });
 __PACKAGE__->has_many('clones' => 'LIXUZ::Schema::LzFile', { 'foreign.clone' => 'self.file_id' });
@@ -714,29 +715,40 @@ sub get_format
 # Usage: mimetype = file->get_mimetype($c);
 sub get_mimetype
 {
-    my($self,$c) = @_;
-    my $ckey = get_ckey('file','mimetype',$self->file_id);
+    my($self,$c,$viewable) = @_;
+    $viewable //= 0;
+
+    my $ckey = get_ckey('file','mimetype',$self->file_id.'-'.$viewable);
     my $type;
     if ($type = $c->cache->get($ckey))
     {
         return $type;
     }
-    eval
+
+    if ($viewable && $self->get_format =~ /tiff?/)
     {
-        my $magic = File::MMagic::XS->new;
-        #my $magic = File::MMagic->new;
-        $type = $magic ->checktype_filename($self->get_path($c));
+        $type = 'image/png; charset=binary';
         $c->cache->set($ckey,$type,CT_24H);
-        1;
     }
-        or do
+    else
     {
-        my $err = $@;
-        $type = 'application/octet-stream';
-        $ckey = undef;
-        $c->log->error('File::MMagic crashed, defaulting to application/octet-stream and refusing to cache info');
-        $c->log->debug('Error from perl: '.$err);
-    };
+        eval
+        {
+            my $magic = File::MMagic::XS->new;
+            #my $magic = File::MMagic->new;
+            $type = $magic ->checktype_filename($self->get_path($c));
+            $c->cache->set($ckey,$type,CT_24H);
+            1;
+        }
+            or do
+        {
+            my $err = $@;
+            $type = 'application/octet-stream';
+            $ckey = undef;
+            $c->log->error('File::MMagic crashed, defaulting to application/octet-stream and refusing to cache info');
+            $c->log->debug('Error from perl: '.$err);
+        };
+    }
     return $type;
 }
 
@@ -933,7 +945,7 @@ sub get_caption
             $search->{revision} = $revision;
         }
         my $rel = $c->model('LIXUZDB::LzArticleFile')->find($search);
-        if (defined $rel && $rel->caption)
+        if (defined $rel && defined $rel->caption)
         {
             return $rel->caption;
         }
@@ -970,6 +982,9 @@ sub detectImageFields
         $self->set_column('height',$height);
         $self->set_column('width',$width);
         $self->update();
+
+        # Explicitly destroy Graphics::Magick
+        undef $gm;
     }
 }
 
@@ -993,6 +1008,10 @@ sub get_url
         if ($width)
         {
             $params->{width} = $width;
+        }
+        if ($self->get_format =~ /tiff?$/)
+        {
+            $params->{viewable} = 1;
         }
     }
     else
@@ -1020,13 +1039,58 @@ sub get_url
 # Usage: url = obj->get_url_aspect($c, height,width);
 #          OR
 #        (url,height,width) = obj->get_url_aspect($c, height,width);
+#
+# NOTE: When used from HTML::Mason within <% %> you MUST enforce scalar context.
 sub get_url_aspect
 {
     my($self, $c, $height, $width) = @_;
 
-    # If we only got either height or width, then hand control to get_url,
-    # as we don't need to do any calculation
+    # Die if this isn't an image file
+    if (!$self->is_image)
+    {
+        croak('get_url_aspect called on non-image file '.$self->file_id);
+    }
+
+    my $useGetURL = 0;
+    # If we only got either height or width, then just use get_url, as we don't
+    # need to do any calculation
     if ( !defined($height) || !defined($width) )
+    {
+        $useGetURL = 1;
+    }
+    # Don't allow non-numerical height or width
+    elsif($height =~ /\D/ || $width =~ /\D/ || $height eq '' || $width eq '')
+    {
+        if ($height =~ /\D/ && $width =~ /\D/)
+        {
+            croak('get_url_aspect called with non-integer height and width: '.$height.'//'.$width);
+        }
+        elsif($height =~ /\D/)
+        {
+            carp('get_url_aspect called with non-integer height="'.$height.'". This is not permitted, going to assume height=undef');
+            $height = undef;
+        }
+        elsif($width =~ /\D/)
+        {
+            carp('get_url_aspect called with non-integer width="'.$width.'". This is not permitted, going to assume width=undef');
+            $width = undef;
+        }
+        $useGetURL = 1;
+    }
+    # Don't allow height or width to be merely zero
+    elsif($height == 0 && $width > 0)
+    {
+        carp('get_url_aspect called with zero height but nonzero width. This is not permitted, going to assume height=undef');
+        $height = undef;
+        $useGetURL = 1;
+    }
+    elsif($width == 0 && $height > 0)
+    {
+        carp('get_url_aspect called with zero width but nonzero height. This is not permitted, going to assume width=undef');
+        $width = undef;
+        $useGetURL = 1;
+    }
+    if ($useGetURL)
     {
         my $URL = $self->get_url($c,$height,$width);
         return $self->_returnStringAndAspect(wantarray,$URL,$height,$width);
@@ -1047,7 +1111,7 @@ sub get_url_aspect
     # return the original size instead of the resized size
     if ($width >= $self->width && $height >= $self->height)
     {
-        return $self->get_url($c);
+        return $self->_returnStringAndAspect(wantarray,$self->get_url($c),$self->height,$self->width);
     }
 
     # If either the height or width exceed the original, then use the original
@@ -1060,51 +1124,31 @@ sub get_url_aspect
         $width = $self->width;
     }
 
-    my $final = {
-        height => undef,
-        width => undef,
+    try
+    {
+        ($width,$height) = get_new_aspect_constrained($self->width,$self->height,$width,$height);
+    }
+    catch
+    {
+        croak('Failed to get_new_aspect_constrained() for file '.$self->file_id.': '.$_);
     };
-    # Landscape format
-    if ($self->width > $self->height)
-    {
-        # Okay, it's landscape, thus if the height supplied is larger than the
-        # width, we use that as our base, otherwise, we use the width
-        if ($height > $width)
-        {
-            $final->{height} = $height;
-        }
-        else
-        {
-            $final->{width} = $width;
-        }
-    }
-    # Portrait
-    else
-    {
-        # Okay, it's portrait, thus if the width supplied is larger than the
-        # height, we use that as our base, otherwise, we use the height
-        if ($width > $height)
-        {
-            $final->{width} = $width;
-        }
-        else
-        {
-            $final->{height} = $height;
-        }
-    }
 
-    my $URL = $self->get_url($c, $final->{height}, $final->{width});
+    my $URL = $self->get_url($c, $height,$width);
 
-    return $self->_returnStringAndAspect(wantarray,$URL,$final->{height},$final->{width});
+    return $self->_returnStringAndAspect(wantarray,$URL,$height,$width);
 }
 
 # Summary: Get a resized version of this file
-# Usage: path = object->get_resized($c,height,width);
-# Both height and width are optional
+# Usage: path = object->get_resized($c,height,width,forceViewable);
+# height, width and forceViewable are optional
 # Returns: String, path to resized file
+#
+# If forceViewable are supplied and the file is a tiff-file then
+# a png will be returned
 sub get_resized
 {
-    my($self, $c, $height, $width) = @_;
+    my($self, $c, $height, $width, $forceViewable) = @_;
+    $forceViewable = $forceViewable ? ($self->get_format =~ /tiff?$/) : 0;
 
     ($height,$width) = $self->_fullSizeSanitize($c,$height,$width);
     # Keep track of if we were supplied both or not
@@ -1119,7 +1163,15 @@ sub get_resized
     }
     elsif(not defined $height and not defined $width)
     {
-        return $self->_path_or_undef($c,$self->get_path($c));
+        if ($forceViewable)
+        {
+            $height = $self->height;
+            $width = $self->width;
+        }
+        else
+        {
+            return $self->_path_or_undef($c,$self->get_path($c));
+        }
     }
 
     if ($had_height and $height =~ /\D/)
@@ -1217,13 +1269,15 @@ sub get_resized
         if ($e)
         {
             $c->log->error('get_resized(). GraphicksMagick failed to scale the file: '.$e);
+            # Explicitly destroy Graphics::Magick
+            undef $gm;
             return;
         }
     }
     my $format = $self->get_format;
     # If it's a tiff-file, write a png file, if we don't then browsers
     # can't read it
-    if ($format && $format =~ /tiff?$/)
+    if ($forceViewable || ($format && $format =~ /tiff?$/))
     {
         $gm->Write('png:'.$fname);
     }
@@ -1231,6 +1285,8 @@ sub get_resized
     {
         $gm->Write($fname);
     }
+    # Explicitly destroy Graphics::Magick
+    undef $gm;
     return $fname;
 }
 
@@ -1501,8 +1557,8 @@ sub _returnStringAndAspect
     {
         return ($string,$self->height,$self->width);
     }
-    $height //= get_new_aspect($self->width,$self->height,$width);
-    $width  //= get_new_aspect($self->width,$self->height,undef,$height);
+    $height ||= get_new_aspect($self->width,$self->height,$width);
+    $width  ||= get_new_aspect($self->width,$self->height,undef,$height);
     return ($string,$height,$width);
 }
 

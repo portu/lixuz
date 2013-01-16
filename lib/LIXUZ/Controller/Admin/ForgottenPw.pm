@@ -1,5 +1,5 @@
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+# Copyright (C) Utrop A/S Portu media & Communications 2012
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -22,7 +22,7 @@ use Digest::MD5 'md5_base64';
 BEGIN { extends 'Catalyst::Controller::FormBuilder' };
 use LIXUZ::HelperModules::EMail qw(send_email_to);
 
-# Summary: ForgottenPw handler, creates the form and other goodies
+# Summary: Main request handler. Generates and displays the form and messages.
 sub forgottenpw : Path('/admin/forgottenpw') Form('/forgottenpw')
 {
     my ( $self, $c, @args ) = @_;
@@ -30,27 +30,28 @@ sub forgottenpw : Path('/admin/forgottenpw') Form('/forgottenpw')
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Forgotten password');
     my $i18n = $c->stash->{i18n};
     my $form = $self->formbuilder;
-    if ($msg_type eq 1)
+    if ($msg_type == 1)
     {
         $c->flash->{userRedirErr} = $i18n->get('An e-mail with a link where you may change your password has been sent. Please check your e-mail.');
         $c->res->redirect('/admin/login');
     }
-    elsif($msg_type eq 2)
+    elsif($msg_type == 2)
     {
 	    $c->stash->{message} = $i18n->get('Error: Failed to locate a user with the this email address.');
     }
-    elsif($msg_type eq 3)
+    elsif($msg_type == 3)
     {
 	    $c->stash->{message} = $i18n->get('Please enter a vaild e-mail address.');
     }
     $c->stash->{template} = 'adm/core/forgottenpw.html';
 }    
-    
+
+# Summary: Handle posts that request a 'forgot password' e-mail to be sent.
 sub pstpwd : Path('/admin/pstpwd')
 {
     my ( $self, $c ) = @_;
     my $i18n = $c->stash->{i18n};
-    my $msg_typ = "no";
+    my $msg_typ = 'no';
     my $form = $self->formbuilder;
     my $post_email = $c->req->param('user_email');
     if(defined($post_email) && length($post_email))
@@ -89,7 +90,8 @@ sub pstpwd : Path('/admin/pstpwd')
     $c->forward(qw(LIXUZ::Controller::Admin::ForgottenPw forgottenpw) , [ $msg_typ ]);
 }
     
-# For change password form
+# Summary: Handle requests for the 'change password' page.
+# Displays the form, and any messages associated with it.
 sub change_password : Local Form('change_password')
 {	  
     my ( $self, $c, @args ) = @_;
@@ -106,22 +108,23 @@ sub change_password : Local Form('change_password')
         $c->flash->{userRedirErr} = $i18n->get('The password token was invalid.');
         $c->res->redirect('/admin/login');
     }
-    if($msg_type eq 1)
+    if($msg_type == 1)
     {
 	    $c->stash->{message} = $i18n->get('You need to enter a password.');
     }
-    elsif( $msg_type eq 2)
+    elsif( $msg_type == 2)
     {
         $c->flash->{userRedirErr} = $i18n->get('Your password has been changed. You may now log in with your new password');
         $c->res->redirect('/admin/login');
     }
-    elsif( $msg_type eq 3)
+    elsif( $msg_type == 3)
     {
         $c->stash->{message} = $i18n->get('The new passwords do not match');
     }
     $c->stash->{template} = 'adm/core/change_password.html';   
 }
 
+# Summary: Perform the actual password change if possible.
 sub chngpwd :  Path('/admin/chngpwd')
 {
     my ( $self, $c ) = @_;

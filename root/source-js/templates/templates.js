@@ -68,7 +68,7 @@ function deleteTemplateNow (response)
     if(response)
     {
         showPI(i18n.get('Deleting...'));
-        JSON_Request('/admin/templates/delete/'+deleteThisTemplate,template_asyncDone);
+        XHR.GET('/admin/templates/delete/'+deleteThisTemplate,template_asyncDone);
     }
 }
 
@@ -85,6 +85,6 @@ function template_setDefaultNow (response)
     if(response)
     {
         showPI(i18n.get('Setting as default...'));
-        JSON_Request('/admin/templates/setDefault/'+setTemplateAsDefault,template_asyncDone);
+        XHR.GET('/admin/templates/setDefault/'+setTemplateAsDefault,template_asyncDone);
     }
 }

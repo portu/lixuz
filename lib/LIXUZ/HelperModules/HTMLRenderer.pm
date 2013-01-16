@@ -57,17 +57,30 @@ has 'article_rev' => (
     isa => 'Int',
 );
 
-has 'maxHeight' => (
-    is => 'ro',
+has 'noFloat' => (
+    is => 'rw',
     required => 0,
-    isa => 'Int'
+    isa => 'Int',
+    writer => '_noFloat',
+);
+
+has 'maxHeight' => (
+    is => 'rw',
+    required => 0,
+    isa => 'Int',
+    writer => '_maxHeight',
 );
 
 has 'maxWidth' => (
-    is => 'ro',
+    is => 'rw',
     required => 0,
     isa => 'Int',
     default => 450,
+    writer => '_maxWidth',
+);
+
+has '_initialized' => (
+    is => 'rw',
 );
 
 # Loop through all images in the DOM and render each of them to our
@@ -121,6 +134,13 @@ sub renderImg
         return $img->to_xml;
     }
 
+    # Ignore non-images (ie. in the case of videos, which may also have <img>
+    # tags in the body)
+    if (! $image->is_image)
+    {
+        return;
+    }
+
     my $attrs       = $img->attrs;
     my $size = $self->_metaSizeExtractor($img,$img->attrs('src'));
 
@@ -132,11 +152,8 @@ sub renderImg
     {
         $size->{height} = $self->maxHeight;
     }
-    if (!$size->{height} && !$size->{width} && ( $self->maxHeight || $self->maxWidth) )
-    {
-        $size->{height} = $self->maxHeight;
-        $size->{width}  = $self->maxWidth;
-    }
+    $size->{height} ||= $self->maxHeight;
+    $size->{width}  ||= $self->maxWidth;
 
     my($src,$height,$width) = $image->get_url_aspect($self->c,$size->{height},$size->{width});
 
@@ -148,6 +165,13 @@ sub renderImg
 
     # Find the tag that we will insert our image into
     my $placeholder = $template->find('.lzImagePlaceholder')->first;
+
+    # If there's no placeholder, assume that it was done on purpose and
+    # return an empty string.
+    if (!defined $placeholder)
+    {
+        return '';
+    }
 
     $attrs       = merge($placeholder->attrs, $attrs);
     # Set src to the generated url, instead of the one that's already there
@@ -162,6 +186,10 @@ sub renderImg
     # Set the generated width/height
     $style->{width} = $width.'px';
     $style->{height} = $height.'px';
+    if ($style->{float} && $self->noFloat)
+    {
+        delete($style->{float});
+    }
     # Prepare the style in attrs for insertion of new rules
     if ($attrs->{style})
     {
@@ -203,9 +231,9 @@ sub templateString
     my $float;
 
     my $templateFile;
-    if ($self->template)
+    if ($self->_template)
     {
-        $templateFile = $self->template->file;
+        $templateFile = $self->_template->file;
     }
     else
     {
@@ -228,6 +256,10 @@ sub templateString
             $float = $style->{float};
         }
         $float //= $attrs->{align};
+    }
+    if ($self->noFloat)
+    {
+        $float = '';
     }
 
     my $content = $self->c->view('Mason')->render($self->c, $templateFile, {
@@ -329,9 +361,73 @@ sub _detectTemplate
 {
     my($self) = @_;
 
-    my $template = $self->c->model('LIXUZDB::LzTemplate')->search({ type => 'media' });
+    my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ type => 'media', is_default => 1 });
+    if ($template)
+    {
+        return $template;
+    }
+    $template = $self->c->model('LIXUZDB::LzTemplate')->search({ type => 'media' });
     return $template->first;
 }
+
+sub _template
+{
+    my $self = shift;
+
+    my $ret = $self->template(@_);
+    if (!@_)
+    {
+        if(!defined $ret)
+        {
+            my $template = $self->_detectTemplate;
+            $self->template($template);
+            $ret = $template;
+        }
+        elsif(ref($ret) eq '')
+        {
+            my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ uniqueid => $ret });
+            $self->template($template);
+            $ret = $template;
+        }
+    }
+    return $ret;
+}
+
+sub _initializeMetadata
+{
+    my($self) = @_;
+    if ($self->_initialized)
+    {
+        return;
+    }
+    my $template = $self->_template;
+    if ($template)
+    {
+        my $info = $template->get_info($self->c);
+        if ($info->{mediasettings})
+        {
+            $self->_maxHeight($info->{mediasettings}->{maxHeight});
+            $self->_maxWidth($info->{mediasettings}->{maxWidth});
+            if ($info->{mediasettings}->{noFloat})
+            {
+                $self->_noFloat(1);
+            }
+        }
+    }
+    $self->_initialized(1);
+    return;
+}
+
+before 'maxWidth' => sub
+{
+    my $self = shift;
+    $self->_initializeMetadata;
+};
+before 'maxHeight' => sub
+{
+    my $self = shift;
+    $self->_initializeMetadata;
+};
 
 __PACKAGE__->meta->make_immutable;
 1;

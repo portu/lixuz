@@ -72,7 +72,6 @@ my %deps = (
     'Scalar::Util'                                 => 0,
     'SMS::CPAGateway'                              => 0,
     'Test::MockClass'                              => 0,
-    'Text::Aspell'                                 => 0,
     'Text::FromAny'                                => 0,
     'Try::Tiny'                                    => 0,
     'URI::Escape'                                  => 0,

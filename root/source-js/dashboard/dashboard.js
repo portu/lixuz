@@ -36,7 +36,7 @@ function LZDB_AcceptAssignment (id)
     }
     CURR_LZDB_ID = id;
     $('#LZWorkflowAcceptButton_'+CURR_LZDB_ID).html(i18n.get('Accepting...'));
-    JSON_Request('/admin/articles/workflow/acceptAssignment/'+id,LZDB_AssignmentAccepted, LZDB_AssignmentAcceptFailure);
+    XHR.GET('/admin/articles/workflow/acceptAssignment/'+id,LZDB_AssignmentAccepted, LZDB_AssignmentAcceptFailure);
 }
 
 /*
@@ -55,7 +55,7 @@ function LZDB_AssignmentAccepted (data)
  */
 function LZDB_AssignmentAcceptFailure (data)
 {
-    var error = LZ_JSON_GetErrorInfo(data,null);
+    var error = XHR.getErrorInfo(data,null);
     if(error == 'DENIED')
     {
         $('#LZWorkflowAcceptButton_'+CURR_LZDB_ID).html(i18n.get('Acceptance denied'));

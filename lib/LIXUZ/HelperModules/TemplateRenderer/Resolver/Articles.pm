@@ -279,7 +279,9 @@ sub get_article
             {
                 if(not $obj->is_live($self->c, $searchContent->{extraLiveStatus}, $searchContent->{overrideLiveStatus}))
                 {
-                    $self->renderer->error(404,undef,'Provided primaryArticle is not valid');
+                    $self->renderer->error(404,undef,'Provided primaryArticle is not valid',
+                        'Did not validate as is_live() with settings: extraLiveStatus='.($searchContent->{extraLiveStatus} // '""').' overrideLiveStatus='.($searchContent->{overrideLiveStatus} // '""')
+                    );
                 }
             }
         }

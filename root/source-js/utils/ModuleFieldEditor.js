@@ -47,7 +47,7 @@ function LZ_DisplayFieldEditForm (type,uid)
     {
         URL = URL + '?object_id=' + FieldEdit_UID;
     }
-    JSON_Request(URL,LZ_FieldEditFormReply,LZ_FieldEditFormError);
+    XHR.GET(URL,LZ_FieldEditFormReply,LZ_FieldEditFormError);
 }
 
 function LZ_FieldEditFormReply (data)
@@ -74,7 +74,7 @@ function LZ_FieldEditFormReply (data)
 
 function LZ_FieldEditFormError (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     if(error == 'FOLDER_NOT_FOUND')
     {
         userMessage(i18n.get('The folder associated with this article was not found, you need to set a new folder'));
@@ -107,7 +107,7 @@ function LZ_SubmitADFields (data)
         }
     }
     reqData = reqData+'&fields='+data.join(',');
-    JSON_Request(reqData,LZ_ADFieldSuccess, LZ_ADFieldFailure);
+    XHR.GET(reqData,LZ_ADFieldSuccess, LZ_ADFieldFailure);
     FieldEdit_Type = null;
     FieldEdit_UID = null;
 }

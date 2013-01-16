@@ -1,0 +1,16 @@
+<table id="contentFrame">
+    <tr>
+        <td class="left"><& ../left.html, noFolderActions => 1, %ARGS &></td>
+        <td class="main">
+            <table>
+            <& ../../core/pluginIncludes.html, relPath => '../articles/', glob => '../artList-*.plugin.html', %ARGS &>
+                <tr>
+                <td class="menu"><& ../menu.html, %ARGS &></td>
+            </tr>
+                <tr>
+                <td colspan="3" class="list"><& calendar.html, %ARGS &></td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+</table>

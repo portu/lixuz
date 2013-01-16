@@ -28,11 +28,12 @@ use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl add_globalJSVar add
 use LIXUZ::HelperModules::DragDrop;
 
 # Summary: Show the primary list
-sub index : Path Args(0) Form('/core/search') {
+sub index : Path Args(0) Form('/core/search')
+{
     my ( $self, $c, $query ) = @_;
     my $category = $c->model('LIXUZDB::LzCategory');
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Categories');
-    $self->handleListRequest({
+    $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $category,
@@ -44,25 +45,14 @@ sub index : Path Args(0) Form('/core/search') {
         });
 }
 
-# Summary: Forward the category to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    if(not $message)
-    {
-        $c->log->warn('No valid message supplied to messageToList in Categories.pm');
-    }
-    $c->response->redirect('/admin/categories');
-    $c->detach();
-}
-
 # Summary: Handle creating a new category
-sub add: Local Form('/categories/edit') {
+sub add: Local Form('/categories/edit')
+{
     my ( $self, $c ) = @_;
     my $i18n = $c->stash->{i18n};
     my $form = $self->formbuilder;
+    # If the form was submitted, then we need to save the data submitted. Otherwise
+    # we just display the add form.
     if ($form->submitted && $form->validate)
     {
         my $category_uid = $c->model('LIXUZDB::LzCategory')->find({category_id => $form->fields->{uid}});
@@ -80,7 +70,8 @@ sub add: Local Form('/categories/edit') {
 }
 
 # Summary: Handle editing an existing category
-sub edit: Local Args Form('/categories/edit') {
+sub edit: Local Args Form('/categories/edit')
+{
     my ( $self, $c, $uid ) = @_;
     my $form = $self->formbuilder;
     # Categoryname is not required here, it's just included for completeness
@@ -268,7 +259,6 @@ sub buildform: Private
     }
     add_jsOnLoad($c,'loadHilightedFolderSeedInit');
 	add_jsIncl($c,$dnd->get_jsfiles());
-	add_cssIncl($c,$dnd->get_cssfiles());
 }
 
 # Summary: Save form data

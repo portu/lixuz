@@ -138,7 +138,7 @@ function newFilteringObjectSelector (onDone, requestURL, type, filterURL, button
     }
     dataCache = {};
     showPI(i18n.get('Loading filtering rules...'));
-    JSON_Request(filterURL,LZ_OS_FilterReply,null);
+    XHR.GET(filterURL,LZ_OS_FilterReply,null);
 }
 
 /*
@@ -349,7 +349,7 @@ function LZ_OS_GetFilteredData (page)
         {
             showPI(i18n.get('Filtering...'));
         }
-        JSON_Request(URL,LZ_OS_RecievedFilteredData,null);
+        XHR.GET(URL,LZ_OS_RecievedFilteredData,null);
     }
     else
     {

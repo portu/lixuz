@@ -56,6 +56,7 @@ require 5.010_000;
 # Lixuz version
 my $VERSION_NO = '0.2';
 our $GITREV = '';
+our $GITBRANCH = '';
 our $VERSION = $VERSION_NO;
 our $PATH = $FindBin::RealBin.'/..';
 
@@ -65,7 +66,7 @@ if ($GITREV)
 {
     if ($SNAPSHOT)
     {
-        $VERSION = $VERSION_NO.' git snapshot ('.$GITREV.')';
+        $VERSION = $VERSION_NO.' git snapshot ('.$GITREV.'/'.$GITBRANCH.')';
     }
     else
     {
@@ -75,6 +76,12 @@ if ($GITREV)
 else
 {
     $VERSION = $VERSION_NO.' git';
+    if (-d './.git')
+    {
+        open(my $i,'-|','git','rev-parse','--abbrev-ref','HEAD');
+        $VERSION .= '/'.<$i>;
+        close($i);
+    }
 }
 
 # Configure the application. 

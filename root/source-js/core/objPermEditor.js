@@ -219,7 +219,7 @@ var objPermEditor = jClass({
         if(submit.object == 'folder')
             submit.applyRecursive = $('#overrideChildFolders').val() == 'on' ? 1 : 0;
         var self = this;
-        JSON_HashPostRequest('/admin/services/setPerm',submit, function(reply)
+        XHR.Form.POST('/admin/services/setPerm',submit, function(reply)
         {
             self.submittedData(reply);
         });
@@ -245,7 +245,7 @@ var folderPermEditor = jClass({
     {
         showPI(i18n.get('Loading folder data ...'));
         var self = this;
-        JSON_Request('/admin/services/folderList',function (reply) {
+        XHR.GET('/admin/services/folderList',function (reply) {
             self.folderListFetched(reply);
         });
     },

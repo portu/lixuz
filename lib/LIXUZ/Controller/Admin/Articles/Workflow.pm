@@ -100,7 +100,6 @@ sub writecheck
     return 1;
 }
 
-
 # Summary: Process a new comment submission
 sub submitComment : Local
 {
@@ -364,8 +363,8 @@ sub notifyRoleMembers
     my $article = $workflow->article;
     my $i18n = $c->stash->{i18n};
     my $subject = $i18n->get_advanced('A new article (%(ARTICLE_NAME) (%(ARTICLE_ID)) is available',{ ARTICLE_NAME => $article->title, ARTICLE_ID => $article->article_id});
-    my $message = $i18n->get_advanced("An article has just been reassigned to the role that you belong to.\n\nYou may accept this assignment on its page, %(PAGE),\nor your Lixuz dashboard.",{PAGE => $c->uri_for('/admin/edit/'.$article->article_id) });
-    my $users = $role->users;
+    my $message = $i18n->get_advanced("An article has just been reassigned to the role that you belong to.\n\nYou may accept this assignment on its page, %(PAGE),\nor your Lixuz dashboard.",{PAGE => $c->uri_for('/admin/articles/edit/'.$article->article_id) });
+    my $users = $role->users->search({user_status => 'Active'});
     my @recipients;
     while(my $user = $users->next)
     {
@@ -383,6 +382,8 @@ sub notifyRoleMembers
     }
 }
 
+# Summary: Generate and send e-mails notifying watchers and assignees about comments
+# Usage: self->notifyAboutComment($c,$articleId,$comment_obj);
 sub notifyAboutComment
 {
     my ($self, $c, $artid, $comment) = @_;

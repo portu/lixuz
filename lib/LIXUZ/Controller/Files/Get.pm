@@ -22,6 +22,7 @@ use base qw(Catalyst::Controller::FormBuilder);
 use LIXUZ::HelperModules::Files qw(lixuz_serve_static_file lixuz_serve_scalar_file);
 use LIXUZ::HelperModules::Live::CAPTCHA qw(serve_captcha);
 
+# Summary: Retrieve a captcha
 sub captcha : Path(/files/captcha)
 {
     my ( $self, $c, $uid ) = @_;
@@ -29,6 +30,7 @@ sub captcha : Path(/files/captcha)
     lixuz_serve_scalar_file($c,$data,$mimetype);
 }
 
+# Summary: Retrieve a file if possible
 sub default : Path(/files/get)
 {
     my ( $self, $c, $uid ) = @_;
@@ -91,7 +93,7 @@ sub default : Path(/files/get)
             $self->error($c);
         }
     }
-    if ($c->req->param('width') or $c->req->param('height'))
+    if ($c->req->param('width') || $c->req->param('height') || $c->req->param('viewable'))
     {
         $filePath = $self->get_image($c,$file);
     }
@@ -108,9 +110,10 @@ sub default : Path(/files/get)
         $c->log->error('Requested file with UID '.$uid.': Object existed and was active in the database but on-disk file was not found!');
         $self->error($c);
     }
-    lixuz_serve_static_file($c,$filePath, $file->get_mimetype($c));
+    lixuz_serve_static_file($c,$filePath, $file->get_mimetype($c,$c->req->param('viewable')));
 }
 
+# Summary: Handle the different requests for videos (flv, preview, ..)
 sub get_video: Private
 {
     my ( $self, $c, $file) = @_;
@@ -133,14 +136,16 @@ sub get_video: Private
     die;
 }
 
+# Summary: Handle the different requests for images (resize, original)
 sub get_image: Private
 {
     my ( $self, $c, $file) = @_;
     my $width = $c->req->param('width');
     my $height = $c->req->param('height');
+    my $forceViewable = $c->req->param('viewable');
     if ($file->is_image)
     {
-        return $file->get_resized($c, $height, $width);
+        return $file->get_resized($c, $height, $width,$forceViewable);
     }
     else
     {
@@ -162,6 +167,7 @@ sub get_image: Private
     }
 }
 
+# Summary: Display an error
 sub error : Private
 {
     my ( $self, $c ) = @_;

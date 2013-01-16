@@ -125,6 +125,8 @@ sub populateImageFields
     }
     $format =~ tr/[A-Z]/[a-z]/;
     $fileObj->set_column('format',$format);
+    # Explicitly destroy Graphics::Magick
+    undef $gm;
 }
 
 1;

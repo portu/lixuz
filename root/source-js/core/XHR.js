@@ -52,7 +52,16 @@ var XHR = {
     {
         POST: function (url,data,onSuccess,onFailure)
         {
-            data = $.param(data);
+            if(! _.isString(data))
+            {
+                data = $.param(data);
+            }
+            else
+            {
+                var calledBy = '(unknown)';
+                try { calledBy = getFuncNameFromOutput(arguments.callee.caller.toString()); } catch (e) {}
+                lzlog('Use of deprecated string syntax for XHR.Form.POST by '+calledBy);
+            }
             XHR._private.submit({
                 url          : url,
                 submitString : data,
@@ -186,7 +195,7 @@ var XHR = {
 
             if(params.method == null)
                 params.method = 'POST';
-            params.url = XHR._private.addPartToURL(params.url,'_JSON_Request=1');
+            params.url = XHR._private.addPartToURL(params.url,'_JSON_Submit=1');
             var reqParams = {
                 url     : params.url,
                 success : function (response)
@@ -270,3 +279,6 @@ var XHR = {
         },
     }
 };
+
+// Lixuz uses "traditional" request parameters
+jQuery.ajaxSettings.traditional = true;

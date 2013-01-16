@@ -73,7 +73,7 @@ sub index : Path Args(0) Form('/core/search')
 
     $self->init_searchFilters($c);
 
-    my $obj = $self->handleListRequest({
+    my $obj = $self->handleListRequest($c,{
             c => $c,
             query => $query,
             object => $s,
@@ -90,6 +90,7 @@ sub index : Path Args(0) Form('/core/search')
     }
 
     add_jsIncl($c,
+        'utils.js',
         'rssimport.js',
     );
     add_editor_incl($c);
@@ -262,8 +263,25 @@ sub importFromFeed : Private
 
     foreach my $entry ($feed->get_item())
     {
-        my $guid = $entry->guid() ? $entry->guid() : $entry->link();
-        if(not $guid)
+        my $guid = $entry->guid();
+        # Generate a GUID if the feed does not provide one. It must be easily
+        # reproducable, and unique to this entry.
+        if (!defined $guid)
+        {
+            if (defined $entry->link && defined $entry->pubDate)
+            {
+                $guid = $entry->get_pubDate_epoch.'-'.$entry->link;
+            }
+            elsif (defined $entry->link && defined $entry->title)
+            {
+                $guid = $entry->title.'-'.$entry->link;
+            }
+            else
+            {
+                $guid = $entry->link;
+            }
+        }
+        if(!defined $guid)
         {
             $c->log->warn('Error: no guid for an entry in feed from source '.$source.' - skipping entry');
             next;

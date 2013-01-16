@@ -40,7 +40,7 @@ function LZ_secondaryFolders_request ()
     }
 
     showPI(i18n.get('Loading folders...'));
-    JSON_Request('/admin/articles/ajax?&wants=secondaryFolders&article_id='+article_id,LZ_secondaryFolders_success,null);
+    XHR.GET('/admin/articles/ajax?&wants=secondaryFolders&article_id='+article_id,LZ_secondaryFolders_success,null);
 }
 
 function LZ_secondaryFolders_success (reply)
@@ -92,3 +92,10 @@ function LZ_GetSecondaryFoldersParams ()
     catch(e){}
     return null;
 }
+
+// Handle toggleSection events
+$.subscribe('/articles/toggleSection/secondaryFolders',function(evData)
+{
+    evData.handled = true;
+    LZ_toggleSecondaryFolders();
+});

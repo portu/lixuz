@@ -16,6 +16,80 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var lixuzFolders = {
+    moveDialog: function()
+    {
+        this.loadFolderData(function (reply) {
+            lixuzFolders.showMoveDialog(reply);
+        });
+    },
+
+    showMoveDialog: function (reply)
+    {
+        var folderList = reply.tree,
+            html = i18n.get('Move')+'<br />';
+        html = html+'<select id="folderMove_folder" name="folderMove_folder" style="width:100%;">';
+        html = html+folderList;
+        html = html+'</select><br />';
+        html = html+i18n.get('to')+':<br />';
+        html = html+'<select id="folderMove_target" name="folderMove_target" style="width:100%;">';
+        html = html+folderList;
+        html = html+'</select><br />';
+        var buttons = {},
+            self = this;
+        buttons[i18n.get('Move')] = function () {
+            var target = $('#folderMove_target').val();
+            var source = $('#folderMove_folder').val();
+            if(target == null)
+            {
+                userMessage(i18n.get('Please select a target folder'));
+                return false;
+            }
+            if(source == null)
+            {
+                userMessage(i18n.get('Please select a source folder'));
+                return false;
+            }
+            if(source == target)
+            {
+                userMessage(i18n.get('A folder can not be moved to itself'));
+                return false;
+            }
+            self.performMove( source,target );
+            $(this).dialog('close');
+        };
+        var LZ_newArticleDialog = new dialogBox(html,
+        {
+            title: i18n.get('Move folder'),
+            buttons: buttons,
+            width: 550
+        },
+        {
+            closeButton: i18n.get('Cancel')
+        });
+        destroyPI();
+    },
+
+    performMove: function(source,target)
+    {
+        showPI(i18n.get('Renaming...'));
+        XHR.Form.POST('/admin/services/moveFolder', {
+            folder_id: source,
+            parent_id: target
+        }, lixuz_DD_RefreshList, function (error)
+        {
+            destroyPI();
+            if(error.error == 'RECURSIVE_PARENT')
+            {
+                userMessage(i18n.get('Move failed: Unable to move a folder to a subfolder of itself'));
+            }
+            else
+            {
+                var errorI = XHR.getErrorInfo(error);
+                lzError(errorI.tech,errorI.message,true);
+            }
+        });
+    },
+
     renameDialog: function ()
     {
         this.loadFolderData(function (reply) {

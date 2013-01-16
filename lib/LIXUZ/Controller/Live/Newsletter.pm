@@ -45,18 +45,20 @@ use LIXUZ::HelperModules::Live::CAPTCHA qw(validate_captcha);
 
 __PACKAGE__->config->{namespace} = 'newsletter';
 
+# Summary: Handle new subscriptions to the newsletter
 sub subscribe : Local
 {
     my ($self,$c) = @_;
-    my $email = $c->req->param('email');
+    my $email      = $c->req->param('email');
     my @categories = $c->req->param('categories');
-    my $name = $c->req->param('name');
-    my $format = $c->req->param('format');
-    my $interval = $c->req->param('interval');
-    my $language = $c->req->param('language');
+    my $name       = $c->req->param('name');
+    my $format     = $c->req->param('format');
+    my $interval   = $c->req->param('interval');
+    my $language   = $c->req->param('language');
 
-    my $captcha = $c->req->param('captcha');
+    my $captcha    = $c->req->param('captcha');
     my $captcha_id = $c->req->param('captcha_id');
+
     if(not validate_captcha($c,$captcha_id,$captcha))
     {  
         $self->message($c,'Invalid captcha. Press the back button in your web browser and try again.');
@@ -144,6 +146,7 @@ sub subscribe : Local
     $self->message($c,$msg);
 }
 
+# Summary: Handle unsubscribe-requests
 sub unsubscribe : Local
 {
     my ($self,$c) = @_;
@@ -166,6 +169,7 @@ sub unsubscribe : Local
     $self->message($c,$msg);
 }
 
+# Summary: Validate a request to subscribe
 sub validate : Local
 {
     my ($self,$c) = @_;
@@ -190,6 +194,7 @@ sub validate : Local
     $self->message($c,$msg);
 }
 
+# Summary: Display an error message 
 sub message : Private
 {
     my ($self,$c,$message,$error) = @_;

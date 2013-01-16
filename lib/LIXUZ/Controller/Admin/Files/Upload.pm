@@ -29,6 +29,8 @@ use constant {
     TYPE_TEMPLATE    => 6,
 };
 
+# Summary: Displays an upload form. Depending upon GET parameters, this might
+# be a full upload page, or a simple upload form (for use in iframes)
 sub index : Path Args(0)
 {
     my ( $self, $c ) = @_;
@@ -64,6 +66,7 @@ sub index : Path Args(0)
     }
 }
 
+# Summary: Handle uploads, saving fields etc.
 sub upload : Path Args(1) Form('/files/edit')
 {
     my($self,$c,$fileClassID) = @_;
@@ -144,6 +147,7 @@ sub upload : Path Args(1) Form('/files/edit')
     }
 }
 
+# Summary: Handle data, storing it to disk
 sub handleData : Private
 {
     my($self,$c,$fileName,$upload) = @_;
@@ -160,6 +164,7 @@ sub handleData : Private
     return $obj;
 }
 
+# Summary: Retrieve and store a file, and then redirect to an edit page
 sub receiveFile : Private
 {
     my ($self, $c, $form) = @_;
@@ -178,48 +183,8 @@ sub receiveFile : Private
     $c->detach();
 }
 
-sub receiveTemplate : Private {
-    die("FIXME");
-    my ($self, $c, $form) = @_;
-    my $fileObj = $c->model('LIXUZDB::LzTemplate');
-    my $fileName = $form->fields->{'file_upload'};
-
-    my $upload = $c->req->upload('file_upload');
-    # Create the file
-    $fileObj = $fileObj->create(
-        {
-            template_name => $fileName,
-        }
-    );
-
-    if ( $fileName !~ /\.(xml|htm|html)$/ ) {
-        $self->error($c,$fileObj, TYPE_TEMPLATE, "filename:$fileName" );
-        return;
-    }
-
-    # Read in content from form and write the file
-    if(not -d $c->config->{LIXUZ}->{template_path} or not -w $c->config->{LIXUZ}->{template_path})
-    {
-        $self->error($c,$fileObj,ERR_DIRNOTFOUND,$c->config->{LIXUZ}->{template_path});
-        return;
-    }
-    my $targetFile = $fileObj->get_path($c);
-    if(not ($upload->link_to($targetFile) || $upload->copy_to($targetFile)))
-    {
-        $self->error($c,$fileObj,ERR_WRITEFAILURE,$!);
-    }
-    $fileObj->update();
-    if ($c->req->param('asyncUpload'))
-    {
-        $c->response->redirect('/admin/templates/edit/'.$fileObj->template_id.'?asyncUpload=true');
-    }
-    else
-    {
-        $c->response->redirect('/admin/templates/edit/'.$fileObj->template_id);
-    }
-    $c->detach();
-}
-
+# Summary: Display and handle errors, deleting partially-populated file objects
+# if needed
 sub error : Private
 {
     my ($self, $c, $fileObj, $error, $info) = @_;

@@ -82,6 +82,7 @@ __PACKAGE__->has_many(categoryfolders => 'LIXUZ::Schema::LzCategoryFolder', 'fol
 __PACKAGE__->has_many(children => 'LIXUZ::Schema::LzFolder', { 'foreign.parent' => 'self.folder_id' });
 __PACKAGE__->belongs_to(parent => 'LIXUZ::Schema::LzFolder');
 
+use Carp;
 use LIXUZ::HelperModules::Fields;
 use Moose;
 with 'LIXUZ::Role::AccessControl::Model';
@@ -92,7 +93,6 @@ with 'LIXUZ::Role::AccessControl::Model';
 sub children_recursive
 {
     my $self = shift;
-    my $arrayRef = shift;
 
     my @children;
 
@@ -103,6 +103,37 @@ sub children_recursive
         push(@children, @{$child->children_recursive(1)});
     }
     return \@children;
+}
+
+# Purpose: Check if this folder has a child that matches the supplied ID or LzFolder
+# Usage: bool = $folder->has_child($lz_folder or $ID)
+sub has_child
+{
+    my $self = shift;
+    my $check = shift;
+    if (ref($check))
+    {
+        if ($check->can('folder_id'))
+        {
+            $check = $check->folder_id;
+        }
+        else
+        {
+            croak('has_child got unknown reference: '.ref($check));
+        }
+    }
+    
+    my @children = @{$self->children_recursive};
+    # XXX: This isn't particulary fast
+
+    foreach my $child(@children)
+    {
+        if ($child == $check)
+        {
+            return 1;
+        }
+    }
+    return;
 }
 
 # Purpose: Get the full (filesystem-like) path to the folder, with all its parents

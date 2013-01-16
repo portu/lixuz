@@ -83,11 +83,53 @@ sub main
     {
         dualPrint("Upgrading $installTarget from Lixuz version $oldVer to $newVer\n");
     }
+    my $packup = getTempDir(undef,'Package packup directory');
+    if (-x $installTarget.'/tools/lixuzctl')
+    {
+        print 'Repackaging installed packages...';
+        if(lixuzctl($installTarget,'packup',$packup) == 0)
+        {
+            print "done\n";
+            logAction('Repackaged packages');
+        }
+        else
+        {
+            print "no packages found\n";
+            logAction('Installation has no packages');
+            $packup = undef;
+        }
+    }
+    else
+    {
+        dualPrint('(upgrading from packageless Lixuz, skipping package tasks)'."\n");
+        $packup = undef;
+    }
     createMergeDirectory($dataLocation,$tempDir);
     mergeData($tempDir,$dataTarget);
     backupOldData($dataTarget);
     installNewData($tempDir,$dataTarget);
     upgradeConfig($dataTarget);
+    print 'Running lixuzctl upgrade..';
+    lixuzctl($installTarget,'upgrade');
+    print "done\n";
+    if ($packup)
+    {
+        print 'Re-injecting packages...';
+        my @packages = ( glob($packup.'/*.lpp'), glob($packup.'/*.lpk') );
+        if(lixuzctl($installTarget,'reinject',@packages) == 0)
+        {
+            print "done\n";
+        }
+        else
+        {
+            print "error\n";
+            move(@packages,$installTarget);
+            dualPrint("Something went wrong during re-injection of packages\n");
+            dualPrint("You may wish to check the logfile for errors.\n");
+            dualPrint("The packages have all been moved to $installTarget\n");
+            dualPrint("for manual processing\n\n");
+        }
+    }
     dualPrint("All is done and appears to have gone well.\n\n");
     dualPrint("Note that you may need to upgrade the database. The recommended way to do this\n");
     dualPrint("is to stop the FastCGI instance, run the sql/upgradeDB script from the installed\n");
@@ -376,6 +418,73 @@ sub checkRestoreInstall
 # ---
 # Various helper and wrapper functions
 # ---
+
+
+# Summary: Run a lixuzctl command
+# Usage: lixuzctl(/lixuz/path,plumbingCommand,args);
+# This wraps lixuzctl. It will check which version of the lixuzctl api we're
+# dealing with, and adapt which parameters are used to fit that version.
+sub lixuzctl
+{
+    return _lixuzctl(undef,@_);
+}
+
+# Summary: Run a lixuzctl command
+# Usage: _lixuzctl(pathToBinary,/lixuz/path,plumbingCommand,args);
+# This wraps lixuzctl. It will check which version of the lixuzctl api we're
+# dealing with, and adapt which parameters are used to fit that version.
+#
+# Should never be called directly.
+sub _lixuzctl
+{
+    my $pathToBinary = shift;
+    my $lixuzPath = shift;
+    my $command = shift;
+    my @params;
+
+    if (!defined($pathToBinary))
+    {
+        $pathToBinary = $lixuzPath.'/tools/lixuzctl';
+    }
+
+    my ($apilevel,$minapilevel);
+
+    open(my $apiIN,'-|',$pathToBinary,qw(plumbing getlevel));
+    my $apiinfo = <$apiIN>;
+    close($apiIN);
+    no warnings;
+    $apilevel = int($apiinfo);
+    use warnings;
+    $apilevel ||= 1;
+    if ($apilevel >= 3)
+    {
+        $apilevel = $apiinfo;
+        $minapilevel = $apiinfo;
+
+        $apilevel =~ s{^(\d+)/.+$}{$1};
+        $minapilevel =~ s{^\d+/(\d+)(\D+.*)?}{$1};
+        $apilevel = int($apilevel);
+        $minapilevel = int($minapilevel);
+    }
+
+    # Versions of lixuzctl with an API level below 3 are known to be buggy, so
+    # we execute our own instead.
+    if ($apilevel < 3)
+    {
+        logAction('Lixuzctl in target tree is too old (apilevel '.$apilevel.'), using our shipped version instead');
+        return _lixuzctl(locateInstallData().'/tools/lixuzctl',$lixuzPath,$command,@_);
+    }
+
+    push(@params,'v'.$apilevel,
+        '--logfile',$logfile,
+        '--lixuzdir',$lixuzPath,
+        qw(--lixuz-upgrade --quiet),
+    );
+
+    my @command = ($pathToBinary,'plumbing',@params,$command,@_);
+    logAction('Running lixuzctl action: '.join(' ',@command));
+    return system(@command);
+}
 
 # Summary: Open the logfile and output initial messages
 sub startLog

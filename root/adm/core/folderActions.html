@@ -1,0 +1,20 @@
+<div style="height:16px; clear:both;">&nbsp;</div>
+<div class="buttonHolder"><a href="#" onclick="$(this).parent().hide(); $('#folderActionsHolder').fadeIn(); return false;"><img src="/static/images/icons/folder.png" border="0" align="left" alt="" /> <% $i18n->get('Folder actions') |n %></a></div>
+<div id="folderActionsHolder" style="display:none;">
+<div class="buttonHolder"><a href="#" onclick="lixuz_DD_NewItem(null,'root'); return false;"><img src="/static/images/icons/folder-add.png" border="0" align="left" />&nbsp;<%$i18n->get('New folder')%></a></div>
+%if($c->user->can_access('/admin/services/setPerm')) {
+<div class="buttonHolder"><a href="#" onclick="new folderPermEditor(); return false;"><img src="/static/images/icons/folder-edit.png" border="0" align="left" />&nbsp;<% $i18n->get('Edit folder') |n %></a></div>
+%}
+%if($c->user->can_access('/admin/services/deleteFolder')) {
+<div class="buttonHolder"><a href="#" onclick="lixuzFolders.deleteDialog(); return false;"><img src="/static/images/icons/folder-delete.png" border="0" align="left" />&nbsp;<% $i18n->get('Delete a folder') |n %></a></div>
+%}
+%if($c->user->can_access('/admin/services/renameFolder')) {
+<div class="buttonHolder"><a href="#" onclick="lixuzFolders.renameDialog(); return false;"><img src="/static/images/icons/folder-rename.png" border="0" align="left" />&nbsp;<% $i18n->get('Rename a folder') |n %></a></div>
+%}
+%if($c->user->can_access('/admin/services/moveFolder')) {
+<div class="buttonHolder"><a href="#" onclick="lixuzFolders.moveDialog(); return false;"><img src="/static/images/icons/folder-move.png" border="0" align="left" />&nbsp;<% $i18n->get('Move a folder') |n %></a></div>
+%}
+</div>
+<%args>
+$i18n
+</%args>

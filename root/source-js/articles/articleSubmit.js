@@ -162,7 +162,7 @@ var articleSubmit = jClass.extend([articleDataManager,lzWrapperHelpers,lzProgres
 
     submitArticle_failure: function (data)
     {
-        var errorCode = LZ_JSON_GetErrorInfo(data,null);
+        var errorCode = XHR.getErrorInfo(data,null);
         LZWF_WF_ForwardToPage = null;
         if(errorCode == 'STATUSCHANGE_DENIED')
         {

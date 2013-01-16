@@ -26,6 +26,7 @@ use File::Basename qw(basename);
     {
         setTimeout(function ()
             {
+                window.onerror = $.noop;
 <%perl>
 
 $m->out('$LAB');

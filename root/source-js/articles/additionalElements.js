@@ -165,3 +165,9 @@ var additionalElements = {
     }
 };
 $(additionalElements.addRemoveHandlers);
+// Toggle handler
+$.subscribe('/articles/toggleSection/additionalElements',function(evData)
+{
+    evData.handled = true;
+    additionalElements.toggle();
+});

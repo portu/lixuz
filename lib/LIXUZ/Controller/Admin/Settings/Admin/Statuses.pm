@@ -26,11 +26,12 @@ use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 use LIXUZ::HelperModules::Forms qw(get_checkboxes);
 use List::MoreUtils qw(any);
 
+# Summary: Display the list of statuses
 sub index : Path Args(0) Form('/core/search')
 {
     my ( $self, $c ) = @_;
     my $fields = $c->model('LIXUZDB::LzStatus');
-    my $obj = $self->handleListRequest({
+    my $obj = $self->handleListRequest($c,{
             c => $c,
             object => $fields,
             objectName => 'status',
@@ -67,16 +68,7 @@ sub delete : Local Args
     return $self->messageToList($c,$c->stash->{i18n}->get('Status deleted.'));
 }
 
-# Summary: Forward the article to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList : Private
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    $c->response->redirect('/admin/settings/admin/statuses');
-    $c->detach();
-}
-
+# Summary: Edit an existing status
 sub edit : Local Args Form('/settings/edit_status')
 {
     my ( $self, $c, $uid ) = @_;
@@ -107,6 +99,7 @@ sub edit : Local Args Form('/settings/edit_status')
     $c->stash->{template} = 'adm/settings/admin/statuses/edit.html';
 }
 
+# Summary: Create a new status
 sub add : Local Form('/settings/edit_status')
 {
     my ( $self, $c ) = @_;
@@ -120,11 +113,7 @@ sub add : Local Form('/settings/edit_status')
     $c->stash->{template} = 'adm/settings/admin/statuses/edit.html';
 }
 
-sub prepareform
-{
-    # We're creating a article
-}
-
+# Summary: Save (create or modify) a status
 sub savedata : Private
 {
     my ( $self, $c, $form ) = @_;

@@ -40,16 +40,6 @@ use constant { true => 1, false => 0};
 # The main list
 # --------
 
-# Summary: Forward the article to the list view, and display a status message at the top of it
-# Usage: $self->messageToList($c, MESSAGE);
-sub messageToList
-{
-    my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    $c->response->redirect('/admin/articles');
-    $c->detach();
-}
-
 # Summary: Show the primary list
 sub index : Path Args(0) Form('/core/search')
 {
@@ -233,7 +223,6 @@ sub index : Path Args(0) Form('/core/search')
         }
         $c->stash->{dragdrop} = $dnd->get_html();
         add_jsIncl($c,$dnd->get_jsfiles());
-        add_cssIncl($c,$dnd->get_cssfiles());
         $self->init_searchFilters($c);
     }
 }
@@ -248,35 +237,32 @@ sub retrieveArticles : Private
     my $trashed = shift;
     $trashed //= 0;
 
-    $self->c($c);
-
-    $self->handleListRequest({
+    $c->stash->{template} = 'adm/articles/index.html';
+    my $helper = $self->getListHelper($c,{
             query => $query,
             object => $baseModel,
             objectName => 'article',
-            template => 'adm/articles/index.html',
             orderParams => [qw(article_id title status_id modified_time assigned_to_user author)],
-            autoSearch => 0,
             formbuilder => $formbuilder,
             advancedSearch => [ qw(workflow.assigned_to_user workflow.assigned_by workflow.assigned_to_role status_id) ],
-            searchColumns => [qw/title article_id body lead/],
+            searchColumns => [qw/title article_id body lead author/],
         });
-    $self->listAddJoin('workflow');
+    $helper->listAddJoin('workflow');
 
     # If we can't edit other peoples articles, *and* we can't preview
     # other peoples articles then limit the results
     if(not $c->user->can_access('EDIT_OTHER_ARTICLES') and not $c->user->can_access('PREVIEW_OTHER_ARTICLES'))
     {
-        $self->listAddExpr({ '-or', => [
+        $helper->listAddExpr({ '-or', => [
                 { 'workflow.assigned_to_user' => $c->user->user_id },
                 { 'workflow.assigned_to_role' => $c->user->role->role_id },
                 ]});
     }
 
-    $self->listAddJoin('revisionMeta');
-    $self->listAddExpr({ 'revisionMeta.is_latest' => 1, trashed => $trashed});
+    $helper->listAddJoin('revisionMeta');
+    $helper->listAddExpr({ 'revisionMeta.is_latest' => 1, trashed => $trashed});
 
-    my $list = $self->listGetResultObject({ paginate => 1 });
+    my $list = $helper->listGetResultObject({ paginate => 1 });
     $c->stash->{article} = article_latest_revisions($list);
     return $list;
 }
@@ -416,25 +402,47 @@ sub read : Local Args
             my $files = [];
             if ($article->files)
             {
-                my $fil = $article->files;
-                while(my $f = $fil->next)
+                my $file = $article->files;
+                while(my $f = $file->next)
                 {
                     my $caption = $f->caption;
+                    my $fileObj = $f->file;
+                    if(not defined $fileObj)
+                    {
+                        $c->log->warn('Failed to locate LzFile entry for file '.$f->file_id.' attached to object '.$f->article_id);
+                        next;
+                    }
                     if(not defined $caption)
                     {
-                        $caption = $f->file->caption;
+                        $caption = $fileObj->caption;
                     }
+                    my $fileNameSplit = $fileObj->file_name;
+                    $fileNameSplit =~ s/(.{17})/$1<br \/>/g;
                     my $info = {
-                        iconItem =>$f->file->get_icon($c),
-                        iconItemBody => $f->file->get_url_aspect($c,250,250),
-                        file_id => $f->file->file_id,
-                        file_name => $f->file->file_name,
-                        file_owner => $f->file->ownerUser->name,
-                        fsize => $f->file->sizeString($c),
+                        iconItem =>$fileObj->get_icon($c),
+                        file_id => $fileObj->file_id,
+                        file_name => $fileNameSplit,
+                        file_name_real => $fileObj->file_name,
+                        fsize => $fileObj->sizeString($c),
                         caption => $caption,
-                        identifier => $f->file->identifier
+                        identifier => $fileObj->identifier,
+                        fields => {},
+                        is_image => $fileObj->is_image,
                     };
-                   push(@{$files},$info);
+                    if ($fileObj->is_image)
+                    {
+                        $info->{iconItemBody} = $fileObj->get_url_aspect($c,250,250);
+                    }
+                    my $fields = $fileObj->getAllFields($c);
+                    if ($fields)
+                    {
+                        foreach my $f (keys %{$fields})
+                        {
+                            my $field = $c->model('LIXUZDB::LzField')->find({ field_id => $f });
+                            $info->{fields}->{ $field->field_name } = $fields->{$f};
+                        }
+                    }
+                    push(@{$files},$info);
                 }
             }
 
@@ -607,7 +615,7 @@ sub preview : Local Args
 
     my $includes = '<!-- Lixuz preview includes -->'."\n";
     $includes .= '<link rel="stylesheet" type="text/css" href="/css/jqueryui/jquery-ui.css" /> ';
-    my @scripts = qw( /jquery.plugins.lib.js /core.js /articles-previewUI.js);
+    my @scripts = qw( /core.lib.js /core.js /articles-previewUI.js);
     if ($c->stash->{lixuzLang})
     {
         push(@scripts,'/i18n/'.$c->stash->{lixuzLang}.'.js');
@@ -953,7 +961,6 @@ sub buildform: Private
     add_globalJSVar($c,'pollServer_interval_pageDefault',180000);
     # Folders
 	add_jsIncl($c,$dnd->get_jsfiles());
-	add_cssIncl($c,$dnd->get_cssfiles());
     add_globalJSVar($c,'hilightedFoldersSeed','[]');
 }
 

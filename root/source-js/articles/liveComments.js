@@ -45,35 +45,16 @@ function LZ_reallyDeleteComment (deleteIt)
     if(deleteIt)
     {
         showPI(i18n.get('Deleting comment ...'));
-        JSON_Request('/admin/articles/deleteComment/'+deleteThisComment,LZ_LiveCommentChangeSuccess,null);
+        XHR.GET('/admin/articles/deleteComment/'+deleteThisComment,LZ_LiveCommentChangeSuccess,null);
         deleteThisFile = null;
         $('#CommentsForArticle').html(CommentsForArticle--);
-    }
-}
-
-// Toggle the files section closed/open
-function LZ_toggleLiveComments()
-{
-    if ($('#lixuzArticleEdit_uid').val() == null || $('#lixuzArticleEdit_uid').val() == '')
-    {
-        userMessage(i18n.get('You must save the article before you can view comments made to it'));
-        return;
-    }
-    if (!LiveCommentsLoaded)
-    {
-        showPI(i18n.get('Loading comment list ...'));
-        LZ_fetchLiveCommentsForArticle(true);
-    }
-    else
-    {
-        $('#liveComments_slider_inner').slideToggle();
     }
 }
 
 // Fetch file list for an article
 function LZ_fetchLiveCommentsForArticle (toggle)
 {
-    JSON_Request('/admin/articles/getCommentListFor/'+$('#lixuzArticleEdit_uid').val(),LZ_newLiveCommentList,LZ_newLiveCommentListFailure);
+    XHR.GET('/admin/articles/getCommentListFor/'+$('#lixuzArticleEdit_uid').val(),LZ_newLiveCommentList,LZ_newLiveCommentListFailure);
 }
 
 // New file list recieved
@@ -121,7 +102,7 @@ function buildLiveCommentListFromDataset (data)
 // Something went wrong when recieving the file list
 function LZ_newLiveCommentListFailure (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     if(error == 'ACCESS_DENIED')
     {
         destroyPI(); // Destroy progress indicator
@@ -132,3 +113,23 @@ function LZ_newLiveCommentListFailure (reply)
         LZ_SaveFailure(reply,i18n.get('Failed to retrieve the live comment list'));
     }
 }
+
+// Toggle handler
+$.subscribe('/articles/toggleSection/liveComments',function(evData)
+{
+    evData.handled = true;
+    if ($('#lixuzArticleEdit_uid').val() == null || $('#lixuzArticleEdit_uid').val() == '')
+    {
+        userMessage(i18n.get('You must save the article before you can view comments made to it'));
+        return;
+    }
+    if (!LiveCommentsLoaded)
+    {
+        showPI(i18n.get('Loading comment list ...'));
+        LZ_fetchLiveCommentsForArticle(true);
+    }
+    else
+    {
+        $('#liveComments_slider_inner').slideToggle();
+    }
+});

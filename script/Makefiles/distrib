@@ -1,60 +1,63 @@
 # --
 # Distribution targets
 # --
+DIST_QUICK?=0
 DIST_SOURCE?=$(shell pwd)
 DIST_VERSION?=$(VERSION)
 DIST_MAINTARGET?=lixuz-$(DIST_VERSION)
-DIST_TARGET?=$(shell pwd)/packages/$(DIST_MAINTARGET)
-DIST_FILES = $(shell ls -A "$(DIST_SOURCE)" |grep -v "packages")
-DIST_SETSNAPSHOT=
+DIST_TARGET?=$(DIST_MAINTARGET)
 GIT_VERSION=$(shell git log --format="%h" | head -n1)
 GIT_BRANCH=$(shell git branch|egrep '^\*'|perl -pi -e 's/^\S+\s+//')
 
-# Prepare for distrib
-distrib_prep: distrib_preclean sanitycheck distrib_prepdata build
-distrib_preclean: 
-	rm -rf "$(DIST_TARGET)"
-	rm -rf "$(DIST_SOURCE)/packages"
-distrib_prepdata:
-	mkdir -p "$(DIST_SOURCE)/packages"
-	mkdir -p "$(DIST_TARGET)"
-	cp -r $(DIST_FILES) "$(DIST_TARGET)"
-	(cd "$(DIST_TARGET)" || exit 1; [ -e '../../.git' ] ; git clean -x -d -f)
-	rm -rf "$(DIST_TARGET)/.git" "$(DIST_TARGET)/.gitignore"
-	make -C "$(DIST_TARGET)" build
-# Source distrib
-distrib_src: distrib_prep dist_addgitver
-	cd packages && tar -jcf lixuz-$(DIST_VERSION).src.tar.bz2 $(DIST_MAINTARGET)
-# Use distrib (minified)
-distrib_use: distrib_prep dist_addgitver distrib_minify
-	cd packages && tar -jcf lixuz-$(DIST_VERSION).minified.tar.bz2 $(DIST_MAINTARGET)
-# Deployment distrib
-distrib_deploy: distrib_prep distrib_minify dist_addgitver
-	( cd $$HOME/makeself* || cd $$HOME/downloads/makeself* || exit 1; $(BESILENT) ./makeself.sh --bzip2 --nox11 $(DIST_TARGET) lixuz-$(DIST_VERSION).run 'Lixuz $(DIST_VERSION) distribution script' ./script/lixuz_distrib_wrap.pl || exit 1; mv ./lixuz-$(DIST_VERSION).run "$(DIST_SOURCE)"/packages )
-# Minfy distrib
-distrib_minify:
-	make -C "$(DIST_TARGET)" build minify
-# Create both tarballs
-distrib: PERFORM_DEPLOY=$(shell [ "`ls ~/makeself* ~/downloads/makeself* 2>/dev/null`" != "" ] && echo distrib_deploy || true)
-distrib:
-	@make DIST_SOURCE="$(DIST_SOURCE)" DIST_TARGET="$(DIST_TARGET)" DIST_MAINTARGET="$(DIST_MAINTARGET)" DIST_VERSION="$(DIST_VERSION)" dist_addgitver $(DIST_SETSNAPSHOT) distrib_src distrib_use $(PERFORM_DEPLOY) distrib_clean
-distrib_clean:
-	rm -rf "$(DIST_TARGET)"
-dist_addgitver: distrib_prep
-	perl -pi -e "s{^(our \\\$$GITREV =).*}{\$$1 '$(GIT_VERSION)';}" "$(DIST_TARGET)/lib/LIXUZ.pm"
-# Create tarballs+.run wrapper
-fulldistrib: distrib_src distrib_use distrib_deploy distrib_clean
+# Release distrib target
+distrib: DIST_VERSION=$(VERSION)
+distrib: DIST_TARGET=lixuz-$(DIST_VERSION)
+distrib: mkDistClone distCloneAddGitrev distCloneSanity vanillaPackage distCloneBuildAndMinify usePackage installerPackage pluginPackages buildCleanup
 
-# Git snapshot
-gitprep: DIST_VERSION=$(VERSION)-$(GIT_VERSION)-$(GIT_BRANCH)
-gitprep: distrib_prep dist_setSnapshot
-#gitsnapshot: gitprep distrib_minify
+# Git snapshot distrib target
 gitdistrib: DIST_VERSION=$(VERSION)-$(GIT_VERSION)-$(GIT_BRANCH)
-gitdistrib: DIST_SETSNAPSHOT=dist_setSnapshot
-gitdistrib: gitprep distrib
-fullgitdistrib: DIST_VERSION=$(VERSION)-$(GIT_VERSION)-$(GIT_BRANCH)
-fullgitdistrib: DIST_SETSNAPSHOT=dist_setSnapshot
-fullgitdistrib: gitprep fulldistrib
-dist_setSnapshot:
+gitdistrib: DIST_TARGET=lixuz-$(DIST_VERSION)
+gitdistrib: mkDistClone distCloneAddGitrev distCloneSetSnapshot distCloneSanity vanillaPackage distCloneBuildAndMinify usePackage installerPackage pluginPackages buildCleanup
+# Git snapshot distrib target that skips sanity checks
+quickgitdistrib: DIST_QUICK=1
+quickgitdistrib: gitdistrib
+
+mkDistClone:
+	rm -rf "$(DIST_TARGET)"
+	rm -rf packages
+	mkdir -p packages
+	git clone ./ "$(DIST_TARGET)" --branch "$(GIT_BRANCH)"
+	cd "$(DIST_TARGET)" && git clean -x -d -f
+
+distCloneAddGitrev: mkDistClone
+	perl -pi -e "s{^(our \\\$$GITREV =).*}{\$$1 '$(GIT_VERSION)';}" "$(DIST_TARGET)/lib/LIXUZ.pm"
+	perl -pi -e "s{^(our \\\$$GITBRANCH =).*}{\$$1 '$(GIT_BRANCH)';}" "$(DIST_TARGET)/lib/LIXUZ.pm"
+distCloneSetSnapshot: mkDistClone
 	perl -pi -e 's{^(my\s+\$$SNAPSHOT)\s*=\s*\d*\;}{$$1 = 1;}g' "$(DIST_TARGET)/lib/LIXUZ.pm"
+
+distCloneSanity: mkDistClone
+	[  "$(DIST_QUICK)" == "1" ] || make -C "$(DIST_TARGET)" sanitycheck_nojs
+
+vanillaPackage: mkDistClone distCloneSanity
+	tar -jcf lixuz-$(DIST_VERSION).src.tar.bz2 $(DIST_TARGET)
+	mv lixuz-$(DIST_VERSION).src.tar.bz2 packages
+
+distCloneBuildAndMinify: mkDistClone
+	make -C "$(DIST_TARGET)" build minify
+
+usePackage: mkDistClone distCloneBuildAndMinify
+	tar -jcf lixuz-$(DIST_VERSION).minified.tar.bz2 $(DIST_TARGET)
+	mv lixuz-$(DIST_VERSION).minified.tar.bz2 packages
+
+installerPackage: mkDistClone distCloneBuildAndMinify
+	( cd $$HOME/makeself* || cd $$HOME/downloads/makeself* || exit 1; $(BESILENT) ./makeself.sh --bzip2 --nox11 $(shell realpath "$(DIST_TARGET)") lixuz-$(DIST_VERSION).run 'Lixuz $(DIST_VERSION) distribution script' ./script/lixuz_distrib_wrap.pl || exit 1; mv ./lixuz-$(DIST_VERSION).run "$(DIST_SOURCE)"/packages )
+
+pluginPackages: mkDistClone distCloneBuildPluginPackages
+distCloneBuildPluginPackages:
+	[ ! -e "$(DIST_TARGET)/plugins/" ] || for plugin in $(DIST_TARGET)/plugins/*; do cd "$$plugin"; perl ../../tools/lixuzctl plugin build || exit 1;done
+	[ ! -e "$(DIST_TARGET)/plugins/" ] || mv "$(DIST_TARGET)/plugins/"*/*.lpk packages
+
+buildCleanup:
+	rm -rf "$(DIST_TARGET)"
+
 # vim: set ft=make :

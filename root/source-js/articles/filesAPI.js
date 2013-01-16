@@ -270,7 +270,7 @@ var articleFiles = {
     getFileCaption: function (file)
     {
         file = articleFiles.getFileFromVar(file);
-        if(file.caption)
+        if(file.caption != null)
             return file.caption;
         return file.file.caption;
     },
@@ -344,7 +344,7 @@ var articleFiles = {
 
     addTheseFiles: function (files)
     {
-        LZ_RetrieveSpots('image',function (data)
+        articleFiles.retrieveFileSpots('image',function (data)
         {
             articleFiles.performFileAddition(data,files);
         });
@@ -363,14 +363,21 @@ var articleFiles = {
             {
                 $.unsubscribe(id);
 
-                onDone({
-                    '/admin/services/templateInfo': {
-                        spots: data.spots
-                    },
-                    '/admin/articles/JSON/getTakenFileSpots': {
-                        taken: data.taken
-                    }
-                });
+                try
+                {
+                    onDone({
+                        '/admin/services/templateInfo': {
+                            spots: data.spots
+                        },
+                        '/admin/articles/JSON/getTakenFileSpots': {
+                            taken: data.taken
+                        }
+                    });
+                }
+                catch(e)
+                {
+                    lzException(e);
+                }
             });
         }
 
@@ -394,7 +401,106 @@ var articleFiles = {
     updateRelCount: function ()
     {
         $('#filesInArticle').text($('.fileEntry').length);
+    },
+
+    addToRTE: function(fileID,RTE)
+    {
+        var file = this.getFileByID(fileID).file;
+        try
+        {
+            if(file.is_image)
+            {
+                var d = new Date();
+                var identifier = articleFiles.getIdentifierByID(fileID);
+                articleFiles.removeFromSpot(fileID);
+                var image = '<img alt="" title="" style="float:right;" src="/files/get/'+identifier+'?width=240" imgId="'+identifier+'" id="image_'+RTE+identifier+d.getTime()+'" /> ';
+                lixuzRTE.pushContent(RTE,image);
+                articleFiles.buildFileList();
+            }
+            else if(file.is_video)
+            {
+                var d = new Date();
+                var identifier = articleFiles.getIdentifierByID(fileID);
+                var video = '<div name="lixuz_video" uid="'+identifier+'" style="display:block;width:400px;height:300px" id="player_'+RTE+identifier+d.getTime()+'"><img src="/files/get/'+identifier+'?flvpreview=1" style="border:0;" /></div>';
+                lixuzRTE.pushContent(RTE,video);
+            }
+            else if(file.is_audio)
+            {
+                var d = new Date();
+                var audio = '<div name="lixuz_audio" uid="'+fileID+'" style="display:block;width:400px;height:50" id="player_'+RTE+fileID+d.getTime()+'"><img src="/static/images/icons/audio.png" alt="" /></div>';
+                lixuzRTE.pushContent(RTE,audio);
+            }
+            else
+            {
+                var d = new Date();
+                var title = file.title;
+                var fileName = file.file_name.replace(/"/g,'').replace(/\s/g,'_');;
+                if(title == null || title.length == 0)
+                {
+                    title = file.file_name;
+                    if(title == null || title.length == 0)
+                    {
+                        title = 'file_id '+fileID;
+                        fileName = fileID;
+                    }
+                }
+                title = title.replace(/<imageId/g,'&gt;').replace(/>/g,'&lt;');
+                var identifier = articleFiles.getIdentifierByID(fileID);
+                var entry = '<a href="/files/get/'+identifier+'/'+fileName+'">'+title+'</a>';
+                lixuzRTE.pushContent(RTE,entry);
+            }
+        } catch(e)
+        {
+            lzException(e);
+        }
+    },
+
+    UI: {
+        assignToSpot: function(file,spot,destroy,force)
+        {
+            if(articleFiles.spotTaken(spot) && !force)
+            {
+                var spotFile = articleFiles.getFileBySpot(spot);
+                if(spotFile.file_id != file)
+                {
+                    var thisFile = articleFiles.getFileByID(file);
+                    XuserQuestion(i18n.get_advanced('A file named "%(NAME)" (id %(ID)) is already assigned to this spot. Do you want to replace it with the file "%(NEWNAME)"?', {
+                        'NAME': spotFile.file.file_name,
+                        'ID': spotFile.file_id,
+                        'NEWNAME': thisFile.file.file_name
+                    }), function(response)
+                    {
+                        if(response)
+                        {
+                            articleFiles.UI.assignToSpot(file,spot,destroy,true)
+                        }
+                        
+                    });
+                    return;
+                }
+                else // This file is already assigned to this very spot.
+                {
+                    destroy();
+                    return;
+                }
+            }
+            destroy();
+            articleFiles.assignToSpot(file,spot);
+            articleFiles.buildFileList();
+        },
+
+        removeFromArticle: function(fileID)
+        {
+            XuserQuestion(i18n.get('Are you sure you wish to remove that file from this article? The file will not be deleted.'),function(response)
+            {
+                if(response)
+                {
+                    articleFiles.removeFile(fileID);
+                }
+            });
+            
+        }
     }
 };
 
-$(articleFiles.initBuild);
+$.subscribe('/lixuz/init',function () { articleFiles.initBuild(); });

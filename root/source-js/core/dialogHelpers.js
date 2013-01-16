@@ -321,22 +321,6 @@ function userMessage (message)
     return rawUserMessage(message,null,null);
 }
 
-/* 
- * The same as userMessage, but with a title
- */
-function titledUserMessage (message,title)
-{
-    return rawUserMessage(message,title,null);
-}
-
-/* 
- * The same as userMessage, but with a custom name for the close button
- */
-function userMessageBname (message, buttonName)
-{
-    return rawUserMessage(message,null,buttonName);
-}
-
 function rawUserMessage (message,title,buttonName, settings)
 {
     if (!buttonName)
@@ -344,15 +328,6 @@ function rawUserMessage (message,title,buttonName, settings)
     var buttons = {}
     buttons[buttonName] = closeDialogOn();
     showOrQueueMessage(message,title,buttons,settings);
-}
-
-/*
- * userMessageBname and titledUserMessage combined.
- */
-function titledUserMessageBname (message, title, buttonName)
-{
-    deprecated(getCallerName(arguments));
-    return rawUserMessage(message,title,buttonName);
 }
 
 /*

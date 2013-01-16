@@ -245,7 +245,7 @@ if (not $buildOnlyMode)
         '--package-name',		'LIXUZ',
         '--from-code',			'UTF-8',
         '--package-version',	'('.scalar localtime().')',
-        '-o',					$potTarget,
+        '-o',					'./lixuz.pot',
         '--add-comments=TRANSLATORS',
         @Files,);
     # These can be used to debug issues
@@ -254,20 +254,37 @@ if (not $buildOnlyMode)
     system(@command);
     print "done\n";
 
-    if(not -e $potTarget)
+    print 'Running jsxgettext...';
+    my @files;
+    find({
+            wanted => sub {
+                if (/\.js$/ && !/3rdparty-libs/ && -f $_)
+                {
+                    push(@files,$_);
+                }
+            },
+            no_chdir => 1,
+        },'root/source-js');
+    my @jsxgettext = (qw(jsxgettext --addfunc i18n.get --addfunc i18n.get_advanced ./lixuz-js.pot),@files);
+    system(@jsxgettext);
+    print "done\n";
+
+    if(not -e './lixuz.pot')
     {
-        die("$potTarget: missing, even after xgettext\n");
+        die("'./lixuz.pot': missing, even after xgettext\n");
     }
     print 'Finalizing POT...';
-    open(my $pot,'<',$potTarget);
+    system(qw(msgcat ./lixuz.pot ./lixuz-js.pot),'-o','output.pot');
+    open(my $pot,'<','./output.pot');
     undef $/;
     my $pot_content = <$pot>;
     close($pot);
-    $pot_content =~ s{YEAR Portu}{$year Portu};
-    $pot_content =~ s{# SOME DESCRIPTIVE TITLE\.}{$HEADER};
-    $pot_content =~ s{# This file is distributed under the same license as the PACKAGE package\.\n}{};
-    $pot_content =~ s{# FIRST AUTHOR <EMAIL\@ADDRESS>, YEAR\.\n}{};
-    $pot_content =~ s{charset=CHARSET}{charset=UTF-8};
+    $pot_content =~ s{YEAR (Portu|THE PACKAGE'S COPYRIGHT HOLDER)}{$year Portu}g;
+    $pot_content =~ s{PACKAGE VERSION}{Lixuz}g;
+    $pot_content =~ s{# SOME DESCRIPTIVE TITLE\.}{$HEADER}g;
+    $pot_content =~ s{# This file is distributed under the same license as the PACKAGE package\.\n}{}g;
+    $pot_content =~ s{# FIRST AUTHOR <EMAIL\@ADDRESS>, YEAR\.\n}{}g;
+    $pot_content =~ s{charset=CHARSET}{charset=UTF-8}g;
     open($pot,'>',$potTarget);
     print $pot $pot_content;
     close($pot);
@@ -282,7 +299,7 @@ else
 chdir($i18nDir);
 foreach my $poFile (<*.po>)
 {
-	next if $poFile eq '*.po' or $poFile =~ /-js\.po/;
+    next if ! -e $poFile;
     if(not $buildOnlyMode)
     {
         system('msgmerge','-q','-U',$poFile,$potTarget);

@@ -80,6 +80,8 @@ sub serve_captcha
     {
         $c->log->error('ImageToBlob returned undef, captcha broken');
     }
+    # Explicitly destroy Graphics::Magick
+    undef $magick;
     return($image_data,'image/png');
 }
 

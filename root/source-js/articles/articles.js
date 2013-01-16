@@ -55,7 +55,7 @@ function reallyMoveArticle(response)
         return;
     }
     showPI(i18n.get('Moving to trash...'));
-    JSON_Request('/admin/articles/trash/move/'+MoveToTrash_ArtID,articleMoveSuccess,null);
+    XHR.GET('/admin/articles/trash/move/'+MoveToTrash_ArtID,articleMoveSuccess,null);
 }
 
 function articleMoveSuccess ()
@@ -76,12 +76,12 @@ function LZ_DeleteArticleBackup (backup_id)
 {
     showPI(i18n.get('Deleting...'));
     LZ_newArticleDialog.destroy();
-    JSON_Request('/admin/services/backup?delete='+backup_id, LZ_DeleteArticleBackup_success, LZ_DeleteArticleBackup_failure);
+    XHR.GET('/admin/services/backup?delete='+backup_id, LZ_DeleteArticleBackup_success, LZ_DeleteArticleBackup_failure);
 }
 
 function LZ_DeleteArticleBackup_failure (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     destroyPI();
     userMessage(i18n.get('Failed to delete: ')+error);
 }
@@ -103,7 +103,7 @@ function LZ_DeleteArticleBackup_success (reply)
 function LZ_ArticleBackupsAvailable ()
 {
     showPI(i18n.get('Backups found on server, loading information...'));
-    JSON_Request('/admin/services/backup?wants=list', LZ_ArticleBackupsAvailable_success, LZ_ArticleBackupsAvailable_failure);
+    XHR.GET('/admin/services/backup?wants=list', LZ_ArticleBackupsAvailable_success, LZ_ArticleBackupsAvailable_failure);
 }
 
 function LZ_ArticleBackupsAvailable_success (reply)
@@ -150,7 +150,7 @@ function LZ_ArticleBackupsAvailable_success (reply)
 
 function LZ_ArticleBackupsAvailable_failure (reply)
 {
-    var error = LZ_JSON_GetErrorInfo(reply,null);
+    var error = XHR.getErrorInfo(reply,null);
     userMessage('Failed to retrieve backup information ('+error+')');
 }
 
@@ -295,3 +295,22 @@ function articleKeepLockStatus(stat,reply)
         }
     });
 }
+
+$.subscribe('/lixuz/init',function ()
+{
+    $('.sliderToggler').click(function(e)
+    {
+        e.preventDefault();
+        var $this = $(this);
+        $this.parent().toggleClass('sliderOpen');
+        var eventInfo = { handled: false, section: $this.data('section'), '$this':$this };
+        var name = eventInfo.section.replace(/_slider_inner/,'');
+        $.publish('/articles/toggleSection/'+name, [ eventInfo ]);
+        if(eventInfo.handled)
+        {
+            return;
+        }
+        $('#'+eventInfo.section).slideToggle();
+    });
+    articleFiles.initBuild();
+});

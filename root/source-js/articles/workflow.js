@@ -47,7 +47,7 @@ function LZWF_SubmitComment ()
 function LZWF_AcceptAssignment ()
 {
     $('#LZWorkflowAcceptButton').html(i18n.get('Accepting assingment ...'));
-    JSON_Request('/admin/articles/workflow/acceptAssignment/'+$('#artid').val(),LZWF_AssignmentAccepted, LZWF_AssignmentAcceptFailure);
+    XHR.GET('/admin/articles/workflow/acceptAssignment/'+$('#artid').val(),LZWF_AssignmentAccepted, LZWF_AssignmentAcceptFailure);
 }
 
 /*
@@ -67,7 +67,7 @@ function LZWF_AssignmentAccepted (data)
  */
 function LZWF_AssignmentAcceptFailure (data)
 {
-    var error = LZ_JSON_GetErrorInfo(data,null);
+    var error = XHR.getErrorInfo(data,null);
     if(error == 'DENIED')
     {
         $('LZWorkflowAcceptButton').html(i18n.get('You were denied access to accepting this assignment'));
@@ -85,15 +85,16 @@ function LZWF_AssignmentAcceptFailure (data)
  * ***********************
  */
 
-window.onbeforeunload = function () {
+$.subscribe('/lixuz/beforeunload', function (messages)
+{
     try {
         if(changedSince === undefined)
         {
             return;
         }
     } catch(e) { return; }
-    if (changedSince('save'))
+    if (changedSince('save') && $('#lz_artid_value').length)
     {
-        return i18n.get('You have unsaved changes. If you move away from this page, those changes will be lost.');
+        messages.push(i18n.get('You have unsaved changes. If you move away from this page, those changes will be lost.'));
     }
-};
+});

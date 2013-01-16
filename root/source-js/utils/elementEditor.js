@@ -25,7 +25,7 @@ var savedElementReply = function () {
 function editElement (element)
 {
     showPI(i18n.get('Loading element data...'));
-    JSON_Request('/admin/services/elements?action=info&elementId='+element,editElementReply,null);
+    XHR.GET('/admin/services/elements?action=info&elementId='+element,editElementReply,null);
 }
 
 function editElementReply (content)
@@ -76,7 +76,7 @@ function saveElementData ()
             type: $('#element_type').val()
     };
     showPI(i18n.get('Saving...'));
-    JSON_HashPostRequest('/admin/services/elements?action=save',data,savedElementReply,null);
+    XHR.Form.POST('/admin/services/elements?action=save',data,savedElementReply,null);
     elementEditor.destroy();
     elementEditor = null;
 }

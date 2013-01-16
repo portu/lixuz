@@ -56,8 +56,9 @@ use Exporter qw(import);
 use File::stat;
 use IO::File ();
 use LIXUZ::HelperModules::Cache qw(get_ckey CT_24H);
+use Carp qw(croak);
 
-our @EXPORT_OK = qw(lixuz_serve_static_file lixuz_serve_scalar_file get_new_aspect fsize);
+our @EXPORT_OK = qw(lixuz_serve_static_file lixuz_serve_scalar_file get_new_aspect fsize get_new_aspect_constrained);
 
 # Purpose: Serve a static file, lixuz version of Catalyst::Plugin::Static::Simple->serve_static_file
 # Usage: lixuz_serve_static_file($c,path,type);
@@ -132,28 +133,123 @@ sub get_new_aspect
     my $oldVal;
     my $newVal;
     my $changeVal;
+    my $mode;
     if ($newWidth)
     {
         $oldVal = $oldWidth;
         $newVal = $newWidth;
         $changeVal = $oldHeight;
+        $mode = 'newWidth';
     }
     else
     {
         $oldVal = $oldHeight;
         $newVal = $newHeight;
         $changeVal = $oldWidth;
+        $mode = 'newHeight';
     }
     if ((not defined $oldVal or $oldVal == 0) || (not defined $newVal or $newVal == 0))
     {
-        die("oldVal or newVal is zero");
+        if(not defined $oldVal)
+        {
+            croak('oldVal is not defined (in '.$mode.' mode)');
+        }
+        elsif($oldVal == 0)
+        {
+            croak('oldVal is zero (in '.$mode.'mode)');
+        }
+        elsif(not defined $newVal)
+        {
+            croak('newVal is not defined (in '.$mode.' mode)');
+        }
+        elsif($newVal == 0)
+        {
+            croak('newVal is zero (in '.$mode.' mode)');
+        }
     }
     $percentage_change = $oldVal/$newVal;
     if ($changeVal == 0 || $percentage_change == 0)
     {
-        die("changeVal or percentage_change is zero");
+        if ($changeVal == 0)
+        {
+            croak('changeVal is zero');
+        }
+        elsif($percentage_change == 0)
+        {
+            croak('percentage_change is zero');
+        }
     }
     return sprintf('%d',$changeVal / $percentage_change );
+}
+
+# Purpose: Calculate new height/width values that will never exceed the supplied
+#           values
+# Usage: ($width,$height,$used) = get_new_aspect_constrained(oldWidth, oldHeight, newWidth, newHeight);
+# $used is a string, either 'width' or 'height'. It tells you which of the values that
+# were supplied that were used.
+sub get_new_aspect_constrained
+{
+    my($oldWidth, $oldHeight, $newWidth, $newHeight) = @_;
+
+    my $try = {};
+
+    # Landscape
+    if ($oldWidth > $oldHeight)
+    {
+        if ($newHeight > $newWidth)
+        {
+            $try->{height} = $newHeight;
+        }
+        else
+        {
+            $try->{width} = $newWidth;
+        }
+    }
+    # Portrait
+    else
+    {
+        if ($newHeight < $newWidth)
+        {
+            $try->{width}  = $newWidth;
+        }
+        else
+        {
+            $try->{height} = $newHeight;
+        }
+    }
+    my $new = get_new_aspect($oldWidth,$oldHeight,$try->{width},$try->{height});
+    my ($retHeight, $retWidth,$used);
+    if ($try->{width})
+    {
+        if ($new > $newHeight)
+        {
+            $retHeight = $newHeight;
+            $retWidth  = get_new_aspect($oldWidth,$oldHeight,undef,$newHeight);
+            $used = 'height';
+        }
+        else
+        {
+            $retHeight = $new;
+            $retWidth  = $newWidth;
+            $used = 'width';
+        }
+    }
+    else
+    {
+        if ($new > $newWidth)
+        {
+            $retWidth  = $newWidth;
+            $retHeight = get_new_aspect($oldWidth,$oldHeight,$newWidth,undef);
+            $used = 'width';
+        }
+        else
+        {
+            $retWidth  = $new;
+            $retHeight = $newHeight;
+            $used = 'height';
+        }
+    }
+    return($retWidth,$retHeight);
 }
 
 # Purpose: Get the total file size and the type.

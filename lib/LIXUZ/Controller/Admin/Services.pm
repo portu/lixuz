@@ -21,12 +21,12 @@ use Moose;
 use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller' };
 
-use Text::Aspell;
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use JSON::XS;
 use Try::Tiny;
 use LIXUZ::HelperModules::Search qw(perform_search);
 use LIXUZ::HelperModules::Cache qw(get_ckey CT_24H);
+use LIXUZ::HelperModules::RevisionHelpers qw(get_latest_article);
 use constant {
     TYPE_PREFORMATTED => 1,
     TYPE_HASH => 2,
@@ -36,6 +36,9 @@ use constant {
     false => 0,
     };
 
+# Summary: Handler for "merged" ajax requests
+# This subroutine performs routing of requests from the client side where it
+# has requested information from multiple sources at the same time.
 sub multiRequest : Local
 {
     my ($self,$c) = @_;
@@ -136,6 +139,7 @@ sub multiRequest : Local
     return json_response($c,$c->stash->{multiRequestResponse});
 }
 
+# Summary: Retusns a JSON-list of all templates
 sub templateList : Local
 {
     my ($self,$c) = @_;
@@ -154,6 +158,7 @@ sub templateList : Local
     return json_response($c,{ list => \@list });
 }
 
+# Summary: Returns a JSON-object with information about a specified template
 sub templateInfo : Local
 {
     my ($self,$c) = @_;
@@ -216,47 +221,6 @@ sub templateInfo : Local
     {
         return json_error($c,'UNKNOWNREQUEST');
     }
-}
-
-# Summary: Spellchecker
-sub spellcheck : Local
-{
-    my ($self,$c) = @_;
-    my $data  = $c->req->param('spellCheckData');
-    if(not defined $data)
-    {
-        return json_error($c,'NODATA');
-    }
-
-    # Strip HTML/XML
-    $data =~ s/<[^>]+>//g;
-
-    # TODO: We need to be able to properly detect and handle other languages than Norwegian, this one is stupid.
-    # We might be able to just simply use $i18n->get('DICTIONARY') or something.
-    my $s = Text::Aspell->new();
-    $s->set_option('lang','nb_NO');
-
-    my @Suggestions;
-
-    foreach my $l(split(/(\s+|\.)/,$data))
-    {
-        next if not $l =~ /\D/;
-        (my $check = $l) =~ s/[,\.:\"«»\(\)\?\`\!\&\$\£\€]//g;;
-        if ((not $check =~ /[^A-Z]/) or ($check =~ /^(\d|\-)+$/))
-        {
-            next;
-        }
-        if (not $s->check($check))
-        {
-            my @Suggest = $s->suggest($check);
-            if (@Suggest && (@Suggest > 1 || $Suggest[0]))
-            {
-                push(@Suggestions, { word => $check, suggestions => \@Suggest });
-            }
-        }
-    }
-
-    return json_response($c,{ check => 'spelling', data => \@Suggestions });
 }
 
 # Summary: Get a list of folders
@@ -489,6 +453,7 @@ sub permList : Local
     return json_response($c,$response);
 }
 
+# Summary: Handles setting permissions on folders
 sub setPerm : Local
 {
     my($self,$c) = @_;
@@ -611,7 +576,7 @@ sub poll : Local
     my $r = {};
     if(defined $c->req->param('article_id') && length $c->req->param('article_id'))
     {
-        my $art = $c->model('LIXUZDB::LzArticle')->find({article_id => $c->req->param('article_id')});
+        my $art = get_latest_article($c,$c->req->param('article_id'));
         if(not $art or not $art->lock($c))
         {
             $r->{keepLock} = 'failed';
@@ -985,6 +950,8 @@ sub buildtree : Private
     }
 }
 
+# Summary: Returns a JSON object with settings that define how to display
+#   filtering options to the user
 sub jsFilter: Local
 {
     my($self,$c) = @_;
@@ -1036,6 +1003,7 @@ sub jsFilter: Local
         });
 }
 
+# Summary: Deletes a folder
 sub deleteFolder: Local
 {
     my ($self,$c) = @_;
@@ -1049,6 +1017,7 @@ sub deleteFolder: Local
     return json_response($c, {} );
 }
 
+# Summary: Renames a folder
 sub renameFolder: Local
 {
     my ($self,$c) = @_;
@@ -1064,6 +1033,41 @@ sub renameFolder: Local
         return json_error($c,'INVALID_FOLDER_NAME');
     }
     $folder->set_column('folder_name',$newName);
+    $folder->update();
+    return json_response($c, {} );
+}
+
+# Summary: Moves a folder
+sub moveFolder: Local
+{
+    my ($self,$c) = @_;
+    my $folder_id = $c->req->param('folder_id');
+    my $newParentID = $c->req->param('parent_id');
+    my $folder = $c->model('LIXUZDB::LzFolder')->find({ folder_id => $folder_id });
+    if(not defined $folder_id or $folder_id =~ /\D/ or not length $folder_id or not $folder)
+    {
+        return json_error($c,'INVALID_FOLDER_ID');
+    }
+
+    if (!defined $newParentID || $newParentID ne 'root')
+    {
+        my $parent = $c->model('LIXUZDB::LzFolder')->find({ folder_id => $newParentID });
+        if(not defined $newParentID or $newParentID =~ /\D/ or not length $newParentID or not $parent)
+        {
+            return json_error($c,'INVALID_PARENT_ID');
+        }
+
+        if ($folder->has_child($parent))
+        {
+            return json_error($c,'RECURSIVE_PARENT');
+        }
+    }
+    else
+    {
+        $newParentID = undef;
+    }
+
+    $folder->set_column('parent',$newParentID);
     $folder->update();
     return json_response($c, {} );
 }

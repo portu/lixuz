@@ -14,7 +14,26 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+my $loggedIn = 0;
+try
+{
+    if($c->user && $c->user_exists && $c->user->is_active )
+    {
+        $loggedIn = 1;
+    }
+};
+if($loggedIn && defined($internal) && length($internal))
+{
+    $techie = 'Technical information:'."\n".$internal;
+    $techie =~ s{\n}{<br />}g; #/
+}
+else
+{
+    $techie = 'Technical: '.$techie;
+}
 </%perl>
+<!DOCTYPE html>
 <html>
 <head>
 <!-- Lixuz error -->
@@ -23,19 +42,34 @@
 <body>
 <h4><% $error|n %></h4>
 <h5><% $error_no|n %></h5>
-<b><i>EN</i></b>: <% $text |n %>
-<br /><br />
-<b><i>NO</i></b>: <% $text_no |n %>
-<br /><br /><br /><br />
-<br /><br /><br /><br />
-<small><code>
-Technical: <% $techie |n %>
-</code></small>
-</body></html>
+<div class="errorMessage">
+    <b><i>EN</i></b>:
+    <div class="content"><% $text |n %>
+    <br /><br />
+</div>
+<div class="errorMessage">
+    <b><i>NO</i></b>:
+    <% $text_no |n %>
+    <br /><br /><br /><br />
+%if(!$loggedIn) {
+    <br /><br /><br /><br />
+%}
+</div>
+<div class="details" style="max-width:650px">
+    <small><code>
+    <% $techie |n %>
+    </code></small>
+</div>
+</body>
+</html>
 <%args>
 $error => 'UNKNOWN ERROR'
 $error_no => 'UKJENT FEIL'
 $text => 'An unknown error has occurred'
 $text_no => 'Ein ukjent feil har oppst&aring;tt'
 $techie => 'This is likely caused by missing parameters to renderError.html'
+$internal => undef
 </%args>
+<%once>
+use Try::Tiny;
+</%once>

@@ -32,6 +32,9 @@ Licensed under the GNU GPLv3, see gnu.org/licenses/gpl.html -->
 <link rel="shortcut icon" href="/static/images/lixuz_favicon.png?2" />
 
 <link rel="stylesheet" type="text/css" href="/css/lixuz.css?<%$GITREVISION%>" />
+%foreach my $css (@{ $cssIncl }) {
+    <link rel="stylesheet" type="text/css" href="<% $css %>" />
+%}
 
 <script language="JavaScript" type="text/javascript" src="/js/LABjs.lib.js?<%$GITREVISION%>"></script>
 <script type="text/javascript">
@@ -46,7 +49,7 @@ if($jsIncl)
 }
 # The order of these can be important, therefore they are unshifted onto the array
 # here, rather than added with add_jsIncl().
-foreach my $baseIncl (qw(core.js jquery.plugins.lib.js modernizr.lib.js))
+foreach my $baseIncl (reverse qw(modernizr.lib.js core.lib.js core.js))
 {
     unshift(@jsFiles,$c->uri_for('/js/'.$baseIncl));
 }
@@ -211,6 +214,7 @@ $CDNLoadParams => {}
 $onlySkeletonHTML => undef
 $GITREVISION => 'git'
 $lixuzLang => undef
+$cssIncl => []
 $i18n
 </%args>
 
