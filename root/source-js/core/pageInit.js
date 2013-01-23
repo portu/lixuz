@@ -22,7 +22,6 @@
 {
     $(function()
     {
-
         // Activate chosen
         $('.enableChosen').chosen();
 
@@ -38,6 +37,18 @@
         }, function () {
             $(this).children('.subMenu').stop(true);
             $(this).children('.subMenu').slideUp();
+        });
+
+        // Set up line hovering for lists
+        $('.listView tr').hoverIntent(function()
+        {
+            var $this = $(this);
+            $this.data('orig-background',$this.css('background-color'));
+            $this.animate({'background-color':'#accde6'});
+        },function()
+        {
+            var $this = $(this);
+            $this.animate({'background-color':$this.data('orig-background')});
         });
 
         // Set up calendars (needs jscalendar loaded, so push to the end of the LAB stack)
