@@ -380,6 +380,8 @@ sub parse_squareParams
 #   includes_map => { hashref, map like returned from resolve_dependencies() },
 #   template_deps_parsed => parsed dependencies,
 #   spots_parsed => parsed spot list,
+#   layout => [ arrayref, each entry specifies the number of articles on that line ],
+#   layout_spots => int, total number of layout spots available,
 # }
 sub get_parsed_template_info
 {
@@ -456,6 +458,17 @@ sub get_parsed_template_info
         $info->{mediasettings} = parse_squareParams($size);
     }
     $info->{spots_parsed} = \@spots;
+
+    my $layout = $info->{template_info}->{TEMPLATE_LAYOUT};
+    if ($layout)
+    {
+        $info->{layout} = [ split(/\|/,$layout) ];
+        $info->{layout_spots} = 0;
+        foreach my $e (@{ $info->{layout} })
+        {
+            $info->{layout_spots} += $e;
+        }
+    }
 
     my %needinfoParsed;
     foreach my $dep (@{$deps})

@@ -121,7 +121,6 @@ __PACKAGE__->set_primary_key("template_id");
 
 use LIXUZ::HelperModules::Templates qw(get_parsed_template_info);
 
-# You can replace this text with custom content, and it will be preserved on regeneration
 sub path_to_template_file
 {
     my($self,$c) = @_;
@@ -133,7 +132,33 @@ sub get_info
     my($self,$c) = @_;
     return get_parsed_template_info($c,$self->path_to_template_file($c));
 }
-1;
+
+sub get_layout_meta
+{
+    my($self,$c) = @_;
+    my $info = $self->get_info($c);
+
+    if (! $info->{layout})
+    {
+        return;
+    }
+    my $meta = {
+        layout => $info->{layout},
+        layout_spots => $info->{layout_spots},
+        listmeta => undef,
+    };
+    if ($info->{template_deps_parsed} && $info->{template_deps_parsed}->{article} && $info->{template_deps_parsed}->{article}->{list})
+    {
+        foreach my $infoRequest (@{ $info->{template_deps_parsed}->{article}->{list} })
+        {
+            if ($infoRequest->{layout})
+            {
+                $meta->{listmeta} = $infoRequest;
+            }
+        }
+    }
+    return $meta;
+}
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
