@@ -1,63 +1,58 @@
 <form name="articleOrdering" id="articleOrdering" method="post" action="/admin/categories/layout/save">
-<input type="hidden" name="hid_category_id" id="hid_category_id" value="<% $category_id %>">
-<input type ="hidden" name="hid_template_id" id="hid_template_id" value="3">
-%my @layout_array = split('\|',$layout_str);
-%my $no=1;
+<input type="hidden" name="category_id" id="category_id" value="<% $category_id %>" />
+<input type ="hidden" name="template_id" id="template_id" value="<% $templateObj->id %>" />
+<%perl>
+my @layout_array = @{ $templateObj->get_info($c)->{layout} };
+my $no=1;
+</%perl>
 <table border="0" width="100%">
-%foreach my $lay(@layout_array) {    
-%my  $colspan;
-%my $width ="width:300px;";
+<%perl>
+foreach my $lay (@layout_array)
+{
+    my $colspan;
+    my $width ="width:300px;";
+</%perl>
 <tr>
-%if ($lay==1) {
-% $colspan ="colspan='2'";
-% $width = "";
-%}
+<%perl>
+    if ($lay==1)
+    {
+        $colspan ="colspan='2'";
+        $width = "";
+    }
+    for(my $i=0; $i < $lay;)
+    {
+</%perl>
+    <td <% $colspan %> style="height:120px;<% $width %>;">
+<%perl>
+        if(my $articleobj = $articles->next)
+        {
+            my $list_title = $articleobj->shortText('title',50);
+            if(not defined $list_title or not length $list_title)
+            {
+               $list_title = $i18n->get('(unnamed)');
+            }
 
-%for(my $i=0; $i < $lay;) {
-<td <% $colspan %> style = "height:120px;<% $width %>">
-%my $articleobj = spot_accupied_article($c,$no,$category_id);
-%if($articleobj) {
-%my $art_title = $articleobj->title;
-%my $list_title = $articleobj->shortText('title',50);
-%if(not defined $art_title or not length $art_title){
-%   $art_title = $i18n->get('(unnamed)');
-%   $list_title = $art_title;
-%}
-
-%my $art_lead = $articleobj->lead;
-%my $list_lead = $articleobj->shortText('lead',150);
-%if(not defined $art_lead or not length $art_lead){
-%$art_lead = '';
-%$list_lead = $art_lead;
-%}
-<input type="hidden" name="spot_article" id="spot_article_<% $no %>" value="<%$articleobj->article_id %>">
-<div class="targetSpot ui-droppable" spotval="<% $no%>" style="border:1px solid black;">
-%my $imgpath;
-%my $img = $articleobj->get_fileSpot(1);
-%if($img) {
-% $img = $img->file;
-%if($img && $img->is_image()) {
-% $imgpath = $img->get_url($c,undef,80);
-%}
-%}
-    <div class="dropcontainer ui-draggable" artid="<%$articleobj->article_id %>" arttitle="<%$list_title %>" artlead = "<%$list_lead %>" artimage = "<%$imgpath%>" style="poistion:relative;">
-        <img src="<%$imgpath%>" style="float:left;margin:5px;border-radius:5px;">
-      <h3><%$list_title %> </h3>
-      <p> <%$list_lead |n %> </p>
-      <div style="align:right;"> <a href="#" onclick="articleList.removeFromSpot('<%$articleobj->article_id %>','<%$no%>');" title="cancel"><img src="/static/images/icons/cancel-mono.png"></a></div>
-    </div>
-</div>
-
-%}else{
-
-    <input type="hidden" name="spot_article" id="spot_article_<% $no %>" value=""> 
+            my $imgpath;
+            if (my $img = $articleobj->get_fileSpot(1))
+            {
+                $img = $img->file;
+                if($img && $img->is_image())
+                {
+                    $imgpath = $img->get_url($c,undef,80);
+                }
+            }
+</%perl>
+    <div class="layout-default hidden" data-spot="<% $no %>" data-artid="<% $articleobj->article_id %>" data-arttitle="<% $list_title %>" data-artimage="<% $imgpath %>"></div>
+%       } 
+    <input type="hidden" name="spot_article_<% $no %>" id="spot_article_<% $no %>" value=""> 
     <div class="targetSpot" spotval="<% $no%>"><% $i18n->get('Spot').'-'.$no%></div>
-%}    
 
 </td>
-%$i++;
-%$no++;
-%}
+<%perl>
+        $i++;
+        $no++;
+    }
+</%perl>
 </tr>
 %}
 
@@ -70,10 +65,11 @@
 
 <%args>
 $obj_layout=>undef
+$articles
 $i18n
-$layout_str
+$templateObj
 $category_id
 </%args>
 <%once>
-use LIXUZ::HelperModules::Layout qw(spot_accupied_article);
+use LIXUZ::HelperModules::Layout qw(getArticleInSpot);
 </%once>

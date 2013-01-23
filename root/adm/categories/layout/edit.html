@@ -28,24 +28,24 @@
                         </div>
                     </td>
                     <td>
-                        <form action="/adm/categories/layout/renderCatArticleList" method="get" id="list_search" name="list_search">
-                        <input type="hidden" name="category_id" id="category_id" value="<% $category_id %>">
-                        <input type="hidden" name="folder_id" id="folder_id">
-                        <input type="text" name="query" id="query">
-                        <input id="list_submit_search" name="_submit" type="button" onclick="searchFromArticle()" value="<% $i18n->get('Search')  |n %>" />
+                        <form action="/admin/categories/layout/renderCatArticleList/<% $category_id %>" method="get" id="list_search" name="list_search">
+                            <input type="hidden" name="category_id" id="category_id" value="<% $category_id %>" />
+                            <input type="hidden" name="folder_id" id="folder_id" />
+                            <input type="text" name="query" id="query" />
+                            <input id="list_submit_search" name="_submit" type="button" value="<% $i18n->get('Search')  |n %>" />
                         </form>
                     </td>
                 </tr>
                 <tr>
                     <td class="left"><& left.html, %ARGS &></td>
-                    <td style="width:300px">
+                    <td style="width:700px">
                         <div id="listdiv">
                         </div>
                     </td>
                 </tr>
             </table>
         </td>
-        <td style="width:600px;">
+        <td>
             <div class="layout_category_heading">
                     <% $i18n->get('Category layout for: ')%> <% $category_name%>
             </div>

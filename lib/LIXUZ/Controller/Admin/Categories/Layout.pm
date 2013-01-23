@@ -26,18 +26,25 @@ use LIXUZ::HelperModules::Search qw(cross);
 use LIXUZ::HelperModules::Forms qw(finalize_form);
 use LIXUZ::HelperModules::Includes qw(add_jsIncl add_cssIncl add_globalJSVar add_jsOnLoad);
 use LIXUZ::HelperModules::DragDrop;
-use LIXUZ::HelperModules::Templates qw(cached_parse_templatefile);
 
 sub messageToList
 {
     my ($self, $c, $message) = @_;
-    $c->flash->{ListMessage} = $message;
-    if(not $message)
+    if (defined $c->stash->{displaySite} && $c->stash->{displaySite} == 0)
     {
-        $c->log->warn('No valid message supplied to messageToList in Layout.pm');
+        $c->stash->{content} = $message;
+        $c->stash->{template} = 'adm/core/dummy.html';
     }
-    $c->response->redirect('/admin/categories');
-    $c->detach();
+    else
+    {
+        $c->flash->{ListMessage} = $message;
+        if(not $message)
+        {
+            $c->log->warn('No valid message supplied to messageToList in Layout.pm');
+        }
+        $c->response->redirect('/admin/categories');
+        $c->detach();
+    }
 }   
 
 sub edit : Local Args
@@ -47,29 +54,27 @@ sub edit : Local Args
 
     if (not defined $cat_id or $cat_id =~ /\D/)
     {   
-        return $self->messageToList($c,$i18n->get_advanced('Error: Failed to locate a layout with the CATEGORY_ID %(CATEGORY_ID).', { CATEGORY_ID => $cat_id }));
+        return $self->messageToList($c,$i18n->get_advanced('Error: Invalid ID supplied'));
     }
     else
     {
         my $category = $c->model('LIXUZDB::LzCategory')->find({category_id => $cat_id});
         if(not $category)
         {
-            return $self->messageToList($c,$i18n->get_advanced('Error: Failed to locate a layout with the CATEGORY_ID %(CATEGORY_ID).', { CATEGORY_ID => $cat_id }));
+            return $self->messageToList($c,$i18n->get_advanced('Error: Failed to locate a category with the id %(CATEGORY_ID).', { CATEGORY_ID => $cat_id }));
         }
         else
         {
-            my @catarray =$category->get_category_tree($c);
-            my $catname = '/'.join('/',reverse(@catarray));
-            $c->stash->{category_id} = $cat_id;
-            $c->stash->{category_name} = $catname; 
+            my @catarray               = $category->get_category_tree($c);
+            my $catname                = '/'.join('/',reverse(@catarray));
 
-            $c->stash->{pageTitle} = $c->stash->{i18n}->get('Article Ordering');
             my $template = $c->model('LIXUZDB::LzTemplate')->find({ type => 'list', is_default => 1});
-            my $file = $template->path_to_template_file($c);
 
-            my $info = cached_parse_templatefile($c,$file);
-
-            $c->stash->{layout_str} =  $info->{TEMPLATE_LAYOUT};
+            $c->stash->{category_id}   = $cat_id;
+            $c->stash->{templateObj}   = $template;
+            $c->stash->{category_name} = $catname;
+            $c->stash->{pageTitle}     = $i18n->get('Category layout');
+            $c->stash->{articles}      = $category->orderedRS($c);
 
             my $dnd = LIXUZ::HelperModules::DragDrop->new($c,'LIXUZDB::LzFolder','/admin/articles/folderAjax/',
                 {
@@ -78,7 +83,7 @@ sub edit : Local Args
                 },
                 {
                     immutable => 1, # FIXME: Drop
-                    onclick => 'renderArticleList',
+                    onclick => 'categoryLayout.updateArtList',
                 },
             );
             if ($c->req->param('folder') && $c->req->param('folder') !~ /\D/)
@@ -103,109 +108,127 @@ sub edit : Local Args
 
 sub renderCatArticleList : Local Args Form('/core/search')
 {
-    my ( $self, $c, $cat_id) = @_;
-    my $query = $c->req->param('query');;
+    my ($self, $c, $cat_id) = @_;
     my $category;
-    $self->c($c);
+    my $articles;
     my $i18n = $c->stash->{i18n};
-    my $errorMessage;
+    $c->stash->{displaySite} = 0;
 
     if (not defined $cat_id or $cat_id =~ /\D/)
     {
-        $errorMessage = $i18n->get('Invalid category id');
+        return $self->messageToList($c,$i18n->get_advanced('Error: Invalid ID supplied'));
     }
-    else
+    $category = $c->model('LIXUZDB::LzCategory')->find({category_id => $cat_id});
+    if (not $category)
     {
-        $category = $c->model('LIXUZDB::LzCategory')->find({category_id => $cat_id});
-        if (not $category)
+        return $self->messageToList($c,$i18n->get_advanced('Error: Failed to locate a category with the id %(CATEGORY_ID).', { CATEGORY_ID => $cat_id }));
+    }
+    if (defined (my $folder = $c->req->param('folder')))
+    {
+        if ($folder =~ /\D/ && $folder ne 'root')
         {
-            $errorMessage = $i18n->get('Invalid category id');
+            return $self->messageToList($c,$i18n->get_advanced('Error: Invalid folder-ID supplied'));
         }
-        else
+        elsif ($folder ne 'root')
         {
-            if (defined $c->req->param('folder'))
-            {            
-                my $folder = $c->req->param('folder');
-                if ($folder =~ /\D/)
-                {
-                    $errorMessage = $i18n->get('Invalid folder id');
-                }
-                else
-                {
-                     my $folder_cat = $c->model('LIXUZDB::LzCategoryFolder')->find({category_id => $cat_id, folder_id => $folder});
-                     if (not $folder_cat)
-                     {
-                         $errorMessage = $i18n->get('This folder is not associated with the category');
-                     }
-                     else
-                     {
-                         $category = $c->model('LIXUZDB::LzCategory')->find({category_id => $cat_id, folder_id =>$folder});
-                     }
-                }
-            }
-            if ($errorMessage eq '' )
-            {
-                my $newer = $category->get_live_articles($c);
-                $self->handleListRequest({
-                        object => $newer,
-                        objectName => 'artlist',
-                        template => 'adm/categories/layout/list.html',
-                        orderParams => [qw(article_id title status_id modified_time assigned_to_user author)],
-                        searchColumns => [qw/title article_id body lead/],
-                    });
-           }
-        }   
+             my $folder_cat = $c->model('LIXUZDB::LzCategoryFolder')->find({category_id => $cat_id, folder_id => $folder});
+             if (not $folder_cat)
+             {
+                 return $self->messageToList($c,$i18n->get_advanced('This folder is not associated with the category'));
+             }
+        }
     }
-    if (defined $errorMessage)
+    $articles = $category->get_live_articles($c);
+    if (!defined $articles)
     {
-        $c->stash->{errorMessage} = $errorMessage;
-        $c->stash->{template} = 'adm/categories/layout/list.html';
+        die('Ended up without any articles RS');
     }
-
-    $c->stash->{displaySite} = 0;
+    my $query = $c->req->param('query');
+    my $listRequest = {
+            object => $articles,
+            objectName => 'artlist',
+            template => 'adm/categories/layout/list.html',
+            orderParams => [qw(article_id title status_id modified_time assigned_to_user author)],
+            searchColumns => [qw/title article_id body lead/],
+    };
+    if(defined $query && length $query)
+    {
+        $listRequest->{query} = $query;
+    }
+    $self->handleListRequest($c,$listRequest);
 }
 
 sub save : Local
 {
     my ( $self, $c ) = @_;
     my $i18n = $c->stash->{i18n};
-    my $pst_category_id = $c->req->param('hid_category_id');
-    my $pst_template_id = $c->req->param('hid_template_id');
-    if (not defined $pst_category_id or $pst_category_id =~ /\D/)
+    my $category_id = $c->req->param('category_id');
+    my $template_id = $c->req->param('template_id');
+    my $template = $c->model('LIXUZDB::LzTemplate')->find({ template_id => $template_id });
+    if (not defined $category_id or $category_id =~ /\D/)
     {
         $self->messageToList($c, $i18n->get('Invalid category id.') );
     }
-    elsif (not defined $pst_template_id or $pst_template_id =~ /\D/)
+    elsif (not defined $template_id or $template_id =~ /\D/ or !$template)
     {
         $self->messageToList($c, $i18n->get('Invalid template id.') );
     }
-    elsif (not defined $c->req->param('spot_article') )
+    elsif(!defined $template->get_info($c)->{layout})
     {
-        $self->messageToList($c, $i18n->get('Article ordering is empty.') );
+        $self->messageToList($c, $i18n->get('Template has no spots, unable to save layout') );
     }
     else
     {
-        my $del_order_obj = $c->model('LIXUZDB::LzCategoryLayout')->search({ category_id => $pst_category_id });
-        $del_order_obj->delete_all;
+        my $previousOrdering = $c->model('LIXUZDB::LzCategoryLayout')->search({ category_id => $category_id });
+        $previousOrdering->delete;
+        
+        my $category = $c->model('LIXUZDB::LzCategory')->find({ category_id => $category_id });
 
-        my @pst_article_order = $c->req->param('spot_article');
-        my $i=1;
-        foreach my $artid(@pst_article_order)
+        my @article_order = $c->req->param('spot_article');
+
+        my $layoutMeta = $template->get_layout_meta($c);
+        my $totalSpots = $layoutMeta->{layout_spots};
+
+        my @articles;
+        for(my $spot = 0; $spot <= $totalSpots; $spot++)
         {
-            if ($artid != 0 && $artid != ' ')
+            my $content = $c->req->param('spot_article_'.$spot);
+            if ( defined $content && $content =~ /^\d+$/)
             {
-                my $insert_order_obj = $c->model('LIXUZDB::LzCategoryLayout')->create({
-                    category_id => $pst_category_id,
-                    article_id => $artid,
-                    template_id => $pst_template_id,
-                    spot => $i,
-                });
-                
-                $insert_order_obj->update;
+                push(@articles,$content);
             }
-            $i++;
         }
-        $self->messageToList($c, $i18n->get('Article order saved successfully.') );
+
+        my $otherArticles = $category->get_live_articles($c, { 
+                overrideLiveStatus => $layoutMeta->{overrideLiveStatus},
+                extraLiveStatus => $layoutMeta->{extraLiveStatus},
+            });
+        $otherArticles = $otherArticles->search({ 'me.article_id' => { -not_in => \@articles } });
+
+        my %seen;
+        for(my $spot = 0; $spot <= $totalSpots; $spot++)
+        {
+            my $artid = $c->req->param('spot_article_'.$spot);
+            if (! defined $artid || $artid =~ /\D/)
+            {
+                $artid = $otherArticles->next->article_id;
+            }
+            if ($seen{$artid})
+            {
+                $c->log->warn('WARNING: Duplicates in layout definition. Replacing duplicate of '.$artid);
+                $artid = $otherArticles->next->article_id;
+            }
+            $seen{$artid} = 1;
+            my $insert_order_obj = $c->model('LIXUZDB::LzCategoryLayout')->create({
+                    category_id => $category_id,
+                    article_id => $artid,
+                    template_id => $template_id,
+                    spot => $spot,
+                });
+
+            $insert_order_obj->update;
+        }
+        $self->messageToList($c, $i18n->get('Category layout saved successfully.') );
     }
 }
 1;
