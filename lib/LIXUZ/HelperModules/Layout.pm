@@ -1,5 +1,5 @@
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+# Copyright (C) Utrop A/S Portu media & Communications 2012-2013
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -14,20 +14,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# LIXUZ::HelperModules::Layout;
-# 
+
 # This module contains functions that assists with display layout
-# 
-#
 package LIXUZ::HelperModules::Layout;
 use strict;
 use warnings;
 use Exporter qw(import);
 use constant { true => 1, false => 0 };
 use LIXUZ::HelperModules::RevisionHelpers qw(get_live_or_latest_article);
-our @EXPORT_OK = qw(spot_accupied_article);
+our @EXPORT_OK = qw(getArticleInSpot);
 
-sub spot_accupied_article
+sub getArticleInSpot
 {
     my $c = shift;
     my $spot_id = shift;
