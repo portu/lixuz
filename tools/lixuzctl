@@ -1702,9 +1702,9 @@ sub installTemplateFile
         }
     }
 
-    if ($info->{'TEMPLATE_APIVERSION'} ne '1')
+    if ($info->{'TEMPLATE_APIVERSION'} > 2)
     {
-        die($errorPrefix.' APIVERSION not supported. This version of Lixuz only supports APIVERSION 1, this template is for APIVERSION '.$info->{'TEMPLATE_APIVERSION'});
+        die($errorPrefix.' APIVERSION not supported. This version of Lixuz only supports APIVERSION 2 and lower, this template is for APIVERSION '.$info->{'TEMPLATE_APIVERSION'});
     }
 
     # When we have reached this point we can assume that all is o.k. with the
