@@ -977,12 +977,19 @@ sub buildPackage
                 # Ignore temporary files
                 next if $file =~ /(\.swp|~)$/;
 
-                my $info = parse_templatefile($fakeC,$file);
-                if ( my $existing = $idMap{ $info->{'TEMPLATE_UNIQUEID'} } )
+                try
                 {
-                    push(@errors,'Multiple templates are using the unique id "'.$info->{'TEMPLATE_UNIQUEID'}.'": '.basename($file).' '.basename($existing)."\n");
+                    my $info = parse_templatefile($fakeC,$file);
+                    if ( my $existing = $idMap{ $info->{'TEMPLATE_UNIQUEID'} } )
+                    {
+                        push(@errors,'Multiple templates are using the unique id "'.$info->{'TEMPLATE_UNIQUEID'}.'": '.basename($file).' '.basename($existing)."\n");
+                    }
+                    $idMap{ $info->{'TEMPLATE_UNIQUEID'} } = $file;
                 }
-                $idMap{ $info->{'TEMPLATE_UNIQUEID'} } = $file;
+                catch
+                {
+                    push(@errors,'File '.$file.' does not appear to have a LIXUZ section'."\n");
+                };
             }
         }
         if (@errors)
