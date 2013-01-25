@@ -17,8 +17,13 @@
 </%perl>
 <%args>
 $mode => 'script'
+$location => 'header'
 </%args>
 <%perl>
+if($mode eq 'dual' && $location eq 'header')
+{
+    return;
+}
 my $UI = 0;
 $UI = 1 if $c->stash->{lz_preview_mode};
 
