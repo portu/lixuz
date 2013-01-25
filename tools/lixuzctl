@@ -1682,16 +1682,18 @@ sub installTemplateFile
     my $errorPrefix = 'Unable to install template from '.$file.':';
 
     loadLixuzModules();
+    
+    printd('Processing '.basename($file));
 
     printd('Fetching DBIC, fake $c and config');
     my $dbic = getDBIC();
     my $fakeC = fakeC();
     my $config = getConfig();
 
-    printd('Parsing '.$file);
+    printd('Reading infoblock');
     my $info = parse_templatefile($fakeC,$file);
 
-    printd('Validating infoblock in '.$file);
+    printd('Validating infoblock');
 
     if(not defined $info or not (keys %{$info}))
     {
@@ -1722,11 +1724,11 @@ sub installTemplateFile
 
     if(defined $template)
     {
-        printd('Upgrading template from '.$file);
+        printd('Upgrading template');
     }
     else
     {
-        printd('Installing new template from '.$file);
+        printd('Installing new template');
         $template = $dbic->resultset('LzTemplate')->create({
                 uniqueid => $info->{TEMPLATE_UNIQUEID},
             });
@@ -1773,7 +1775,7 @@ sub installTemplateFile
     }
     else
     {
-        printd('Skipped copying of template data for '.$fnam.': identical version already present');
+        printd('Skipped copying of template data: identical version already present');
     }
 
     if ($error)
@@ -1781,7 +1783,7 @@ sub installTemplateFile
         $template->delete;
         die($errorPrefix.' Failed to copy file into place: '.$error);
     }
-    printd('Template '.$file.' injection complete');
+    printd('Template injection complete');
     return $info->{TEMPLATE_UNIQUEID};
 }
 
