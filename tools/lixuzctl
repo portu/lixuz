@@ -994,7 +994,6 @@ sub buildPackage
         }
         if (@errors)
         {
-            printStatus('failed'."\n\n");
             $runCleanup->(1);
             foreach my $error (@errors)
             {
