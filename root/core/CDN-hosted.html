@@ -19,6 +19,7 @@
 $mode => 'rawLAB'
 $UI => 1
 $JQcore => 1
+$lodash => 1
 $YUI => 0
 </%args>
 <%once>
@@ -39,6 +40,11 @@ if($UI)
 if($YUI)
 {
     push(@URLs, 'http://yui.yahooapis.com/combo?2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js&2.8.0r4/build/dragdrop/dragdrop-min.js&2.8.0r4/build/element/element-min.js&2.8.0r4/build/resize/resize-min.js&2.8.0r4/build/imagecropper/imagecropper-min.js');
+}
+if($lodash)
+{
+    my $lodash_VERSION = '1.0.0-rc.3';
+    push(@URLs, 'http://cdnjs.cloudflare.com/ajax/libs/lodash.js/'.$lodash_VERSION.'/lodash.min.js');
 }
 
 given($mode)
