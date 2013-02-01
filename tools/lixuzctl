@@ -881,35 +881,60 @@ sub buildPackage
     $target //= '.';
     my $disableTriggers = shift;
 
-    printStatus('Performing sanity checks... ');
-    if (! -w $target && -w $srcdir)
     {
-        warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
-        $target = $srcdir;
-    }
-    elsif(! -w $target)
-    {
-        die('Neither '.$target.'/ or '.$srcdir.' is writeable, giving up'."\n");
-    }
-
-    if (! -e $srcdir.'/package.yml')
-    {
-        if (-e $srcdir.'/plugin.yml')
+        my $prepDone = 0;
+        printStatus('Preparing... ');
+        if (! -w $target && -w $srcdir)
         {
-            if ($mode eq 'reconstruct')
+            warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
+            $target = $srcdir;
+        }
+
+        if (! -e $srcdir.'/package.yml')
+        {
+            if (-e $srcdir.'/plugin.yml')
             {
-                move($srcdir.'/plugin.yml',$srcdir.'/package.yml');
+                if ($mode eq 'reconstruct')
+                {
+                    move($srcdir.'/plugin.yml',$srcdir.'/package.yml');
+                }
+                else
+                {
+                    die('Package is using plugin.yml instead of package.yml. It is outdated.'."\n".
+                        'Rename plugin.yml to package.yml and update apiversion to 4 and try again.'."\n");
+                }
             }
             else
             {
-                die('Package is using plugin.yml instead of package.yml. It is outdated.'."\n".
-                    'Rename plugin.yml to package.yml and update apiversion to 4 and try again.'."\n");
+                my $origsrc = $srcdir;
+                while(! -e $srcdir.'/package.yml' && $srcdir ne '/')
+                {
+                    $srcdir = realpath($srcdir.'/../');
+                }
+                if (! -e $srcdir.'/package.yml')
+                {
+                    die("package.yml is missing\n");
+                }
+                if ($target eq $origsrc)
+                {
+                    $target = $srcdir;
+                }
+                printStatus('done'."\n");
+                $prepDone = 1;
+                print "Autodetected package root directory: $srcdir\n";
             }
         }
-        else
+        if (!$prepDone)
         {
-            die($srcdir.'/package.yml is missing'."\n");
+            printStatus('done'."\n");
         }
+    }
+
+    printStatus('Performing sanity checks... ');
+
+    if(! -w $target)
+    {
+        die('Neither '.$target.'/ or '.$srcdir.' is writeable, giving up'."\n");
     }
     if (-e $srcdir.'/plugin' && ! -e $srcdir.'/content')
     {
