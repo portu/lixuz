@@ -640,6 +640,7 @@ sub clearCache
         get_ckey('article','filteredBody',$self->article_id),
         get_ckey('article','bestCategoryID','-'.$self->article_id),
         get_ckey('article','categoryName','-'.$self->article_id),
+        get_ckey('article','categoryID','-'.$self->article_id),
         get_ckey('article','allCategories',$self->article_id),
         get_ckey('article','lastChronologyKey',$self->article_id),
         get_ckey('template','artid',$self->article_id),
@@ -652,6 +653,7 @@ sub clearCache
     {
         push(@keys, get_ckey('article','bestCategoryID',$cat->category_id.'-'.$self->article_id));
         push(@keys, get_ckey('article','categoryName',$cat->category_id.'-'.$self->article_id));
+        push(@keys, get_ckey('article','categoryID',$cat->category_id.'-'.$self->article_id));
     }
 
     # Last chronology key fetched. Delete it if it is available.
@@ -1054,18 +1056,32 @@ sub category_name
 }
 
 # Summary: Get the ID of the (best) category this article lives in
-# Usage: id = article->category_id($c)
+# Usage: id = article->category_id($c,$notIn)
 sub category_id
 {
     my $self = shift;
     my $c = shift or croak('$c missing');
+    my $notIn = shift;
+    my $notInK = defined $notIn ? $notIn : '';
+    my $ckey = get_ckey('article','categoryID',$notInK.'-'.$self->article_id);
 
-    my $cat = $self->_get_best_category($c);
-    if ($cat)
+
+    if (my $value = $c->cache->get($ckey))
     {
-        return $cat->category_id;
+        return $value;
     }
-    return;
+
+    if(my $bestCategory = $self->_get_best_category($c,$notIn))
+    {
+        $bestCategory = $bestCategory->id;
+        $c->cache->set($ckey,$bestCategory,CT_DEFAULT);
+        return $bestCategory;
+    }
+    else
+    {
+        $c->cache->set($ckey,'',CT_DEFAULT);
+        return '';
+    }
 }
 
 # Summary: Get the object of the (best) category this article lives in
