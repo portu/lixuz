@@ -253,13 +253,16 @@ newStep('Database configuration');
 print "WARNING: If there is any Lixuz data already in the database\n";
 print "         you supply here, that data will be DELETED.\n";
 print "         Please use caution (and backups).\n";
-my($dbnam,$dbuser,$dbpwd) = (basename($settings{installPath}), undef,undef);
+my($dbnam,$dbuser,$dbpwd) = (basename($settings{installPath}), undef,getRndPwd());
+print "\nUse the following in a mysql console if you just want to create a new\nuser and database:\n";
+print "CREATE DATABASE $dbnam; CREATE USER '$dbnam'\@'localhost' IDENTIFIED BY '$dbpwd';\n";
+print "GRANT ALL ON $dbnam.* TO '$dbnam'\@'localhost;\n";
 while(1)
 {
     $dbnam = getInput('What is the name of the database Lixuz should use?',$dbnam);
     $dbuser //= $dbnam;
     $dbuser = getInput('What is the username for it?',$dbuser);
-    $dbpwd = getInput('What is the password for it?');
+    $dbpwd = getInput('What is the password for it?',$dbpwd);
 
     print "Testing database connection...";
 	my $fail = 0;
