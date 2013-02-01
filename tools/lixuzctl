@@ -230,6 +230,12 @@ sub usage
     print "\n";
     print "Run: \"lixuzctl [category] --help\" for a list of subcommands and parameters\n";
     print "for that category\n";
+    print "\n";
+    print "Global parameters:\n";
+    printHelp('','--logfile X','Log messages to X');
+    printHelp('','--lixuzdir X','Operate on the Lixuz installation located at X');
+    printHelp('','--quiet','Be quiet');
+    printHelp('','--debug','Enable debugging output');
     exit(shift);
 }
 
