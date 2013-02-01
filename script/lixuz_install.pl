@@ -722,7 +722,7 @@ sub getRndPwd
     $letters .= '0123456789';
     my @opts = split(//,$letters);
     my $rnd;
-    for(0..10)
+    for(0..15)
     {
         $rnd .= $opts[rand scalar(@opts)];
     }
