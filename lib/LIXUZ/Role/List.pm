@@ -24,6 +24,7 @@ package LIXUZ::Role::List;
 
 use Moose::Role;
 use 5.010;
+use Carp qw(croak);
 
 sub handleListRequest
 {
@@ -38,6 +39,11 @@ sub getListHelper
     my $self    = shift;
     my $c       = shift;
     my $options = shift;
+
+    if(ref($c) ne 'LIXUZ')
+    {
+        croak('$c missing');
+    }
 
     $options //= {};
     $options->{c} = $c;
@@ -66,7 +72,7 @@ sub getListHelper
 
         default
         {
-            die('LIXUZ::Role::List should not be consumed directly');
+            croak('LIXUZ::Role::List should not be consumed directly');
         }
     }
 }
