@@ -17,10 +17,19 @@
 </%perl>
 <%args>
 $mode => 'script'
+$location => 'header'
+$lodash => 0
+$UI => 0
 </%args>
 <%perl>
-my $UI = 0;
-$UI = 1 if $c->stash->{lz_preview_mode};
+if($mode eq 'dual' && $location eq 'header')
+{
+    return;
+}
+if($c->stash->{lz_preview_mode})
+{
+    $UI = 1;
+}
 
 if($mode eq 'LAB')
  {
@@ -28,7 +37,7 @@ if($mode eq 'LAB')
 </%perl>
 <script type="text/javascript">
 %}
-<& CDN-hosted.html, mode => $mode, UI => $UI &>
+<& CDN-hosted.html, mode => $mode, UI => $UI, lodash => $lodash &>
 %if($mode eq 'rawLAB') {
 $LAB.queue('/js/live.js',true);
 </script>

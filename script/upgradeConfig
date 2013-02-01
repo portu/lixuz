@@ -89,6 +89,10 @@ sub loadConf
         # fetching.
         $settings{FILES_COMPAT} = '1';
     }
+    if ($lc->{rssImportActiveDefault} && $lc->{rssImportActiveDefault} ne 'false')
+    {
+        $settings{RSS_IMPORT_ACTIVE_DEFAULT} = $lc->{rssImportActiveDefault};
+    }
     if(not $settings{EMAIL_TO_OVERRIDE})
     {
         $settings{EMAIL_TO_OVERRIDE} = 'false';
