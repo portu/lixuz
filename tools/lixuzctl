@@ -681,7 +681,7 @@ sub runPackageTrigger
 
     my $origDir = getcwd;
     my $file;
-    if ($trigger eq 'build' || $trigger eq 'buildCleanup')
+    if ($trigger =~ /^build\w*$/)
     {
         $file = shift;
         chdir(dirname($file));
@@ -868,6 +868,15 @@ my $triggers; $triggers = {
         # Run buildCleanup first, to ensure our environment is clean
         # (you may remove this if you don\'t need it)
         $triggers->{buildCleanup}->(@_);
+    },
+    # Triggered during the construction step of package building. At this point
+    # the current directory is a temporary directory tree that will become
+    # the package content and contain only copies of files (ie. any changes made
+    # here will only be present in the actual package, not in your working
+    # tree). The only two directories available at this point is content/ and
+    # liveTemplates/
+    buildConstruct => sub
+    {
     },
     # Triggered after the package has been built. You may use this to
     # clean up after the build trigger if needed. buildCleanup also gets
@@ -1059,7 +1068,7 @@ sub buildPackage
         printStatus('done'."\n");
     }
 
-    printStatus('Constructing package...');
+    printStatus('Constructing package payload...');
     my $date = strftime('%Y%m%d',localtime);
     $meta->{version} =~ s/{DATE}/$date/g;
     my $fname = $packageName.'-'.$meta->{version}.'.lpk';
@@ -1108,6 +1117,32 @@ sub buildPackage
                 }, $srcdir.'/'.$tree);
         }
     }
+
+    printStatus('done'."\n");
+
+    if (!$disableTriggers)
+    {
+        my $previousDir = getcwd();
+        chdir($dir) or die('Failed to chdir to '.$dir.': '.$!);
+
+        printStatus('Running construction triggers...');
+        try
+        {
+            runPackageTrigger($packageName,'buildConstruct',$srcdir.'/triggers.pl');
+        }
+        catch
+        {
+            $runCleanup->(1);
+            chdir($previousDir);
+            die($_);
+        };
+        printStatus('done'."\n");
+
+        chdir($previousDir);
+    }
+
+    printStatus('Constructing package file...');
+
     # Replace placeholders in package.yml
     my $packageYML = slurp($dir.'/package.yml');
     $packageYML =~ s/(version:.+)\{DATE\}/$1$date/g;
