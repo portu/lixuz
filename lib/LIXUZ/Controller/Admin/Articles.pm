@@ -392,7 +392,6 @@ sub read : Local Args
             {
                 $folder_id = $article->folder->folder_id;
             }
-            $c->forward('LIXUZ::Controller::Admin::Articles::Workflow','writecheck',[undef, $article]) or $c->detach();
             $c->stash->{artfolder} = $article->primary_folder->folder->get_path();
             $c->stash->{artstatus} = $article->status->status_name($c->stash->{i18n});
             $c->stash->{artpubtime}= $article->human_publish_time();
