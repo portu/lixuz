@@ -567,9 +567,33 @@ sub packages
 
         when('remove')
         {
-            foreach (@ARGV)
+            my @retry;
+            foreach my $pkg (@ARGV)
             {
-                removePackage($_);
+                try
+                {
+                    removePackage($pkg);
+                }
+                catch
+                {
+                    push(@retry,$pkg);
+                };
+            }
+            my @die;
+            foreach my $pkg (@retry)
+            {
+                try
+                {
+                    removePackage($pkg);
+                }
+                catch
+                {
+                    push(@die,$_[0]);
+                };
+            }
+            if (@die)
+            {
+                die(join('',@die));
             }
         }
 
@@ -1662,7 +1686,7 @@ sub removePackage
         printnd('.');
     }
 
-    printStatus('Removing '.$packageName.'... ');
+    printStatus(' Removing '.$packageName.'... ');
 
     runPackageTrigger($packageName,'removal');
 
