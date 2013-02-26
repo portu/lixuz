@@ -25,7 +25,7 @@
 package LIXUZ::HelperModules::AccessControl;
 
 use Moose;
-use Carp;
+use Carp qw(cluck);
 use LIXUZ::HelperModules::Cache qw(get_ckey);
 use constant {
     true => 1,
@@ -92,6 +92,10 @@ sub access_denied
         die('access_denied() loop detected');
     }
     $self->deniedOnce(1);
+    if ($c->debug && $ENV{LIXUZ_ACL_DEBUG})
+    {
+        cluck('Access to '.$self->last_denied.' denied');
+    }
     $c->detach('LIXUZ::Controller::Admin::ACL','access_denied');
     die('access_denied() got to end of function');
 }
