@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2012
-# Copyright (C) Eskild Hustvedt 2012
+# Copyright (C) Utrop A/S Portu media & Communications 2012, 2013
+# Copyright (C) Eskild Hustvedt 2012, 2013
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -41,7 +41,7 @@ my $dataFormatRevision        = 2;
 # The minimum supported api level of plumbing commands
 my $minSupportedApiLevel      = 2;
 # The real (latest) supported api level of plumbing commands
-my $currentSupportedApiLevel  = 4;
+my $currentSupportedApiLevel  = 5;
 # The revision of the package format that we write
 my $packageFormatRevision     = 1;
 # The mimimum supported package format supported
@@ -119,6 +119,11 @@ sub main
         when(/^(package|pkg|plugin)s?$/)
         {
             packages();
+        }
+
+        when('templates')
+        {
+            templates();
         }
 
         when('database')
@@ -225,6 +230,7 @@ sub usage
     print "\n";
     print "Available categories:\n";
     printHelp('','packages','Package actions (install, remove, upgrade, list etc.)');
+    printHelp('','templates','Template actions (inject, remove, list)');
     printHelp('','database','Database actions (upgrade)');
     printHelp('','plumbing','Plumbing actions, used internally by Lixuz (not meant for public use)');
     print "\n";
@@ -901,6 +907,232 @@ my $triggers; $triggers = {
 }
 
 # ---
+# Template management functions
+# ---
+
+# Purpose: Handler for templates-section subcommands
+sub templates
+{
+    $| = 1;
+    checkForHelpParam(sub { usageTemplates(0) });
+
+    my $subcommand = shift(@ARGV);
+
+    printv('Operating on Lixuz at '.$lixuzDir."\n");
+
+    given($subcommand)
+    {
+        when('inject')
+        {
+            foreach my $templateFile (@ARGV)
+            {
+                if (-e $templateFile)
+                {
+                    injectTemplateFile($templateFile);
+                }
+            }
+        }
+
+        when('remove')
+        {
+            foreach my $templateID (@ARGV)
+            {
+                removeTemplate($templateID);
+            }
+        }
+
+        when('list')
+        {
+            print "\n";
+            printnd('Fetching template list...');
+            loadLixuzModules();
+
+            printd('Fetching DBIC');
+            my $dbic = getDBIC();
+            my $fmt = "%-35s %-18s %s\n";
+
+            my $templates = $dbic->resultset('LzTemplate');
+            printnd("\r");
+            printf($fmt,'Unique ID','Type','Name');
+            while(my $template = $templates->next)
+            {
+                my $default = $template->is_default ? ' (default)' : '';
+                printf($fmt,$template->uniqueid,$template->type.$default,$template->name);
+            }
+        }
+        default
+        {
+            die('Unknown subcommand for templates: '.$subcommand."\nSee \"templates --help\" for more information\n");
+        }
+    }
+}
+
+# Purpose: Displays usage information for template subcommands
+sub usageTemplates
+{
+    print "USAGE: lixuzctl templates [subcommand] [parameters]\n";
+    print "\n";
+    print "Available subcommands:\n";
+    printHelp('','inject X','Install or upgrade the supplied live template file');
+    printHelp('','remove X','Remove the template identified by the supplied unique ID X');
+    printHelp('','list','List all installed templates');
+    exit(shift);
+}
+
+# Purpose: Inject a live template into Lixuz
+sub injectTemplateFile
+{
+    my $file = shift;
+
+    my $errorPrefix = 'Unable to install template from '.$file.':';
+
+    loadLixuzModules();
+    
+    printd('Processing '.basename($file));
+
+    printd('Fetching DBIC, fake $c and config');
+    my $dbic = getDBIC();
+    my $fakeC = fakeC();
+    my $config = getConfig();
+
+    printd('Reading infoblock');
+    my $info;
+    try
+    {
+        $info = parse_templatefile($fakeC,$file);
+    }
+    catch
+    {
+        die('Fatal: Failed to parse the infoblock in '.$file."\n");
+    };
+
+    printd('Validating infoblock');
+
+    if(not defined $info or not (keys %{$info}))
+    {
+        die($errorPrefix.' invalid infoblock');
+    }
+
+    # TODO: Add some regexes to validate the content of the items as well,
+    # UNIQUEID in particular, which should probably only be [A-Za-z0-9.-\+]
+    foreach my $required (qw(VERSION NAME APIVERSION UNIQUEID TYPE))
+    {
+        if(not defined $info->{'TEMPLATE_'.$required} or not length($info->{'TEMPLATE_'.$required}))
+        {
+            die($errorPrefix.' TEMPLATE_'.$required.' missing from infoblock');
+        }
+    }
+
+    if ($info->{'TEMPLATE_APIVERSION'} ne '1')
+    {
+        die($errorPrefix.' APIVERSION not supported. This version of Lixuz only supports APIVERSION 1, this template is for APIVERSION '.$info->{'TEMPLATE_APIVERSION'});
+    }
+
+    # When we have reached this point we can assume that all is o.k. with the
+    # template and that its infoblock is well formed, and can thus simply be
+    # shoved into the database without further validation.
+    my $template = $dbic->resultset('LzTemplate')->find({
+            uniqueid => $info->{TEMPLATE_UNIQUEID}
+        });
+
+    if(defined $template)
+    {
+        printd('Upgrading template');
+    }
+    else
+    {
+        printd('Installing new template');
+        $template = $dbic->resultset('LzTemplate')->create({
+                uniqueid => $info->{TEMPLATE_UNIQUEID},
+            });
+    }
+
+    eval
+    {
+        my $name;
+        $template->set_column('type',$info->{TEMPLATE_TYPE});
+        $template->set_column('apiversion',1);
+        if ($info->{TEMPLATE_NAME})
+        {
+            $name = $info->{TEMPLATE_NAME};
+        }
+        else
+        {
+            $name = $info->{TEMPLATE_UNIQUEID};
+        }
+        $template->set_column('name',$name);
+        $template->update();
+        1;
+    } or do {
+        my $e = $@;
+        # Delete if something at all got added
+        eval { if ($template) { $template->delete(); } };
+
+        die($errorPrefix.' Failed to create template object during injection. Error: '.$e);
+    };
+
+    my $fnam = $template->template_id.'_'.$template->uniqueid.'_'.$template->apiversion.'.lz.mas';
+    $template->set_column('file',$fnam);
+    my $current = $dbic->resultset('LzTemplate')->search({ is_default => 1, type => $template->type });
+    if (!$current || !$current->count >0)
+    {
+        $template->set_column('is_default',1);
+    }
+    $template->update();
+
+    my $error;
+    if (! -e $config->{LIXUZ}->{template_path}.'/'.$fnam || filesDiffer($file,$config->{LIXUZ}->{template_path}.'/'.$fnam))
+    {
+        printd('Wrote updated template to '.$config->{LIXUZ}->{template_path}.'/'.$fnam);
+        copy($file,$config->{LIXUZ}->{template_path}.'/'.$fnam) or $error = $!;
+    }
+    else
+    {
+        printd('Skipped copying of template data: identical version already present');
+    }
+
+    if ($error)
+    {
+        $template->delete;
+        die($errorPrefix.' Failed to copy file into place: '.$error);
+    }
+    printd('Template injection complete');
+    return $info->{TEMPLATE_UNIQUEID};
+}
+
+# Purpose: Remove a live template from Lixuz
+sub removeTemplate
+{
+    my $id = shift;
+    my $errorPrefix = 'Failed to remove template with ID '.$id.':';
+    loadLixuzModules();
+
+    printd('Fetching DBIC');
+    my $dbic = getDBIC();
+
+    printd('Fetching a fake $c');
+    my $fakeC = fakeC();
+
+    printd('Loading config');
+    my $config = getConfig();
+
+    my $template = $dbic->resultset('LzTemplate')->find({
+            uniqueid => $id,
+        });
+
+    if (! $template)
+    {
+        printd('No template with the ID '.$id.' in the database. Ignoring request.');
+        return;
+    }
+    my $file = $config->{LIXUZ}->{template_path}.'/'.$template->get_column('file');
+    unlink($file) or die($errorPrefix.': Failed to unlink '.$file.': '.$!."\n");
+    printd('Removed '.$file);
+    $template->delete;
+    printd('Removed database entry for '.$id);
+}
+
+# ---
 # Package construction functions
 # ---
 
@@ -916,7 +1148,7 @@ sub buildPackage
 
     {
         my $prepDone = 0;
-        printStatus('Preparing... ');
+        printStatus('Preparing...');
         if (! -w $target && -w $srcdir)
         {
             warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
@@ -964,7 +1196,7 @@ sub buildPackage
         }
     }
 
-    printStatus('Performing sanity checks... ');
+    printStatus('Performing sanity checks...');
 
     if(! -w $target)
     {
@@ -989,7 +1221,6 @@ sub buildPackage
 
     my $packageName = getPackageSystemName($meta);
     lockfile('create');
-    printStatus('done'."\n");
 
     my $runCleanup = sub
     {
@@ -998,11 +1229,11 @@ sub buildPackage
         {
             if ($error)
             {
-                printStatus('failed - cleaning up ...');
+                printStatus('failed - cleaning up...');
             }
             else
             {
-                printStatus('Running build cleanup triggers...');
+                printStatus('Running trigger: buildCleanup...');
             }
             runPackageTrigger($packageName,'buildCleanup',$srcdir.'/triggers.pl');
             printStatus('done'."\n");
@@ -1010,9 +1241,11 @@ sub buildPackage
         lockfile('remove');
     };
 
+    printStatus('done'."\n");
+
     if (!$disableTriggers)
     {
-        printStatus('Running build triggers...');
+        printStatus('Running trigger: build...');
         try
         {
             runPackageTrigger($packageName,'build',$srcdir.'/triggers.pl');
@@ -1126,7 +1359,7 @@ sub buildPackage
         my $previousDir = getcwd();
         chdir($dir) or die('Failed to chdir to '.$dir.': '.$!);
 
-        printStatus('Running construction triggers...');
+        printStatus('Running trigger: buildCleanup...');
         try
         {
             runPackageTrigger($packageName,'buildConstruct',$srcdir.'/triggers.pl');
@@ -1529,7 +1762,7 @@ sub installPackage
             {
                 if (-e $templateFile)
                 {
-                    $templateIDs{ installTemplateFile($templateFile) } = 1;
+                    $templateIDs{ injectTemplateFile($templateFile) } = 1;
                 }
             }
         }
@@ -1739,7 +1972,7 @@ sub removePackage
     }
     if ($meta->{packages}->{$packageName}->{templateIDs})
     {
-        selfRun('plumbing','templateremove',@{$meta->{packages}->{$packageName}->{templateIDs}});
+        selfRun('templates','remove',@{$meta->{packages}->{$packageName}->{templateIDs}});
     }
     delete($meta->{packages}->{$packageName});
     writeMetaFile($meta);
@@ -1763,159 +1996,6 @@ sub listPackages
     {
         print '(there are no packages installed)'."\n";
     }
-}
-
-# Purpose: Install a live template from a package into Lixuz
-sub installTemplateFile
-{
-    my $file = shift;
-
-    my $errorPrefix = 'Unable to install template from '.$file.':';
-
-    loadLixuzModules();
-    
-    printd('Processing '.basename($file));
-
-    printd('Fetching DBIC, fake $c and config');
-    my $dbic = getDBIC();
-    my $fakeC = fakeC();
-    my $config = getConfig();
-
-    printd('Reading infoblock');
-    my $info;
-    try
-    {
-        $info = parse_templatefile($fakeC,$file);
-    }
-    catch
-    {
-        die('Fatal: Failed to parse the infoblock in '.$file."\n");
-    };
-
-    printd('Validating infoblock');
-
-    if(not defined $info or not (keys %{$info}))
-    {
-        die($errorPrefix.' invalid infoblock');
-    }
-
-    # TODO: Add some regexes to validate the content of the items as well,
-    # UNIQUEID in particular, which should probably only be [A-Za-z0-9.-\+]
-    foreach my $required (qw(VERSION NAME APIVERSION UNIQUEID TYPE))
-    {
-        if(not defined $info->{'TEMPLATE_'.$required} or not length($info->{'TEMPLATE_'.$required}))
-        {
-            die($errorPrefix.' TEMPLATE_'.$required.' missing from infoblock');
-        }
-    }
-
-    if ($info->{'TEMPLATE_APIVERSION'} ne '1')
-    {
-        die($errorPrefix.' APIVERSION not supported. This version of Lixuz only supports APIVERSION 1, this template is for APIVERSION '.$info->{'TEMPLATE_APIVERSION'});
-    }
-
-    # When we have reached this point we can assume that all is o.k. with the
-    # template and that its infoblock is well formed, and can thus simply be
-    # shoved into the database without further validation.
-    my $template = $dbic->resultset('LzTemplate')->find({
-            uniqueid => $info->{TEMPLATE_UNIQUEID}
-        });
-
-    if(defined $template)
-    {
-        printd('Upgrading template');
-    }
-    else
-    {
-        printd('Installing new template');
-        $template = $dbic->resultset('LzTemplate')->create({
-                uniqueid => $info->{TEMPLATE_UNIQUEID},
-            });
-    }
-
-    eval
-    {
-        my $name;
-        $template->set_column('type',$info->{TEMPLATE_TYPE});
-        $template->set_column('apiversion',1);
-        if ($info->{TEMPLATE_NAME})
-        {
-            $name = $info->{TEMPLATE_NAME};
-        }
-        else
-        {
-            $name = $info->{TEMPLATE_UNIQUEID};
-        }
-        $template->set_column('name',$name);
-        $template->update();
-        1;
-    } or do {
-        my $e = $@;
-        # Delete if something at all got added
-        eval { if ($template) { $template->delete(); } };
-
-        die($errorPrefix.' Failed to create template object during injection. Error: '.$e);
-    };
-
-    my $fnam = $template->template_id.'_'.$template->uniqueid.'_'.$template->apiversion.'.lz.mas';
-    $template->set_column('file',$fnam);
-    my $current = $dbic->resultset('LzTemplate')->search({ is_default => 1, type => $template->type });
-    if (!$current || !$current->count >0)
-    {
-        $template->set_column('is_default',1);
-    }
-    $template->update();
-
-    my $error;
-    if (! -e $config->{LIXUZ}->{template_path}.'/'.$fnam || filesDiffer($file,$config->{LIXUZ}->{template_path}.'/'.$fnam))
-    {
-        printd('Wrote updated template to '.$config->{LIXUZ}->{template_path}.'/'.$fnam);
-        copy($file,$config->{LIXUZ}->{template_path}.'/'.$fnam) or $error = $!;
-    }
-    else
-    {
-        printd('Skipped copying of template data: identical version already present');
-    }
-
-    if ($error)
-    {
-        $template->delete;
-        die($errorPrefix.' Failed to copy file into place: '.$error);
-    }
-    printd('Template injection complete');
-    return $info->{TEMPLATE_UNIQUEID};
-}
-
-# Purpose: Remove a live template from a package from Lixuz
-sub removeTemplate
-{
-    my $id = shift;
-    my $errorPrefix = 'Failed to remove template with ID '.$id.':';
-    loadLixuzModules();
-
-    printd('Fetching DBIC');
-    my $dbic = getDBIC();
-
-    printd('Fetching a fake $c');
-    my $fakeC = fakeC();
-
-    printd('Loading config');
-    my $config = getConfig();
-
-    my $template = $dbic->resultset('LzTemplate')->find({
-            uniqueid => $id,
-        });
-
-    if (! $template)
-    {
-        printd('No template with the ID '.$id.' in the database. Ignoring request.');
-        return;
-    }
-    my $file = $config->{LIXUZ}->{template_path}.'/'.$template->get_column('file');
-    unlink($file) or die($errorPrefix.': Failed to unlink '.$file.': '.$!."\n");
-    printd('Removed '.$file);
-    $template->delete;
-    printd('Removed database entry for '.$id);
 }
 
 # ---
@@ -1990,42 +2070,6 @@ sub plumbing
             }
         }
 
-        when('templateinject')
-        {
-            foreach my $templateFile (@ARGV)
-            {
-                if (-e $templateFile)
-                {
-                    installTemplateFile($templateFile);
-                }
-            }
-        }
-
-        when('templateremove')
-        {
-            foreach my $templateID (@ARGV)
-            {
-                removeTemplate($templateID);
-            }
-        }
-
-        when('templatelist')
-        {
-            loadLixuzModules();
-
-            printd('Fetching DBIC');
-            my $dbic = getDBIC();
-            my $fmt = "%-35s %-18s %s\n";
-
-            my $templates = $dbic->resultset('LzTemplate');
-            printf($fmt,'Unique ID','Type','Name');
-            while(my $template = $templates->next)
-            {
-                my $default = $template->is_default ? ' (default)' : '';
-                printf($fmt,$template->uniqueid,$template->type.$default,$template->name);
-            }
-        }
-
         when('checkowner')
         {
             checkPackageOwners('plumbing',@ARGV);
@@ -2034,6 +2078,13 @@ sub plumbing
         when('upgrade')
         {
             performVersionUpgrade();
+        }
+
+        # Remove this once minSupportedApiLevel > 4
+        when(/^template(list|remove|inject)$/)
+        {
+            s/^template//;
+            exit(selfRun('templates',$_,@ARGV));
         }
 
         default
@@ -2059,9 +2110,6 @@ sub usagePlumbing
     printHelp('','reinject X Y ..','Re-inject the packages specified into the Lixuz tree (similar to an upgrade, but runs lixuzUpgrade instead of upgrade triggers, and ignores all conflicts/dependencies)');
     printHelp('','checkowner X Y ..','Check if files X, Y, .. are owned by a package. Exits with exit status 0 if all the files are owned by packages, 1 if not');
     printHelp('','getlevel','Output the plumbing API level supported by this version of lixuzctl');
-    printHelp('','templateinject X','Install or upgrade the supplied live template file');
-    printHelp('','templateremove X','Remove the template identified by the supplied unique ID X');
-    printHelp('','templatelist','List all installed templates');
     printHelp('','upgrade','Upgrade lixuzctl metadata');
     exit(shift);
 }
