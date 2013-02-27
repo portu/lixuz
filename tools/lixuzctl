@@ -121,7 +121,7 @@ sub main
             packages();
         }
 
-        when('templates')
+        when(/^(templates?|tpl)$/)
         {
             templates();
         }
