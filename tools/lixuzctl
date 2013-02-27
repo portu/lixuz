@@ -1781,7 +1781,15 @@ sub installTemplateFile
     my $config = getConfig();
 
     printd('Reading infoblock');
-    my $info = parse_templatefile($fakeC,$file);
+    my $info;
+    try
+    {
+        $info = parse_templatefile($fakeC,$file);
+    }
+    catch
+    {
+        die('Fatal: Failed to parse the infoblock in '.$file."\n");
+    };
 
     printd('Validating infoblock');
 
