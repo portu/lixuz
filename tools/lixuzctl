@@ -955,6 +955,7 @@ sub buildPackage
                 printStatus('done'."\n");
                 $prepDone = 1;
                 print "Autodetected package root directory: $srcdir\n";
+                chdir($srcdir);
             }
         }
         if (!$prepDone)
