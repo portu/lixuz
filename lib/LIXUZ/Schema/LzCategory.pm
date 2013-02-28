@@ -111,6 +111,10 @@ __PACKAGE__->set_primary_key("category_id");
 # Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-01-17 10:17:20
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:rfd+AtLAMcMWd75LGlP7tw
 
+__PACKAGE__->has_many(children => 'LIXUZ::Schema::LzCategory', {
+    'foreign.parent' => 'self.category_id',
+    });
+
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012
 #

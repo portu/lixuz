@@ -131,6 +131,11 @@ sub main
             database();
         }
 
+        when('utils')
+        {
+            utils();
+        }
+
         when('plumbing')
         {
             plumbing();
@@ -232,6 +237,7 @@ sub usage
     printHelp('','packages','Package actions (install, remove, upgrade, list etc.)');
     printHelp('','templates','Template actions (inject, remove, list)');
     printHelp('','database','Database actions (upgrade)');
+    printHelp('','utils','Various utilities that do not fit into the other categories');
     printHelp('','plumbing','Plumbing actions, used internally by Lixuz (not meant for public use)');
     print "\n";
     print "Run: \"lixuzctl [category] --help\" for a list of subcommands and parameters\n";
@@ -1130,6 +1136,87 @@ sub removeTemplate
     printd('Removed '.$file);
     $template->delete;
     printd('Removed database entry for '.$id);
+}
+
+# ---
+# Utility functions
+# ---
+
+# Purpose: Handler for utils-section subcommands
+sub utils
+{
+    $| = 1;
+    checkForHelpParam(sub { usageUtils(0) });
+
+    my $subcommand = shift(@ARGV);
+
+    printv('Operating on Lixuz at '.$lixuzDir."\n");
+
+    given($subcommand)
+    {
+        when(/^(cat(egory)|folders?)?_?tree$/)
+        {
+            loadLixuzModules();
+            my $fakeC = mockC();
+            my $dbic = getDBIC();
+            my $objects;
+            if (/^folder/)
+            {
+                $objects = $dbic->resultset('LzFolder')->search({ parent => \'IS NULL' });
+            }
+            else
+            {
+                $objects = $dbic->resultset('LzCategory')->search({ parent => \'IS NULL' });
+            }
+            printTreeVisualization($objects,0);
+        }
+
+        default
+        {
+            die('Unknown subcommand for utils: '.$subcommand."\nSee \"utils --help\" for more information\n");
+        }
+    }
+}
+
+# Purpose: Displays usage information for util subcommands
+sub usageUtils
+{
+    print "USAGE: lixuzctl utils [subcommand] [parameters]\n";
+    print "\n";
+    print "Available subcommands:\n";
+    printHelp('','categorytree','Print a simple visualization of the category tree');
+    printHelp('','foldertree','Print a simple visualization of the folder tree');
+    exit(shift);
+}
+
+# Purpose: Prints a visualization of a Lixuz tree structure (ie. categories or folders)
+sub printTreeVisualization
+{
+    my($tree,$level) = @_;
+    my $nextLevel = $level +1;
+    while(my $object = $tree->next)
+    {
+        my $spaces = $level;
+        while($spaces)
+        {
+            print '  ';
+            $spaces--;
+        }
+        if ($object->can('category_name'))
+        {
+            print $object->category_name;
+        }
+        elsif ($object->can('folder_name'))
+        {
+            print $object->folder_name;
+        }
+        else
+        {
+            die;
+        }
+        print "\n";
+        printTreeVisualization(scalar $object->children,$nextLevel);
+    }
 }
 
 # ---
