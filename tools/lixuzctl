@@ -876,7 +876,7 @@ sub createPackageTree
     print 'Create: '.$path.'/package.yml'."\n";
 
     open(my $triggers,'>',$path.'/triggers.pl');
-    print {$triggers} 'die(\'Used by "lixuzctl", not to be executed directly\') if (!$lixuzctlManaged);
+    print {$triggers} 'no warnings;die(\'Used by "lixuzctl", not to be executed directly\') if (!$lixuzctlManaged);
 use strict;
 use warnings;
 use 5.010;
