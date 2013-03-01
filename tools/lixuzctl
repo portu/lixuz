@@ -22,6 +22,7 @@ use File::Temp qw(tempdir);
 use File::Copy qw(copy move);
 use File::Path qw(mkpath);
 use File::Find qw(find);
+use File::stat;
 use File::Basename qw(basename dirname);
 use Digest::SHA qw(sha512_hex);
 use Getopt::Long;
@@ -43,7 +44,7 @@ my $minSupportedApiLevel      = 2;
 # The real (latest) supported api level of plumbing commands
 my $currentSupportedApiLevel  = 5;
 # The revision of the package format that we write
-my $packageFormatRevision     = 1;
+my $packageFormatRevision     = 2;
 # The mimimum supported package format supported
 my $minSupportedPackageFormat = 0;
 # Force an action to complete
@@ -452,6 +453,11 @@ sub filesDiffer
     {
         return 1;
     }
+    # If their permissions are different, then they differ
+    if(stat($file1)->mode != stat($file2)->mode)
+    {
+        return 1;
+    }
     # If their filesizes are different, then they differ
     if (-s $file1 != -s $file2)
     {
@@ -471,6 +477,23 @@ sub runSystem
 {
     printd('Running: '.join(' ',@_));
     return system(@_);
+}
+
+# Purpose: Copy a file along with its permissions
+sub copyFile
+{
+    my $source = shift;
+    my $destination = shift;
+    if (!copy($source,$destination))
+    {
+        return;
+    }
+    if (-d $destination)
+    {
+        $destination .= '/'.basename($source);
+    }
+    chmod(stat($source)->mode,$destination);
+    return 1;
 }
 
 # ---
@@ -1090,7 +1113,7 @@ sub injectTemplateFile
     if (! -e $config->{LIXUZ}->{template_path}.'/'.$fnam || filesDiffer($file,$config->{LIXUZ}->{template_path}.'/'.$fnam))
     {
         printd('Wrote updated template to '.$config->{LIXUZ}->{template_path}.'/'.$fnam);
-        copy($file,$config->{LIXUZ}->{template_path}.'/'.$fnam) or $error = $!;
+        copyFile($file,$config->{LIXUZ}->{template_path}.'/'.$fnam) or $error = $!;
     }
     else
     {
@@ -1403,7 +1426,7 @@ sub buildPackage
     {
         if (-e $srcdir.'/'.$copy)
         {
-            copy($srcdir.'/'.$copy,$dir);
+            copyFile($srcdir.'/'.$copy,$dir);
             printd($copy.' added to package');
         }
     }
@@ -1431,7 +1454,7 @@ sub buildPackage
                         }
                         else
                         {
-                            copy($_,$dir.'/'.$path);
+                            copyFile($_,$dir.'/'.$path);
                             printd($path.' added to package');
                         }
                     },
@@ -1567,14 +1590,14 @@ sub reconstructPackage
 
     foreach my $meta (@{$pkgMeta->{metaFiles}})
     {
-        copy($lixuzDir.'/.packageMeta/'.$packageName.'/'.$meta,$dir);
+        copyFile($lixuzDir.'/.packageMeta/'.$packageName.'/'.$meta,$dir);
     }
     if ($pkgMeta->{files})
     {
         foreach my $file (@{$pkgMeta->{files}})
         {
             mkpath($dir.'/content/'.dirname($file));
-            copy($lixuzDir.'/'.$file,$dir.'/content/'.dirname($file));
+            copyFile($lixuzDir.'/'.$file,$dir.'/content/'.dirname($file));
         }
     }
     if ($pkgMeta->{templateIDs})
@@ -1592,7 +1615,7 @@ sub reconstructPackage
                 die('Unable to reconstruct: Failed to locate template with ID '.$ID."\n");
             }
             mkpath($dir.'/liveTemplates/');
-            copy($template->path_to_template_file($fakeC),$dir.'/liveTemplates/'.$ID.'.html');
+            copyFile($template->path_to_template_file($fakeC),$dir.'/liveTemplates/'.$ID.'.html');
         }
     }
 
@@ -1861,7 +1884,7 @@ sub installPackage
         mkpath($lixuzDir.'/'.dirname($f));
         if (! -e $lixuzDir.'/'.$f || filesDiffer($dir.'/content/'.$f,$lixuzDir.'/'.$f))
         {
-            copy($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
+            copyFile($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
             printd('Copied '.$f.' into tree');
         }
         else
@@ -1908,7 +1931,7 @@ sub installPackage
         if (-e $dir.'/'.$copy)
         {
             push(@metaFiles,$copy);
-            copy($dir.'/'.$copy,$lixuzDir.'/.packageMeta/'.$packageName);
+            copyFile($dir.'/'.$copy,$lixuzDir.'/.packageMeta/'.$packageName);
             printd('Copied '.$copy.' into package meta storage');
         }
     }
