@@ -1761,47 +1761,49 @@ sub installPackage
     }
 
     # Check deps
-    if (!$lazyInstall && $packageMeta->{perlDependencies} && ref($packageMeta->{perlDependencies}) eq 'ARRAY')
     {
-        foreach my $dep (@{ $packageMeta->{perlDependencies} })
+        my $unsatisfied = 0;
+        if (!$lazyInstall && $packageMeta->{perlDependencies} && ref($packageMeta->{perlDependencies}) eq 'ARRAY')
         {
-            try
+            foreach my $dep (@{ $packageMeta->{perlDependencies} })
             {
-                $dep =~ s/\s+//;
-                $dep =~ s/[^\w:]//g;
-                printd('Checking perl dependency: '.$dep);
-                eval('package '.$dep.'::lixuzctl::depsresolve; use '.$dep.';1') or die;
+                try
+                {
+                    $dep =~ s/\s+//;
+                    $dep =~ s/[^\w:]//g;
+                    printd('Checking perl dependency: '.$dep);
+                    eval('package '.$dep.'::lixuzctl::depsresolve; use '.$dep.';1') or die;
+                }
+                catch
+                {
+                    printStatus("error\n") if (!$unsatisfied);
+                    warn('Unsatisfied perl dependency: "'.$dep.'".'."\n");
+                    $unsatisfied = 1;
+                };
             }
-            catch
-            {
-                if($force)
-                {
-                    warn('WARNING: Unsatisfied perl dependency: "'.$dep.'". Continuing anyway due to --force'."\n");
-                }
-                else
-                {
-                    printStatus("error\n");
-                    die('Unsatisfied perl dependency: '.$dep.'. Installation aborted.'."\n");
-                }
-            };
         }
-    }
-    if (!$lazyInstall && $packageMeta->{lixuzDependencies} && ref($packageMeta->{lixuzDependencies}) eq 'ARRAY')
-    {
-        foreach my $dep (@{ $packageMeta->{lixuzDependencies} })
+        if (!$lazyInstall && $packageMeta->{lixuzDependencies} && ref($packageMeta->{lixuzDependencies}) eq 'ARRAY')
         {
-            printd('Checking package dependency: '.$dep);
-            if (!$meta->{packages}->{$dep})
+            foreach my $dep (@{ $packageMeta->{lixuzDependencies} })
             {
-                if($force)
+                printd('Checking package dependency: '.$dep);
+                if (!$meta->{packages}->{$dep})
                 {
-                    warn('WARNING: Unsatisfied dependency: "'.$dep.'". Continuing anyway due to --force'."\n");
+                    printStatus("error\n") if (!$unsatisfied);
+                    warn('Unsatisfied dependency: "'.$dep.'".'."\n");
+                    $unsatisfied = 1;
                 }
-                else
-                {
-                    printStatus("error\n");
-                    die('Unsatisfied dependency: '.$dep.'. Installation aborted.'."\n");
-                }
+            }
+        }
+        if ($unsatisfied)
+        {
+            if ($force)
+            {
+                warn('WARNING: Continuing with installation anyway due to --force'."\n");
+            }
+            else
+            {
+                die("Installation aborted due to unsatisfied dependencies.\n"),
             }
         }
     }
