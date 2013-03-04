@@ -262,7 +262,7 @@ sub loadMetaFile
         $metaFile = decode_json(slurp($lixuzDir.'/.lixuzctl.data'));
     }
     $metaFile //= {};
-    $metaFile->{formatRevision} //= 1;
+    $metaFile->{formatRevision} //= $dataFormatRevision;
     $metaFile->{lastWritten} //= time,
     $metaFile->{packages} //= {};
 
