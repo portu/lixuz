@@ -32,6 +32,7 @@ use JSON qw(encode_json decode_json);
 use Try::Tiny;
 use Cwd qw(getcwd);
 use POSIX qw(strftime);
+use IPC::Open3;
 use constant {
     true => 1,
     false => 0,
@@ -479,6 +480,19 @@ sub runSystem
     return system(@_);
 }
 
+# Purpose: Get the STDOUT of a command
+sub getOutputFrom
+{
+    my $pid = open3(my $in,my $out,my $err,@_);
+    my $output = '';
+    while(my $data = <$out>)
+    {
+        $output .= $data;
+    }
+    waitpid($pid,0);
+    return $output;
+}
+
 # Purpose: Copy a file along with its permissions
 sub copyFile
 {
@@ -852,9 +866,11 @@ sub createPackageTree
     print {$yml} '# Package name'."\n";
     print {$yml} 'name: '.$path."\n";
     print {$yml} '# Package version number'."\n";
-    print {$yml} '# You may use the {DATE} placeholder in this string to autogenerate'."\n";
-    print {$yml} '# a version number with the build date. Ie. 0.1.{DATE} could become'."\n";
-    print {$yml} '# 0.1.20130101'."\n";
+    print {$yml} '# You may use the following placeholders in this string, they will'."\n";
+    print {$yml} '# automatically have their values replaced at build time:'."\n";
+    print {$yml} '# {DATE}        - the current date (YYYYMMDD)'."\n";
+    print {$yml} '# {GITREVISION} - the current git revision of the plugin (if in a git tree)'."\n";
+    print {$yml} '# Ie. 0.1.{DATE}-{GITREVISION} could become 0.1.20130101-5a14815'."\n";
     print {$yml} 'version: 0.1'."\n";
     print {$yml} '# The lowest Lixuz core API version supported'."\n";
     print {$yml} '# (note: core API version is distinct from template API version)'."\n";
@@ -1415,6 +1431,20 @@ sub buildPackage
     printStatus('Constructing package payload...');
     my $date = strftime('%Y%m%d',localtime);
     $meta->{version} =~ s/{DATE}/$date/g;
+    my $gitRev = '';
+    if ($meta->{version} =~ m/{GITREVISION}/)
+    {
+        $gitRev = getOutputFrom(qw(git log --abbrev-commit --pretty=format:%h ./));
+        if (!$gitRev)
+        {
+            $gitRev = 'notree';
+        }
+        else
+        {
+            $gitRev =~ s/\n.+$//sg;
+        }
+        $meta->{version} =~ s/{GITREVISION}/$gitRev/g;
+    }
     my $fname = $packageName.'-'.$meta->{version}.'.lpk';
     $fname =~ s/\s+/-/g;
 
@@ -1490,6 +1520,7 @@ sub buildPackage
     # Replace placeholders in package.yml
     my $packageYML = slurp($dir.'/package.yml');
     $packageYML =~ s/(version:.+)\{DATE\}/$1$date/g;
+    $packageYML =~ s/(version:.+)\{GITREVISION\}/$1$gitRev/g;
     writeFile($dir.'/package.yml',$packageYML);
 
     # Add a format file
