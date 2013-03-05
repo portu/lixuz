@@ -49,7 +49,6 @@ GetOptions(
 
 if ($fork)
 {
-    print "FORKING\n";
     exit if fork;
 }
 nice(10); # Other processes (read: LIXUZ core) are more important
