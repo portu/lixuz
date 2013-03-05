@@ -605,7 +605,10 @@ sub packages
 
     my $subcommand = shift(@ARGV);
 
-    printv('Operating on Lixuz at '.$lixuzDir."\n");
+    if (!$chained)
+    {
+        printv('Operating on Lixuz at '.$lixuzDir."\n");
+    }
 
     given($subcommand)
     {
@@ -1004,7 +1007,10 @@ sub templates
 
     my $subcommand = shift(@ARGV);
 
-    printv('Operating on Lixuz at '.$lixuzDir."\n");
+    if (!$chained)
+    {
+        printv('Operating on Lixuz at '.$lixuzDir."\n");
+    }
 
     given($subcommand)
     {
@@ -1230,7 +1236,10 @@ sub utils
 
     my $subcommand = shift(@ARGV);
 
-    printv('Operating on Lixuz at '.$lixuzDir."\n");
+    if (!$chained)
+    {
+        printv('Operating on Lixuz at '.$lixuzDir."\n");
+    }
 
     given($subcommand)
     {
