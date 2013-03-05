@@ -128,7 +128,7 @@ sub main
             templates();
         }
 
-        when('database')
+        when(/^(database|db)$/)
         {
             database();
         }
@@ -241,6 +241,8 @@ sub usage
     printHelp('','database','Database actions (upgrade)');
     printHelp('','utils','Various utilities that do not fit into the other categories');
     printHelp('','plumbing','Plumbing actions, used internally by Lixuz (not meant for public use)');
+    print "\n";
+    print "Available aliases: pkg -> packages, tpl -> templates, db -> database\n";
     print "\n";
     print "Run: \"lixuzctl [category] --help\" for a list of subcommands and parameters\n";
     print "for that category\n";
