@@ -562,7 +562,12 @@ sub database
         when('upgrade')
         {
             chdir($lixuzDir.'/sql');
-            exec('./upgradeDB','../lixuz.yml');
+            my @command = qw(perl ./upgradeDB ../lixuz.yml);
+            if ($force)
+            {
+                push(@command,'--force');
+            }
+            exec(@command) or die('Failed to exec: '.join(' ',@command).': '.$!."\n");
         }
 
         default
