@@ -17,10 +17,33 @@ has 'c' => (
     writer => '_set_c',
 );
 
+has 'standalone' => (
+    is => 'ro',
+    required => 0,
+    default => 0,
+);
+
+has 'dbic' => (
+    is => 'ro',
+    required => 0,
+);
+
+sub model
+{
+	my $self = shift;
+    my $model = shift;
+    if ($self->dbic)
+    {
+        $model =~ s/^LIXUZDB:://;
+        return $self->dbic->resultset($model);
+    }
+    return $self->c->model($model);
+}
+
 sub upload
 {
     my($self,$fileName,$upload,$settings) = @_;
-    my $fileObj = $self->c->model('LIXUZDB::LzFile');
+    my $fileObj = $self->model('LIXUZDB::LzFile');
 
     if ($fileName =~ /\\/)
     {
@@ -33,10 +56,13 @@ sub upload
     }
 
     my $owner = $settings->{owner};
-    $owner //= $self->c->user;
+    if (!$self->standalone)
+    {
+        $owner //= $self->c->user;
+    }
     if (! defined $owner)
     {
-        $owner = $self->c->model('LIXUZDB::LzUser')->first;
+        $owner = $self->model('LIXUZDB::LzUser')->first;
     }
 
     my $fileClass = $settings->{class_id} // $self->c->stash->{fileClassID};
@@ -70,7 +96,7 @@ sub upload
         open(my $f,'>',$targetFile) or $err = $!;
         if ($err)
         {
-            return(undef,{ error => ERR_WRITEFAILURE, system => $err });
+            return(undef,{ error => ERR_WRITEFAILURE, system => $err, target => $targetFile });
         }
         print {$f} $upload;
         close($f);
@@ -89,7 +115,10 @@ sub upload
     $fileObj->set_column('size', -s $fileObj->get_path($self->c));
     $fileObj->update();
 
-    $self->c->forward(qw/LIXUZ::Controller::Admin::Files::Edit handleFolders/, [ $fileObj ]);
+    if (!$self->standalone)
+    {
+        $self->c->forward(qw/LIXUZ::Controller::Admin::Files::Edit handleFolders/, [ $fileObj ]);
+    }
 
     # Ensure an identifier is generated
     $fileObj->identifier();
@@ -98,12 +127,15 @@ sub upload
     {
         $fileObj->create_FLV($self->c);
     }
-    if ($settings->{asyncUpload})
+    if ($settings->{asyncUpload} && !$self->standalone)
     {
         $self->c->stash->{uploadedMeta} //= [];
         push(@{$self->c->stash->{uploadedMeta}}, $fileObj->serialize);
     }
-    $fileObj->set_tags_from_param($self->c->req->param('formTags'));
+	if (!$self->standalone)
+	{
+		$fileObj->set_tags_from_param($self->c->req->param('formTags'));
+	}
     return($fileObj,undef);
 }
 

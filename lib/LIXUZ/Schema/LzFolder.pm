@@ -86,6 +86,7 @@ use Carp;
 use LIXUZ::HelperModules::Fields;
 use Moose;
 with 'LIXUZ::Role::AccessControl::Model';
+with 'LIXUZ::Role::Serializable';
 
 # Purpose: Get all children of this folder, no matter where they live in the folder tree
 # Usage: my $children = $folder->children_recursive();

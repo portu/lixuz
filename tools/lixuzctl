@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2012
-# Copyright (C) Eskild Hustvedt 2012
+# Copyright (C) Utrop A/S Portu media & Communications 2012, 2013
+# Copyright (C) Eskild Hustvedt 2012, 2013
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -22,6 +22,7 @@ use File::Temp qw(tempdir);
 use File::Copy qw(copy move);
 use File::Path qw(mkpath);
 use File::Find qw(find);
+use File::stat;
 use File::Basename qw(basename dirname);
 use Digest::SHA qw(sha512_hex);
 use Getopt::Long;
@@ -31,6 +32,7 @@ use JSON qw(encode_json decode_json);
 use Try::Tiny;
 use Cwd qw(getcwd);
 use POSIX qw(strftime);
+use IPC::Open3;
 use constant {
     true => 1,
     false => 0,
@@ -41,9 +43,9 @@ my $dataFormatRevision        = 2;
 # The minimum supported api level of plumbing commands
 my $minSupportedApiLevel      = 2;
 # The real (latest) supported api level of plumbing commands
-my $currentSupportedApiLevel  = 4;
+my $currentSupportedApiLevel  = 5;
 # The revision of the package format that we write
-my $packageFormatRevision     = 1;
+my $packageFormatRevision     = 2;
 # The mimimum supported package format supported
 my $minSupportedPackageFormat = 0;
 # Force an action to complete
@@ -51,6 +53,7 @@ my $force = false;
 # Don't check deps during install
 my $lazyInstall = false;
 my $logOut;
+my $chained;
 my $logfile;
 my $lixuzDir;
 my $forceRefresh;
@@ -92,9 +95,10 @@ sub main
         # This is not used anywhere yet, but it is supported for use later
         # (and already supplied by the upgrade script)
         'lixuz-upgrade' => sub {},
-        # This is not used anywhere yet, but is supported for use later
-        # (and is already supplied by us when using selfRun)
-        'chained' => sub {},
+        # This indicates that this instance of lixuzctl is a child of another
+        # instance of lixuzctl (ie. it's a chain of lixuzctl's). lixuzctl can
+        # then alter behaviour to suit this (ie. omitting duplicate messages).
+        'chained' => \$chained,
     );
     
     $lixuzDir //= realpath(dirname(realpath($0)).'/../');
@@ -121,9 +125,19 @@ sub main
             packages();
         }
 
-        when('database')
+        when(/^(templates?|tpl)$/)
+        {
+            templates();
+        }
+
+        when(/^(database|db)$/)
         {
             database();
+        }
+
+        when('utils')
+        {
+            utils();
         }
 
         when('plumbing')
@@ -225,8 +239,12 @@ sub usage
     print "\n";
     print "Available categories:\n";
     printHelp('','packages','Package actions (install, remove, upgrade, list etc.)');
+    printHelp('','templates','Template actions (inject, remove, list)');
     printHelp('','database','Database actions (upgrade)');
+    printHelp('','utils','Various utilities that do not fit into the other categories');
     printHelp('','plumbing','Plumbing actions, used internally by Lixuz (not meant for public use)');
+    print "\n";
+    print "Available aliases: pkg -> packages, tpl -> templates, db -> database\n";
     print "\n";
     print "Run: \"lixuzctl [category] --help\" for a list of subcommands and parameters\n";
     print "for that category\n";
@@ -249,7 +267,7 @@ sub loadMetaFile
         $metaFile = decode_json(slurp($lixuzDir.'/.lixuzctl.data'));
     }
     $metaFile //= {};
-    $metaFile->{formatRevision} //= 1;
+    $metaFile->{formatRevision} //= $dataFormatRevision;
     $metaFile->{lastWritten} //= time,
     $metaFile->{packages} //= {};
 
@@ -395,8 +413,10 @@ sub loadLixuzModules
     printd('Loading LIXUZ:: namespace dependencies');
     unshift(@INC,$lixuzDir.'/lib');
     # FIXME: Improved errors
+    eval('no strict; no warnings;$LIXUZ::PATH = $lixuzDir;1;') or die;
     eval('use LIXUZ::HelperModules::Scripts qw(getDBIC getConfig mockC fakeC);1;') or die;
     eval('use LIXUZ::HelperModules::Templates qw(parse_templatefile);1') or die;
+    eval('use LIXUZ::HelperModules::FileUploader qw(ERR_DIRNOTFOUND ERR_WRITEFAILURE);1') or die;
     printd('Dependencies loaded');
     $loadedModules = 1;
 }
@@ -435,8 +455,24 @@ sub filesDiffer
 
     my $file1 = shift;
     my $file2 = shift;
+    # Special symlink handling
+    if (-l $file1 || -l $file2)
+    {
+        my $file1Link = readlink($file1) // "\0";
+        my $file2Link = readlink($file2) // "\0";
+        if($file1Link ne $file2Link)
+        {
+            return 1;
+        }
+        return 0
+    }
     # If one of the files doesn't exist then of course they differ
     if (! -e $file1 || ! -e $file2)
+    {
+        return 1;
+    }
+    # If their permissions are different, then they differ
+    if(stat($file1)->mode != stat($file2)->mode)
     {
         return 1;
     }
@@ -461,6 +497,55 @@ sub runSystem
     return system(@_);
 }
 
+# Purpose: Get the STDOUT of a command
+sub getOutputFrom
+{
+    my $pid = open3(my $in,my $out,my $err,@_);
+    my $output = '';
+    while(my $data = <$out>)
+    {
+        $output .= $data;
+    }
+    waitpid($pid,0);
+    return $output;
+}
+
+# Purpose: Copy a file along with its permissions
+sub copyFile
+{
+    my $source = shift;
+    my $destination = shift;
+    if (-l $source)
+    {
+        my $target = readlink($source);
+        if (-d $destination)
+        {
+            $destination .= '/'.basename($target);
+        }
+        if (-e $destination || -l $destination)
+        {
+            unlink($destination);
+        }
+        if (!symlink($target,$destination))
+        {
+            warn('Failed to symlink '.$destination.' to '.$target.': '.$!."\n");
+            return;
+        }
+        return 1;
+    }
+    if (!copy($source,$destination))
+    {
+        warn('Failed top copy '.$source.' to '.$destination.': '.$!."\n");
+        return;
+    }
+    if (-d $destination)
+    {
+        $destination .= '/'.basename($source);
+    }
+    chmod(stat($source)->mode,$destination);
+    return 1;
+}
+
 # ---
 # Database functions
 # ---
@@ -479,7 +564,12 @@ sub database
         when('upgrade')
         {
             chdir($lixuzDir.'/sql');
-            exec('./upgradeDB','../lixuz.yml');
+            my @command = qw(perl ./upgradeDB ../lixuz.yml);
+            if ($force)
+            {
+                push(@command,'--force');
+            }
+            exec(@command) or die('Failed to exec: '.join(' ',@command).': '.$!."\n");
         }
 
         default
@@ -515,7 +605,10 @@ sub packages
 
     my $subcommand = shift(@ARGV);
 
-    printv('Operating on Lixuz at '.$lixuzDir."\n");
+    if (!$chained)
+    {
+        printv('Operating on Lixuz at '.$lixuzDir."\n");
+    }
 
     given($subcommand)
     {
@@ -567,9 +660,33 @@ sub packages
 
         when('remove')
         {
-            foreach (@ARGV)
+            my @retry;
+            foreach my $pkg (@ARGV)
             {
-                removePackage($_);
+                try
+                {
+                    removePackage($pkg);
+                }
+                catch
+                {
+                    push(@retry,$pkg);
+                };
+            }
+            my @die;
+            foreach my $pkg (@retry)
+            {
+                try
+                {
+                    removePackage($pkg);
+                }
+                catch
+                {
+                    push(@die,$_[0]);
+                };
+            }
+            if (@die)
+            {
+                die(join('',@die));
             }
         }
 
@@ -657,7 +774,7 @@ sub runPackageTrigger
 
     my $origDir = getcwd;
     my $file;
-    if ($trigger eq 'build' || $trigger eq 'buildCleanup')
+    if ($trigger =~ /^build\w*$/)
     {
         $file = shift;
         chdir(dirname($file));
@@ -793,9 +910,11 @@ sub createPackageTree
     print {$yml} '# Package name'."\n";
     print {$yml} 'name: '.$path."\n";
     print {$yml} '# Package version number'."\n";
-    print {$yml} '# You may use the {DATE} placeholder in this string to autogenerate'."\n";
-    print {$yml} '# a version number with the build date. Ie. 0.1.{DATE} could become'."\n";
-    print {$yml} '# 0.1.20130101'."\n";
+    print {$yml} '# You may use the following placeholders in this string, they will'."\n";
+    print {$yml} '# automatically have their values replaced at build time:'."\n";
+    print {$yml} '# {DATE}        - the current date (YYYYMMDD)'."\n";
+    print {$yml} '# {GITREVISION} - the current git revision of the plugin (if in a git tree)'."\n";
+    print {$yml} '# Ie. 0.1.{DATE}-{GITREVISION} could become 0.1.20130101-5a14815'."\n";
     print {$yml} 'version: 0.1'."\n";
     print {$yml} '# The lowest Lixuz core API version supported'."\n";
     print {$yml} '# (note: core API version is distinct from template API version)'."\n";
@@ -817,7 +936,7 @@ sub createPackageTree
     print 'Create: '.$path.'/package.yml'."\n";
 
     open(my $triggers,'>',$path.'/triggers.pl');
-    print {$triggers} 'die(\'Used by "lixuzctl", not to be executed directly\') if (!$lixuzctlManaged);
+    print {$triggers} 'no warnings;die(\'Used by "lixuzctl", not to be executed directly\') if (!$lixuzctlManaged);
 use strict;
 use warnings;
 use 5.010;
@@ -845,6 +964,15 @@ my $triggers; $triggers = {
         # (you may remove this if you don\'t need it)
         $triggers->{buildCleanup}->(@_);
     },
+    # Triggered during the construction step of package building. At this point
+    # the current directory is a temporary directory tree that will become
+    # the package content and contain only copies of files (ie. any changes made
+    # here will only be present in the actual package, not in your working
+    # tree). The only two directories available at this point is content/ and
+    # liveTemplates/
+    buildConstruct => sub
+    {
+    },
     # Triggered after the package has been built. You may use this to
     # clean up after the build trigger if needed. buildCleanup also gets
     # triggered if the build fails for some reason.
@@ -868,6 +996,382 @@ my $triggers; $triggers = {
 }
 
 # ---
+# Template management functions
+# ---
+
+# Purpose: Handler for templates-section subcommands
+sub templates
+{
+    $| = 1;
+    checkForHelpParam(sub { usageTemplates(0) });
+
+    my $subcommand = shift(@ARGV);
+
+    if (!$chained)
+    {
+        printv('Operating on Lixuz at '.$lixuzDir."\n");
+    }
+
+    given($subcommand)
+    {
+        when('inject')
+        {
+            foreach my $templateFile (@ARGV)
+            {
+                if (-e $templateFile)
+                {
+                    injectTemplateFile($templateFile);
+                }
+            }
+        }
+
+        when('remove')
+        {
+            foreach my $templateID (@ARGV)
+            {
+                removeTemplate($templateID);
+            }
+        }
+
+        when('list')
+        {
+            print "\n";
+            printnd('Fetching template list...');
+            loadLixuzModules();
+
+            printd('Fetching DBIC');
+            my $dbic = getDBIC();
+            my $fmt = "%-35s %-18s %s\n";
+
+            my $templates = $dbic->resultset('LzTemplate');
+            printnd("\r");
+            printf($fmt,'Unique ID','Type','Name');
+            while(my $template = $templates->next)
+            {
+                my $default = $template->is_default ? ' (default)' : '';
+                printf($fmt,$template->uniqueid,$template->type.$default,$template->name);
+            }
+        }
+        default
+        {
+            die('Unknown subcommand for templates: '.$subcommand."\nSee \"templates --help\" for more information\n");
+        }
+    }
+}
+
+# Purpose: Displays usage information for template subcommands
+sub usageTemplates
+{
+    print "USAGE: lixuzctl templates [subcommand] [parameters]\n";
+    print "\n";
+    print "Available subcommands:\n";
+    printHelp('','inject X','Install or upgrade the supplied live template file');
+    printHelp('','remove X','Remove the template identified by the supplied unique ID X');
+    printHelp('','list','List all installed templates');
+    exit(shift);
+}
+
+# Purpose: Inject a live template into Lixuz
+sub injectTemplateFile
+{
+    my $file = shift;
+
+    my $errorPrefix = 'Unable to install template from '.$file.':';
+
+    loadLixuzModules();
+    
+    printd('Processing '.basename($file));
+
+    printd('Fetching DBIC, fake $c and config');
+    my $dbic = getDBIC();
+    my $fakeC = fakeC();
+    my $config = getConfig();
+
+    printd('Reading infoblock');
+    my $info;
+    try
+    {
+        $info = parse_templatefile($fakeC,$file);
+    }
+    catch
+    {
+        die('Fatal: Failed to parse the infoblock in '.$file."\n");
+    };
+
+    printd('Validating infoblock');
+
+    if(not defined $info or not (keys %{$info}))
+    {
+        die($errorPrefix.' invalid infoblock');
+    }
+
+    # TODO: Add some regexes to validate the content of the items as well,
+    # UNIQUEID in particular, which should probably only be [A-Za-z0-9.-\+]
+    foreach my $required (qw(VERSION NAME APIVERSION UNIQUEID TYPE))
+    {
+        if(not defined $info->{'TEMPLATE_'.$required} or not length($info->{'TEMPLATE_'.$required}))
+        {
+            die($errorPrefix.' TEMPLATE_'.$required.' missing from infoblock');
+        }
+    }
+
+    if ($info->{'TEMPLATE_APIVERSION'} > 2)
+    {
+        die($errorPrefix.' APIVERSION not supported. This version of Lixuz only supports APIVERSION 2 and lower, this template is for APIVERSION '.$info->{'TEMPLATE_APIVERSION'});
+    }
+
+    # When we have reached this point we can assume that all is o.k. with the
+    # template and that its infoblock is well formed, and can thus simply be
+    # shoved into the database without further validation.
+    my $template = $dbic->resultset('LzTemplate')->find({
+            uniqueid => $info->{TEMPLATE_UNIQUEID}
+        });
+
+    if(defined $template)
+    {
+        printd('Upgrading template');
+    }
+    else
+    {
+        printd('Installing new template');
+        $template = $dbic->resultset('LzTemplate')->create({
+                uniqueid => $info->{TEMPLATE_UNIQUEID},
+            });
+    }
+
+    eval
+    {
+        my $name;
+        $template->set_column('type',$info->{TEMPLATE_TYPE});
+        $template->set_column('apiversion',1);
+        if ($info->{TEMPLATE_NAME})
+        {
+            $name = $info->{TEMPLATE_NAME};
+        }
+        else
+        {
+            $name = $info->{TEMPLATE_UNIQUEID};
+        }
+        $template->set_column('name',$name);
+        $template->update();
+        1;
+    } or do {
+        my $e = $@;
+        # Delete if something at all got added
+        eval { if ($template) { $template->delete(); } };
+
+        die($errorPrefix.' Failed to create template object during injection. Error: '.$e);
+    };
+
+    my $fnam = $template->template_id.'_'.$template->uniqueid.'_'.$template->apiversion.'.lz.mas';
+    $template->set_column('file',$fnam);
+    my $current = $dbic->resultset('LzTemplate')->search({ is_default => 1, type => $template->type });
+    if (!$current || !$current->count >0)
+    {
+        $template->set_column('is_default',1);
+    }
+    $template->update();
+
+    my $error;
+    if (! -e $config->{LIXUZ}->{template_path}.'/'.$fnam || filesDiffer($file,$config->{LIXUZ}->{template_path}.'/'.$fnam))
+    {
+        printd('Wrote updated template to '.$config->{LIXUZ}->{template_path}.'/'.$fnam);
+        copyFile($file,$config->{LIXUZ}->{template_path}.'/'.$fnam) or $error = $!;
+    }
+    else
+    {
+        printd('Skipped copying of template data: identical version already present');
+    }
+
+    if ($error)
+    {
+        $template->delete;
+        die($errorPrefix.' Failed to copy file into place: '.$error);
+    }
+    printd('Template injection complete');
+    return $info->{TEMPLATE_UNIQUEID};
+}
+
+# Purpose: Remove a live template from Lixuz
+sub removeTemplate
+{
+    my $id = shift;
+    my $errorPrefix = 'Failed to remove template with ID '.$id.':';
+    loadLixuzModules();
+
+    printd('Fetching DBIC');
+    my $dbic = getDBIC();
+
+    printd('Fetching a fake $c');
+    my $fakeC = fakeC();
+
+    printd('Loading config');
+    my $config = getConfig();
+
+    my $template = $dbic->resultset('LzTemplate')->find({
+            uniqueid => $id,
+        });
+
+    if (! $template)
+    {
+        printd('No template with the ID '.$id.' in the database. Ignoring request.');
+        return;
+    }
+    my $file = $config->{LIXUZ}->{template_path}.'/'.$template->get_column('file');
+    unlink($file) or die($errorPrefix.': Failed to unlink '.$file.': '.$!."\n");
+    printd('Removed '.$file);
+    $template->delete;
+    printd('Removed database entry for '.$id);
+}
+
+# ---
+# Utility functions
+# ---
+
+# Purpose: Handler for utils-section subcommands
+sub utils
+{
+    $| = 1;
+    checkForHelpParam(sub { usageUtils(0) });
+
+    my $subcommand = shift(@ARGV);
+
+    if (!$chained)
+    {
+        printv('Operating on Lixuz at '.$lixuzDir."\n");
+    }
+
+    given($subcommand)
+    {
+        when(/^(cat(egory)|folders?)?_?tree$/)
+        {
+            loadLixuzModules();
+            my $fakeC = mockC();
+            my $dbic = getDBIC();
+            my $objects;
+            if (/^folder/)
+            {
+                $objects = $dbic->resultset('LzFolder')->search({ parent => \'IS NULL' });
+            }
+            else
+            {
+                $objects = $dbic->resultset('LzCategory')->search({ parent => \'IS NULL' });
+            }
+            printTreeVisualization($objects,0);
+        }
+
+        when('fileinject')
+        {
+            foreach(@ARGV)
+            {
+                if (-e $_)
+                {
+                    injectFile($_);
+                }
+                else
+                {
+                    warn($_.': does not exist - skipped'."\n");
+                }
+            }
+        }
+
+        default
+        {
+            die('Unknown subcommand for utils: '.$subcommand."\nSee \"utils --help\" for more information\n");
+        }
+    }
+}
+
+# Purpose: Displays usage information for util subcommands
+sub usageUtils
+{
+    print "USAGE: lixuzctl utils [subcommand] [parameters]\n";
+    print "\n";
+    print "Available subcommands:\n";
+    printHelp('','categorytree','Print a simple visualization of the category tree');
+    printHelp('','foldertree','Print a simple visualization of the folder tree');
+    printHelp('','fileInject X Y ..','Inject a file or set of files into Lixuz (as if they were uploaded via the web-interface)');
+    exit(shift);
+}
+
+# Purpose: Prints a visualization of a Lixuz tree structure (ie. categories or folders)
+sub printTreeVisualization
+{
+    my($tree,$level) = @_;
+    my $nextLevel = $level +1;
+    while(my $object = $tree->next)
+    {
+        my $spaces = $level;
+        while($spaces)
+        {
+            print '  ';
+            $spaces--;
+        }
+        if ($object->can('category_name'))
+        {
+            print $object->category_name;
+        }
+        elsif ($object->can('folder_name'))
+        {
+            print $object->folder_name;
+        }
+        else
+        {
+            die;
+        }
+        print "\n";
+        printTreeVisualization(scalar $object->children,$nextLevel);
+    }
+}
+
+# Purpose: Inject a file into Lixuz
+sub injectFile
+{
+    my $file = shift;
+    printStatus('Injecting '.$file.'...');
+    loadLixuzModules();
+    printStatus('.');
+    my $fUploader = LIXUZ::HelperModules::FileUploader->new(
+        c          => mockC(),
+        standalone => 1,
+        dbic       => getDBIC()
+    );
+    printStatus('.');
+    my ($obj,$error) = $fUploader->upload(basename($file),slurp($file),{
+        class_id => 0,
+    });
+    if ($error)
+    {
+        printStatus('error'."\n");
+        my $msg = $error->{system};
+        if (!$msg)
+        {
+            if ($error->{error} == ERR_DIRNOTFOUND())
+            {
+                $msg = 'Directory not found';
+            }
+            elsif($error->{error} == ERR_WRITEFAILURE())
+            {
+                $msg = 'Write failure';
+            }
+            else
+            {
+                $msg = 'Unknown error';
+            }
+        }
+        elsif($error->{target})
+        {
+            $msg .= ' while writing to '.$error->{target};
+        }
+        warn('Failed to inject file: '.$msg."\n");
+    }
+    else
+    {
+        printStatus('done - given file ID '.$obj->file_id."\n");
+    }
+}
+
+# ---
 # Package construction functions
 # ---
 
@@ -881,35 +1385,61 @@ sub buildPackage
     $target //= '.';
     my $disableTriggers = shift;
 
-    printStatus('Performing sanity checks... ');
-    if (! -w $target && -w $srcdir)
     {
-        warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
-        $target = $srcdir;
-    }
-    elsif(! -w $target)
-    {
-        die('Neither '.$target.'/ or '.$srcdir.' is writeable, giving up'."\n");
-    }
-
-    if (! -e $srcdir.'/package.yml')
-    {
-        if (-e $srcdir.'/plugin.yml')
+        my $prepDone = 0;
+        printStatus('Preparing...');
+        if (! -w $target && -w $srcdir)
         {
-            if ($mode eq 'reconstruct')
+            warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
+            $target = $srcdir;
+        }
+
+        if (! -e $srcdir.'/package.yml')
+        {
+            if (-e $srcdir.'/plugin.yml')
             {
-                move($srcdir.'/plugin.yml',$srcdir.'/package.yml');
+                if ($mode eq 'reconstruct')
+                {
+                    move($srcdir.'/plugin.yml',$srcdir.'/package.yml');
+                }
+                else
+                {
+                    die('Package is using plugin.yml instead of package.yml. It is outdated.'."\n".
+                        'Rename plugin.yml to package.yml and update apiversion to 4 and try again.'."\n");
+                }
             }
             else
             {
-                die('Package is using plugin.yml instead of package.yml. It is outdated.'."\n".
-                    'Rename plugin.yml to package.yml and update apiversion to 4 and try again.'."\n");
+                my $origsrc = $srcdir;
+                while(! -e $srcdir.'/package.yml' && $srcdir ne '/')
+                {
+                    $srcdir = realpath($srcdir.'/../');
+                }
+                if (! -e $srcdir.'/package.yml')
+                {
+                    die("package.yml is missing\n");
+                }
+                if ($target eq $origsrc)
+                {
+                    $target = $srcdir;
+                }
+                printStatus('done'."\n");
+                $prepDone = 1;
+                print "Autodetected package root directory: $srcdir\n";
+                chdir($srcdir);
             }
         }
-        else
+        if (!$prepDone)
         {
-            die($srcdir.'/package.yml is missing'."\n");
+            printStatus('done'."\n");
         }
+    }
+
+    printStatus('Performing sanity checks...');
+
+    if(! -w $target)
+    {
+        die('Neither '.$target.'/ or '.$srcdir.' is writeable, giving up'."\n");
     }
     if (-e $srcdir.'/plugin' && ! -e $srcdir.'/content')
     {
@@ -930,7 +1460,6 @@ sub buildPackage
 
     my $packageName = getPackageSystemName($meta);
     lockfile('create');
-    printStatus('done'."\n");
 
     my $runCleanup = sub
     {
@@ -939,11 +1468,11 @@ sub buildPackage
         {
             if ($error)
             {
-                printStatus('failed - cleaning up ...');
+                printStatus('failed - cleaning up...');
             }
             else
             {
-                printStatus('Running build cleanup triggers...');
+                printStatus('Running trigger: buildCleanup...');
             }
             runPackageTrigger($packageName,'buildCleanup',$srcdir.'/triggers.pl');
             printStatus('done'."\n");
@@ -951,9 +1480,11 @@ sub buildPackage
         lockfile('remove');
     };
 
+    printStatus('done'."\n");
+
     if (!$disableTriggers)
     {
-        printStatus('Running build triggers...');
+        printStatus('Running trigger: build...');
         try
         {
             runPackageTrigger($packageName,'build',$srcdir.'/triggers.pl');
@@ -1010,9 +1541,23 @@ sub buildPackage
         printStatus('done'."\n");
     }
 
-    printStatus('Constructing package...');
+    printStatus('Constructing package payload...');
     my $date = strftime('%Y%m%d',localtime);
     $meta->{version} =~ s/{DATE}/$date/g;
+    my $gitRev = '';
+    if ($meta->{version} =~ m/{GITREVISION}/)
+    {
+        $gitRev = getOutputFrom(qw(git log --abbrev-commit --pretty=format:%h ./));
+        if (!$gitRev)
+        {
+            $gitRev = 'notree';
+        }
+        else
+        {
+            $gitRev =~ s/\n.+$//sg;
+        }
+        $meta->{version} =~ s/{GITREVISION}/$gitRev/g;
+    }
     my $fname = $packageName.'-'.$meta->{version}.'.lpk';
     $fname =~ s/\s+/-/g;
 
@@ -1024,7 +1569,7 @@ sub buildPackage
     {
         if (-e $srcdir.'/'.$copy)
         {
-            copy($srcdir.'/'.$copy,$dir);
+            copyFile($srcdir.'/'.$copy,$dir);
             printd($copy.' added to package');
         }
     }
@@ -1052,16 +1597,43 @@ sub buildPackage
                         }
                         else
                         {
-                            copy($_,$dir.'/'.$path);
+                            copyFile($_,$dir.'/'.$path);
                             printd($path.' added to package');
                         }
                     },
                 }, $srcdir.'/'.$tree);
         }
     }
+
+    printStatus('done'."\n");
+
+    if (!$disableTriggers)
+    {
+        my $previousDir = getcwd();
+        chdir($dir) or die('Failed to chdir to '.$dir.': '.$!);
+
+        printStatus('Running trigger: buildCleanup...');
+        try
+        {
+            runPackageTrigger($packageName,'buildConstruct',$srcdir.'/triggers.pl');
+        }
+        catch
+        {
+            $runCleanup->(1);
+            chdir($previousDir);
+            die($_);
+        };
+        printStatus('done'."\n");
+
+        chdir($previousDir);
+    }
+
+    printStatus('Constructing package file...');
+
     # Replace placeholders in package.yml
     my $packageYML = slurp($dir.'/package.yml');
     $packageYML =~ s/(version:.+)\{DATE\}/$1$date/g;
+    $packageYML =~ s/(version:.+)\{GITREVISION\}/$1$gitRev/g;
     writeFile($dir.'/package.yml',$packageYML);
 
     # Add a format file
@@ -1162,14 +1734,14 @@ sub reconstructPackage
 
     foreach my $meta (@{$pkgMeta->{metaFiles}})
     {
-        copy($lixuzDir.'/.packageMeta/'.$packageName.'/'.$meta,$dir);
+        copyFile($lixuzDir.'/.packageMeta/'.$packageName.'/'.$meta,$dir);
     }
     if ($pkgMeta->{files})
     {
         foreach my $file (@{$pkgMeta->{files}})
         {
             mkpath($dir.'/content/'.dirname($file));
-            copy($lixuzDir.'/'.$file,$dir.'/content/'.dirname($file));
+            copyFile($lixuzDir.'/'.$file,$dir.'/content/'.dirname($file));
         }
     }
     if ($pkgMeta->{templateIDs})
@@ -1187,7 +1759,7 @@ sub reconstructPackage
                 die('Unable to reconstruct: Failed to locate template with ID '.$ID."\n");
             }
             mkpath($dir.'/liveTemplates/');
-            copy($template->path_to_template_file($fakeC),$dir.'/liveTemplates/'.$ID.'.html');
+            copyFile($template->path_to_template_file($fakeC),$dir.'/liveTemplates/'.$ID.'.html');
         }
     }
 
@@ -1302,47 +1874,49 @@ sub installPackage
     }
 
     # Check deps
-    if (!$lazyInstall && $packageMeta->{perlDependencies} && ref($packageMeta->{perlDependencies}) eq 'ARRAY')
     {
-        foreach my $dep (@{ $packageMeta->{perlDependencies} })
+        my $unsatisfied = 0;
+        if (!$lazyInstall && $packageMeta->{perlDependencies} && ref($packageMeta->{perlDependencies}) eq 'ARRAY')
         {
-            try
+            foreach my $dep (@{ $packageMeta->{perlDependencies} })
             {
-                $dep =~ s/\s+//;
-                $dep =~ s/[^\w:]//g;
-                printd('Checking perl dependency: '.$dep);
-                eval('package '.$dep.'::lixuzctl::depsresolve; use '.$dep.';1') or die;
+                try
+                {
+                    $dep =~ s/\s+//;
+                    $dep =~ s/[^\w:]//g;
+                    printd('Checking perl dependency: '.$dep);
+                    eval('package '.$dep.'::lixuzctl::depsresolve; use '.$dep.';1') or die;
+                }
+                catch
+                {
+                    printStatus("error\n") if (!$unsatisfied);
+                    warn('Unsatisfied perl dependency: "'.$dep.'".'."\n");
+                    $unsatisfied = 1;
+                };
             }
-            catch
-            {
-                if($force)
-                {
-                    warn('WARNING: Unsatisfied perl dependency: "'.$dep.'". Continuing anyway due to --force'."\n");
-                }
-                else
-                {
-                    printStatus("error\n");
-                    die('Unsatisfied perl dependency: '.$dep.'. Installation aborted.'."\n");
-                }
-            };
         }
-    }
-    if (!$lazyInstall && $packageMeta->{lixuzDependencies} && ref($packageMeta->{lixuzDependencies}) eq 'ARRAY')
-    {
-        foreach my $dep (@{ $packageMeta->{lixuzDependencies} })
+        if (!$lazyInstall && $packageMeta->{lixuzDependencies} && ref($packageMeta->{lixuzDependencies}) eq 'ARRAY')
         {
-            printd('Checking package dependency: '.$dep);
-            if (!$meta->{packages}->{$dep})
+            foreach my $dep (@{ $packageMeta->{lixuzDependencies} })
             {
-                if($force)
+                printd('Checking package dependency: '.$dep);
+                if (!$meta->{packages}->{$dep})
                 {
-                    warn('WARNING: Unsatisfied dependency: "'.$dep.'". Continuing anyway due to --force'."\n");
+                    printStatus("error\n") if (!$unsatisfied);
+                    warn('Unsatisfied dependency: "'.$dep.'".'."\n");
+                    $unsatisfied = 1;
                 }
-                else
-                {
-                    printStatus("error\n");
-                    die('Unsatisfied dependency: '.$dep.'. Installation aborted.'."\n");
-                }
+            }
+        }
+        if ($unsatisfied)
+        {
+            if ($force)
+            {
+                warn('WARNING: Continuing with installation anyway due to --force'."\n");
+            }
+            else
+            {
+                die("Installation aborted due to unsatisfied dependencies.\n"),
             }
         }
     }
@@ -1444,7 +2018,7 @@ sub installPackage
             {
                 if (-e $templateFile)
                 {
-                    $templateIDs{ installTemplateFile($templateFile) } = 1;
+                    $templateIDs{ injectTemplateFile($templateFile) } = 1;
                 }
             }
         }
@@ -1456,7 +2030,7 @@ sub installPackage
         mkpath($lixuzDir.'/'.dirname($f));
         if (! -e $lixuzDir.'/'.$f || filesDiffer($dir.'/content/'.$f,$lixuzDir.'/'.$f))
         {
-            copy($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
+            copyFile($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
             printd('Copied '.$f.' into tree');
         }
         else
@@ -1503,7 +2077,7 @@ sub installPackage
         if (-e $dir.'/'.$copy)
         {
             push(@metaFiles,$copy);
-            copy($dir.'/'.$copy,$lixuzDir.'/.packageMeta/'.$packageName);
+            copyFile($dir.'/'.$copy,$lixuzDir.'/.packageMeta/'.$packageName);
             printd('Copied '.$copy.' into package meta storage');
         }
     }
@@ -1637,7 +2211,7 @@ sub removePackage
         printnd('.');
     }
 
-    printStatus('Removing '.$packageName.'... ');
+    printStatus(' Removing '.$packageName.'... ');
 
     runPackageTrigger($packageName,'removal');
 
@@ -1654,7 +2228,7 @@ sub removePackage
     }
     if ($meta->{packages}->{$packageName}->{templateIDs})
     {
-        selfRun('plumbing','templateremove',@{$meta->{packages}->{$packageName}->{templateIDs}});
+        selfRun('templates','remove',@{$meta->{packages}->{$packageName}->{templateIDs}});
     }
     delete($meta->{packages}->{$packageName});
     writeMetaFile($meta);
@@ -1678,151 +2252,6 @@ sub listPackages
     {
         print '(there are no packages installed)'."\n";
     }
-}
-
-# Purpose: Install a live template from a package into Lixuz
-sub installTemplateFile
-{
-    my $file = shift;
-
-    my $errorPrefix = 'Unable to install template from '.$file.':';
-
-    loadLixuzModules();
-    
-    printd('Processing '.basename($file));
-
-    printd('Fetching DBIC, fake $c and config');
-    my $dbic = getDBIC();
-    my $fakeC = fakeC();
-    my $config = getConfig();
-
-    printd('Reading infoblock');
-    my $info = parse_templatefile($fakeC,$file);
-
-    printd('Validating infoblock');
-
-    if(not defined $info or not (keys %{$info}))
-    {
-        die($errorPrefix.' invalid infoblock');
-    }
-
-    # TODO: Add some regexes to validate the content of the items as well,
-    # UNIQUEID in particular, which should probably only be [A-Za-z0-9.-\+]
-    foreach my $required (qw(VERSION NAME APIVERSION UNIQUEID TYPE))
-    {
-        if(not defined $info->{'TEMPLATE_'.$required} or not length($info->{'TEMPLATE_'.$required}))
-        {
-            die($errorPrefix.' TEMPLATE_'.$required.' missing from infoblock');
-        }
-    }
-
-    if ($info->{'TEMPLATE_APIVERSION'} > 2)
-    {
-        die($errorPrefix.' APIVERSION not supported. This version of Lixuz only supports APIVERSION 2 and lower, this template is for APIVERSION '.$info->{'TEMPLATE_APIVERSION'});
-    }
-
-    # When we have reached this point we can assume that all is o.k. with the
-    # template and that its infoblock is well formed, and can thus simply be
-    # shoved into the database without further validation.
-    my $template = $dbic->resultset('LzTemplate')->find({
-            uniqueid => $info->{TEMPLATE_UNIQUEID}
-        });
-
-    if(defined $template)
-    {
-        printd('Upgrading template');
-    }
-    else
-    {
-        printd('Installing new template');
-        $template = $dbic->resultset('LzTemplate')->create({
-                uniqueid => $info->{TEMPLATE_UNIQUEID},
-            });
-    }
-
-    eval
-    {
-        my $name;
-        $template->set_column('type',$info->{TEMPLATE_TYPE});
-        $template->set_column('apiversion',1);
-        if ($info->{TEMPLATE_NAME})
-        {
-            $name = $info->{TEMPLATE_NAME};
-        }
-        else
-        {
-            $name = $info->{TEMPLATE_UNIQUEID};
-        }
-        $template->set_column('name',$name);
-        $template->update();
-        1;
-    } or do {
-        my $e = $@;
-        # Delete if something at all got added
-        eval { if ($template) { $template->delete(); } };
-
-        die($errorPrefix.' Failed to create template object during injection. Error: '.$e);
-    };
-
-    my $fnam = $template->template_id.'_'.$template->uniqueid.'_'.$template->apiversion.'.lz.mas';
-    $template->set_column('file',$fnam);
-    my $current = $dbic->resultset('LzTemplate')->search({ is_default => 1, type => $template->type });
-    if (!$current || !$current->count >0)
-    {
-        $template->set_column('is_default',1);
-    }
-    $template->update();
-
-    my $error;
-    if (! -e $config->{LIXUZ}->{template_path}.'/'.$fnam || filesDiffer($file,$config->{LIXUZ}->{template_path}.'/'.$fnam))
-    {
-        printd('Wrote updated template to '.$config->{LIXUZ}->{template_path}.'/'.$fnam);
-        copy($file,$config->{LIXUZ}->{template_path}.'/'.$fnam) or $error = $!;
-    }
-    else
-    {
-        printd('Skipped copying of template data: identical version already present');
-    }
-
-    if ($error)
-    {
-        $template->delete;
-        die($errorPrefix.' Failed to copy file into place: '.$error);
-    }
-    printd('Template injection complete');
-    return $info->{TEMPLATE_UNIQUEID};
-}
-
-# Purpose: Remove a live template from a package from Lixuz
-sub removeTemplate
-{
-    my $id = shift;
-    my $errorPrefix = 'Failed to remove template with ID '.$id.':';
-    loadLixuzModules();
-
-    printd('Fetching DBIC');
-    my $dbic = getDBIC();
-
-    printd('Fetching a fake $c');
-    my $fakeC = fakeC();
-
-    printd('Loading config');
-    my $config = getConfig();
-
-    my $template = $dbic->resultset('LzTemplate')->find({
-            uniqueid => $id,
-        });
-
-    if (! $template)
-    {
-        printd('No template with the ID '.$id.' in the database. Ignoring request.');
-        return;
-    }
-    my $file = $config->{LIXUZ}->{template_path}.'/'.$template->get_column('file');
-    unlink($file) or die($errorPrefix.': Failed to unlink '.$file.': '.$!."\n");
-    printd('Removed '.$file);
-    $template->delete;
-    printd('Removed database entry for '.$id);
 }
 
 # ---
@@ -1897,42 +2326,6 @@ sub plumbing
             }
         }
 
-        when('templateinject')
-        {
-            foreach my $templateFile (@ARGV)
-            {
-                if (-e $templateFile)
-                {
-                    installTemplateFile($templateFile);
-                }
-            }
-        }
-
-        when('templateremove')
-        {
-            foreach my $templateID (@ARGV)
-            {
-                removeTemplate($templateID);
-            }
-        }
-
-        when('templatelist')
-        {
-            loadLixuzModules();
-
-            printd('Fetching DBIC');
-            my $dbic = getDBIC();
-            my $fmt = "%-35s %-18s %s\n";
-
-            my $templates = $dbic->resultset('LzTemplate');
-            printf($fmt,'Unique ID','Type','Name');
-            while(my $template = $templates->next)
-            {
-                my $default = $template->is_default ? ' (default)' : '';
-                printf($fmt,$template->uniqueid,$template->type.$default,$template->name);
-            }
-        }
-
         when('checkowner')
         {
             checkPackageOwners('plumbing',@ARGV);
@@ -1941,6 +2334,13 @@ sub plumbing
         when('upgrade')
         {
             performVersionUpgrade();
+        }
+
+        # Remove this once minSupportedApiLevel > 4
+        when(/^template(list|remove|inject)$/)
+        {
+            s/^template//;
+            exit(selfRun('templates',$_,@ARGV));
         }
 
         default
@@ -1966,9 +2366,6 @@ sub usagePlumbing
     printHelp('','reinject X Y ..','Re-inject the packages specified into the Lixuz tree (similar to an upgrade, but runs lixuzUpgrade instead of upgrade triggers, and ignores all conflicts/dependencies)');
     printHelp('','checkowner X Y ..','Check if files X, Y, .. are owned by a package. Exits with exit status 0 if all the files are owned by packages, 1 if not');
     printHelp('','getlevel','Output the plumbing API level supported by this version of lixuzctl');
-    printHelp('','templateinject X','Install or upgrade the supplied live template file');
-    printHelp('','templateremove X','Remove the template identified by the supplied unique ID X');
-    printHelp('','templatelist','List all installed templates');
     printHelp('','upgrade','Upgrade lixuzctl metadata');
     exit(shift);
 }

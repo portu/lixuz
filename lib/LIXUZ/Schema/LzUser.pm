@@ -159,6 +159,7 @@ __PACKAGE__->set_primary_key("user_id");
 
 
 __PACKAGE__->belongs_to('role' => 'LIXUZ::Schema::LzRole', 'role_id');
+with 'LIXUZ::Role::Serializable';
 
 use Moose;
 use Digest::MD5 qw(md5_hex);
@@ -171,6 +172,11 @@ has 'c' => (
     # This is used to bootstrap $c->user->can_access. Called by Admin.pm's auto sub.
     writer => 'set_c',
 );
+
+sub _serializeIgnore
+{
+    return [ 'password', 'last_login', 'created', 'email', 'lang', 'reset_code' ];
+}
 
 # Summary: Encrypts the users password and changes it in the database
 # Usage: object->set_password(NEW_PASSWORD);

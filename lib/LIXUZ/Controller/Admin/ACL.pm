@@ -20,6 +20,7 @@ use strict;
 use warnings;
 use base qw(Catalyst::Controller);
 use LIXUZ::HelperModules::JSON qw(json_error);
+use HTML::Entities qw(encode_entities);
 
 sub access_denied: Private
 {
@@ -29,8 +30,9 @@ sub access_denied: Private
         return json_error($c,'ACCESS_DENIED','Access to the requested file, component or resource was denied for your role',undef, { path_denied => $c->user->last_denied});
     }
     my $i18n = $c->stash->{i18n};
+    my $denied = encode_entities($c->user->last_denied);
     $c->stash->{template} = 'adm/core/dummy.html';
-    $c->stash->{content} = '<br /><br /><center>'.$i18n->get('<b>Access denied</b>: You are not allowed to access that resource').'</center><br /><br />';
+    $c->stash->{content} = '<br /><br /><center>'.$i18n->get('<b>Access denied</b>: You are not allowed to access that resource').'</center><br /><br />'."\n<!-- Denied resource: ".$denied."-->\n";
     $c->stash->{pageTitle} = $c->stash->{i18n}->get('Access denied');
     # Return 403 forbidden status
     $c->response->status(403);

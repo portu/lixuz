@@ -512,7 +512,14 @@ sub get_fields
             push(@fields,$f);
         }
     }
-    return @fields;
+    if (!wantarray())
+    {
+        return \@fields;
+    }
+    else
+    {
+        return @fields;
+    }
 }
 
 

@@ -111,6 +111,15 @@ __PACKAGE__->belongs_to('field' => 'LIXUZ::Schema::LzField','field_id');
 use Moose;
 with 'LIXUZ::Role::Serializable';
 
+sub _serializeExtra
+{
+    return [ 'human_value' ];
+}
+sub _serializeIgnore
+{
+    return [ 'dt_value' ];
+}
+
 around 'value' => sub
 {
     my $orig = shift;

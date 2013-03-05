@@ -79,6 +79,18 @@ __PACKAGE__->set_primary_key("tag_id", "article_id", "revision");
 
 __PACKAGE__->belongs_to('tag' => 'LIXUZ::Schema::LzTag', 'tag_id');
 with 'LIXUZ::Role::Serializable';
+with 'LIXUZ::Role::SchemaHelpers';
+
+sub _serializeExtra
+{
+    return [ 'tag_value' ];
+}
+
+sub tag_value
+{
+    my($self) = @_;
+    return $self->tag->name;
+}
 
 # You can replace this text with custom content, and it will be preserved on regeneration
 __PACKAGE__->meta->make_immutable;

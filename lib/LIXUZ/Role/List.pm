@@ -48,7 +48,7 @@ sub getListHelper
     $options //= {};
     $options->{c} = $c;
 
-    if ($self->formbuilder)
+    if ($self->can('formbuilder'))
     {
         $options->{formbuilder} = $self->formbuilder;
     }

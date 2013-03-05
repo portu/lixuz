@@ -105,6 +105,7 @@ __PACKAGE__->set_primary_key("comment_id");
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+with 'LIXUZ::Role::Serializable';
 
 sub article
 {

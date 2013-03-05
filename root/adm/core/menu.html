@@ -143,6 +143,9 @@ my @menu = (
          ],
      },
 );
+
+$m->comp('pluginIncludes.html', menu => \@menu, glob => 'menu-*.html', relPath => './');
+
 my $menuHTML = '';
 my $onLoadJS = '';
 foreach my $entry ( @menu)

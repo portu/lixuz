@@ -99,6 +99,11 @@ __PACKAGE__->set_primary_key("comment_id");
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+with 'LIXUZ::Role::Serializable';
+sub _serializeExtra
+{
+    return [ 'author' ];
+}
 __PACKAGE__->belongs_to('article' => 'LIXUZ::Schema::LzArticle', { 'foreign.article_id' => 'self.article_id', 'foreign.revision' => 'self.on_revision' });
 __PACKAGE__->belongs_to('author' => 'LIXUZ::Schema::LzUser', 'user_id');
 
