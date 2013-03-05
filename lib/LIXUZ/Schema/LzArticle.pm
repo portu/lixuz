@@ -829,6 +829,10 @@ sub getField
         $field_id = $_[2];
     }
     my $field = $self->getFieldObject($field_id);
+    if (!defined $field)
+    {
+        return '';
+    }
     return $field->human_value;
 }
 
