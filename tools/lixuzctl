@@ -409,8 +409,10 @@ sub loadLixuzModules
     printd('Loading LIXUZ:: namespace dependencies');
     unshift(@INC,$lixuzDir.'/lib');
     # FIXME: Improved errors
+    eval('no strict; no warnings;$LIXUZ::PATH = $lixuzDir;1;') or die;
     eval('use LIXUZ::HelperModules::Scripts qw(getDBIC getConfig mockC fakeC);1;') or die;
     eval('use LIXUZ::HelperModules::Templates qw(parse_templatefile);1') or die;
+    eval('use LIXUZ::HelperModules::FileUploader qw(ERR_DIRNOTFOUND ERR_WRITEFAILURE);1') or die;
     printd('Dependencies loaded');
     $loadedModules = 1;
 }
@@ -1240,6 +1242,21 @@ sub utils
             printTreeVisualization($objects,0);
         }
 
+        when('fileinject')
+        {
+            foreach(@ARGV)
+            {
+                if (-e $_)
+                {
+                    injectFile($_);
+                }
+                else
+                {
+                    warn($_.': does not exist - skipped'."\n");
+                }
+            }
+        }
+
         default
         {
             die('Unknown subcommand for utils: '.$subcommand."\nSee \"utils --help\" for more information\n");
@@ -1255,6 +1272,7 @@ sub usageUtils
     print "Available subcommands:\n";
     printHelp('','categorytree','Print a simple visualization of the category tree');
     printHelp('','foldertree','Print a simple visualization of the folder tree');
+    printHelp('','fileInject X Y ..','Inject a file or set of files into Lixuz (as if they were uploaded via the web-interface)');
     exit(shift);
 }
 
@@ -1285,6 +1303,53 @@ sub printTreeVisualization
         }
         print "\n";
         printTreeVisualization(scalar $object->children,$nextLevel);
+    }
+}
+
+# Purpose: Inject a file into Lixuz
+sub injectFile
+{
+    my $file = shift;
+    printStatus('Injecting '.$file.'...');
+    loadLixuzModules();
+    printStatus('.');
+    my $fUploader = LIXUZ::HelperModules::FileUploader->new(
+        c          => mockC(),
+        standalone => 1,
+        dbic       => getDBIC()
+    );
+    printStatus('.');
+    my ($obj,$error) = $fUploader->upload(basename($file),slurp($file),{
+        class_id => 0,
+    });
+    if ($error)
+    {
+        printStatus('error'."\n");
+        my $msg = $error->{system};
+        if (!$msg)
+        {
+            if ($error->{error} == ERR_DIRNOTFOUND())
+            {
+                $msg = 'Directory not found';
+            }
+            elsif($error->{error} == ERR_WRITEFAILURE())
+            {
+                $msg = 'Write failure';
+            }
+            else
+            {
+                $msg = 'Unknown error';
+            }
+        }
+        elsif($error->{target})
+        {
+            $msg .= ' while writing to '.$error->{target};
+        }
+        warn('Failed to inject file: '.$msg."\n");
+    }
+    else
+    {
+        printStatus('done - given file ID '.$obj->file_id."\n");
     }
 }
 
