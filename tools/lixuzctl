@@ -53,6 +53,7 @@ my $force = false;
 # Don't check deps during install
 my $lazyInstall = false;
 my $logOut;
+my $chained;
 my $logfile;
 my $lixuzDir;
 my $forceRefresh;
@@ -94,9 +95,10 @@ sub main
         # This is not used anywhere yet, but it is supported for use later
         # (and already supplied by the upgrade script)
         'lixuz-upgrade' => sub {},
-        # This is not used anywhere yet, but is supported for use later
-        # (and is already supplied by us when using selfRun)
-        'chained' => sub {},
+        # This indicates that this instance of lixuzctl is a child of another
+        # instance of lixuzctl (ie. it's a chain of lixuzctl's). lixuzctl can
+        # then alter behaviour to suit this (ie. omitting duplicate messages).
+        'chained' => \$chained,
     );
     
     $lixuzDir //= realpath(dirname(realpath($0)).'/../');
