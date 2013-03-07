@@ -112,6 +112,12 @@ sub pager
     return $pager;
 }
 
+sub count
+{
+    my $self = shift;
+    return $self->pager->total_entries;
+}
+
 sub next
 {
     my $self = shift;
