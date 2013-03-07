@@ -120,7 +120,7 @@ sub main
 
     given($action)
     {
-        when(/^(package|pkg|plugin)s?$/)
+        when(/^(package|pkg)s?$/)
         {
             packages();
         }
@@ -138,6 +138,11 @@ sub main
         when('utils')
         {
             utils();
+        }
+
+        when(/^plugins?$/)
+        {
+            plugins();
         }
 
         when('plumbing')
@@ -242,6 +247,7 @@ sub usage
     printHelp('','templates','Template actions (inject, remove, list)');
     printHelp('','database','Database actions (upgrade)');
     printHelp('','utils','Various utilities that do not fit into the other categories');
+    printHelp('','plugins','Custom actions provided by plugins');
     printHelp('','plumbing','Plumbing actions, used internally by Lixuz (not meant for public use)');
     print "\n";
     print "Available aliases: pkg -> packages, tpl -> templates, db -> database\n";
@@ -1369,6 +1375,76 @@ sub injectFile
     {
         printStatus('done - given file ID '.$obj->file_id."\n");
     }
+}
+
+# ---
+# Plugin subcommand functions
+# ---
+
+# Purpose: Handler for plugins-section subcommands
+sub plugins
+{
+    $| = 1;
+    checkForHelpParam(sub { usagePlugins(0) });
+
+    my $subcommand = shift(@ARGV);
+
+    if (!$chained)
+    {
+        printv('Operating on Lixuz at '.$lixuzDir."\n");
+    }
+
+    given($subcommand)
+    {
+        default
+        {
+            runPluginSubcommand($subcommand,@ARGV);
+        }
+    }
+}
+
+# Purpose: Run a plugin utility
+sub runPluginSubcommand
+{
+    my $plugin = shift;
+    if (-e $lixuzDir.'/tools/plugins.d/'.$plugin)
+    {
+        $ENV{LIXUZ_ROOT} = $lixuzDir;
+        my $origLib = $ENV{PERL5LIB} // '';
+        $ENV{PERL5LIB} = $lixuzDir.'/lib:'.$origLib;
+        printd('Added '.$lixuzDir.'/lib'.' to PERL5LIB');
+        my @command = ('perl',$lixuzDir.'/tools/plugins.d/'.$plugin,@_);
+        printd('Running: '.join(' ',@command));
+        my @ret = system(@command);
+        $ENV{PERL5LIB} = $origLib;
+        return @ret;
+    }
+    else
+    {
+        die('Plugin '.$plugin.' not found'."\n");
+    }
+}
+
+# Purpose: Displays usage information for plugins subcommands
+sub usagePlugins
+{
+    print "USAGE: lixuzctl plugins [subcommand] [parameters]\n";
+    print "\n";
+    print "Available subcommands:\n";
+    my $saw = 0;
+    foreach my $plugin (glob($lixuzDir.'/tools/plugins.d/*'))
+    {
+        if (-x $plugin && $plugin !~ /~$/)
+        {
+            $saw = 1;
+            runPluginSubcommand(basename($plugin),'toolslist');
+        }
+    }
+    if (!$saw)
+    {
+        print "(no plugin subcommands are available)\n";
+    }
+    exit(shift);
 }
 
 # ---

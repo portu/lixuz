@@ -1,0 +1,2 @@
+Plugins will add any utilities in this directory, making them available
+from 'lixuzctl plugin …'.
