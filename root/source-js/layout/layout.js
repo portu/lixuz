@@ -149,7 +149,13 @@ var categoryLayout =
     },
     setSpotValue: function(spot,id,title,img)
     {
-        var $target = $('.targetSpot[data-spotval='+spot+']');
+        var $target = $('.targetSpot[data-spotval='+spot+']'),
+            alreadyIn = this.getSpotFromEntry(id);
+
+        if(alreadyIn != null)
+        {
+            this.removeFromSpot(id,alreadyIn);
+        }
 
         this.setSpotEntry(spot,id);
 
