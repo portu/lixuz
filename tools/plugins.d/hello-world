@@ -1,0 +1,56 @@
+#!/usr/bin/perl
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2013
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+use strict;
+use warnings;
+use 5.010;
+use Getopt::Long;
+
+sub main
+{
+    GetOptions(
+        'help' => sub {
+            print "\n";
+            printf "%-19s %s\n", 'hello-world','A simple hello world example plugin tool';
+            print "\n";
+            print "Available subcommands:\n";
+            printf "%-19s %s\n", 'hello','Greet the world';
+            exit(0);
+        },
+    );
+    my $command = shift(@ARGV);
+    if (!defined $command)
+    {
+        exec($0,'--help');
+    }
+    given($command)
+    {
+        when('hello')
+        {
+            print "Hello world!\n";
+        }
+        when('toolslist')
+        {
+            printf "%-19s %s\n", 'hello-world','A simple hello world example plugin tool';
+        }
+        default
+        {
+            die('Unknown command: '.$command."\n");
+        }
+    }
+}
+
+main();
