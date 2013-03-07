@@ -240,7 +240,24 @@ sub orderedRS
     return LIXUZ::HelperModules::ProxiedResultSet->new(
             normalBuilder => sub
             {
-                return $self->get_live_articles($c,$info);
+                my $proxy = shift;
+                my $total = $templateMeta->{layout_spots};
+                # If the number of ordered articles are below the number of requested articles
+                # then we assume that there aren't enough articles to go around, and thus we
+                # don't bother constructing a live list on the assumption that there won't
+                # be enough anyway.
+                if ($proxy->ordered->count < $total)
+                {
+                    return undef;
+                }
+                # This returns all articles that are not already present in the
+                # ordered resultset
+                return $self->get_live_articles($c,$info)->search(
+                    {
+                        'me.article_id' => {
+                            -not_in => [ $proxy->getOrderedArticleIDs ]
+                        }
+                    });
             },
             orderedBuilder => sub
             {
