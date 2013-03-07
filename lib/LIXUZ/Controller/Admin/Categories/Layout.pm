@@ -212,27 +212,31 @@ sub save : Local
             if (! defined $artid || $artid =~ /\D/)
             {
                 my $next = $otherArticles->next;
-                if ($next)
+                if (defined $next && $next =~ /^\d+$/)
                 {
-                    $artid = $otherArticles->next;
+                    $artid = $next;
                 }
                 else
                 {
                     next;
                 }
             }
-            if ($seen{$artid})
+            while ($seen{$artid})
             {
                 $c->log->warn('WARNING: Duplicates in layout definition. Replacing duplicate of '.$artid);
                 my $next = $otherArticles->next;
                 if ($next)
                 {
-                    $artid = $otherArticles->next;
+                    $artid = $next;
                 }
                 else
                 {
-                    next;
+                    $artid = undef;
                 }
+            }
+            if (! defined $artid || !length($artid) || $artid !~ /^\d+$/)
+            {
+                next;
             }
             $seen{$artid} = 1;
             my $insert_order_obj = $c->model('LIXUZDB::LzCategoryLayout')->create({
