@@ -246,7 +246,7 @@ sub orderedRS
                 # then we assume that there aren't enough articles to go around, and thus we
                 # don't bother constructing a live list on the assumption that there won't
                 # be enough anyway.
-                if ($proxy->ordered->count < $total)
+                if (defined $proxy->ordered && $proxy->ordered->count < $total)
                 {
                     return undef;
                 }
