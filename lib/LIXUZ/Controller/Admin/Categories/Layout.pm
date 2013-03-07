@@ -211,12 +211,28 @@ sub save : Local
             my $artid = $c->req->param('spot_article_'.$spot);
             if (! defined $artid || $artid =~ /\D/)
             {
-                $artid = $otherArticles->next->article_id;
+                my $next = $otherArticles->next;
+                if ($next)
+                {
+                    $artid = $otherArticles->next;
+                }
+                else
+                {
+                    next;
+                }
             }
             if ($seen{$artid})
             {
                 $c->log->warn('WARNING: Duplicates in layout definition. Replacing duplicate of '.$artid);
-                $artid = $otherArticles->next->article_id;
+                my $next = $otherArticles->next;
+                if ($next)
+                {
+                    $artid = $otherArticles->next;
+                }
+                else
+                {
+                    next;
+                }
             }
             $seen{$artid} = 1;
             my $insert_order_obj = $c->model('LIXUZDB::LzCategoryLayout')->create({
