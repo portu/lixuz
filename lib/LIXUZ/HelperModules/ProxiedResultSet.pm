@@ -124,6 +124,25 @@ sub next
     return $self->current->next;
 }
 
+# Purpose: This method is primarily as an internal interface so that objects
+# that return ProxiedResultSets can ensure that ordered objects are not
+# included in the unordered list. It returns the article IDs of all objects
+# that are in our ordered resultset.
+sub getOrderedArticleIDs
+{
+    my $self = shift;
+    my @IDs;
+    if(my $ordered = $self->ordered)
+    {
+        $ordered = $ordered->get_cache;
+        foreach my $entry (@{ $ordered })
+        {
+            push(@IDs, $entry->article_id);
+        }
+    }
+    return @IDs;
+}
+
 sub _autoCurrent
 {
     my $self = shift;
