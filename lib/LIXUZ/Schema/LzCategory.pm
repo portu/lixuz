@@ -276,13 +276,17 @@ sub orderedRS
                 # Retrieve articles that have been published *after* the last ordering of
                 # the RS
                 my $newerSearch = {
-                    article_id => { -not_in => \@present },
+                    'me.article_id' => { -not_in => \@present },
                 };
                 if(defined $newerThan)
                 {
                     $newerSearch->{publish_time} = { '>' => $newerThan };
                 }
-                $newer = get_live_articles_from($c->model('LIXUZDB::LzArticle')->search($newerSearch, { limit => $total, order_by => 'publish_time DESC' }));
+                $newer = $self->get_live_articles($c)->search($newerSearch,
+                    {
+                        limit => $total,
+                        order_by => 'publish_time DESC'
+                    });
 
                 # The array that will be used as the basis for the final result set
                 my @entries;
@@ -315,12 +319,13 @@ sub orderedRS
                 if( (my $remaining = ($total - scalar(@entries) )) > 0)
                 {
                     # Retrieve the older articles
-                    $older = get_live_articles_from($c->model('LIXUZDB::LzArticle')->search({
-                                article_id => { -not_in => \@present }
+                    $older = $self->get_live_articles($c)->search({
+                                'me.article_id' => { -not_in => \@present }
                             },
                             {
-                                order_by => 'publish_time DESC'
-                            }))->search(undef, { limit => $remaining });
+                                order_by => 'publish_time DESC',
+                                limit => $remaining,
+                            });
 
                     # Finally, push the older articles if needed
                     while(my $old = $older->next)
