@@ -1,5 +1,6 @@
 var categoryLayout =
 {
+    spotMap: {},
     initialize: function()
     {
         var self = categoryLayout;
@@ -40,6 +41,46 @@ var categoryLayout =
         });
     },
 
+    getEntryFromSpot: function(spot)
+    {
+        var $spot = $('#spot_article_'+spot);
+        if($spot)
+        {
+            return $spot.val();
+        }
+        return;
+    },
+
+    getSpotFromEntry: function(entry)
+    {
+        if(this.spotMap[entry])
+        {
+            return this.spotMap[entry];
+        }
+        var $orig = $('#spotArea').find('div[data-artid='+entry+']');
+        if($orig)
+        {
+            return $orig.val();
+        }
+        return;
+    },
+
+    setSpotEntry: function(spot,entry)
+    {
+        var $element = $('#spot_article_'+spot);
+        if($element.val())
+        {
+            this.spotMap[$element.val()] = null;
+        }
+        $element.val(entry);
+        if(this.spotMap[entry] != null)
+        {
+            var $otherElement = $('#spot_article_'+this.spotMap[entry]);
+            $otherElement.val('');
+        }
+        this.spotMap[entry] = spot;
+    },
+
     initDrag: function()
     {
         var self = this;
@@ -65,6 +106,16 @@ var categoryLayout =
                     lead  = $dropped.data('artlead'),
                     img   = $dropped.data('artimage'),
                     spotval   = $(this).data('spotval');
+
+                if($('#spot_article_'+spotval).val() == id)
+                {
+                    $dropped.draggable('option','revert',true);
+                    setTimeout(1,function()
+                    {
+                        $dropped.draggable('option','revert','invalid');
+                    });
+                    return;
+                }
                 $(this).html("");
 
                 if($dropped.parents('#spotArea').length > 0)
@@ -86,11 +137,11 @@ var categoryLayout =
     },
     getSpotEntry: function(spot,id,title,img)
     {
-        var htmldata = '<div class="dropcontainer" data-artid="'+ id +'" data-arttitle="'+ title +'" data-artimage = "'+ img +'" style="poistion:relative;">';
+        var htmldata = '<div class="dropcontainer" data-artid="'+ id +'" data-arttitle="'+ title +'" data-artimage = "'+ img +'" style="position:relative;">';
         htmldata = htmldata + '<img src="'+ img +'" style="float:left;margin:5px;border-radius:5px;">';
         htmldata = htmldata + '<h3>'+ title +'</h3>';
-        htmldata = htmldata + '<p>'+i18n.get('Article ID: ')+id+'</p>';
-        htmldata = htmldata + '<div style="align:right;"> <a href="#" class="remove-from-spot" title="cancel"><img src="/static/images/icons/cancel-mono.png"></a></div>';
+        htmldata = htmldata + i18n.get('Article ID: ')+id;
+        htmldata = htmldata + '<div class="removeButton"><a href="#" class="remove-from-spot" title="'+i18n.get("Remove article")+'"></a></div>';
 
         htmldata = htmldata + '</div>';
 
@@ -98,14 +149,9 @@ var categoryLayout =
     },
     setSpotValue: function(spot,id,title,img)
     {
-        var $target = $('.targetSpot[spotval='+spot+']'),
-            existingval = $('#spotArea').find('div[data-artid='+id+']');
-        if (existingval.length > 0)
-        {
-            existingval.remove();
-        }
+        var $target = $('.targetSpot[data-spotval='+spot+']');
 
-        $('#spot_article_'+spot).val(id);
+        this.setSpotEntry(spot,id);
 
         $target.html(this.getSpotEntry(spot, id, title, img));
 

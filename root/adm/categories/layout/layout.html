@@ -45,7 +45,7 @@ foreach my $lay (@layout_array)
     <div class="layout-default hidden" data-spot="<% $no %>" data-artid="<% $articleobj->article_id %>" data-arttitle="<% $list_title %>" data-artimage="<% $imgpath %>"></div>
 %       } 
     <input type="hidden" name="spot_article_<% $no %>" id="spot_article_<% $no %>" value=""> 
-    <div class="targetSpot" spotval="<% $no%>"><% $i18n->get('Spot').'-'.$no%></div>
+    <div class="targetSpot" data-spotval="<% $no%>"><% $i18n->get('Spot').'-'.$no%></div>
 
 </td>
 <%perl>
