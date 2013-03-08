@@ -240,6 +240,10 @@ with 'LIXUZ::Role::URLGenerator';
 with 'LIXUZ::Role::IndexTriggers';
 with 'LIXUZ::Role::SchemaHelpers';
 
+sub _serializeIgnore
+{
+    return [ 'category_layout' ];
+}
 sub _serializeExtra
 {
     return [ 
