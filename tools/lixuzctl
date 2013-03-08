@@ -1667,6 +1667,11 @@ sub buildPackage
                         my $path = substr($_,length($srcdir));
                         # Ignore temporary files
                         return if /(\.swp|~)$/;
+                        # Ignore .git and .gitignore
+                        if ($_ =~ m{/\.git/} || $_ =~ m{/\.gitignore$})
+                        {
+                            return;
+                        }
                         if (-d $_)
                         {
                             mkpath($dir.'/'.$path);
