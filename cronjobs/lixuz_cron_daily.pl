@@ -327,6 +327,20 @@ tryRun
     }
 };
 
+# Category layouts that don't have a matching article
+tryRun
+{
+    die('SUB_SKIPPED') if $onlyIndex;
+    my $categoryLayouts = $fakeC->model('LIXUZDB::LzCategoryLayout');
+    while(my $l = $categoryLayouts->next)
+    {
+        if (!$l->article)
+        {
+            $l->delete;
+        }
+    }
+};
+
 # ---
 # Make sure the search index is up to date
 # ---
