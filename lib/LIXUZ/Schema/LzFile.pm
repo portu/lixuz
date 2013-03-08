@@ -201,7 +201,10 @@ use Math::Int2Base qw( int2base );
 use Try::Tiny;
 
 __PACKAGE__->belongs_to('ownerUser' => 'LIXUZ::Schema::LzUser', { 'foreign.user_id' => 'self.owner' });
-__PACKAGE__->has_many('clones' => 'LIXUZ::Schema::LzFile', { 'foreign.clone' => 'self.file_id' });
+__PACKAGE__->has_many(
+    'clones' => 'LIXUZ::Schema::LzFile', { 'foreign.clone' => 'self.file_id' },
+    { cascade_delete => 0 },
+);
 __PACKAGE__->has_many('folders' => 'LIXUZ::Schema::LzFileFolder', 'file_id');
 __PACKAGE__->has_many('articles' => 'LIXUZ::Schema::LzArticleFile', 'file_id');
 __PACKAGE__->has_many(tags => 'LIXUZ::Schema::LzFileTag',{

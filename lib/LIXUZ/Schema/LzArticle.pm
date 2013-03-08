@@ -199,8 +199,10 @@ __PACKAGE__->has_many(relationships => 'LIXUZ::Schema::LzArticleRelations', {
     'foreign.revision' => 'self.revision'
     });
 __PACKAGE__->has_many(comments => 'LIXUZ::Schema::LzLiveComment',{
-    'foreign.article_id' => 'self.article_id',
-    });
+        'foreign.article_id' => 'self.article_id',
+    },
+    { cascade_delete => 0 },
+    );
 __PACKAGE__->has_many(files => 'LIXUZ::Schema::LzArticleFile',{
     'foreign.article_id' => 'self.article_id',
     'foreign.revision' => 'self.revision'
