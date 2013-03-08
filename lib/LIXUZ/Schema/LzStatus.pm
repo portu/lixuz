@@ -79,7 +79,10 @@ __PACKAGE__->set_primary_key("status_id");
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__PACKAGE__->has_many(articles => 'LIXUZ::Schema::LzArticle', 'status_id');
+__PACKAGE__->has_many(
+    articles => 'LIXUZ::Schema::LzArticle', 'status_id',
+    { cascade_delete => 0 },
+);
 
 around 'status_name' => sub
 {

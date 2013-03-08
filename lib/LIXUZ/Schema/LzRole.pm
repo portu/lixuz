@@ -78,8 +78,14 @@ __PACKAGE__->set_primary_key("role_id");
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__PACKAGE__->has_many(users => 'LIXUZ::Schema::LzUser','role_id');
-__PACKAGE__->has_many(actions => 'LIXUZ::Schema::LzRoleAction','role_id');
+__PACKAGE__->has_many(
+    users => 'LIXUZ::Schema::LzUser','role_id',
+    { cascade_delete => 0 },
+);
+__PACKAGE__->has_many(
+    actions => 'LIXUZ::Schema::LzRoleAction','role_id',
+    { cascade_delete => 0 },
+);
 
 # Summary: Get all fields (except password) from this user in a hash
 # Usage: object->get_everything();

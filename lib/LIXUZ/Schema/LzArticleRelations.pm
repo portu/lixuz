@@ -94,7 +94,11 @@ __PACKAGE__->set_primary_key("article_id", "related_article_id", "relation_type"
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 __PACKAGE__->belongs_to('owner' => 'LIXUZ::Schema::LzArticle', { 'foreign.article_id' => 'self.article_id', 'foreign.revision' => 'self.article_id' });
-__PACKAGE__->has_many('related' => 'LIXUZ::Schema::LzArticle', { 'foreign.article_id' => 'self.related_article_id' });
+__PACKAGE__->has_many(
+    'related' => 'LIXUZ::Schema::LzArticle',
+    { 'foreign.article_id' => 'self.related_article_id' },
+    { cascade_delete => 0 },
+);
 
 use Carp;
 use LIXUZ::HelperModules::Cache qw(get_ckey);

@@ -1667,6 +1667,11 @@ sub buildPackage
                         my $path = substr($_,length($srcdir));
                         # Ignore temporary files
                         return if /(\.swp|~)$/;
+                        # Ignore .git and .gitignore
+                        if ($_ =~ m{/\.git/} || $_ =~ m{/\.gitignore$})
+                        {
+                            return;
+                        }
                         if (-d $_)
                         {
                             mkpath($dir.'/'.$path);
@@ -1688,7 +1693,7 @@ sub buildPackage
         my $previousDir = getcwd();
         chdir($dir) or die('Failed to chdir to '.$dir.': '.$!);
 
-        printStatus('Running trigger: buildCleanup...');
+        printStatus('Running trigger: buildConstruct...');
         try
         {
             runPackageTrigger($packageName,'buildConstruct',$srcdir.'/triggers.pl');
