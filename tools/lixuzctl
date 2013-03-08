@@ -1693,7 +1693,7 @@ sub buildPackage
         my $previousDir = getcwd();
         chdir($dir) or die('Failed to chdir to '.$dir.': '.$!);
 
-        printStatus('Running trigger: buildCleanup...');
+        printStatus('Running trigger: buildConstruct...');
         try
         {
             runPackageTrigger($packageName,'buildConstruct',$srcdir.'/triggers.pl');
