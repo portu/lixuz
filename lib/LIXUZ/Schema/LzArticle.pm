@@ -594,6 +594,8 @@ sub renderBody
         article_id => $self->article_id,
         article_rev => $self->revision,
         template => $options->{template},
+        height => $options->{height},
+        width => $options->{width},
     );
     my $rendered = $HTMLR->render;
 
