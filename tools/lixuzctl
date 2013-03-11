@@ -552,6 +552,13 @@ sub copyFile
     return 1;
 }
 
+# Purpose: Run an action on the cron helper
+sub runCronHelper
+{
+    my $action = shift;
+    exec('perl',$lixuzDir.'/cronjobs/lixuz_cron_daily.pl',qw(--strict --lixuzctl --verbose),$action) or die($!);
+}
+
 # ---
 # Database functions
 # ---
@@ -578,6 +585,21 @@ sub database
             exec(@command) or die('Failed to exec: '.join(' ',@command).': '.$!."\n");
         }
 
+        when(/^(check|fsck)$/)
+        {
+            runCronHelper(qw(--database-sanity));
+        }
+        
+        when(/^reindex$/)
+        {
+            runCronHelper(qw(--reindex --onlyindex));
+        }
+        
+        when(/^index$/)
+        {
+            runCronHelper(qw(--onlyindex));
+        }
+
         default
         {
             die('Unknown subcommand for database: '.$subcommand."\nSee \"database --help\" for more information\n");
@@ -592,6 +614,9 @@ sub usageDatabase
     print "\n";
     print "Available subcommands:\n";
     printHelp('','upgrade','Upgrade the database to the latest schema revision');
+    printHelp('','check','Perform database checks and fix any inconsistencies (also done regulary by the Lixuz cronjob)');
+    printHelp('','index','Index anything found in the database that is not in the index yet (also done regulary by the Lixuz cronjob)');
+    printHelp('','reindex','Re-index everything in the database (expensive)');
     exit(shift);
 }
 

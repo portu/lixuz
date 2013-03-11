@@ -11,6 +11,7 @@ use File::stat;
 use DBI;
 use Cwd;
 use Try::Tiny;
+use Getopt::Long;
 use constant {
     true => 1,
     false => 0
@@ -26,21 +27,114 @@ my $return       = false;
 my $verbosity    = 0;
 my $runAll       = false;
 my $skipIndex    = false;
-my $onlyIndex    = false;
 my $reIndex      = false;
 my $paramErrors  = 0;
-my $strictParams = 0;
+my $mode         = 'cron';
+my $fakeC;
+my $dbh;
+my ($wday,$mday);
 my %options;
 
+main();
+
+# Main logic
+sub main
+{
+    my $perform = 'cron';
+    my $strictParams = 0;
+    my $optionsOk = GetOptions(
+        'noindex' => \$skipIndex,
+        'v|verbose' => \$verbosity,
+        'runall' => \$runAll,
+        'onlyindex' => sub
+        {
+            $perform = 'indexing';
+        },
+        'reindex' => \$reIndex,
+        'strict' => \$strictParams,
+        'lixuzctl' => sub
+        {
+            $mode = 'lixuzctl';
+        },
+        'indexer-skip-files' => sub
+        {
+            $options{'indexer-skip-files'} = 1;
+        },
+        'indexer-skip-articles' => sub
+        {
+            $options{'indexer-skip-articles'} = 1;
+        },
+        'database-sanity' => sub
+        {
+            $perform = 'database-sanity';
+        }
+    );
+    if (!$optionsOk && $strictParams)
+    {
+        die;
+    }
+
+    initialize();
+
+    if ($perform eq 'cron')
+    {
+        runCron();
+    }
+    elsif($perform eq 'database-sanity')
+    {
+        fixSelfReferencingArticles();
+        fixMissingStatuses();
+        fixFolderFields();
+        fixStatuschangeActions();
+        addMissingLzAction();
+        fixWorkflowReassignACL();
+        fixArticleIssues();
+        performExpensiveArticleFixes();
+        dropBrokenMetaObjects();
+        performTreeRecursionChecks();
+    }
+    elsif($perform eq 'indexing')
+    {
+        updateIndex();
+    }
+    else
+    {
+        die("Don't know what to do: $perform\n");
+    }
+}
+
+# Set the current title. Either in $0, or as a message to the terminal
 sub title
 {
     $currTitle = shift;
+    my $verboseTitle = shift;
     $0 = $title .' - '.$currTitle;
     if ($verbosity)
     {
-        print $0."\n";
+        if($mode eq 'cron')
+        {
+            print $0."\n";
+        }
+        elsif($mode eq 'lixuzctl')
+        {
+            if ($verboseTitle)
+            {
+                print $verboseTitle;
+            }
+            else
+            {
+                print $currTitle;
+            }
+            print "\n";
+        }
     }
 }
+
+# Attempt to run a piece of code, catching any exceptions and outputting
+# a warning when it does, but allowing the rest of the program to continue.
+#
+# This is used so that a crash in a cron action does not stop us from running
+# the rest of the cronjob.
 sub tryRun (&)
 {
     my $sub = shift;
@@ -59,6 +153,7 @@ sub tryRun (&)
         $return = 1;
     };
 }
+
 # Run a piece of code in silence
 sub silent(&)
 {
@@ -83,95 +178,109 @@ sub silent(&)
     die($err) if $err;
 }
 
-foreach (@ARGV)
+# Lixuz initialization (loads dependencies etc.)
+sub initialize
 {
-	given($_)
-	{
-		when('--noindex')
-		{
-			$skipIndex = true;
-		}
+    title('init','Initializing the Lixuz core...');
 
-		when('--verbose')
-		{
-			$verbosity++;
-		}
+    silent
+    {
+        require LIXUZ;
+    };
+    title('init','Initializing connections and helpers...');
+    silent
+    {
+        eval('use LIXUZ::HelperModules::Scripts qw(fakeC); use LIXUZ::HelperModules::Indexer;1;') or die($@);
+    };
 
-		when('--runall')
-		{
-			$runAll++;
-		}
+    $fakeC  = fakeC();
 
-        when('--onlyindex')
-        {
-            $onlyIndex = true;
-            $title = 'Lixuz indexer';
-        }
+    if(ref($fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}) eq 'ARRAY')
+    {
+        die("Old-style config. Unable to continue.\n");
+    }
+    my $DBSTR  = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{dsn};
+    my $DBUser = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{user};
+    my $DBPwd  = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{password};
+    $dbh = DBI->connect($DBSTR,$DBUser,$DBPwd);
 
-        when('--reindex')
-        {
-            $reIndex = true;
-        }
-
-        when(/^--indexer[-_]skip(files|articles)$/)
-        {
-            s/^--//;
-            s/^-/_/g;
-            $options{$_} = 1;
-        }
-
-        when('--strict')
-        {
-            $strictParams = 1;
-        }
-
-		default
-		{
-            $paramErrors++;
-			warn("Unknown parameter: $_\n");
-		}
-	}
+    (undef,undef,undef,$mday,undef,undef,$wday,undef,undef) = localtime;
 }
 
-die("Dying because of unknown parameters (with --strict enabled)\n") if($strictParams && $paramErrors);
-
-title('init');
-
-silent
+# Executes the cronjob (default action)
+sub runCron
 {
-    require LIXUZ;
-};
-use LIXUZ::HelperModules::Scripts qw(fakeC);
-use LIXUZ::HelperModules::Indexer;
+    tryRun
+    {
+        cleanCaptcha();
+    };
+    tryRun
+    {
+        cleanImgcache();
+    };
+    tryRun
+    {
+        fixSelfReferencingArticles();
+    };
+    tryRun
+    {
+        fixMissingStatuses();
+    };
+    tryRun
+    {
+        fixFolderFields();
+    };
+    tryRun
+    {
+        fixStatuschangeActions();
+    };
+    tryRun
+    {
+        fixWorkflowReassignACL();
+    };
+    tryRun
+    {
+        addMissingLzAction();
+    };
+    tryRun
+    {
+        fixArticleIssues();
+    };
+    tryRun
+    {
+        updateIndex();
+    };
 
-my $fakeC  = fakeC();
-
-if(ref($fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}) eq 'ARRAY')
-{
-    die("Old-style config. Unable to continue.\n");
+    if ($wday == 1 || $runAll)
+    {
+        $title =~ s/Daily/Weekly/g;
+        tryRun
+        {
+            performExpensiveArticleFixes();
+        };
+        tryRun
+        {
+            performTreeRecursionChecks();
+        };
+        tryRun
+        {
+            dropBrokenMetaObjects();
+        };
+    }
+    exit($return);
 }
-my $DBSTR  = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{dsn};
-my $DBUser = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{user};
-my $DBPwd  = $fakeC->config->{'Model::LIXUZDB'}->{'connect_info'}->{password};
-my $dbh = DBI->connect($DBSTR,$DBUser,$DBPwd);
-
-my (undef,undef,undef,$mday,undef,undef,$wday,undef,undef) = localtime;
 
 # Clean up captchas
-tryRun
+sub cleanCaptcha
 {
-    die('SUB_SKIPPED') if $onlyIndex;
-
-    title('captcha cleaning');
+    title('captcha cleaning','Cleaning up expired captcha entries...');
     $dbh->do('DELETE FROM lz_live_captcha WHERE UNIX_TIMESTAMP() > (UNIX_TIMESTAMP(created_date)+7400);');
-};
+}
 
 # Clean up old cached files
-tryRun
+sub cleanImgcache
 {
-    die('SUB_SKIPPED') if $onlyIndex;
-
-    title('imgcache cleaning');
+    title('imgcache cleaning','Cleaning up image cache...');
     my $path = $fakeC->config->{LIXUZ}->{file_path};
     while(my $f = glob($path.'/*.imgcache'))
     {
@@ -185,36 +294,30 @@ tryRun
             }
         }
     }
-};
+}
 
 # ---
 # Clean up errors in the DB
 # ---
 
 # Self-referencing relationships
-tryRun
+sub fixSelfReferencingArticles
 {
-    die('SUB_SKIPPED') if $onlyIndex;
-
-    title('self-ref relationship cleaning');
+    title('self-ref relationship cleaning','Checking for and fixing self-referencing relationships...');
     $dbh->do('DELETE FROM lz_article_relations WHERE article_id=related_article_id;');
-};
+}
 
 # Missing statuses
-tryRun
+sub fixMissingStatuses
 {
-    die('SUB_SKIPPED') if $onlyIndex;
-
-    title('missing statuses');
+    title('missing statuses','Checking for and fixing articles with no status...');
     $dbh->do('UPDATE lz_article SET status_id=4 WHERE status_id IS NULL;');
-};
+}
 
 # Folders without a single field, and folders missing essential fields
-tryRun
+sub fixFolderFields
 {
-    die('SUB_SKIPPED') if $onlyIndex;
-
-    title('missing fields');
+    title('missing fields','Checking for and adding missing fields...');
     my $rootFolders = $dbh->selectall_arrayref('SELECT folder_id FROM lz_folder WHERE parent IS NULL');
     foreach my $folder (@{$rootFolders})
     {
@@ -254,13 +357,12 @@ tryRun
             }
         }
     }
-};
-# Missing STATUSCHANGE_*
-tryRun
-{
-    die('SUB_SKIPPED') if $onlyIndex;
+}
 
-    title('missing statuschange entries');
+# Missing STATUSCHANGE_*
+sub fixStatuschangeActions
+{
+    title('missing statuschange entries','Checking for and adding missing statuschange entries...');
     my $statuses = $dbh->selectall_arrayref('SELECT status_id FROM lz_status');
     foreach my $status (@{$statuses})
     {
@@ -272,13 +374,12 @@ tryRun
         }
         $dbh->do('INSERT INTO lz_action (action_path) VALUES ("STATUSCHANGE_'.$status.'")');
     }
-};
-# Missing WORKFLOW_REASSIGN_TO_ROLE_*
-tryRun
-{
-    die('SUB_SKIPPED') if $onlyIndex;
+}
 
-    title('missing workflow-reassign ACL entries');
+# Missing WORKFLOW_REASSIGN_TO_ROLE_*
+sub fixWorkflowReassignACL
+{
+    title('missing workflow-reassign ACL entries','Checking for and fixing missing workflow assignment entries...');
     my $roles = $dbh->selectall_arrayref('SELECT role_id FROM lz_role');
     foreach my $role (@{$roles})
     {
@@ -290,26 +391,24 @@ tryRun
         }
         $dbh->do('INSERT INTO lz_action (action_path) VALUES ("WORKFLOW_REASSIGN_TO_ROLE_'.$role.'")');
     }
-};
-# Missing lz_action entries
-tryRun
-{
-    die('SUB_SKIPPED') if $onlyIndex;
+}
 
-	title('missing lz_action entries');
+# Missing lz_action entries
+sub addMissingLzAction
+{
+	title('missing lz_action entries','Checking for and adding missing lz_action entries...');
 	my $i18n = LIXUZ::HelperModules::I18N->new('lixuz','en_US',$fakeC->path_to('i18n','locale')->stringify);
 	my %actionPaths = LIXUZ::Schema::LzAction->getPathsHash($i18n);
 	foreach my $k (keys %actionPaths)
 	{
 		$fakeC->model('LIXUZDB::LzAction')->find_or_create({ action_path => $k });
 	}
-};
-# Article issues
-tryRun
-{
-    die('SUB_SKIPPED') if $onlyIndex;
+}
 
-    title('article issues');
+# Article issues
+sub fixArticleIssues
+{
+    title('article issues','Performing article sanity checks and fixing any issues found...');
     my %seen;
     my $folders = $fakeC->model('LIXUZDB::LzArticleFolder')->search({ primary_folder => 1});
     while(my $f = $folders->next)
@@ -325,7 +424,7 @@ tryRun
             $seen{$id} = true;
         }
     }
-};
+}
 
 # Category layouts that don't have a matching article
 tryRun
@@ -344,11 +443,11 @@ tryRun
 # ---
 # Make sure the search index is up to date
 # ---
-tryRun
+sub updateIndex
 {
 	if (!$skipIndex)
 	{
-		title('indexing (init)');
+		title('indexing (init)','Initializing indexer');
 
 		my $internalIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'internal', c => $fakeC, reindex => $reIndex);
 		my $liveIndexer = LIXUZ::HelperModules::Indexer->new(config => $fakeC->config->{'LIXUZ'}->{'indexer'}, mode => 'external', c => $fakeC, reindex => $reIndex);
@@ -357,7 +456,7 @@ tryRun
         {
             die('SUB_SKIPPED') if $options{indexer_skiparticles};
 
-            title('indexing (articles)');
+            title('indexing (articles)','Indexing articles...');
             my $allArts = $fakeC->model('LIXUZDB::LzArticle')->page(1);
             my $pager = $allArts->pager;
             foreach my $page ($pager->first_page..$pager->last_page)
@@ -384,7 +483,7 @@ tryRun
         {
             die('SUB_SKIPPED') if $options{indexer_skipfiles};
 
-            title('indexing (files)');
+            title('indexing (files)','Indexing files...');
             my $allFiles = $fakeC->model('LIXUZDB::LzFile')->page(1);
             my $pager = $allFiles->pager;
             my $added = 0;
@@ -410,163 +509,170 @@ tryRun
             }
         };
 
-		title('indexing (committing)');
+		title('indexing (committing)','Comitting index...');
 		# Commit, and tell the indexer to optimize the index while we're at it
 		$liveIndexer->commit(1);
 		$internalIndexer->commit(1);
 	}
-};
+}
 
-exit($return) if $onlyIndex;
-
-
-# ===
-# Weekly chunk
-# ===
-if ($wday == 1 || $runAll)
+# Perform expensive article fixes (ie. missing revision metadata, missing workflows,
+# missing primary folder etc.
+sub performExpensiveArticleFixes
 {
-    $title =~ s/Daily/Weekly/g;
-    tryRun
+    title('Article sanitychecks','Performing expensive article sanity checks and fixing any issues found...');
+    my $arts = $fakeC->model('LIXUZDB::LzArticle');
+    while(my $art = $arts->next)
     {
-        title('Article sanitychecks');
-        my $arts = $fakeC->model('LIXUZDB::LzArticle');
-        while(my $art = $arts->next)
+        # Articles without workflows will be sort of lost within the system
+        if(not $art->workflow)
         {
-			# Articles without workflows will be sort of lost within the system
-            if(not $art->workflow)
-            {
-                my $wf = $fakeC->model('LIXUZDB::LzWorkflow')->create({
-                        article_id => $art->article_id,
-                        revision => $art->revision,
-                        assigned_by => 1,
-                        assigned_to_user => 1,
-                    });
-                $wf->update();
-            }
-			# Articles without revision control metadata will not be editable
-			if(not $art->revisionMeta)
-			{
-				my $isLatest = false;
-				try
-				{
-					my $latest = $fakeC->model('LIXUZDB::LzArticle')->search({ article_id => $art->article_id }, { order_by => 'publish_time DESC' });
-					if ($latest->first->revision == $art->revision)
-					{
-						$isLatest = 1;
-					}
-				};
-				my $rm = $fakeC->model('LIXUZDB::LzRevision')->create({
-						type => 'article',
-						type_revision => $art->revision,
-						type_id => $art->article_id,
-						committer => 1,
-						is_latest => $isLatest,
-					});
-				$rm->update();
-			}
-			# Articles without a primary folder won't list the neccessary fields
-			if(not $art->primary_folder)
-			{
-				if ($art->folders && $art->folders->count)
-				{
-					my $newpr = $art->folders->first;
-					$newpr->set_column('primary_folder',1);
-					$newpr->update();
-				}
-				else
-				{
-					my $f;
-					try
-					{
-						$f = $fakeC->model('LIXUZDB::LzFolder')->search(undef, { order_by => 'folder_id ASC' })->first;
-						my $newpr = $fakeC->model('LIXUZDB::LzArticleFolder')->create({
-								article_id => $art->article_id,
-								revision => $art->revision,
-								folder_id => $f->folder_id,
-								primary_folder => 1
-							});
-						$newpr->update;
-					}
-					catch
-					{
-						my $first = $_;
-						try
-						{
-							warn("Failed to create LzArticleFolder for article ".$art->article_id.'/'.$art->revision." and folder_id ".$f->folder_id.': '.$_);
-						}
-						catch
-						{
-							warn("Crash during LzArticleFolder creation: $first\n$_");
-						};
-					};
-				}
-			}
+            my $wf = $fakeC->model('LIXUZDB::LzWorkflow')->create({
+                    article_id => $art->article_id,
+                    revision => $art->revision,
+                    assigned_by => 1,
+                    assigned_to_user => 1,
+                });
+            $wf->update();
         }
-    };
-    tryRun
-	{
-		title('Tree recursion checks');
-		foreach my $type (qw(LzFolder LzCategory))
-		{
-			my $objects = $fakeC->model('LIXUZDB::'.$type);
-			while(my $f = $objects->next)
-			{
-				next if not $f->parent;
-				my $p = $f;
-				while($p = $p->parent)
-				{
-					next if not $p->parent;
-					if ($p->id == $f->id)
-					{
-						# Invalid (recursive) relationship. Move the object to the root of the tree
-						# to resolve it
-						$f->set_column('parent',undef);
-						$f->update();
-						last;
-					}
-				}
-			}
-		}
-        title('Tree root checks');
-		foreach my $type (qw(LzFolder LzCategory))
-		{
-			my $objects = $fakeC->model('LIXUZDB::'.$type);
-			while(my $f = $objects->next)
-			{
-                my $foundRoot = false;
-                my $loopC;
-				next if not $f->parent;
-				my $p = $f;
-				while($p = $p->parent)
-				{
-                    if(not $p->parent)
-                    {
-                        $foundRoot = true;
-                        last;
-                    }
-                    $loopC++;
-                    if ($loopC > 99)
-                    {
-                        # Depth too great, move it
-                        last;
-                    }
-				}
-                if(not $foundRoot)
+        # Articles without revision control metadata will not be editable
+        if(not $art->revisionMeta)
+        {
+            my $isLatest = false;
+            try
+            {
+                my $latest = $fakeC->model('LIXUZDB::LzArticle')->search({ article_id => $art->article_id }, { order_by => 'publish_time DESC' });
+                if ($latest->first->revision == $art->revision)
                 {
-                    # Move this object to the root of the tree
+                    $isLatest = 1;
+                }
+            };
+            my $rm = $fakeC->model('LIXUZDB::LzRevision')->create({
+                    type => 'article',
+                    type_revision => $art->revision,
+                    type_id => $art->article_id,
+                    committer => 1,
+                    is_latest => $isLatest,
+                });
+            $rm->update();
+        }
+        # Articles without a primary folder won't list the neccessary fields
+        if(not $art->primary_folder)
+        {
+            if ($art->folders && $art->folders->count)
+            {
+                my $newpr = $art->folders->first;
+                $newpr->set_column('primary_folder',1);
+                $newpr->update();
+            }
+            else
+            {
+                my $f;
+                try
+                {
+                    $f = $fakeC->model('LIXUZDB::LzFolder')->search(undef, { order_by => 'folder_id ASC' })->first;
+                    my $newpr = $fakeC->model('LIXUZDB::LzArticleFolder')->create({
+                            article_id => $art->article_id,
+                            revision => $art->revision,
+                            folder_id => $f->folder_id,
+                            primary_folder => 1
+                        });
+                    $newpr->update;
+                }
+                catch
+                {
+                    my $first = $_;
+                    try
+                    {
+                        warn("Failed to create LzArticleFolder for article ".$art->article_id.'/'.$art->revision." and folder_id ".$f->folder_id.': '.$_);
+                    }
+                    catch
+                    {
+                        warn("Crash during LzArticleFolder creation: $first\n$_");
+                    };
+                };
+            }
+        }
+    }
+}
+
+# Perform recursion tests, ensures an object doesn't have a relationship with
+# itself, and makes sure each tree actually has a root.
+sub performTreeRecursionChecks
+{
+    title('Tree recursion checks','Checking for and fixing tree recursion checks issues...');
+    foreach my $type (qw(LzFolder LzCategory))
+    {
+        my $objects = $fakeC->model('LIXUZDB::'.$type);
+        while(my $f = $objects->next)
+        {
+            next if not $f->parent;
+            my $p = $f;
+            while($p = $p->parent)
+            {
+                next if not $p->parent;
+                if ($p->id == $f->id)
+                {
+                    # Invalid (recursive) relationship. Move the object to the root of the tree
+                    # to resolve it
                     $f->set_column('parent',undef);
                     $f->update();
+                    last;
                 }
-			}
-		}
-	};
+            }
+        }
+    }
+    title('Tree root checks','Checking for and fixing trees without a true root...');
+    foreach my $type (qw(LzFolder LzCategory))
+    {
+        my $objects = $fakeC->model('LIXUZDB::'.$type);
+        while(my $f = $objects->next)
+        {
+            my $foundRoot = false;
+            my $loopC;
+            next if not $f->parent;
+            my $p = $f;
+            while($p = $p->parent)
+            {
+                if(not $p->parent)
+                {
+                    $foundRoot = true;
+                    last;
+                }
+                $loopC++;
+                if ($loopC > 99)
+                {
+                    # Depth too great, move it
+                    last;
+                }
+            }
+            if(not $foundRoot)
+            {
+                # Move this object to the root of the tree
+                $f->set_column('parent',undef);
+                $f->update();
+            }
+        }
+    }
 }
 
-# ===
-# Monthly chunk
-# ===
-if ($mday == 1 || $runAll)
+# Deletes parentless LzRevision objects
+sub dropBrokenMetaObjects
 {
-    $title =~ s/(Daily|Weekly)/Monthly/g;
+    title('Revision meta objects without parent','Checking for and removing revision meta objects that have no parent...');
+    foreach my $type (qw(LzArticleElements LzArticleFile LzArticleFolder LzArticleRelations LzArticleTag LzArticleWatch LzWorkflow))
+    {
+        my $object = $fakeC->model('LIXUZDB::'.$type);
+        while(my $obj = $object->next)
+        {
+            my $art = $fakeC->model('LIXUZDB::LzArticle')->find({
+                    revision => $obj->revision,
+                    article_id => $obj->article_id
+                });
+            if (!$art)
+            {
+                $obj->delete;
+            }
+        }
+    }
 }
-exit($return);

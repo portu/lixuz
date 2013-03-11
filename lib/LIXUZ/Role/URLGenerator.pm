@@ -137,6 +137,7 @@ sub _escape_component
 {
     my $comp = shift;
     $comp    =~ s/\s+/-/g;
+    $comp    =~ s{/+}{-}g;
     $comp    = uri_escape_utf8($comp);
     return $comp;
 }

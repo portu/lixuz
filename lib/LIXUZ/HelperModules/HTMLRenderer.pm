@@ -64,17 +64,29 @@ has 'noFloat' => (
     writer => '_noFloat',
 );
 
+has 'height' => (
+    is => 'ro',
+    required => 0,
+    isa => 'Maybe[Int]',
+);
+
+has 'width' => (
+    is => 'ro',
+    required => 0,
+    isa => 'Maybe[Int]',
+);
+
 has 'maxHeight' => (
     is => 'rw',
     required => 0,
-    isa => 'Int',
+    isa => 'Maybe[Int]',
     writer => '_maxHeight',
 );
 
 has 'maxWidth' => (
     is => 'rw',
     required => 0,
-    isa => 'Int',
+    isa => 'Maybe[Int]',
     default => 450,
     writer => '_maxWidth',
 );
@@ -141,8 +153,8 @@ sub renderImg
         return;
     }
 
-    my $attrs       = $img->attrs;
-    my $size = $self->_metaSizeExtractor($img,$img->attrs('src'));
+    my $attrs = $img->attrs;
+    my $size  = $self->_retrieveElementSize($img,$img->attrs('src'));
 
     if ($self->maxWidth && $size->{width} && $size->{width} >= $self->maxWidth)
     {
@@ -286,6 +298,26 @@ sub templateString
     return $content;
 }
 
+# Retrieves the size of an element.
+# If height/width is set on the HTMLRenderer object, those will be used,
+# otherwise it will use _metaSizeExtractor to retrieve them.
+sub _retrieveElementSize
+{
+    my $self = shift;
+    if ($self->height || $self->width)
+    {
+        return
+        {
+            height => $self->height,
+            width => $self->width,
+        };
+    }
+    else
+    {
+        return $self->_metaSizeExtractor(@_);
+    }
+}
+
 # Retrieves the size defined in DOM metadata from an element.
 sub _metaSizeExtractor
 {
@@ -406,8 +438,14 @@ sub _initializeMetadata
         my $info = $template->get_info($self->c);
         if ($info->{mediasettings})
         {
-            $self->_maxHeight($info->{mediasettings}->{maxHeight});
-            $self->_maxWidth($info->{mediasettings}->{maxWidth});
+            if ($info->{mediasettings}->{maxHeight})
+            {
+                $self->_maxHeight($info->{mediasettings}->{maxHeight});
+            }
+            if ($info->{mediasettings}->{maxWidth})
+            {
+                $self->_maxWidth($info->{mediasettings}->{maxWidth});
+            }
             if ($info->{mediasettings}->{noFloat})
             {
                 $self->_noFloat(1);
