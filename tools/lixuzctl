@@ -556,7 +556,12 @@ sub copyFile
 sub runCronHelper
 {
     my $action = shift;
-    exec('perl',$lixuzDir.'/cronjobs/lixuz_cron_daily.pl',qw(--strict --lixuzctl --verbose),$action) or die($!);
+    my @params = qw(--strict --lixuzctl --verbose);
+    if ($verbosity >= 99)
+    {
+        push(@params,'--debug');
+    }
+    exec('perl',$lixuzDir.'/cronjobs/lixuz_cron_daily.pl',@params,$action) or die($!);
 }
 
 # ---

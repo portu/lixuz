@@ -46,6 +46,9 @@ sub main
         'noindex' => \$skipIndex,
         'v|verbose' => \$verbosity,
         'runall' => \$runAll,
+        'debug' => sub { 
+            $verbosity = 99;
+        },
         'onlyindex' => sub
         {
             $perform = 'indexing';
@@ -418,6 +421,7 @@ sub fixArticleIssues
         {
             $f->set_column('primary_folder',0);
             $f->update();
+            printd('Removed double primary folder entries from '.$id);
         }
         else
         {
@@ -426,9 +430,7 @@ sub fixArticleIssues
     }
 }
 
-# ---
 # Make sure the search index is up to date
-# ---
 sub updateIndex
 {
 	if (!$skipIndex)
@@ -520,6 +522,7 @@ sub performExpensiveArticleFixes
                     assigned_to_user => 1,
                 });
             $wf->update();
+            printd('Added missing workflow for '.$art->article_id.'/'.$art->revision);
         }
         # Articles without revision control metadata will not be editable
         if(not $art->revisionMeta)
@@ -541,6 +544,7 @@ sub performExpensiveArticleFixes
                     is_latest => $isLatest,
                 });
             $rm->update();
+            printd('Added missing revision control data for '.$art->article_id.'/'.$art->revision);
         }
         # Articles without a primary folder won't list the neccessary fields
         if(not $art->primary_folder)
@@ -550,6 +554,7 @@ sub performExpensiveArticleFixes
                 my $newpr = $art->folders->first;
                 $newpr->set_column('primary_folder',1);
                 $newpr->update();
+                printd('Converted '.$newpr->folder_id.' to the primary folder for '.$art->article_id.'/'.$art->revision);
             }
             else
             {
@@ -564,6 +569,7 @@ sub performExpensiveArticleFixes
                             primary_folder => 1
                         });
                     $newpr->update;
+                    printd('Added a primary folder for the article '.$art->article_id.'/'.$art->revision);
                 }
                 catch
                 {
@@ -601,6 +607,7 @@ sub performTreeRecursionChecks
                 {
                     # Invalid (recursive) relationship. Move the object to the root of the tree
                     # to resolve it
+                    printd('Moved '.$f->id.' to the root of the tree due to a recursive relationship');
                     $f->set_column('parent',undef);
                     $f->update();
                     last;
@@ -634,6 +641,7 @@ sub performTreeRecursionChecks
             }
             if(not $foundRoot)
             {
+                printd('Moving '.$f->id.' to the root of the tree');
                 # Move this object to the root of the tree
                 $f->set_column('parent',undef);
                 $f->update();
@@ -660,5 +668,18 @@ sub dropBrokenMetaObjects
                 $obj->delete;
             }
         }
+    }
+}
+
+# Purpose: Output something when in debug mode
+# Usage: printd('text')
+# Adds a newline to each message and a debug prefix
+sub printd
+{
+    if ($verbosity >= 99)
+    {
+        print 'Debug: ';
+        print @_;
+        print "\n";
     }
 }
