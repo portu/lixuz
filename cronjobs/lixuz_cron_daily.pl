@@ -650,10 +650,11 @@ sub performTreeRecursionChecks
     }
 }
 
-# Deletes parentless LzRevision objects
+# Deletes parentless metadata objects (ie. article relationships, tags etc.)
 sub dropBrokenMetaObjects
 {
     title('Revision meta objects without parent','Checking for and removing revision meta objects that have no parent...');
+    # Articles
     foreach my $type (qw(LzArticleElements LzArticleFile LzArticleFolder LzArticleRelations LzArticleTag LzArticleWatch LzWorkflow))
     {
         my $object = $fakeC->model('LIXUZDB::'.$type);
@@ -665,6 +666,23 @@ sub dropBrokenMetaObjects
                 });
             if (!$art)
             {
+                printd('Deleted '.$type.'-object referring to nonexisting article '.$obj->article_id.'/'.$obj->revision);
+                $obj->delete;
+            }
+        }
+    }
+    # Files
+    foreach my $type (qw(LzArticleFile LzFileFolder LzFileTag))
+    {
+        my $object = $fakeC->model('LIXUZDB::'.$type);
+        while(my $obj = $object->next)
+        {
+            my $file = $fakeC->model('LIXUZDB::LzFile')->find({
+                    file_id => $obj->file_id
+                });
+            if (!$file)
+            {
+                printd('Deleted '.$type.'-object referring to nonexisting file '.$obj->file_id);
                 $obj->delete;
             }
         }
