@@ -294,6 +294,7 @@ sub handleFolders : Private
     {
         $file->folders->delete();
     }
+    my %seen;
     # Loop through and fetch+save file_folders
     foreach my $folder (sort keys %{$c->req->params})
     {
@@ -303,12 +304,19 @@ sub handleFolders : Private
 
         next if ( !defined($fileFolder) || !length($fileFolder) || $fileFolder =~ /\D/);
 
+        # If we've already added this folder, then skip this one
+        if ($seen{$fileFolder})
+        {
+            next;
+        }
+
         $c->model('LIXUZDB::LzFileFolder')->create({
             file_id => $file->file_id,
             folder_id => $fileFolder,
             primary_folder => $primary
         });
         $primary = 0;
+        $seen{$fileFolder} = 1;
     }
 }
 
