@@ -151,5 +151,5 @@ function JSON_multiRequest(paths,argHash,onSuccess,errorFunc,dontRequireAll)
         argHash['multiReqFail'] = true;
     }
 
-    return XHR.Form.POST('/admin/services/multiRequest',argHash,function (data) { console.log(data); onSuccess(data); },errorFunc);
+    return XHR.Form.POST('/admin/services/multiRequest',argHash,function (data) { onSuccess(data); },errorFunc);
 }
