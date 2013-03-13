@@ -8,10 +8,11 @@ var categoryLayout =
 
         $('.layout-default').each(function()
         {
-            var $this = $(this);
+            var $this = $(this),
+                meta  = self.getSpotMetaFromElement($this);
             try
             {
-                self.setSpotValue($this.data('spot'), $this.data('artid'), $this.data('arttitle'),$this.data('artimage'));
+                self.setSpotValue(meta.spot, meta.id, meta.title, meta.img);
             } catch(e) { lzException(e) }
         });
 
@@ -83,7 +84,8 @@ var categoryLayout =
 
     initDrag: function()
     {
-        var self = this;
+        var self = this,
+            dropTargetUI;
         $('#ddcontents .makeMeDraggable').draggable(
         {
             containment: '#ddcontents',
@@ -97,17 +99,28 @@ var categoryLayout =
             revert: 'invalid'
         });
 
+        dropTargetUI = {
+            mouseOver: function($elem)
+            {
+                $elem.css({ 'border':'1px solid black' });
+            },
+            mouseOut:function($elem)
+            {
+                $elem.css({ 'border':'1px solid #CCCCCC' });
+            }
+        };
+
         $('.targetSpot').droppable({
             drop: function (ev, UI)
             {
-                var $dropped  = UI.draggable,
-                    id    = $dropped.data('artid'),
-                    title = $dropped.data('arttitle'),
-                    lead  = $dropped.data('artlead'),
-                    img   = $dropped.data('artimage'),
-                    spotval   = $(this).data('spotval');
+                var $this     = $(this),
+                    $dropped  = UI.draggable,
+                    meta      = self.getSpotMetaFromElement($dropped),
+                    spotval   = $this.data('spotval'),
+                    existing  = self.getSpotMetaFromElement($this.find('.dropcontainer')),
+                    previous  = self.getSpotFromEntry(meta.id);
 
-                if($('#spot_article_'+spotval).val() == id)
+                if($('#spot_article_'+spotval).val() == meta.id)
                 {
                     $dropped.draggable('option','revert',true);
                     setTimeout(1,function()
@@ -116,21 +129,26 @@ var categoryLayout =
                     });
                     return;
                 }
-                $(this).html("");
+                $this.html("");
 
                 if($dropped.parents('#spotArea').length > 0)
                 {
                     $dropped.remove();
                 }
-                self.setSpotValue(spotval,id,title,img);
+                self.setSpotValue(spotval,meta.id,meta.title,meta.img);
+                if(existing && existing.id != null && previous != null)
+                {
+                    self.setSpotValue(previous, existing.id,existing.title,existing.img);
+                }
+                dropTargetUI.mouseOut($this);
             },
             over: function ()
             {
-                $(this).css({ 'border':'1px solid black' });
+                dropTargetUI.mouseOver($(this));
             },
             out: function ()
             {
-                $(this).css({ 'border':'1px solid #CCCCCC' });
+                dropTargetUI.mouseOut($(this));
             } 
         });
 
@@ -147,12 +165,27 @@ var categoryLayout =
 
         return htmldata;
     },
+    getSpotMetaFromElement: function($element)
+    {
+        if($element == null)
+        {
+            return {};
+        }
+        var meta = {
+            spot:  $element.data('spot'),
+            id:    $element.data('artid'),
+            title: $element.data('arttitle'),
+            lead:  $element.data('artlead'),
+            img:   $element.data('artimage')
+        };
+        return meta;
+    },
     setSpotValue: function(spot,id,title,img)
     {
-        var $target = $('.targetSpot[data-spotval='+spot+']'),
+        var $target   = $('.targetSpot[data-spotval='+spot+']'),
             alreadyIn = this.getSpotFromEntry(id);
 
-        if(alreadyIn != null)
+        if(alreadyIn != null && alreadyIn != '')
         {
             this.removeFromSpot(id,alreadyIn);
         }
@@ -160,6 +193,7 @@ var categoryLayout =
         this.setSpotEntry(spot,id);
 
         $target.html(this.getSpotEntry(spot, id, title, img));
+        $target.parent().find('.auto-label').remove();
 
         categoryLayout.initDrag();
     },
@@ -183,6 +217,7 @@ var categoryLayout =
             var text = i18n.get('(auto)'),
                 textDiv = $('<div />');
             textDiv.text(text);
+            textDiv.addClass('auto-label');
             textDiv.appendTo(parent);
         }
         else
