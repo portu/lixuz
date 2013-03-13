@@ -1,6 +1,7 @@
 var categoryLayout =
 {
     spotMap: {},
+    changed: false,
     initialize: function()
     {
         var self = categoryLayout;
@@ -32,6 +33,10 @@ var categoryLayout =
         {
             e.preventDefault();
             $('#saveArticleOrdering').click();
+        });
+        $('#saveArticleOrdering').click(function()
+        {
+            self.changed = false;
         });
 
         $('#spotArea').on('click','.remove-from-spot',function(e)
@@ -141,6 +146,7 @@ var categoryLayout =
                     self.setSpotValue(previous, existing.id,existing.title,existing.img);
                 }
                 dropTargetUI.mouseOut($this);
+                self.changed = true;
             },
             over: function ()
             {
@@ -258,3 +264,10 @@ var categoryLayout =
 };
 
 $.subscribe('/lixuz/init', categoryLayout.initialize);
+$.subscribe('/lixuz/beforeunload', function(messages)
+{
+    if ( categoryLayout.changed === true )
+    {
+        messages.push(i18n.get('You have unsaved changes, those changes will be lost if you leave without saving.'));
+    }
+});
