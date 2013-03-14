@@ -472,7 +472,8 @@ select ul li.subs {
 }
 
 .makeMeDraggable{
-    width:290px; height:30px; background:#F9F9F9;
+    width:290px;
+    background:#F9F9F9;
     margin-bottom:5px;
     padding:5px;
     border:1px solid #CCCCCC;
@@ -510,10 +511,17 @@ select ul li.subs {
     margin:0px;
 }
 
+.layout-submit
+{
+    margin-left:2px;
+    float:left;
+    text-align:left;
+}
+
 .layout_category_heading
 {
     font-size:18px;
-    height:50px;
+    margin-left:633px;
 }
 .initiallyHidden
 {

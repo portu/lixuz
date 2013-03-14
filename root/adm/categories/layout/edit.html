@@ -16,43 +16,46 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </%perl>
 
+<div class="headerLine">
+    <div id="submitbutton" class="layout-submit">
+        <input id="saveLayoutChanges" name="_blankSaveLayoutChanges" type="submit" value="<% $i18n->get('Save layout')  |n %>" />
+    </div>
+    <div class="layout_category_heading">
+            <% $i18n->get('Category layout for: ')%> <% $category_name%>
+    </div>
+</div>
+
 <div id="ddcontents">
 <table id="contentFrame">
     <tr>
         <td style="border-right:1px solid #9BB8CF"> 
-            <table>
-                <tr>
-                    <td>
-                        <div id="submitbutton" style="float: left; text-align: left;">
-                            <input id="saveLayoutChanges" name="_blankSaveLayoutChanges" type="submit" value="<% $i18n->get('Save layout')  |n %>" />
-                        </div>
-                    </td>
-                    <td>
-                        <form action="/admin/categories/layout/renderCatArticleList/<% $category_id %>" method="get" id="list_search" name="list_search">
-                            <input type="hidden" name="category_id" id="category_id" value="<% $category_id %>" />
-                            <input type="hidden" name="folder_id" id="folder_id" />
-                            <input type="text" name="query" id="query" />
-                            <input id="list_submit_search" name="_submit" type="button" value="<% $i18n->get('Search')  |n %>" />
-                        </form>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left"><& left.html, %ARGS &></td>
-                    <td style="width:700px">
-                        <div id="listdiv">
-                        </div>
-                    </td>
-                </tr>
-            </table>
+            <div class="heightLimitedSection heightLimitedLayout" data-limitgroup=".heightLimitedLayout">
+                <table>
+                    <tr>
+                        <td class="left">
+                            <& left.html, %ARGS &>
+                        </td>
+                        <td style="min-width:320px;">
+                            <form action="/admin/categories/layout/renderCatArticleList/<% $category_id %>" method="get" id="list_search" name="list_search">
+                                <input type="hidden" name="category_id" id="category_id" value="<% $category_id %>" />
+                                <input type="hidden" name="folder_id" id="folder_id" />
+                                <input type="text" name="query" id="query" />
+                                <input id="list_submit_search" name="_submit" type="button" value="<% $i18n->get('Search')  |n %>" />
+                            </form>
+                            <div id="listdiv">
+                                <% $i18n->get('Loading ...') |n %>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </td>
         <td>
-            <div class="layout_category_heading">
-                    <% $i18n->get('Category layout for: ')%> <% $category_name%>
+            <div class="heightLimitedSection heightLimitedLayout" data-limitgroup=".heightLimitedLayout">
+                <div id="spotArea" style="color:#999999;">
+                    <& layout.html, %ARGS &>
+                </div>    
             </div>
-
-            <div id="spotArea" style="color:#999999;">
-                <& layout.html, %ARGS &>
-            </div>    
         </td>
     </tr>
 </table>
