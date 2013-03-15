@@ -539,6 +539,10 @@ sub copyFile
         }
         return 1;
     }
+    if ( -e $destination && !-w $destination)
+    {
+        unlink($destination) or warn('Failed to preemptively unlink '.$destination."\n");
+    }
     if (!copy($source,$destination))
     {
         warn('Failed top copy '.$source.' to '.$destination.': '.$!."\n");
