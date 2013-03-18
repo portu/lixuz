@@ -41,7 +41,7 @@ sub parse_templatefile
     my $c = shift;
     my $file = shift;
 
-    open(my $i, '<', $file) or do
+    open(my $i, '<:encoding(UTF-8)', $file) or do
     {
         $c->log->error('ERROR: Failed to open "'.$file.'" for reading: '.$!);
         return undef;
