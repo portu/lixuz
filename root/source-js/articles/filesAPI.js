@@ -278,12 +278,19 @@ var articleFiles = {
     getThumbnailFor: function(file)
     {
         file = articleFiles.getFileFromVar(file);
-        var size = '?width=80';
-        if(parseInt(file.file.height,10) > parseInt(file.file.width,10))
+        if(file.file.is_image || file.file.is_video)
         {
-            size = '?height=80';
+            var size = '?width=80';
+            if(parseInt(file.file.height,10) > parseInt(file.file.width,10))
+            {
+                size = '?height=80';
+            }
+            return '/files/get/'+file.file.identifier+size;
         }
-        return '/files/get/'+file.file.identifier+size;
+        else
+        {
+            return file.file.icon;
+        }
     },
 
     assignToSpot: function (file, spot)
