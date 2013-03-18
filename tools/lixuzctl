@@ -49,7 +49,7 @@ my $packageFormatRevision     = 2;
 # The mimimum supported package format supported
 my $minSupportedPackageFormat = 0;
 # Force an action to complete
-my $force = false;
+my $force = 0;
 # Don't check deps during install
 my $lazyInstall = false;
 my $logOut;
@@ -90,7 +90,7 @@ sub main
             $lixuzDir = shift;
         },
         'lazy' => \$lazyInstall,
-        'force' => \$force,
+        'force+' => \$force,
         'force-refresh' => \$forceRefresh,
         # This is not used anywhere yet, but it is supported for use later
         # (and already supplied by the upgrade script)
@@ -799,7 +799,7 @@ sub usagePackages
     printHelp('','create X','Create a new package named "X" in ./X');
     print "\n";
     print "Parameters for install and upgrade:\n";
-    printHelp('','--force','Force an installation, even if there are conflicts, unsatisfied dependencies etc. This parameter is UNSAFE and could break Lixuz, use only if you know what you\'re doing');
+    printHelp('','--force','Force an installation, even if there are conflicts, unsatisfied dependencies etc. This parameter is UNSAFE and could break Lixuz, use only if you know what you\'re doing. Supply twice to bypass additional safety checks.');
     printHelp('','--lazy','Skip dependency checks');
     print "Parameters for upgrade:\n";
     printHelp('','--force-refresh','Update all files in the tree when upgrading, even if the files in question are identical to those already installed');
@@ -1155,7 +1155,7 @@ sub injectTemplateFile
         }
     }
 
-    if ($info->{'TEMPLATE_APIVERSION'} ne '1')
+    if ($info->{'TEMPLATE_APIVERSION'} ne '1' && $force < 2)
     {
         die($errorPrefix.' APIVERSION not supported. This version of Lixuz only supports APIVERSION 1, this template is for APIVERSION '.$info->{'TEMPLATE_APIVERSION'});
     }
@@ -2502,7 +2502,7 @@ sub selfRun
     {
         push(@command,'--debug');
     }
-    if ($force)
+    for (my $i = 0; $i < $force; $i++)
     {
         push(@command,'--force');
     }
