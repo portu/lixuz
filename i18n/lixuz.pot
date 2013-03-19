@@ -1,18 +1,18 @@
-# #-#-#-#-#  lixuz.pot (LIXUZ (Thu Nov 29 14:36:43 2012))  #-#-#-#-#
+# #-#-#-#-#  lixuz.pot (LIXUZ (Tue Mar 19 13:53:03 2013))  #-#-#-#-#
 # LIXUZ translation file
-# Copyright (C) 2012 Portu media & communications
+# Copyright (C) 2013 Portu media & communications
 #
 # #-#-#-#-#  lixuz-js.pot (Lixuz)  #-#-#-#-#
 # LIXUZ translation file
-# Copyright (C) 2012 Portu
+# Copyright (C) 2013 Portu
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  lixuz.pot (LIXUZ (Thu Nov 29 14:36:43 2012))  #-#-#-#-#\n"
-"Project-Id-Version: LIXUZ (Thu Nov 29 14:36:43 2012)\n"
+"#-#-#-#-#  lixuz.pot (LIXUZ (Tue Mar 19 13:53:03 2013))  #-#-#-#-#\n"
+"Project-Id-Version: LIXUZ (Tue Mar 19 13:53:03 2013)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2012-11-29 14:36+0100\n"
+"POT-Creation-Date: 2013-03-19 13:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 "#-#-#-#-#  lixuz-js.pot (Lixuz)  #-#-#-#-#\n"
 "Project-Id-Version: Lixuz\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-29 14:36+0100\n"
+"POT-Creation-Date: 2013-03-19 13:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,8 +39,8 @@ msgstr ""
 #: lib/LIXUZ/Controller/Admin.pm:76 lib/LIXUZ/Controller/Admin.pm:86
 #: lib/LIXUZ/Controller/Admin/Articles.pm:379
 #: lib/LIXUZ/Controller/Admin/Articles.pm:383
-#: lib/LIXUZ/Controller/Admin/Articles.pm:574
-#: lib/LIXUZ/Controller/Admin/Articles.pm:578
+#: lib/LIXUZ/Controller/Admin/Articles.pm:573
+#: lib/LIXUZ/Controller/Admin/Articles.pm:577
 msgid "Permission denied"
 msgstr ""
 
@@ -76,7 +76,7 @@ msgstr ""
 #: lib/LIXUZ/Controller/Admin/Users.pm:207
 #: lib/LIXUZ/Controller/Admin/Categories.pm:174
 #: lib/LIXUZ/Controller/Admin/Categories.pm:214
-#: lib/LIXUZ/Controller/Admin/RSSImport.pm:345
+#: lib/LIXUZ/Controller/Admin/RSSImport.pm:362
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:130
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:228
 #: root/adm/rssimport/list.html:23 root/adm/files/edit.html:100
@@ -90,9 +90,9 @@ msgstr ""
 #: lib/LIXUZ/Controller/Admin/Users.pm:310
 #: lib/LIXUZ/Controller/Admin/Categories.pm:175
 #: lib/LIXUZ/Controller/Admin/Categories.pm:344
-#: lib/LIXUZ/Controller/Admin/RSSImport.pm:349
+#: lib/LIXUZ/Controller/Admin/RSSImport.pm:366
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:130
-#: lib/LIXUZ/Schema/LzStatus.pm:119 root/adm/files/edit.html:101
+#: lib/LIXUZ/Schema/LzStatus.pm:122 root/adm/files/edit.html:101
 #: root/adm/files/list.html:58 root/adm/users/roles/edit/index.html:41
 msgid "Inactive"
 msgstr ""
@@ -109,9 +109,9 @@ msgstr ""
 #: lib/LIXUZ/Controller/Admin/Users.pm:82
 #: lib/LIXUZ/Controller/Admin/Users.pm:141
 #: lib/LIXUZ/Controller/Admin/Categories.pm:172
-#: lib/LIXUZ/Controller/Admin/RSSImport.pm:354
-#: lib/LIXUZ/Controller/Admin/Articles.pm:911
-#: lib/LIXUZ/Controller/Admin/Articles.pm:981 lib/LIXUZ/Schema/LzField.pm:226
+#: lib/LIXUZ/Controller/Admin/RSSImport.pm:371
+#: lib/LIXUZ/Controller/Admin/Articles.pm:910
+#: lib/LIXUZ/Controller/Admin/Articles.pm:980 lib/LIXUZ/Schema/LzField.pm:242
 #: root/adm/categories/editform.html:70 root/adm/categories/list.html:33
 #: root/adm/articles/relationships_right.html:34
 #: root/adm/articles/list.html:42
@@ -132,8 +132,8 @@ msgstr ""
 #: lib/LIXUZ/Controller/Admin/Categories.pm:133
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:57
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:119
-#: lib/LIXUZ/Controller/Admin/Articles.pm:745
-#: lib/LIXUZ/Controller/Admin/Articles.pm:799
+#: lib/LIXUZ/Controller/Admin/Articles.pm:744
+#: lib/LIXUZ/Controller/Admin/Articles.pm:798
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:42
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:146
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:204
@@ -278,8 +278,8 @@ msgid "Folders"
 msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Categories.pm:180
-#: lib/LIXUZ/Controller/Admin/Articles.pm:910
-#: lib/LIXUZ/Controller/Admin/Articles.pm:989 lib/LIXUZ/Schema/LzField.pm:234
+#: lib/LIXUZ/Controller/Admin/Articles.pm:909
+#: lib/LIXUZ/Controller/Admin/Articles.pm:988 lib/LIXUZ/Schema/LzField.pm:250
 #: root/adm/categories/editform.html:53 root/adm/categories/list.html:29
 #: root/adm/articles/list.html:40
 msgid "Template"
@@ -302,11 +302,11 @@ msgstr ""
 msgid "Category data saved"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/ACL.pm:33
+#: lib/LIXUZ/Controller/Admin/ACL.pm:35
 msgid "<b>Access denied</b>: You are not allowed to access that resource"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/ACL.pm:34
+#: lib/LIXUZ/Controller/Admin/ACL.pm:36
 msgid "Access denied"
 msgstr ""
 
@@ -498,25 +498,25 @@ msgid "In status"
 msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:371
-#: lib/LIXUZ/Controller/Admin/Articles.pm:564
+#: lib/LIXUZ/Controller/Admin/Articles.pm:563
 msgid "Error: Failed to locate revision %(REVISION) of the article %(UID)"
 msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Articles.pm:373
-#: lib/LIXUZ/Controller/Admin/Articles.pm:566
-#: lib/LIXUZ/Controller/Admin/Articles.pm:754
+#: lib/LIXUZ/Controller/Admin/Articles.pm:565
+#: lib/LIXUZ/Controller/Admin/Articles.pm:753
 msgid "Error: Failed to locate a article with the UID %(UID)."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:487
+#: lib/LIXUZ/Controller/Admin/Articles.pm:486
 msgid "Default Template"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:515
-#: lib/LIXUZ/Controller/Admin/Articles.pm:520
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:720
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:782
-#: lib/LIXUZ/Schema/LzFile.pm:864 root/adm/articles/list.html:125
+#: lib/LIXUZ/Controller/Admin/Articles.pm:514
+#: lib/LIXUZ/Controller/Admin/Articles.pm:519
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:731
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:793
+#: lib/LIXUZ/Schema/LzFile.pm:878 root/adm/articles/list.html:125
 #: root/adm/files/list.html:87
 #: root/adm/dashboard/widgetHelper_articleList.html:93
 #: root/adm/dashboard/widgetHelper_articleList.html:112
@@ -525,27 +525,27 @@ msgstr ""
 msgid "(none)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:766
+#: lib/LIXUZ/Controller/Admin/Articles.pm:765
 msgid "You have stolen the edit lock for this article."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:819
+#: lib/LIXUZ/Controller/Admin/Articles.pm:818
 msgid "Article deleted"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:883
-#: lib/LIXUZ/Controller/Admin/Articles.pm:887
+#: lib/LIXUZ/Controller/Admin/Articles.pm:882
+#: lib/LIXUZ/Controller/Admin/Articles.pm:886
 msgid "Editing article %(ARTICLE_ID)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:891
+#: lib/LIXUZ/Controller/Admin/Articles.pm:890
 msgid "Creating article"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:903
-#: lib/LIXUZ/Controller/Admin/Articles.pm:982
+#: lib/LIXUZ/Controller/Admin/Articles.pm:902
+#: lib/LIXUZ/Controller/Admin/Articles.pm:981
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:126
-#: lib/LIXUZ/Schema/LzField.pm:227 root/adm/files/edit.html:72
+#: lib/LIXUZ/Schema/LzField.pm:243 root/adm/files/edit.html:72
 #: root/adm/dashboard/widgetHelper_articleList.html:22
 #: root/source-js/articles/relationships.js:76
 #: root/source-js/articles/articles.js:117
@@ -554,53 +554,53 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:904
-#: lib/LIXUZ/Controller/Admin/Articles.pm:984 lib/LIXUZ/Schema/LzField.pm:229
+#: lib/LIXUZ/Controller/Admin/Articles.pm:903
+#: lib/LIXUZ/Controller/Admin/Articles.pm:983 lib/LIXUZ/Schema/LzField.pm:245
 msgid "Lead"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:905
-#: lib/LIXUZ/Controller/Admin/Articles.pm:985 lib/LIXUZ/Schema/LzField.pm:230
+#: lib/LIXUZ/Controller/Admin/Articles.pm:904
+#: lib/LIXUZ/Controller/Admin/Articles.pm:984 lib/LIXUZ/Schema/LzField.pm:246
 #: root/adm/articles/list.html:43
 msgid "Author"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:906
-#: lib/LIXUZ/Controller/Admin/Articles.pm:983 lib/LIXUZ/Schema/LzField.pm:228
+#: lib/LIXUZ/Controller/Admin/Articles.pm:905
+#: lib/LIXUZ/Controller/Admin/Articles.pm:982 lib/LIXUZ/Schema/LzField.pm:244
 msgid "Body"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:907
-#: lib/LIXUZ/Controller/Admin/Articles.pm:986 lib/LIXUZ/Schema/LzField.pm:231
+#: lib/LIXUZ/Controller/Admin/Articles.pm:906
+#: lib/LIXUZ/Controller/Admin/Articles.pm:985 lib/LIXUZ/Schema/LzField.pm:247
 #: root/adm/articles/read/workflow_read.html:31
 msgid "Publish time"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:908
+#: lib/LIXUZ/Controller/Admin/Articles.pm:907
 msgid "Expires at"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:909
+#: lib/LIXUZ/Controller/Admin/Articles.pm:908
 msgid "Order"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:987 lib/LIXUZ/Schema/LzField.pm:232
+#: lib/LIXUZ/Controller/Admin/Articles.pm:986 lib/LIXUZ/Schema/LzField.pm:248
 #: root/adm/articles/read/workflow_read.html:35
 msgid "Expiry time"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:988 lib/LIXUZ/Schema/LzField.pm:233
+#: lib/LIXUZ/Controller/Admin/Articles.pm:987 lib/LIXUZ/Schema/LzField.pm:249
 msgid "Primary folder"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:1084
+#: lib/LIXUZ/Controller/Admin/Articles.pm:1083
 #: lib/LIXUZ/HelperModules/Forms.pm:159
 #: root/adm/core/fields/rangepulldown.html:21
 #: root/adm/core/fields/userpulldown.html:55 root/source-js/core/chosen.js:9
 msgid "-select-"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:1091
+#: lib/LIXUZ/Controller/Admin/Articles.pm:1090
 msgid "(Default template)"
 msgstr ""
 
@@ -608,7 +608,9 @@ msgstr ""
 msgid "Unsorted (files that are not in any folder yet)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Services.pm:760 root/adm/articles/list.html:67
+#: lib/LIXUZ/Controller/Admin/Services.pm:760
+#: root/adm/categories/layout/layout.html:32
+#: root/adm/categories/layout/list.html:16 root/adm/articles/list.html:67
 msgid "(unnamed)"
 msgstr ""
 
@@ -634,6 +636,44 @@ msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Services.pm:965
 msgid "In folder"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:57
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:119
+msgid "Error: Invalid ID supplied"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:64
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:124
+msgid "Error: Failed to locate a category with the id %(CATEGORY_ID)."
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:76
+msgid "Category layout"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:130
+msgid "Error: Invalid folder-ID supplied"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:137
+msgid "This folder is not associated with the category"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:171
+msgid "Invalid category id."
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:175
+msgid "Invalid template id."
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:179
+msgid "Template has no spots, unable to save layout"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Categories/Layout.pm:252
+msgid "Category layout saved successfully."
 msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Files/Upload.pm:146
@@ -851,97 +891,97 @@ msgstr ""
 msgid "Manage templates"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:592
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:603
 msgid "%(USER) has assigned article %(ARTICLE_ID) (%(ARTICLE_NAME)) to you"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:598
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:609
 msgid ""
 "The article \"%(ARTICLE_NAME)\" (%(ARTICLE_ID)) has been\n"
 "assigned to you by %(USER). You may now edit\n"
 "and manage this article in Lixuz at %(PAGE)."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:628
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:639
 msgid ""
 "Some changes has been made by %(FIRSTNAME) %(LASTNAME) (%(USERNAME))\n"
 "to an article (ID %(ARTICLE_ID)) you are watching:"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:662
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:673
 msgid "Title change: \"%(old)\" => \"%(new).\""
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:666
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:677
 msgid "The lead has been changed."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:670
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:681
 msgid "The body has been changed."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:674
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:685
 msgid "Author change: \"%(old)\" => \"%(new).\""
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:680
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:691
 msgid "Publish time has changed: \"%(old)\" => \"%(new).\""
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:684
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:695
 msgid "Expiry time has changed: \"%(old)\" => \"%(new)\"."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:698
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:709
 msgid "(default)"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:702
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:713
 msgid "Template change: \"%(old)\" => \"%(new)\"."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:723
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:734
 msgid "Status change: \"%(old)\" => \"%(new)\"."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:769
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:780
 #: root/adm/articles/workflow.html:163
 #: root/adm/articles/read/workflow_read.html:94
 msgid "Low"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:770
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:781
 #: root/adm/articles/workflow.html:168
 #: root/adm/articles/read/workflow_read.html:99
 msgid "Medium"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:771
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:782
 #: root/adm/articles/workflow.html:173
 #: root/adm/articles/read/workflow_read.html:104
 msgid "High"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:785
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:796
 msgid "Priority change: \"%(old)\" => \"%(new)\"."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:789
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:800
 msgid "The start date changed: \"%(old)\" => \"%(new)\"."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:793
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:804
 msgid "The deadline changed: \"%(old)\" => \"%(new)\"."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:845
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:856
 msgid ""
 "This message has been automatically generated by Lixuz because you\n"
 "are watching this article. You can stop watching this article\n"
 "by going to its edit page."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:845
+#: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:856
 msgid "An article you are watching (%(ARTID)) has been edited"
 msgstr ""
 
@@ -952,7 +992,7 @@ msgstr ""
 #: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:254
 #: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:269
 #: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:304
-#: lib/LIXUZ/Schema/LzWorkflow.pm:178 lib/LIXUZ/Schema/LzWorkflow.pm:191
+#: lib/LIXUZ/Schema/LzWorkflow.pm:201 lib/LIXUZ/Schema/LzWorkflow.pm:218
 #: root/adm/articles/list.html:209
 #: root/adm/dashboard/widgetHelper_articleList.html:103
 msgid "(nobody)"
@@ -1076,12 +1116,12 @@ msgstr ""
 msgid "Template uploaded"
 msgstr ""
 
-#: lib/LIXUZ/HelperModules/List.pm:335
+#: lib/LIXUZ/HelperModules/List.pm:339 root/adm/categories/layout/edit.html:43
 #: root/source-js/utils/objectSelector.js:208
 msgid "Search"
 msgstr ""
 
-#: lib/LIXUZ/HelperModules/List.pm:338
+#: lib/LIXUZ/HelperModules/List.pm:342
 msgid "Filter"
 msgstr ""
 
@@ -1101,85 +1141,85 @@ msgstr ""
 msgid "This message has been automatically generated by Lixuz"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:161
+#: lib/LIXUZ/Schema/LzField.pm:177
 msgid "Single line"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:162
+#: lib/LIXUZ/Schema/LzField.pm:178
 msgid "Multi-line"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:163
+#: lib/LIXUZ/Schema/LzField.pm:179
 #: root/adm/settings/admin/adfields/adfieldedit.html:111
 msgid "Custom pulldown"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:164
+#: lib/LIXUZ/Schema/LzField.pm:180
 #: root/adm/settings/admin/adfields/adfieldedit.html:116
 msgid "Range-defined pulldown"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:165
+#: lib/LIXUZ/Schema/LzField.pm:181
 msgid "Multiple select"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:166
+#: lib/LIXUZ/Schema/LzField.pm:182
 msgid "Date/time"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:167
+#: lib/LIXUZ/Schema/LzField.pm:183
 msgid "Pulldown"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:168
+#: lib/LIXUZ/Schema/LzField.pm:184
 #: root/adm/settings/admin/adfields/adfieldedit.html:101
 msgid "Checkbox"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:169
+#: lib/LIXUZ/Schema/LzField.pm:185
 #: root/adm/settings/admin/adfields/adfieldedit.html:41
 #: root/adm/settings/admin/adfields/adfieldedit.html:126
 msgid "Range"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:170
+#: lib/LIXUZ/Schema/LzField.pm:186
 msgid "Metadata (date)"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:171
+#: lib/LIXUZ/Schema/LzField.pm:187
 msgid "Metadata (integer)"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:176
+#: lib/LIXUZ/Schema/LzField.pm:192
 msgid "(unknown - not set in database)"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:189
+#: lib/LIXUZ/Schema/LzField.pm:205
 msgid "(unknown - \"%(FIELDNAME)\")"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzField.pm:249
+#: lib/LIXUZ/Schema/LzField.pm:265
 msgid "Unknown"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzWorkflow.pm:157
+#: lib/LIXUZ/Schema/LzWorkflow.pm:169
 msgid "(user not found)"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzWorkflow.pm:174
+#: lib/LIXUZ/Schema/LzWorkflow.pm:190
 msgid "%(ROLE_NAME) (role)"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzFile.pm:839 lib/LIXUZ/Schema/LzFile.pm:861
+#: lib/LIXUZ/Schema/LzFile.pm:853 lib/LIXUZ/Schema/LzFile.pm:875
 msgid "File ID:"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzFile.pm:871 lib/LIXUZ/Schema/LzFile.pm:876
+#: lib/LIXUZ/Schema/LzFile.pm:885 lib/LIXUZ/Schema/LzFile.pm:890
 #: root/source-js/core/createArticle.js:49
 msgid "Folder:"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzFile.pm:883 root/adm/files/list.html:73
+#: lib/LIXUZ/Schema/LzFile.pm:897 root/adm/files/list.html:73
 msgid "View other versions"
 msgstr ""
 
@@ -1199,15 +1239,15 @@ msgstr ""
 msgid "Default/generic"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzStatus.pm:116
+#: lib/LIXUZ/Schema/LzStatus.pm:119
 msgid "Draft"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzStatus.pm:117
+#: lib/LIXUZ/Schema/LzStatus.pm:120
 msgid "Live"
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzStatus.pm:118 root/adm/articles/editform.html:55
+#: lib/LIXUZ/Schema/LzStatus.pm:121 root/adm/articles/editform.html:55
 #: root/adm/articles/read/workflow_read.html:27
 #: root/source-js/articles/viewArticleRevisions.js:119
 msgid "Revision"
@@ -1252,7 +1292,7 @@ msgstr ""
 msgid "Replace"
 msgstr ""
 
-#: root/adm/templates/list.html:54 root/adm/categories/list.html:61
+#: root/adm/templates/list.html:54 root/adm/categories/list.html:62
 #: root/adm/articles/list.html:257 root/adm/newsletter/list.html:72
 #: root/adm/settings/admin/statuslist.html:48
 #: root/adm/settings/admin/adfields/adfieldlist.html:62
@@ -1311,7 +1351,7 @@ msgstr ""
 msgid "Display type"
 msgstr ""
 
-#: root/adm/categories/list.html:60 root/adm/articles/list.html:233
+#: root/adm/categories/list.html:61 root/adm/articles/list.html:233
 #: root/adm/newsletter/list.html:71 root/adm/settings/admin/statuslist.html:47
 #: root/adm/settings/admin/adfields/adfieldlist.html:61
 #: root/adm/users/list.html:48 root/adm/users/roles/list.html:38
@@ -1319,8 +1359,36 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: root/adm/categories/list.html:61
+#: root/adm/categories/list.html:62
 msgid "Are you sure you want to delete the category \"%(CATEGORYNAME)\"?"
+msgstr ""
+
+#: root/adm/categories/list.html:63
+msgid "Article ordering"
+msgstr ""
+
+#: root/adm/categories/list.html:63
+msgid "Article Ordering"
+msgstr ""
+
+#: root/adm/categories/layout/edit.html:21
+msgid "Save layout"
+msgstr ""
+
+#: root/adm/categories/layout/edit.html:24
+msgid "Category layout for: "
+msgstr ""
+
+#: root/adm/categories/layout/edit.html:46
+msgid "Loading ..."
+msgstr ""
+
+#: root/adm/categories/layout/layout.html:48
+msgid "Spot"
+msgstr ""
+
+#: root/adm/categories/layout/layout.html:61 root/adm/articles/list.html:27
+msgid "Save Changes"
 msgstr ""
 
 #: root/adm/core/folderActions.html:2
@@ -1631,10 +1699,6 @@ msgstr ""
 
 #: root/adm/articles/workflow.html:130
 msgid "Submit changes"
-msgstr ""
-
-#: root/adm/articles/list.html:27
-msgid "Save Changes"
 msgstr ""
 
 #: root/adm/articles/list.html:73 root/adm/articles/list.html:231
@@ -3069,17 +3133,17 @@ msgstr ""
 msgid "Spot:"
 msgstr ""
 
-#: root/source-js/articles/filesAPI.js:355
+#: root/source-js/articles/filesAPI.js:362
 msgid "Fetching list of file spots..."
 msgstr ""
 
-#: root/source-js/articles/filesAPI.js:467
+#: root/source-js/articles/filesAPI.js:474
 msgid ""
 "A file named \"%(NAME)\" (id %(ID)) is already assigned to this spot. Do you "
 "want to replace it with the file \"%(NEWNAME)\"?"
 msgstr ""
 
-#: root/source-js/articles/filesAPI.js:494
+#: root/source-js/articles/filesAPI.js:501
 msgid ""
 "Are you sure you wish to remove that file from this article? The file will "
 "not be deleted."
@@ -3354,6 +3418,28 @@ msgstr ""
 msgid "Failed to retrieve backup data: "
 msgstr ""
 
+#: root/source-js/layout/layout.js:168
+msgid "Article ID: "
+msgstr ""
+
+#: root/source-js/layout/layout.js:169
+msgid "Remove article"
+msgstr ""
+
+#: root/source-js/layout/layout.js:224
+msgid "(auto)"
+msgstr ""
+
+#: root/source-js/layout/layout.js:246
+msgid "Retrieving articles"
+msgstr ""
+
+#: root/source-js/layout/layout.js:298
+msgid ""
+"You have unsaved changes, those changes will be lost if you leave without "
+"saving."
+msgstr ""
+
 #: root/source-js/files/fileSelector.js:33
 #: root/source-js/files/fileSelector.js:46
 msgid "File selector"
@@ -3493,4 +3579,10 @@ msgstr ""
 
 #: root/source-js/dashboard/dashboard.js:65
 msgid "Acceptance failed"
+msgstr ""
+
+#: root/source-js/core/0-LIXUZ.js:17
+msgid ""
+"Lixuz has loaded several instances on top of each other. This is dangerous, "
+"and can result in data corruption. Please save your work and then reload."
 msgstr ""
