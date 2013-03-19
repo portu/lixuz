@@ -31,9 +31,9 @@ $nextURI = $c->request->uri_with({page => $pager->next_page});
 <div class="pagination" align="right">
 <span style="float:left; visibility:hidden;" id="paginationInfoMessage"></span>
 %if($prevURI) {
-<span class="pageBox"><a href="<% $c->request->uri_with({page => $pager->first_page}) %>">&#171;<% $i18n->get('First') %></a></span>
+<span class="pageBox"><a data-page="<% $pager->first_page %>" href="<% $c->request->uri_with({page => $pager->first_page}) %>">&#171;<% $i18n->get('First') %></a></span>
 &nbsp;
-<span class="pageBox"><a href="<%$prevURI%>">&#171;<% $i18n->get('Previous') %></a></span>
+<span class="pageBox"><a data-page="<% $pager->previous_page %>" href="<%$prevURI%>">&#171;<% $i18n->get('Previous') %></a></span>
 %} else {
 <span class="pageBox">&#171;<% $i18n->get('First') %></span> &nbsp; <span class="pageBox">&#171;<% $i18n->get('Previous') %></span>
 %}
@@ -47,9 +47,9 @@ $nextURI = $c->request->uri_with({page => $pager->next_page});
 
 &nbsp;
 %if($nextURI) {
-<span class="pageBox"><a href="<%$nextURI%>"><% $i18n->get('Next') %>&#187;</a></span>
+<span class="pageBox"><a data-page="<% $pager->next_page %>" href="<%$nextURI%>"><% $i18n->get('Next') %>&#187;</a></span>
 &nbsp;
-<span class="pageBox"><a href="<% $c->request->uri_with({page => $pager->last_page}) %>"><% $i18n->get('Last') %>&#187;</a></span>
+<span class="pageBox"><a data-page="<% $pager->last_page %>" href="<% $c->request->uri_with({page => $pager->last_page}) %>"><% $i18n->get('Last') %>&#187;</a></span>
 %} else {
 <span class="pageBox"><% $i18n->get('Next') %>&#187;</span> &nbsp; <span class="pageBox"><% $i18n->get('Last') %>&#187;</span>
 %}

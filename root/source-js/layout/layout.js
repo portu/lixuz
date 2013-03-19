@@ -231,17 +231,22 @@ var categoryLayout =
             lzlog('removeFromSpot: got artid='+artid+' and spotval='+spotval+' (with $object='+$object+'), ended up with zero removable spots');
         }
     },
-    updateArtList: function renderArticleList(fid,search,init)
+    updateArtList: function renderArticleList(fid,search,init,page)
     {
         var self  = this,
             catid = $('#category_id').val();
         $('#folder_id').val(fid);
+        if (!_.isNumber(page))
+        {
+            page = 1;
+        }
         if(init !== true)
         {
             showPI(i18n.get('Retrieving articles'));
         }
         var params = {
-            folder: fid
+            folder: fid,
+            page: page
         };
         if(search != null)
         {
@@ -252,8 +257,23 @@ var categoryLayout =
         $.post('/admin/categories/layout/renderCatArticleList/'+catid, params,
             function (data)
             {
-                $('#listdiv').html(data);
-                self.initDrag();
+                var $listDiv = $('#listdiv');
+                $listDiv.html(data);
+                setTimeout(function()
+                {
+                    var $pager = $listDiv.find('.pagination');
+                    self.initDrag();
+                    $pager.find('a').click(function(ev)
+                    {
+                        ev.preventDefault();
+                        var $this = $(this);
+                        self.updateArtList(fid,search,false, $this.data('page'));
+                    });
+                    $pager.data({
+                        fid: fid,
+                        search: search
+                    });
+                },1);
                 if(init !== true)
                 {
                     destroyPI();
@@ -263,6 +283,12 @@ var categoryLayout =
     }
 };
 
+$.subscribe('/lixuz/pagerChange',function(data)
+{
+    data.handled = true;
+    var $pager = $('#listdiv').find('pagination');
+    categoryLayout.updateArtList( $pager.data('fid'), $pager.data('search'), false, data.page );
+});
 $.subscribe('/lixuz/init', categoryLayout.initialize);
 $.subscribe('/lixuz/beforeunload', function(messages)
 {

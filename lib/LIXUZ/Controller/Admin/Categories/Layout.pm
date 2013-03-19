@@ -150,6 +150,7 @@ sub renderCatArticleList : Local Args Form('/core/search')
             template => 'adm/categories/layout/list.html',
             orderParams => [qw(article_id title status_id modified_time assigned_to_user author)],
             searchColumns => [qw/title article_id body lead/],
+            paginate => 1,
     };
     if(defined $query && length $query)
     {

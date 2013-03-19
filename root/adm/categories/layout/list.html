@@ -1,6 +1,7 @@
 <%$errorMessage%>
 <table>
     <tr><td>
+<& ../../core/listnavigation.html, %ARGS &>
             <%perl>
 my @arl;            
 if(defined $artlist && $artlist->count > 0)
@@ -42,20 +43,14 @@ if(defined $artlist && $artlist->count > 0)
 </div>
 %   }
 %}
+<& ../../core/listnavigation.html, %ARGS &>
     </td>
 </tr>
 </table>
 
-<%perl>
-my @artlist;
-while(($artlist) && (my $ar = $artlist->next))
-{
-</%perl>
-<% $ar->to_hash %>
-%}
-
 <%args>
 $artlist=>undef
+$pager=>undef
 $i18n
 $errorMessage=>undef
 </%args>
