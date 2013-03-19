@@ -96,6 +96,36 @@
             // Attach a live tipsy handler
             $('.useTipsy').tipsy({ gravity: 'ne', live: true });
             $('.useTipsyW').tipsy({ gravity: 'nw', live: true });
+
+            // Size .heightLimitedSections if needed
+            var $heightLimited = $('.heightLimitedSection');
+            if ( $heightLimited.length )
+            {
+                $heightLimited.each(function()
+                {
+                    var $this = $(this),
+                        outerHeight, winHeight, present = false;
+                    if($this.data('alreadyLimited'))
+                    {
+                        return;
+                    }
+                    if($this.data('limitgroup'))
+                    {
+                        $this = $( $this.data('limitgroup') );
+                    }
+
+                    $this.hide();
+                    winHeight = $(window).height();
+                    outerHeight = $('body').height();
+                    $this.show();
+                    maxHeight = winHeight - outerHeight;
+
+                    $this.css({
+                        'height':maxHeight,
+                        'overflow-y':'scroll'
+                    }).data('alreadyLimited',true);
+                });
+            }
         }, 1);
         $LAB.onLoaded(function()
         {

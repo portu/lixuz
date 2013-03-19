@@ -136,9 +136,9 @@ sub validateTemplate : Private
         }
     }
 
-    if ($data->{'TEMPLATE_APIVERSION'} ne '1')
+    if ($data->{'TEMPLATE_APIVERSION'} > 2 )
     {
-        $self->error($c,'APIVERSION not supported. This version of Lixuz only supports APIVERSION 1, this template is for APIVERSION '.$data->{'TEMPLATE_APIVERSION'});
+        $self->error($c,'APIVERSION not supported. This version of Lixuz only supports APIVERSION 2 and lower, this template is for APIVERSION '.$data->{'TEMPLATE_APIVERSION'});
     }
 
     # FIXME: Supply a list of deps to resolve_dependencies rather than the file

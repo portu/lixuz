@@ -135,6 +135,8 @@ use LIXUZ::HelperModules::Cache qw(get_ckey CT_1H);
 use LIXUZ::HelperModules::Live::Articles qw(get_live_articles_from);
 use Moose;
 with 'LIXUZ::Role::URLGenerator';
+# Objects from orderedRS gets reblessed as ProxiedResultSets
+use LIXUZ::HelperModules::ProxiedResultSet;
 
 # Summary: Get all fields from this user in a hash
 # Usage: object->get_everything();
@@ -213,9 +215,168 @@ sub get_category_tree
     return @tree;
 }
 
+# Summary: Retrieve the ordered front-page RS.
+# Usage: Same as get_live_articles, with the following additions to the options hash:
+#   template => the template *object* corresponding to the template in use.
+#   Required.
+sub orderedRS
+{
+    my($self,$c,$info) = @_;
+    my $template = $info->{template};
+    if (!defined $template)
+    {
+        $template = $c->model('LIXUZDB::LzTemplate')->find({
+                type => 'list',
+                is_default => 1,
+            });
+    }
+    my $templateMeta = $template->get_info($c);
+
+    if (! $templateMeta->{layout})
+    {
+        return $self->get_live_articles($c,$info);
+    }
+
+    return LIXUZ::HelperModules::ProxiedResultSet->new(
+            normalBuilder => sub
+            {
+                my $proxy = shift;
+                my $total = $templateMeta->{layout_spots};
+                # If the number of ordered articles are below the number of requested articles
+                # then we assume that there aren't enough articles to go around, and thus we
+                # don't bother constructing a live list on the assumption that there won't
+                # be enough anyway.
+                if (defined $proxy->ordered && $proxy->ordered->count < $total)
+                {
+                    return undef;
+                }
+                # This returns all articles that are not already present in the
+                # ordered resultset
+                return $self->get_live_articles($c,$info)->search(
+                    {
+                        'me.article_id' => {
+                            -not_in => [ $proxy->getOrderedArticleIDs ]
+                        }
+                    });
+            },
+            orderedBuilder => sub
+            {
+                my $total = $templateMeta->{layout_spots};
+
+                my $ordered;
+                my $newer;
+                my $older;
+
+                # Retrieve a list of all articles present in spots
+                my $layout = $c->model('LIXUZDB::LzCategoryLayout')->search({ 'category_id' => $self->category_id }, { order_by => 'spot' });
+                if (!$layout->count)
+                {
+                    return;
+                }
+
+                # Retrieve a list of all of the live articles in $layout
+                $ordered = get_live_articles_from($layout->search_related('article'));
+                if (!$ordered)
+                {
+                    return;
+                }
+
+                # Build a list of the articles in the layout
+                my @present;
+                my $newerThan;
+                while(my $entry = $layout->next)
+                {
+                    $newerThan //= $entry->ordered_at;
+                    push(@present,$entry->article_id);
+                }
+
+                # Retrieve articles that have been published *after* the last ordering of
+                # the RS
+                my $newerSearch = {
+                    'me.article_id' => { -not_in => \@present },
+                };
+                if(defined $newerThan)
+                {
+                    $newerSearch->{publish_time} = { '>' => $newerThan };
+                }
+                $newer = $self->get_live_articles($c)->search($newerSearch,
+                    {
+                        limit => $total,
+                        order_by => 'publish_time DESC'
+                    });
+
+                # The array that will be used as the basis for the final result set
+                my @entries;
+
+                # Push all newer articles
+                while(my $new = $newer->next)
+                {
+                    # Limit the number of entries
+                    if(scalar(@entries) > $total)
+                    {
+                        last;
+                    }
+
+                    push(@entries,$new);
+                    push(@present,$new->article_id);
+                }
+
+                # Push the ordered articles
+                while(my $current = $ordered->next)
+                {
+                    # Limit the number of entries
+                    if(scalar(@entries) > $total)
+                    {
+                        last;
+                    }
+
+                    push(@entries,$current);
+                }
+
+                if( (my $remaining = ($total - scalar(@entries) )) > 0)
+                {
+                    # Retrieve the older articles
+                    $older = $self->get_live_articles($c)->search({
+                                'me.article_id' => { -not_in => \@present }
+                            },
+                            {
+                                order_by => 'publish_time DESC',
+                                limit => $remaining,
+                            });
+
+                    # Finally, push the older articles if needed
+                    while(my $old = $older->next)
+                    {
+                        # Limit the number of entries
+                        if(scalar(@entries) > $total)
+                        {
+                            last;
+                        }
+
+                        push(@entries,$old);
+                        push(@present,$old->article_id);
+                    }
+                }
+
+                my $result = $c->model('LIXUZDB::LzArticle');
+                $result->set_cache(\@entries);
+
+                return $result;
+            },
+        );
+}
+
 # ======================
 # PRIVATE
 # ======================
+
+sub _orderedCkey
+{
+    my($self,$extraLive,$overrideLive) = @_;
+    $extraLive    //= [];
+    $overrideLive //= '';
+    return 'catOrdered_'.$self->category_id.'|'.join('-',@{$extraLive}).'|'.$overrideLive;
+}
 
 # Summary: This is used to locate all children of a category, so that all articles in the
 #   category and sub-categories are found
@@ -350,6 +511,8 @@ sub _recursiveChildrenFetcher
 __PACKAGE__->has_many(children => 'LIXUZ::Schema::LzCategory', { 'foreign.parent' => 'self.category_id' });
 __PACKAGE__->has_many(folders => 'LIXUZ::Schema::LzCategoryFolder', 'category_id');
 __PACKAGE__->belongs_to(parent => 'LIXUZ::Schema::LzCategory');
+
+__PACKAGE__->has_many(layouts => 'LIXUZ::Schema::LzCategoryLayout', 'category_id');
 1;
 
 

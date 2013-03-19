@@ -190,7 +190,17 @@ function htmlCheckboxToggle (id)
  */
 function LZ_pagerChange (page)
 {
-    var url = new String(window.location);
+    var data,
+        url = new String(window.location);
+    data = {
+        page: page,
+        handled: false
+    };
+    $.publish('/lixuz/pagerChange',[ data ]);
+    if(data.handled !== false)
+    {
+        return
+    }
     if (/page=/.test(url))
     {
         url = url.replace(/page=\d*/,'page='+page);

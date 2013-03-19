@@ -1,0 +1,75 @@
+<form name="articleOrdering" id="articleOrdering" method="post" action="/admin/categories/layout/save">
+<input type="hidden" name="category_id" id="category_id" value="<% $category_id %>" />
+<input type ="hidden" name="template_id" id="template_id" value="<% $templateObj->id %>" />
+<%perl>
+my @layout_array = @{ $templateObj->get_info($c)->{layout} };
+my $no=1;
+</%perl>
+<table border="0" width="100%">
+<%perl>
+foreach my $lay (@layout_array)
+{
+    my $colspan;
+    my $width ="width:300px;";
+</%perl>
+<tr>
+<%perl>
+    if ($lay==1)
+    {
+        $colspan ="colspan='2'";
+        $width = "";
+    }
+    for(my $i=0; $i < $lay;)
+    {
+</%perl>
+    <td <% $colspan %> style="height:120px;<% $width %>;">
+<%perl>
+        if(my $articleobj = $articles->next)
+        {
+            my $list_title = $articleobj->shortText('title',50);
+            if(not defined $list_title or not length $list_title)
+            {
+               $list_title = $i18n->get('(unnamed)');
+            }
+
+            my $imgpath;
+            if (my $img = $articleobj->get_fileSpot(1))
+            {
+                $img = $img->file;
+                if($img && $img->is_image())
+                {
+                    $imgpath = $img->get_url($c,undef,80);
+                }
+            }
+</%perl>
+    <div class="layout-default hidden" data-spot="<% $no %>" data-artid="<% $articleobj->article_id %>" data-arttitle="<% $list_title %>" data-artimage="<% $imgpath %>"></div>
+%       } 
+    <input type="hidden" name="spot_article_<% $no %>" id="spot_article_<% $no %>" value=""> 
+    <div class="targetSpot" data-spotval="<% $no%>"><% $i18n->get('Spot').'-'.$no%></div>
+
+</td>
+<%perl>
+        $i++;
+        $no++;
+    }
+</%perl>
+</tr>
+%}
+
+</table>
+<div id="submitbutton" style="float: left; text-align: left;">
+    <input id="saveArticleOrdering" name="_saveArticleOrdering" type="submit" value="<% $i18n->get('Save Changes')  |n %>" />
+</div>
+
+</form>
+
+<%args>
+$obj_layout=>undef
+$articles
+$i18n
+$templateObj
+$category_id
+</%args>
+<%once>
+use LIXUZ::HelperModules::Layout qw(getArticleInSpot);
+</%once>

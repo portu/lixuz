@@ -251,6 +251,10 @@ sub runCron
     };
     tryRun
     {
+        cleanCategoryLayouts();
+    };
+    tryRun
+    {
         updateIndex();
     };
 
@@ -427,6 +431,22 @@ sub fixArticleIssues
         {
             $seen{$id} = true;
         }
+    }
+}
+
+# Category layouts that don't have a matching article
+sub cleanCategoryLayouts
+{
+    my $categoryLayouts = $fakeC->model('LIXUZDB::LzCategoryLayout');
+    while(my $l = $categoryLayouts->next)
+    {
+        silent
+        {
+            if (!$l->article)
+            {
+                $l->delete;
+            }
+        };
     }
 }
 

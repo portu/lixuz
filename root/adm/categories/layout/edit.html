@@ -1,0 +1,67 @@
+<%perl>
+# LIXUZ content management system
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+</%perl>
+
+<div class="headerLine">
+    <div id="submitbutton" class="layout-submit">
+        <input id="saveLayoutChanges" name="_blankSaveLayoutChanges" type="submit" value="<% $i18n->get('Save layout')  |n %>" />
+    </div>
+    <div class="layout_category_heading">
+            <% $i18n->get('Category layout for: ')%> <% $category_name%>
+    </div>
+</div>
+
+<div id="ddcontents">
+<table id="contentFrame">
+    <tr>
+        <td style="border-right:1px solid #9BB8CF"> 
+            <div class="heightLimitedSection heightLimitedLayout" data-limitgroup=".heightLimitedLayout">
+                <table>
+                    <tr>
+                        <td class="left">
+                            <& left.html, %ARGS &>
+                        </td>
+                        <td style="min-width:320px;">
+                            <form action="/admin/categories/layout/renderCatArticleList/<% $category_id %>" method="get" id="list_search" name="list_search">
+                                <input type="hidden" name="category_id" id="category_id" value="<% $category_id %>" />
+                                <input type="hidden" name="folder_id" id="folder_id" />
+                                <input type="text" name="query" id="query" />
+                                <input id="list_submit_search" name="_submit" type="button" value="<% $i18n->get('Search')  |n %>" />
+                            </form>
+                            <div id="listdiv">
+                                <% $i18n->get('Loading ...') |n %>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+        <td>
+            <div class="heightLimitedSection heightLimitedLayout" data-limitgroup=".heightLimitedLayout">
+                <div id="spotArea" style="color:#999999;">
+                    <& layout.html, %ARGS &>
+                </div>    
+            </div>
+        </td>
+    </tr>
+</table>
+</div>
+<%args>
+$i18n
+$category_id
+$category_name=>undef
+</%args>

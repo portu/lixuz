@@ -22,6 +22,7 @@ use LIXUZ::HelperModules::Live::Comments qw(comment_handler comment_prepare);
 use LIXUZ::HelperModules::Live::Articles qw(get_live_articles_from);
 use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL_to_unix);
 use LIXUZ::HelperModules::Cache qw(get_ckey);
+#use LIXUZ::HelperModules::Templates qw(cached_parse_templatefile);
 use HTML::Entities qw(decode_entities);
 use Carp;
 use constant { true => 1, false => 0 };
@@ -60,6 +61,8 @@ sub get_list
     }
 
     my $obj;
+    my $art;
+    my $ordered;
     my $limit = $searchContent->{limit} ? $searchContent->{limit} : 10;
     if ($self->renderer->has_var($saveAs))
     {
@@ -72,6 +75,9 @@ sub get_list
     }
     else
     {
+        my $info = $self->renderer->template->get_info($self->c);
+        my $template_layout = $info->{layout};
+
         if ($searchContent->{catid})
         {
             my $catid = $searchContent->{catid};
@@ -110,13 +116,21 @@ sub get_list
             }
             if ($cat)
             {
-                $obj = $cat->get_live_articles($self->c,{ limit => $limit, extraLiveStatus => $searchContent->{extraLiveStatus}, overrideLiveStatus => $searchContent->{overrideLiveStatus}});
+                if (defined $template_layout && $searchContent->{layout})
+                {
+                    $obj = $cat->orderedRS( $self->c,{ limit => $limit, extraLiveStatus => $searchContent->{extraLiveStatus}, overrideLiveStatus => $searchContent->{overrideLiveStatus}});
+                }
+                else
+                {
+                    $obj = $cat->get_live_articles($self->c,{ limit => $limit, extraLiveStatus => $searchContent->{extraLiveStatus}, overrideLiveStatus => $searchContent->{overrideLiveStatus}});
+                }
+
                 $return->{$saveAs.'_category'} = $cat;
             }
         }
         else
         {
-            $obj = get_live_articles_from($self->c->model('LIXUZDB::LzArticle'), { rows => $limit, order_by => 'publish_time DESC', extraLiveStatus => $searchContent->{extraLiveStatus}, overrideLiveStatus => $searchContent->{overrideLiveStatus} });
+              $obj = get_live_articles_from($self->c->model('LIXUZDB::LzArticle'), { rows => $limit, order_by => 'publish_time DESC', extraLiveStatus => $searchContent->{extraLiveStatus}, overrideLiveStatus => $searchContent->{overrideLiveStatus} });
         }
 
         # FIXME: This might not always be an actual 404. It might be an empty category.
@@ -139,8 +153,9 @@ sub get_list
 
         if ($searchContent->{ignoreDupes} && $artid)
         {
-            $obj = $obj->search({ 'me.article_id' => \"!= $artid" });
+             $obj = $obj->search({ 'me.article_id' => \"!= $artid" });
         }
+
         $return->{$saveAs} = $obj;
     }
     if ($searchContent->{includePager})
@@ -158,7 +173,7 @@ sub get_list
         $return->{$saveAs.'_pager'} = $obj->pager;
         if ($return->{$saveAs})
         {
-            $return->{$saveAs} = $obj;
+             $return->{$saveAs} = $obj;
         }
     }
     return $return;

@@ -223,6 +223,23 @@ CREATE TABLE `lz_category_folder` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `lz_category_layout`
+--
+
+DROP TABLE IF EXISTS `lz_category_layout`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lz_category_layout` (
+  `category_id` int(11) NOT NULL,
+  `article_id` int(11) NOT NULL,
+  `template_id` int(11) NOT NULL,
+  `spot` smallint(6) NOT NULL,
+  `ordered_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`category_id`,`article_id`,`template_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `lz_field`
 --
 

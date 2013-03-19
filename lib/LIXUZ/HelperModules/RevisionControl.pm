@@ -268,7 +268,7 @@ sub _commit
             croak($fatal);
         }
         $err =~ s/\n$//;
-        warn('[Retry] Transaction failed: '.$err.' - will retry it'."\n");
+        warn('[Retry] Transaction failed (will retry): '.$err."\n");
         $self->_commitRetryCount( $self->_commitRetryCount +1 );
         $retVal = $self->_commit(@_);
         $return = 1;
@@ -321,6 +321,7 @@ sub _registerObjectWithRels
     my $self = shift;
     my $object = shift;
     my @ignore = @_;
+    push(@ignore,@{ $object->_serializeIgnore });
     if (! $self->_dbicCompare($object,$self->_root))
     {
         $self->_registerObject($object);

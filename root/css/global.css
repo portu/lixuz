@@ -471,6 +471,63 @@ select ul li.subs {
     max-width: 250px;    
 }
 
+.makeMeDraggable{
+    width:290px;
+    background:#F9F9F9;
+    margin-bottom:5px;
+    padding:5px;
+    border:1px solid #CCCCCC;
+}
+
+.targetSpot
+{
+    background:#F9F9F9;
+    margin-bottom:5px;
+    padding:5px;
+    border:1px solid #CCCCCC;
+    height:110px;
+}
+
+.targetSpot .dropcontainer
+{
+    display:inline-block;
+}
+
+.removeButton
+{
+    display:inline-block;
+    position:absolute;
+    top:0px;
+    left:0px;
+}
+.remove-from-spot
+{
+    height:16px;
+    width:16px;
+    display:inline-block;
+    background:url('/static/images/icons/cancel-mono.png');
+}
+.remove-from-spot:hover
+{
+    background:url('/static/images/icons/cancel.png');
+}
+#spotArea h3
+{
+    margin:0px;
+}
+
+.layout-submit
+{
+    margin-left:2px;
+    float:left;
+    text-align:left;
+}
+
+.layout_category_heading
+{
+    font-size:18px;
+    margin-left:633px;
+}
 .initiallyHidden
 {
     display:none;

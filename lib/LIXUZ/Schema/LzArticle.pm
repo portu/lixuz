@@ -228,12 +228,22 @@ __PACKAGE__->belongs_to('revisionMeta' => 'LIXUZ::Schema::LzRevision', {
     'foreign.type_revision' => 'self.revision',
     });
 
+__PACKAGE__->has_many(
+    category_layout => 'LIXUZ::Schema::LzCategoryLayout',
+    {'foreign.article_id' => 'self.article_id'},
+    { cascade_delete => 0 },
+);
+
 use Moose;
 with 'LIXUZ::Role::Serializable';
 with 'LIXUZ::Role::URLGenerator';
 with 'LIXUZ::Role::IndexTriggers';
 with 'LIXUZ::Role::SchemaHelpers';
 
+sub _serializeIgnore
+{
+    return [ 'category_layout' ];
+}
 sub _serializeExtra
 {
     return [ 
