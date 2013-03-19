@@ -1,4 +1,4 @@
-# #-#-#-#-#  lixuz.pot (LIXUZ (Tue Mar 19 13:53:03 2013))  #-#-#-#-#
+# #-#-#-#-#  lixuz.pot (LIXUZ (Tue Mar 19 16:57:39 2013))  #-#-#-#-#
 # LIXUZ translation file
 # Copyright (C) 2013 Portu media & communications
 #
@@ -9,10 +9,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"#-#-#-#-#  lixuz.pot (LIXUZ (Tue Mar 19 13:53:03 2013))  #-#-#-#-#\n"
-"Project-Id-Version: LIXUZ (Tue Mar 19 13:53:03 2013)\n"
+"#-#-#-#-#  lixuz.pot (LIXUZ (Tue Mar 19 16:57:39 2013))  #-#-#-#-#\n"
+"Project-Id-Version: LIXUZ (Tue Mar 19 16:57:39 2013)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2013-03-19 13:53+0100\n"
+"POT-Creation-Date: 2013-03-19 16:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 "#-#-#-#-#  lixuz-js.pot (Lixuz)  #-#-#-#-#\n"
 "Project-Id-Version: Lixuz\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-19 13:53+0100\n"
+"POT-Creation-Date: 2013-03-19 16:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -162,8 +162,9 @@ msgstr ""
 msgid "Last name"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users.pm:127 root/adm/newsletter/list.html:26
-#: root/adm/users/edit/index.html:87
+#: lib/LIXUZ/Controller/Admin/Users.pm:127
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:152
+#: root/adm/newsletter/list.html:26 root/adm/users/edit/index.html:87
 msgid "E-mail"
 msgstr ""
 
@@ -425,15 +426,36 @@ msgstr ""
 msgid "The new passwords do not match"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:56
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:57
 msgid "Newsletter subscriptions"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:156
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:152
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:125
+#: root/adm/templates/list.html:28 root/adm/files/edit.html:63
+#: root/adm/files/classes/edit.html:22 root/adm/files/classes/list.html:28
+#: root/adm/newsletter/list.html:27 root/adm/users/roles/list.html:25
+#: root/source-js/newsletter/newsletter.js:501
+msgid "Name"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:152 root/adm/files/edit.html:197
+#: root/adm/newsletter/send.html:33
+#: root/source-js/newsletter/newsletter.js:502
+msgid "Format"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:152
+#: root/adm/newsletter/list.html:28
+#: root/source-js/newsletter/newsletter.js:503
+msgid "Interval"
+msgstr ""
+
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:184
 msgid "Manual newsletter"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:454
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:482
 msgid "Group"
 msgstr ""
 
@@ -706,14 +728,6 @@ msgstr ""
 msgid "Error: That file does not exist."
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:125
-#: root/adm/templates/list.html:28 root/adm/files/edit.html:63
-#: root/adm/files/classes/edit.html:22 root/adm/files/classes/list.html:28
-#: root/adm/newsletter/list.html:27 root/adm/users/roles/list.html:25
-#: root/source-js/newsletter/newsletter.js:501
-msgid "Name"
-msgstr ""
-
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:127 root/adm/files/edit.html:80
 #: root/source-js/articles-previewUI/previewUI.js:212
 msgid "Caption"
@@ -848,46 +862,46 @@ msgid "Newsletter"
 msgstr ""
 
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:417
-msgid "Send, delete and edit"
+msgid "Send, delete, edit and export"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:432
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:433
 msgid "Access tags"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:437
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:438
 msgid "Create new tags"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:439
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:440
 msgid "Manage tags"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:444
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:445
 msgid "RSSImport"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:447 root/adm/core/menu.html:128
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:448 root/adm/core/menu.html:128
 msgid "Administrative settings"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:454
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:455
 msgid "Edit additional fields"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:465
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:466
 msgid "Edit statuses"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:473 root/adm/users/left.html:19
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:474 root/adm/users/left.html:19
 msgid "Manage users"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:480 root/adm/users/left.html:21
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:481 root/adm/users/left.html:21
 msgid "Manage roles"
 msgstr ""
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:490 root/adm/core/menu.html:132
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:491 root/adm/core/menu.html:132
 msgid "Manage templates"
 msgstr ""
 
@@ -1231,7 +1245,7 @@ msgstr ""
 msgid "Reassign an article to the role \"%(ROLE)\""
 msgstr ""
 
-#: lib/LIXUZ/Schema/LzAction.pm:232
+#: lib/LIXUZ/Schema/LzAction.pm:233
 msgid "Assign articles to users"
 msgstr ""
 
@@ -1833,11 +1847,6 @@ msgstr ""
 msgid "Last edited on"
 msgstr ""
 
-#: root/adm/files/edit.html:197 root/adm/newsletter/send.html:33
-#: root/source-js/newsletter/newsletter.js:502
-msgid "Format"
-msgstr ""
-
 #: root/adm/files/edit.html:200
 msgid "image"
 msgstr ""
@@ -1986,13 +1995,12 @@ msgstr ""
 msgid "Import Subscribers"
 msgstr ""
 
-#: root/adm/newsletter/list.html:25
-msgid "Subscription ID"
+#: root/adm/newsletter/left.html:25
+msgid "Export Subscribers to CSV"
 msgstr ""
 
-#: root/adm/newsletter/list.html:28
-#: root/source-js/newsletter/newsletter.js:503
-msgid "Interval"
+#: root/adm/newsletter/list.html:25
+msgid "Subscription ID"
 msgstr ""
 
 #: root/adm/newsletter/list.html:29

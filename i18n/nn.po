@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2013-03-19 13:42+0100\n"
-"PO-Revision-Date: 2013-03-19 13:52+0100\n"
+"POT-Creation-Date: 2013-03-19 16:57+0100\n"
+"PO-Revision-Date: 2013-03-19 16:59+0100\n"
 "Last-Translator: Eskild Hustvedt <eskild@portu.no>\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
 "Language: nn\n"
@@ -163,8 +163,9 @@ msgstr "Fornamn"
 msgid "Last name"
 msgstr "Etternamn"
 
-#: lib/LIXUZ/Controller/Admin/Users.pm:127 root/adm/newsletter/list.html:26
-#: root/adm/users/edit/index.html:87
+#: lib/LIXUZ/Controller/Admin/Users.pm:127
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:152
+#: root/adm/newsletter/list.html:26 root/adm/users/edit/index.html:87
 msgid "E-mail"
 msgstr "E-post"
 
@@ -435,15 +436,36 @@ msgstr ""
 msgid "The new passwords do not match"
 msgstr "Passorda du skreiv inn er ikkje like"
 
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:56
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:57
 msgid "Newsletter subscriptions"
 msgstr "Abonnenter på nyheitsbrev"
 
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:156
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:152
+#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:125
+#: root/adm/templates/list.html:28 root/adm/files/edit.html:63
+#: root/adm/files/classes/edit.html:22 root/adm/files/classes/list.html:28
+#: root/adm/newsletter/list.html:27 root/adm/users/roles/list.html:25
+#: root/source-js/newsletter/newsletter.js:501
+msgid "Name"
+msgstr "Namn"
+
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:152 root/adm/files/edit.html:197
+#: root/adm/newsletter/send.html:33
+#: root/source-js/newsletter/newsletter.js:502
+msgid "Format"
+msgstr "Format"
+
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:152
+#: root/adm/newsletter/list.html:28
+#: root/source-js/newsletter/newsletter.js:503
+msgid "Interval"
+msgstr "Intervall"
+
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:184
 msgid "Manual newsletter"
 msgstr "Manuelt nyheitsbrev"
 
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:454
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:482
 msgid "Group"
 msgstr "Gruppe"
 
@@ -719,14 +741,6 @@ msgstr "<b>Fatal feil:</b><br />%(ERROR_MESSAGE)"
 msgid "Error: That file does not exist."
 msgstr "Feil: Den fila finst ikkje."
 
-#: lib/LIXUZ/Controller/Admin/Files/Edit.pm:125
-#: root/adm/templates/list.html:28 root/adm/files/edit.html:63
-#: root/adm/files/classes/edit.html:22 root/adm/files/classes/list.html:28
-#: root/adm/newsletter/list.html:27 root/adm/users/roles/list.html:25
-#: root/source-js/newsletter/newsletter.js:501
-msgid "Name"
-msgstr "Namn"
-
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:127 root/adm/files/edit.html:80
 #: root/source-js/articles-previewUI/previewUI.js:212
 msgid "Caption"
@@ -861,46 +875,46 @@ msgid "Newsletter"
 msgstr "Nyheitsbrev"
 
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:417
-msgid "Send, delete and edit"
-msgstr "Send, slett og rediger"
+msgid "Send, delete, edit and export"
+msgstr "Send, slett, rediger og eksporter"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:432
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:433
 msgid "Access tags"
 msgstr "Få tilgang til emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:437
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:438
 msgid "Create new tags"
 msgstr "Opprett emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:439
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:440
 msgid "Manage tags"
 msgstr "Handter emneord"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:444
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:445
 msgid "RSSImport"
 msgstr "RSS importering"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:447 root/adm/core/menu.html:128
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:448 root/adm/core/menu.html:128
 msgid "Administrative settings"
 msgstr "Administrative innstillingar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:454
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:455
 msgid "Edit additional fields"
 msgstr "Rediger tilleggsfelt"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:465
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:466
 msgid "Edit statuses"
 msgstr "Rediger statuser"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:473 root/adm/users/left.html:19
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:474 root/adm/users/left.html:19
 msgid "Manage users"
 msgstr "Handter brukarar"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:480 root/adm/users/left.html:21
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:481 root/adm/users/left.html:21
 msgid "Manage roles"
 msgstr "Handter roller"
 
-#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:490 root/adm/core/menu.html:132
+#: lib/LIXUZ/Controller/Admin/Users/Roles.pm:491 root/adm/core/menu.html:132
 msgid "Manage templates"
 msgstr "Handter malar"
 
@@ -1262,7 +1276,7 @@ msgstr "Endra statusen til ein artikkel til «%(STATUS)»"
 msgid "Reassign an article to the role \"%(ROLE)\""
 msgstr "Tildel ein artikkel til rollen «%(ROLE)»"
 
-#: lib/LIXUZ/Schema/LzAction.pm:232
+#: lib/LIXUZ/Schema/LzAction.pm:233
 msgid "Assign articles to users"
 msgstr "Tildel artiklar til brukarar"
 
@@ -1874,11 +1888,6 @@ msgstr "Lasta opp"
 msgid "Last edited on"
 msgstr "Sist redigert"
 
-#: root/adm/files/edit.html:197 root/adm/newsletter/send.html:33
-#: root/source-js/newsletter/newsletter.js:502
-msgid "Format"
-msgstr "Format"
-
 #: root/adm/files/edit.html:200
 msgid "image"
 msgstr "bilete"
@@ -2029,14 +2038,13 @@ msgstr "Legg til abonnenter"
 msgid "Import Subscribers"
 msgstr "Importer abonnenter"
 
+#: root/adm/newsletter/left.html:25
+msgid "Export Subscribers to CSV"
+msgstr "Eksporter abonnenter til CSV"
+
 #: root/adm/newsletter/list.html:25
 msgid "Subscription ID"
 msgstr "Abonnements-ID"
-
-#: root/adm/newsletter/list.html:28
-#: root/source-js/newsletter/newsletter.js:503
-msgid "Interval"
-msgstr "Intervall"
 
 #: root/adm/newsletter/list.html:29
 msgid "Preferred format"
@@ -3585,8 +3593,8 @@ msgid ""
 "You have unsaved changes, those changes will be lost if you leave without "
 "saving."
 msgstr ""
-"Du har ulagra endringar. Viss du beveg deg bort frå denne sida vil "
-"desse endringane gå tapt."
+"Du har ulagra endringar. Viss du beveg deg bort frå denne sida vil desse "
+"endringane gå tapt."
 
 #: root/source-js/files/fileSelector.js:33
 #: root/source-js/files/fileSelector.js:46
@@ -3743,7 +3751,9 @@ msgstr "Klarte ikkje godta"
 msgid ""
 "Lixuz has loaded several instances on top of each other. This is dangerous, "
 "and can result in data corruption. Please save your work and then reload."
-msgstr "Lixuz har lasta fleire instansar på toppen av kvarandre. Dette er farlig og kan resultere i øydelagd data. Lagre arbeidet ditt og last sida på nytt."
+msgstr ""
+"Lixuz har lasta fleire instansar på toppen av kvarandre. Dette er farlig og "
+"kan resultere i øydelagd data. Lagre arbeidet ditt og last sida på nytt."
 
 #~ msgid "week"
 #~ msgstr "veke"
