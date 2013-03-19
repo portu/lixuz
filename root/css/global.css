@@ -488,6 +488,11 @@ select ul li.subs {
     height:110px;
 }
 
+.targetSpot .dropcontainer
+{
+    display:inline-block;
+}
+
 .removeButton
 {
     display:inline-block;
