@@ -184,7 +184,10 @@ sub end : Private
         }
     }
 
-    return 1 if $c->response->body or $c->response->status =~ /^3\d\d$/;
+    if ($c->response->has_body || $c->stash->{_requestHandled} || $c->response->status =~ /^3\d\d$/)
+    {
+        return 1;
+    }
 
     if(not defined $c->response->content_type)
     {
