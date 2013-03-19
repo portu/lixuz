@@ -24,6 +24,7 @@ my $currentDBRevision;
 my $conf;
 my $controlledDie = 0;
 my $c;
+my $debug;
 my $lfile = './db-upgrade.log';
 my $restore = 0;
 
@@ -36,6 +37,7 @@ my $fromVersion;
 GetOptions(
     'chained' => \$chained,
     'logfile=s' => \$lfile,
+    'debug' => \$debug,
     'fromversion=s' => \$fromVersion,
 	'force-revision|forcerevision=i' => sub
 	{
@@ -1182,7 +1184,10 @@ sub logSystem
 sub dualPrint
 {
     my $msg = shift;
-    print $msg;
+    if (!$debug)
+    {
+        print $msg;
+    }
     chomp($msg);
     slog($msg);
 }
@@ -1213,6 +1218,10 @@ sub slog
     $lmday = "0$lmday" if not $lmday >= 10;
     $lyear += 1900;
     print {$logfile} "[$lyear-$lmon-$lmday $lhour:$lmin:$lsec ($$)] ".$msg."\n";
+    if ($debug)
+    {
+        print 'Debug: '.$msg."\n";
+    }
 }
 
 # Fetch a model, attempting two different methods

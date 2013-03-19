@@ -591,6 +591,10 @@ sub database
             {
                 push(@command,'--force');
             }
+            if ($verbosity >= 99)
+            {
+                push(@command,'--debug');
+            }
             exec(@command) or die('Failed to exec: '.join(' ',@command).': '.$!."\n");
         }
 
