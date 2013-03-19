@@ -132,6 +132,7 @@ var categoryLayout =
                     {
                         $dropped.draggable('option','revert','invalid');
                     });
+                    dropTargetUI.mouseOut($this);
                     return;
                 }
                 $this.html("");
