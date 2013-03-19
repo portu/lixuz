@@ -186,6 +186,7 @@ sub getPathsHash
           '/newsletter/subscriptionGroupEdit' => 'Add/remove people from newsletter subscription groups',
           '/newsletter/sentPreviously' => 'List newsletters that have been sent previously',
           '/newsletter/subscriberInfo' => 'Edit/view subscribers',
+          '/newsletter/export' => 'Export subscriber list',
           '/rssimport' => 'Read and import data from RSS feeds',
           '/settings' => 'Access personal settings',
           '/settings/admin' => 'Access administrative settings',

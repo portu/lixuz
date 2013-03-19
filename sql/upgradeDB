@@ -837,7 +837,7 @@ sub detectFlags
         $flags{reIndex} = 1;
     }
     # Trigger ACL upgrades if needed
-    if ($currentDBRevision < 8)
+    if ($currentDBRevision < 12)
     {
         $flags{'upgradeACL'} = 1;
     }
@@ -1116,7 +1116,7 @@ sub upgradeACL
     # If a role has access to existing_path then they will automatically be granted access
     # to new_path
     #
-    # (make sure you update the DBrevision used for the ACLupgrade flag in
+    # (make sure you update the DBrevision used for the upgradeACL flag in
     #  detectFlags if you add something to this)
     my %aclMap = (
         '/articles/preview' => [
@@ -1124,6 +1124,7 @@ sub upgradeACL
         ],
         '/newsletter' => [
             '/newsletter/subscriberInfo',
+            '/newsletter/export',
         ]
     );
 

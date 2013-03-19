@@ -414,7 +414,7 @@ sub get_groups : Private
             paths => [
                 '/newsletter',
             ],
-            $i18n->get('Send, delete and edit') => {
+            $i18n->get('Send, delete, edit and export') => {
                 paths => [
                     '/newsletter/delete',
                     '/newsletter/groupDelete',
@@ -426,6 +426,7 @@ sub get_groups : Private
                     '/newsletter/subscriptionGroupEdit',
                     '/newsletter/sentPreviously',
                     '/newsletter/subscriberInfo',
+                    '/newsletter/export',
                 ],
             },
         },

@@ -28,6 +28,7 @@ use LIXUZ::HelperModules::Includes qw(add_jsIncl);
 use LIXUZ::HelperModules::Editor qw(add_editor_incl);
 use LIXUZ::HelperModules::Search qw(perform_search perform_advanced_search);
 use LIXUZ::HelperModules::Mailer;
+use POSIX qw(strftime);
 use Text::CSV_XS;
 use Regexp::Common qw[Email::Address];
 
@@ -129,6 +130,33 @@ sub importsubscriber : Local
     }
     $c->response->redirect('/admin/newsletter');
     $c->detach();
+}
+
+# Summary: Export a CSV list of users
+sub export : Local
+{
+    my($self,$c) = @_;
+    $c->res->content_type('text/csv');
+    my $domain = $c->req->uri->host;
+    $domain =~ s/\.[^\.]+$//;
+    $domain =~ s/(.*\.)?([^\.]+)$/$2/;
+    $c->res->headers->header('Content-Disposition' => 'attachment; filename="lixuzNewsletter-'.$domain.'-'.strftime('%Y-%m-%d',localtime).'.csv"');
+    $c->stash->{_requestHandled} = 1;
+    my $i18n = $c->stash->{i18n};
+    my $subscription = $c->model('LIXUZDB::LzNewsletterSubscription');
+    my $csv = Text::CSV_XS->new ({
+            binary    => 0,
+            auto_diag => 1,
+            sep_char  => ','    # not really needed as this is the default
+        });
+    $csv->print($c->res,[ 'ID',$i18n->get('E-mail'),$i18n->get('Name'),$i18n->get('Format'),$i18n->get('Interval') ]);
+    $c->res->print("\r\n");
+    while(my $entry = $subscription->next)
+    {
+        $csv->print($c->res, [ $entry->id, $entry->email, $entry->name, $entry->format, $entry->send_every ]);
+        $c->res->print("\r\n");
+    }
+    $c->detach;
 }
 
 # Summary: Display an editor that allows a user to send a newsletter manually
