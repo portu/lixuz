@@ -149,11 +149,20 @@ sub export : Local
             auto_diag => 1,
             sep_char  => ','    # not really needed as this is the default
         });
-    $csv->print($c->res,[ 'ID',$i18n->get('E-mail'),$i18n->get('Name'),$i18n->get('Format'),$i18n->get('Interval') ]);
+    $csv->print($c->res,[ 'ID',$i18n->get('E-mail'),$i18n->get('Name'),$i18n->get('Format'),$i18n->get('Interval'),$i18n->get('Group') ]);
     $c->res->print("\r\n");
     while(my $entry = $subscription->next)
     {
-        $csv->print($c->res, [ $entry->id, $entry->email, $entry->name, $entry->format, $entry->send_every ]);
+        my @groups;
+        my $groups = $entry->groups;
+        if ($groups)
+        {
+            while(my $group = $groups->next)
+            {
+                push(@groups,$group->group->group_name);
+            }
+        }
+        $csv->print($c->res, [ $entry->id, $entry->email, $entry->name, $entry->format, $entry->send_every, join('+',@groups) ]);
         $c->res->print("\r\n");
     }
     $c->detach;
