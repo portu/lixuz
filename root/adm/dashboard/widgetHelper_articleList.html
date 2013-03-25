@@ -95,7 +95,7 @@ if( $hilightDeadlinePassed &&
 %if ($canAccept) {
 <td>
 <span id="LZWorkflowAcceptButton_<%$article->article_id%>">
-<input type="button" value="<% $i18n->get('Accept') %>" onclick="LZDB_AcceptAssignment(<% $article->article_id %>); return false" />
+<input type="button" class="dashboard-accept-assignment" data-accept-id="<% $article->article_id %>" value="<% $i18n->get('Accept') %>" />
 </span>
 </td>
 %}

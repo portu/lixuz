@@ -1,6 +1,6 @@
 /*
  * LIXUZ content management system
- * Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+ * Copyright (C) Utrop A/S Portu media & Communications 2008-2013
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -21,49 +21,50 @@
  * ***********************
  */
 
-var CURR_LZDB_ID = null;
-
-/*
- * This is the function that gets called when a user clicks the
- * "Accept this assignment" button. It contacts the server and tells it that
- * the user wishes to accept this assignment
- */
-function LZDB_AcceptAssignment (id)
-{
-    if(CURR_LZDB_ID)
+var Dashboard = {
+    globalAcceptanceLock: false,
+    acceptAssignment: function(id)
     {
-        userMessage(i18n.get('Please wait until the other article has been accepted before accepting another'));
-    }
-    CURR_LZDB_ID = id;
-    $('#LZWorkflowAcceptButton_'+CURR_LZDB_ID).html(i18n.get('Accepting...'));
-    XHR.GET('/admin/articles/workflow/acceptAssignment/'+id,LZDB_AssignmentAccepted, LZDB_AssignmentAcceptFailure);
-}
+        var self = this;
+        if(this.globalAcceptanceLock !== false)
+        {
+            userMessage(i18n.get('Please wait until the other article has been accepted before accepting another'));
+            return;
+        }
+        this.globalAcceptanceLock = id;
+        $('#LZWorkflowAcceptButton_'+id).html(i18n.get('Accepting...'));
+        XHR.GET('/admin/articles/workflow/acceptAssignment/'+id,function()
+        {
+            var id = self.globalAcceptanceLock;
+            $('#LZWorkflowAcceptButton_'+id).html(i18n.get('Accepted!'));
+           self.globalAcceptanceLock = false; 
+        }, function(data)
+        {
+            var error = XHR.getErrorInfo(data,null),
+                id = self.globalAcceptanceLock;
+            if(error == 'DENIED')
+            {
+                $('#LZWorkflowAcceptButton_'+id).html(i18n.get('Acceptance denied'));
+            }
+            else
+            {
+                $('#LZWorkflowAcceptButton_'+id).html(i18n.get('Acceptance failed'));
+                LZ_SaveFailure(data,i18n.get('Failed to accept assignment: '));
+            }
+            self.globalAcceptanceLock = false;
+        });
+    },
 
-/*
- * This function gets called if a user successfully
- * accepts an assignment
- */
-function LZDB_AssignmentAccepted (data)
-{
-    $('#LZWorkflowAcceptButton_'+CURR_LZDB_ID).html(i18n.get('Accepted!'));
-    CURR_LZDB_ID = null;
-}
 
-/*
- * This function gets called if we fail to accept an assignment.
- * It will provide the user with the reason why it failed.
- */
-function LZDB_AssignmentAcceptFailure (data)
-{
-    var error = XHR.getErrorInfo(data,null);
-    if(error == 'DENIED')
+    initialize:function()
     {
-        $('#LZWorkflowAcceptButton_'+CURR_LZDB_ID).html(i18n.get('Acceptance denied'));
+        var self = Dashboard;
+        $('.dashboardTable').on('click','.dashboard-accept-assignment',function (e)
+        {
+            var $this = $(this);
+            e.preventDefault();
+            self.acceptAssignment($this.data('accept-id'));
+        });
     }
-    else
-    {
-        $('#LZWorkflowAcceptButton_'+CURR_LZDB_ID).html(i18n.get('Acceptance failed'));
-        LZ_SaveFailure(data,i18n.get('Failed to accept assignment: '));
-    }
-    CURR_LZDB_ID = null;
-}
+};
+$.subscribe('/lixuz/init', Dashboard.initialize);
