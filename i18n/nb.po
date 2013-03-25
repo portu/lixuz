@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
-"POT-Creation-Date: 2013-03-19 16:57+0100\n"
-"PO-Revision-Date: 2013-03-19 16:59+0100\n"
+"POT-Creation-Date: 2013-03-25 16:40+0100\n"
+"PO-Revision-Date: 2013-03-25 16:41+0100\n"
 "Last-Translator: Eskild Hustvedt eskild@portu.no\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
 "Language: \n"
@@ -33,10 +33,10 @@ msgid "This account has been deactivated."
 msgstr "Denne kontoen er deaktivert."
 
 #: lib/LIXUZ/Controller/Admin.pm:76 lib/LIXUZ/Controller/Admin.pm:86
-#: lib/LIXUZ/Controller/Admin/Articles.pm:379
-#: lib/LIXUZ/Controller/Admin/Articles.pm:383
-#: lib/LIXUZ/Controller/Admin/Articles.pm:573
-#: lib/LIXUZ/Controller/Admin/Articles.pm:577
+#: lib/LIXUZ/Controller/Admin/Articles.pm:385
+#: lib/LIXUZ/Controller/Admin/Articles.pm:389
+#: lib/LIXUZ/Controller/Admin/Articles.pm:579
+#: lib/LIXUZ/Controller/Admin/Articles.pm:583
 msgid "Permission denied"
 msgstr "Tilgang nektet"
 
@@ -111,8 +111,8 @@ msgstr "(hvem som helst)"
 #: lib/LIXUZ/Controller/Admin/Users.pm:141
 #: lib/LIXUZ/Controller/Admin/Categories.pm:172
 #: lib/LIXUZ/Controller/Admin/RSSImport.pm:371
-#: lib/LIXUZ/Controller/Admin/Articles.pm:910
-#: lib/LIXUZ/Controller/Admin/Articles.pm:980 lib/LIXUZ/Schema/LzField.pm:242
+#: lib/LIXUZ/Controller/Admin/Articles.pm:916
+#: lib/LIXUZ/Controller/Admin/Articles.pm:986 lib/LIXUZ/Schema/LzField.pm:242
 #: root/adm/categories/editform.html:70 root/adm/categories/list.html:33
 #: root/adm/articles/relationships_right.html:34
 #: root/adm/articles/list.html:42
@@ -133,8 +133,8 @@ msgstr "Status"
 #: lib/LIXUZ/Controller/Admin/Categories.pm:133
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:57
 #: lib/LIXUZ/Controller/Admin/Dictionary.pm:119
-#: lib/LIXUZ/Controller/Admin/Articles.pm:744
-#: lib/LIXUZ/Controller/Admin/Articles.pm:798
+#: lib/LIXUZ/Controller/Admin/Articles.pm:750
+#: lib/LIXUZ/Controller/Admin/Articles.pm:804
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:42
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:146
 #: lib/LIXUZ/Controller/Admin/Users/Roles.pm:204
@@ -283,8 +283,8 @@ msgid "Folders"
 msgstr "Mapper"
 
 #: lib/LIXUZ/Controller/Admin/Categories.pm:180
-#: lib/LIXUZ/Controller/Admin/Articles.pm:909
-#: lib/LIXUZ/Controller/Admin/Articles.pm:988 lib/LIXUZ/Schema/LzField.pm:250
+#: lib/LIXUZ/Controller/Admin/Articles.pm:915
+#: lib/LIXUZ/Controller/Admin/Articles.pm:994 lib/LIXUZ/Schema/LzField.pm:250
 #: root/adm/categories/editform.html:53 root/adm/categories/list.html:29
 #: root/adm/articles/list.html:40
 msgid "Template"
@@ -461,13 +461,14 @@ msgstr "Format"
 msgid "Interval"
 msgstr "Intervall"
 
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:184
-msgid "Manual newsletter"
-msgstr "Manuelt nyhetsbrev"
-
-#: lib/LIXUZ/Controller/Admin/Newsletter.pm:482
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:152
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:491
 msgid "Group"
 msgstr "Gruppe"
+
+#: lib/LIXUZ/Controller/Admin/Newsletter.pm:193
+msgid "Manual newsletter"
+msgstr "Manuelt nyhetsbrev"
 
 #: lib/LIXUZ/Controller/Admin/Dashboard.pm:40 root/adm/core/menu.html:24
 msgid "Dashboard"
@@ -498,54 +499,9 @@ msgstr "Artikkelstatus endra"
 msgid "Article(s) have been reassigned"
 msgstr "Artikkelen(e) har blitt tildelt noen andre"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:193
-#: root/adm/dashboard/widgetHelper_articleList.html:90
-msgid "(unknown)"
-msgstr "(ukjent)"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:283
-#: lib/LIXUZ/Controller/Admin/Articles.pm:288
-msgid "(user)"
-msgstr "(bruker)"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:296
-#: lib/LIXUZ/Controller/Admin/Articles.pm:301
-#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:233
-msgid "(role)"
-msgstr "(rolle)"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:328
-#: root/adm/articles/workflow.html:43 root/adm/articles/list.html:44
-#: root/adm/articles/read/workflow_read.html:39
-#: root/adm/dashboard/widgetHelper_articleList.html:37
-msgid "Assigned to"
-msgstr "Tildelt"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:332
-msgid "(any user or role)"
-msgstr "(alle brukere og roller)"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:335
-msgid "In status"
-msgstr "I status"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:371
-#: lib/LIXUZ/Controller/Admin/Articles.pm:563
-msgid "Error: Failed to locate revision %(REVISION) of the article %(UID)"
-msgstr "Feil: Kunne ikke finne en revisjon %(REVISION) av artikkelen %(UID)"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:373
-#: lib/LIXUZ/Controller/Admin/Articles.pm:565
-#: lib/LIXUZ/Controller/Admin/Articles.pm:753
-msgid "Error: Failed to locate a article with the UID %(UID)."
-msgstr "Feil: Kunne ikke finne en artikkel med IDen %(UID)."
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:486
-msgid "Default Template"
-msgstr "Standardmal"
-
-#: lib/LIXUZ/Controller/Admin/Articles.pm:514
-#: lib/LIXUZ/Controller/Admin/Articles.pm:519
+#: lib/LIXUZ/Controller/Admin/Articles.pm:191
+#: lib/LIXUZ/Controller/Admin/Articles.pm:520
+#: lib/LIXUZ/Controller/Admin/Articles.pm:525
 #: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:731
 #: lib/LIXUZ/Controller/Admin/Articles/Submit.pm:793
 #: lib/LIXUZ/Schema/LzFile.pm:878 root/adm/articles/list.html:125
@@ -557,25 +513,71 @@ msgstr "Standardmal"
 msgid "(none)"
 msgstr "(ingen)"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:765
+#: lib/LIXUZ/Controller/Admin/Articles.pm:199
+#: root/adm/dashboard/widgetHelper_articleList.html:90
+msgid "(unknown)"
+msgstr "(ukjent)"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:289
+#: lib/LIXUZ/Controller/Admin/Articles.pm:294
+msgid "(user)"
+msgstr "(bruker)"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:302
+#: lib/LIXUZ/Controller/Admin/Articles.pm:307
+#: lib/LIXUZ/Controller/Admin/Articles/Workflow.pm:233
+msgid "(role)"
+msgstr "(rolle)"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:334
+#: root/adm/articles/workflow.html:43 root/adm/articles/list.html:44
+#: root/adm/articles/read/workflow_read.html:39
+#: root/adm/dashboard/widgetHelper_articleList.html:37
+msgid "Assigned to"
+msgstr "Tildelt"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:338
+msgid "(any user or role)"
+msgstr "(alle brukere og roller)"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:341
+msgid "In status"
+msgstr "I status"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:377
+#: lib/LIXUZ/Controller/Admin/Articles.pm:569
+msgid "Error: Failed to locate revision %(REVISION) of the article %(UID)"
+msgstr "Feil: Kunne ikke finne en revisjon %(REVISION) av artikkelen %(UID)"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:379
+#: lib/LIXUZ/Controller/Admin/Articles.pm:571
+#: lib/LIXUZ/Controller/Admin/Articles.pm:759
+msgid "Error: Failed to locate a article with the UID %(UID)."
+msgstr "Feil: Kunne ikke finne en artikkel med IDen %(UID)."
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:492
+msgid "Default Template"
+msgstr "Standardmal"
+
+#: lib/LIXUZ/Controller/Admin/Articles.pm:771
 msgid "You have stolen the edit lock for this article."
 msgstr "Du har stjålet redigeringslåsen for denne artikkelen."
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:818
+#: lib/LIXUZ/Controller/Admin/Articles.pm:824
 msgid "Article deleted"
 msgstr "Artikkelen er slettet"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:882
-#: lib/LIXUZ/Controller/Admin/Articles.pm:886
+#: lib/LIXUZ/Controller/Admin/Articles.pm:888
+#: lib/LIXUZ/Controller/Admin/Articles.pm:892
 msgid "Editing article %(ARTICLE_ID)"
 msgstr "Redigerer artikkel %(ARTICLE_ID)"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:890
+#: lib/LIXUZ/Controller/Admin/Articles.pm:896
 msgid "Creating article"
 msgstr "Oppretter artikkel"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:902
-#: lib/LIXUZ/Controller/Admin/Articles.pm:981
+#: lib/LIXUZ/Controller/Admin/Articles.pm:908
+#: lib/LIXUZ/Controller/Admin/Articles.pm:987
 #: lib/LIXUZ/Controller/Admin/Files/Edit.pm:126
 #: lib/LIXUZ/Schema/LzField.pm:243 root/adm/files/edit.html:72
 #: root/adm/dashboard/widgetHelper_articleList.html:22
@@ -586,53 +588,53 @@ msgstr "Oppretter artikkel"
 msgid "Title"
 msgstr "Tittel"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:903
-#: lib/LIXUZ/Controller/Admin/Articles.pm:983 lib/LIXUZ/Schema/LzField.pm:245
+#: lib/LIXUZ/Controller/Admin/Articles.pm:909
+#: lib/LIXUZ/Controller/Admin/Articles.pm:989 lib/LIXUZ/Schema/LzField.pm:245
 msgid "Lead"
 msgstr "Inngress"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:904
-#: lib/LIXUZ/Controller/Admin/Articles.pm:984 lib/LIXUZ/Schema/LzField.pm:246
+#: lib/LIXUZ/Controller/Admin/Articles.pm:910
+#: lib/LIXUZ/Controller/Admin/Articles.pm:990 lib/LIXUZ/Schema/LzField.pm:246
 #: root/adm/articles/list.html:43
 msgid "Author"
 msgstr "Forfatter"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:905
-#: lib/LIXUZ/Controller/Admin/Articles.pm:982 lib/LIXUZ/Schema/LzField.pm:244
+#: lib/LIXUZ/Controller/Admin/Articles.pm:911
+#: lib/LIXUZ/Controller/Admin/Articles.pm:988 lib/LIXUZ/Schema/LzField.pm:244
 msgid "Body"
 msgstr "Brødtekst"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:906
-#: lib/LIXUZ/Controller/Admin/Articles.pm:985 lib/LIXUZ/Schema/LzField.pm:247
+#: lib/LIXUZ/Controller/Admin/Articles.pm:912
+#: lib/LIXUZ/Controller/Admin/Articles.pm:991 lib/LIXUZ/Schema/LzField.pm:247
 #: root/adm/articles/read/workflow_read.html:31
 msgid "Publish time"
 msgstr "Publiseringstid"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:907
+#: lib/LIXUZ/Controller/Admin/Articles.pm:913
 msgid "Expires at"
 msgstr "Gyldig til"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:908
+#: lib/LIXUZ/Controller/Admin/Articles.pm:914
 msgid "Order"
 msgstr "Rekkefølge"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:986 lib/LIXUZ/Schema/LzField.pm:248
+#: lib/LIXUZ/Controller/Admin/Articles.pm:992 lib/LIXUZ/Schema/LzField.pm:248
 #: root/adm/articles/read/workflow_read.html:35
 msgid "Expiry time"
 msgstr "Gyldig til"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:987 lib/LIXUZ/Schema/LzField.pm:249
+#: lib/LIXUZ/Controller/Admin/Articles.pm:993 lib/LIXUZ/Schema/LzField.pm:249
 msgid "Primary folder"
 msgstr "Hovedmappe"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:1083
+#: lib/LIXUZ/Controller/Admin/Articles.pm:1089
 #: lib/LIXUZ/HelperModules/Forms.pm:159
 #: root/adm/core/fields/rangepulldown.html:21
 #: root/adm/core/fields/userpulldown.html:55 root/source-js/core/chosen.js:9
 msgid "-select-"
 msgstr "-velg-"
 
-#: lib/LIXUZ/Controller/Admin/Articles.pm:1090
+#: lib/LIXUZ/Controller/Admin/Articles.pm:1096
 msgid "(Default template)"
 msgstr "(standardmal)"
 
@@ -2332,19 +2334,23 @@ msgstr "(oppdag automatisk)"
 msgid "Welcome to Lixuz, %(NAME) (%(USERNAME))"
 msgstr "Velkommen til Lixuz, %(NAME) (%(USERNAME))"
 
-#: root/adm/dashboard/main.html:66
-msgid "Available assignments"
-msgstr "Tilgjengelige oppgaver"
+#: root/adm/dashboard/main.html:40
+msgid "Assignments for:"
+msgstr "Oppgaver for:"
 
-#: root/adm/dashboard/main.html:67
-msgid "My assignments"
-msgstr "Mine oppgaver"
+#: root/adm/dashboard/main.html:51
+msgid "Me"
+msgstr "Meg"
 
-#: root/adm/dashboard/main.html:74
+#: root/adm/dashboard/main.html:58
+msgid "Available assignments for:"
+msgstr "Tilgjengelige oppgaver for:"
+
+#: root/adm/dashboard/main.html:111
 msgid "Recent \"%(STATUS_NAME)\" articles"
 msgstr "Nyeste «%(STATUS_NAME)» artikler"
 
-#: root/adm/dashboard/main.html:77
+#: root/adm/dashboard/main.html:114
 msgid "Recent comments"
 msgstr "Nylige kommentarer"
 
@@ -2353,6 +2359,7 @@ msgid "Accept?"
 msgstr "Godta?"
 
 #: root/adm/dashboard/widgetHelper_articleList.html:98
+#: root/source-js/dashboard/dashboard.js:94
 msgid "Accept"
 msgstr "Godta"
 
@@ -2453,7 +2460,7 @@ msgid "Failed to accept assignment."
 msgstr "Klarte ikke å godta oppgaven."
 
 #: root/source-js/articles/workflow.js:78
-#: root/source-js/dashboard/dashboard.js:66
+#: root/source-js/dashboard/dashboard.js:52
 msgid "Failed to accept assignment: "
 msgstr "Klarte ikke å godta oppgaven: "
 
@@ -3726,26 +3733,26 @@ msgstr "Du har ikke valgt noen filer å laste opp"
 msgid "Uploading..."
 msgstr "Laster opp …"
 
-#: root/source-js/dashboard/dashboard.js:35
+#: root/source-js/dashboard/dashboard.js:31
 msgid ""
 "Please wait until the other article has been accepted before accepting "
 "another"
 msgstr ""
 "Vent til den andre artikkelen har blitt godtatt før du prøver å godta en til"
 
-#: root/source-js/dashboard/dashboard.js:38
+#: root/source-js/dashboard/dashboard.js:35
 msgid "Accepting..."
 msgstr "Godtar …"
 
-#: root/source-js/dashboard/dashboard.js:48
+#: root/source-js/dashboard/dashboard.js:39
 msgid "Accepted!"
 msgstr "Godtatt."
 
-#: root/source-js/dashboard/dashboard.js:61
+#: root/source-js/dashboard/dashboard.js:47
 msgid "Acceptance denied"
 msgstr "Ble nektet å godta"
 
-#: root/source-js/dashboard/dashboard.js:65
+#: root/source-js/dashboard/dashboard.js:51
 msgid "Acceptance failed"
 msgstr "Klarte ikke godta"
 
@@ -3756,6 +3763,9 @@ msgid ""
 msgstr ""
 "Lixuz har lastet flere instanser på toppen av hverandre. Dette er farlig og "
 "kan resultere i ødelagt data. Lagre arbeidet ditt og last sida på nytt."
+
+#~ msgid "My assignments"
+#~ msgstr "Mine oppgaver"
 
 #~ msgid "week"
 #~ msgstr "uke"
