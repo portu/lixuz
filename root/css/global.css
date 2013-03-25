@@ -532,3 +532,7 @@ select ul li.subs {
 {
     display:none;
 }
+.dashboardTable .heading
+{
+    vertical-align:middle;
+}

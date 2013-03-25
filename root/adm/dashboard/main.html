@@ -36,7 +36,44 @@
                 <table class="dashboardTable">
                     <tr>
                         <td class="heading">
+%                       if($mod->{special} && $mod->{special} eq 'assigned') {
+                            <b><% $i18n->get('Assignments for:') %></b>
+                            <select data-type="assigned" style="width:200px;" class="enableChosen">
+                            <%perl>
+                            my $users = $c->model('LIXUZDB::LzUser');
+                            while(my $user = $users->next)
+                            {
+                                my $selected;
+                                my $name = $user->user_name;
+                                if($user->user_id == $c->user->user_id)
+                                {
+                                    $selected = 1;
+                                    $name = $i18n->get('Me');
+                                }
+                            </%perl>
+                                <option data-isme="<% $selected ? 1 : 0 %>" <% $selected ? 'selected="selected"' : '' |n %> value="user-<% $user->user_id %>"><% $name |n %></option>
+%                           }
+                            </select>
+%                       } elsif($mod->{special} && $mod->{special} eq 'available') {
+                            <b><% $i18n->get('Available assignments for:') %></b>
+                            <select data-type="available" style="width:200px;" class="enableChosen">
+                            <%perl>
+                            my $roles = $c->model('LIXUZDB::LzRole');
+                            while(my $role = $roles->next)
+                            {
+                                my $selected;
+                                my $name = $role->role_name;
+                                if($role->role_id == $c->user->role_id)
+                                {
+                                    $selected = 1;
+                                }
+                            </%perl>
+                                <option data-isme="<% $selected ? 1 : 0 %>" <% $selected ? 'selected="selected"' : '' |n %> value="role-<% $role->role_id %>"><% $name |n %></option>
+%                           }
+                            </select>
+%                       } else {
                             <b><% $mod->{label} %></b>
+%                       }
                         </td>
                     </tr>
                     <tr>
@@ -63,8 +100,8 @@ $message => undef
 
 <%init>
 my @Widgets = (
-{ file => 'widget_availableAssignments.html', label => $i18n->get('Available assignments'), },
-{ file => 'widget_myAssignments.html', label => $i18n->get('My assignments'), }, 
+{ file => 'widget_availableAssignments.html', special => 'available', },
+{ file => 'widget_myAssignments.html', special => 'assigned', }, 
 );
 foreach my $arg(sort keys %ARGS)
 {

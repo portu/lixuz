@@ -184,6 +184,12 @@ sub index : Path Args(0) Form('/core/search')
                     my %r;
                     $r{article_id} = $art->article_id;
                     $r{title} = $art->title;
+                    $r{timeLimit} = $art->workflow->deadline;
+                    $r{shortTitle} = $art->shorttitle;
+                    if (!$r{timeLimit})
+                    {
+                        $r{timeLimit} = $c->stash->{i18n}->get('(none)');
+                    }
                     if ($art->status)
                     {
                         $r{status} = $art->status->status_name($c->stash->{i18n});

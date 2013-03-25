@@ -54,8 +54,68 @@ var Dashboard = {
             self.globalAcceptanceLock = false;
         });
     },
+    changeTriggered: function($this)
+    {
+        var newValue = $this.val(),
+            type     = $this.data('type'),
+            $indicator = $('#progInd').clone();
+        $indicator.appendTo($this.parent()).css({
+            'display':'inline-block',
+            'max-height':'15px',
+            'visibility':'visible'
+        }).show();
+        XHR.GET('http://devlixuz.portu.no:24123/admin/articles?orderby=article_id&ordertype=DESC&_submitted_list_search=1&list_type=pure&filter_assigned_to='+newValue,function(list)
+        {
+            var styled = 'odd',
+                $table = $this.parents('.dashboardTable').find('table'),
+                selectedIsMe = $this.find(':selected').data('isme');
+            $table.find('tr:not(.headerRow)').remove();
+            _.each(list.contents,function(entry)
+            {
+                var $tr = $('<tr />');
+                $('<td />').text(entry.article_id).appendTo($tr);
 
+                var $title = $('<a />');
+                var $titleTD = $('<td />');
+                $title.attr('title',entry.title);
+                $title.text(entry.shortTitle);
+                $title.appendTo($titleTD);
+                $titleTD.appendTo($tr);
 
+                $('<td />').text(entry.status).appendTo($tr);
+                $('<td />').text(entry.timeLimit).appendTo($tr);
+
+                if(type == 'available')
+                {
+                    var $acceptTD = $('<td />');
+                    if(selectedIsMe)
+                    {
+                        var $accept = $('<input />');
+                        $accept.attr('type','button').addClass('dashboard-accept-assignment').data('accept-id',entry.article_id).attr('value',i18n.get('Accept')).button();
+                        $accept.appendTo($acceptTD);
+                        $acceptTD.attr('id','LZWorkflowAcceptButton_'+entry.article_id);
+                    }
+                    else
+                    {
+                        $acceptTD.text('-');
+                    }
+                    $acceptTD.appendTo($tr);
+                }
+
+                $tr.addClass(styled);
+                $tr.appendTo($table);
+                if(styled == 'even')
+                {
+                    styled = 'odd';
+                }
+                else
+                {
+                    styled = 'even';
+                }
+            });
+            $indicator.remove();
+        });
+    },
     initialize:function()
     {
         var self = Dashboard;
@@ -64,6 +124,11 @@ var Dashboard = {
             var $this = $(this);
             e.preventDefault();
             self.acceptAssignment($this.data('accept-id'));
+        });
+        $('.dashboardTable').find('select').change(function()
+        {
+            var $this = $(this);
+            self.changeTriggered($this);
         });
     }
 };
