@@ -64,7 +64,7 @@ var Dashboard = {
             'max-height':'15px',
             'visibility':'visible'
         }).show();
-        XHR.GET('http://devlixuz.portu.no:24123/admin/articles?orderby=article_id&ordertype=DESC&_submitted_list_search=1&list_type=pure&filter_assigned_to='+newValue,function(list)
+        XHR.GET('/admin/articles?orderby=article_id&ordertype=DESC&_submitted_list_search=1&list_type=pure&filter_assigned_to='+newValue,function(list)
         {
             var styled = 'odd',
                 $table = $this.parents('.dashboardTable').find('table'),
