@@ -1,5 +1,5 @@
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2013
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -228,6 +228,23 @@ have a single one that contains a space-separated list.
 All templates listed in this are hard deps, so the template will not
 be allowed to render if the includes do not exist. This option is optional.
 
+=item B<LAYOUT>
+
+This defines the layout of the template. It is used to display a layout of
+how the template looks on the category ordering pages. The syntax is:
+
+    ITEMS ON ROW|ITEMS ON ROW|ITEMS ON ROW
+
+So, if you had a template that displayed 10 articles, first one big one, then
+three on one line, another three, another big article, then two mid-sized ones
+you would write:
+
+    LAYOUT=1|3|3|1|2
+
+This setting doesn't actually do anything during the actual rendering of the
+template, it simply provides Lixuz with information that it can use
+to draw a layout similar to what the template uses on the ordering page.
+
 =item B<NEEDSINFO>
 
 This is the most advanced and also the most powerful entry you
@@ -362,6 +379,12 @@ This is a numeric boolean (1=true, 0=false). If it is set to any nonzero
 value then it will exclude the article mentioned in the URL from
 being included in the returned object. This only has an effect on
 article pages that utilize artid=url (see below).
+
+=item B<layout>
+
+This is a numeric boolean (1=true, 0=false). If it is set to any nonzero
+value then the list returned for this data request will be ordered according
+to the LAYOUT defined in the template (see LAYOUT).
 
 =back
 
