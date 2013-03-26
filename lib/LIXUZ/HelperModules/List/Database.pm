@@ -244,6 +244,12 @@ sub list_advanced_search
             next;
         }
 
+        # Handle queries that can contain multiple values
+        if ($cont =~ /,/)
+        {
+            $cont = { -in => [ split(/,/,$cont) ] };
+        }
+
         # If column has a . then the filtering is done in a related table and we need to do
         # some additional processing later on
         if ($column =~ /\./)
