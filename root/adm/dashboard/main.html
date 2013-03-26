@@ -40,7 +40,7 @@
                             <b><% $i18n->get('Assignments for:') %></b>
                             <select data-type="assigned" style="width:200px;" class="enableChosen" data-statuses="<% join(',',@{ $dashboard_MyAssignments_statuses }) %>">
                             <%perl>
-                            my $users = $c->model('LIXUZDB::LzUser');
+                            my $users = $c->model('LIXUZDB::LzUser')->search({ user_status => 'Active' });
                             while(my $user = $users->next)
                             {
                                 my $selected;
@@ -58,7 +58,7 @@
                             <b><% $i18n->get('Available assignments for:') %></b>
                             <select data-type="available" style="width:200px;" class="enableChosen">
                             <%perl>
-                            my $roles = $c->model('LIXUZDB::LzRole');
+                            my $roles = $c->model('LIXUZDB::LzRole')->search({ role_status => 'Active' });
                             while(my $role = $roles->next)
                             {
                                 my $selected;
