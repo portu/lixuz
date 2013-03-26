@@ -39,22 +39,26 @@ INFOBLOCK DATA for more information on the various settings):
 
     <%perl>
     # BEGIN LIXUZ_INFOBLOCK
-    # VERSION=0.1
-    # NAME=Lixuz basic article page
-    # LICENSE=Proprietary
-    # APIVERSION=1
-    # TYPE=article
-    # LAYOUT=1|2|1|1
-    # NEEDSINFO=article_get_[artid=url,as=article,includeRelations=1,includeComments=1,handleComments=1,layout=1]
-    # FILESPOT=[type=image,name=Primary image,as=primaryImage,id=1]
-    # INCLUDES=no.lixuz.header no.lixuz.footer no.lixuz.subscribeNewsletter
-    # UNIQUEID=no.lixuz.basicArticle
+    # VERSION    = 0.1
+    # NAME       = Lixuz basic article page
+    # LICENSE    = Proprietary
+    # APIVERSION = 3
+    # TYPE       = article
+    # LAYOUT     = 1|2|1|1
+    # NEEDSINFO  = article_get_[artid=url,as=article,includeRelations=1,includeComments=1,handleComments=1,layout=1]
+    # FILESPOT   = [type=image,name=Primary image,as=primaryImage,id=1]
+    # INCLUDES   = no.lixuz.header no.lixuz.footer no.lixuz.subscribeNewsletter
+    # UNIQUEID   = no.lixuz.basicArticle
     # END LIXUZ_INFOBLOCK
     </%perl>
 
 Any template can only have one infoblock and Lixuz will stop processing the file
 when it hits the first END LIXUZ_INFOBLOCK. You can have comments inside
 an infoblock by using ## at the start of the line instead of just #.
+
+The casing of the settings does not matter (the casing of the values DOES
+matter, however). So you may write NAME, Name, name or anything in between.
+Additionally you may have as much whitespace around the equals sign as you wish.
 
 =head1 VALIDATION AND DEBUGGING
 
