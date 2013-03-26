@@ -74,11 +74,18 @@ sub parse_templatefile
         my $v = $_;
         # Retrieve the name
         $o =~ s/^([^=]+)=.*/$1/;
+        # Remove any whitespace padding
+        $o =~ s/\s+$//;
+        # Uppercase the entire string
+        $o = uc($o);
         # Drop the legacy TEMPLATE_ prefix
         $o =~ s/^TEMPLATE_//;
 
         # Retrieve the value
         $v =~ s/^[^=]+=//g;
+        # Remove any whitespace prefix
+        $v =~ s/^\s+//;
+
         if(not defined $o or not length($o) or $o =~ /=/)
         {
             next;
