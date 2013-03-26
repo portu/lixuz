@@ -19,7 +19,7 @@
 This is the Lixuz template manual. It serves as an introduction and reference
 for the Lixuz template system.
 
-The version described here is version B<1> of the Lixuz template API.
+The version described here is version B<3> of the Lixuz template API.
 
 =head2 Conventions used
 
@@ -39,16 +39,16 @@ INFOBLOCK DATA for more information on the various settings):
 
     <%perl>
     # BEGIN LIXUZ_INFOBLOCK
-    # TEMPLATE_VERSION=0.1
-    # TEMPLATE_NAME=Lixuz basic article page
-    # TEMPLATE_LICENSE=Proprietary
-    # TEMPLATE_APIVERSION=1
-    # TEMPLATE_TYPE=article
-    # TEMPLATE_LAYOUT=1|2|1|1
-    # TEMPLATE_NEEDSINFO=article_get_[artid=url,as=article,includeRelations=1,includeComments=1,handleComments=1,layout=1]
-    # TEMPLATE_FILESPOT=[type=image,name=Primary image,as=primaryImage,id=1]
-    # TEMPLATE_INCLUDES=no.lixuz.header no.lixuz.footer no.lixuz.subscribeNewsletter
-    # TEMPLATE_UNIQUEID=no.lixuz.basicArticle
+    # VERSION=0.1
+    # NAME=Lixuz basic article page
+    # LICENSE=Proprietary
+    # APIVERSION=1
+    # TYPE=article
+    # LAYOUT=1|2|1|1
+    # NEEDSINFO=article_get_[artid=url,as=article,includeRelations=1,includeComments=1,handleComments=1,layout=1]
+    # FILESPOT=[type=image,name=Primary image,as=primaryImage,id=1]
+    # INCLUDES=no.lixuz.header no.lixuz.footer no.lixuz.subscribeNewsletter
+    # UNIQUEID=no.lixuz.basicArticle
     # END LIXUZ_INFOBLOCK
     </%perl>
 

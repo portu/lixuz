@@ -18,7 +18,7 @@
 
 This is the Lixuz template manual for web templates.
 
-This file describes version B<1> of the Lixuz template API.
+This file describes version B<3> of the Lixuz template API.
 
 B<Note>: the text in this file assumes you have already read the general
 template introduction found in doc/templates.pod of the Lixuz source tree.
@@ -36,8 +36,8 @@ The syntax of the files is the standard syntax for Catalyst controllers.
 =head1 INFOBLOCK DATA
 
 The Lixuz infoblock can contain various pieces of information. The entries that
-are required to be present are: TEMPLATE_NAME TEMPLATE_LICENSE TEMPLATE_VERSION
-TEMPLATE_TYPE TEMPLATE_APIVERSION and TEMPLATE_UNIQUEID. ALL other entries
+are required to be present are: NAME LICENSE VERSION
+TYPE APIVERSION and UNIQUEID. ALL other entries
 are optional, and you should use them as you see fit.
 
 Here follows a list of all possible infoblock entries, and their permitted
@@ -45,26 +45,26 @@ values and syntax.
 
 =over
 
-=item B<TEMPLATE_VERSION>
+=item B<VERSION>
 
 This option should contain the version number of your template. This is
 mostly present to let you track versions yourself, but might also be used
 by Lixuz in the future. It accepts any string and is required.
 
-=item B<TEMPLATE_NAME>
+=item B<NAME>
 
 This option should contain the human-readable name of the template. This
 is the string that will be displayed within the Lixuz interface. It accepts
 any string and is required.
 
-=item B<TEMPLATE_LICENSE>
+=item B<LICENSE>
 
-This option should contain the license of your template. Like TEMPLATE_VERSION
+This option should contain the license of your template. Like VERSION
 this is mostly present to let you track which license a template has yourself
 and to let you find out if you can redistribute that nice template you have.
 It accepts any string and is required.
 
-=item B<TEMPLATE_APIVERSION>
+=item B<APIVERSION>
 
 This option must contain the Lixuz template API version the template is written
 for, as of this document that version is 1. This will make sure that Lixuz does
@@ -72,7 +72,7 @@ not accept templates for newer versions than the one installed, and might also
 allow it to activate a compatibility mode in the future for templates that
 are using an old api version. It accepts a single integer and is required.
 
-=item B<TEMPLATE_TYPE>
+=item B<TYPE>
 
 This option determines which type of template it is, and thus also
 what kind of pages and data Lixuz will use it for. The allowed settings
@@ -126,7 +126,7 @@ a handler in SiteHacks.pm).
 
 This option is required, and only accepts one of the values listed above.
 
-=item B<TEMPLATE_UNIQUEID>
+=item B<UNIQUEID>
 
 This is a unique identifier for this template. This is used both internally
 by Lixuz, and is the means that other templates have for referreing to
@@ -148,7 +148,7 @@ written a basic article template, its uniqueid might be:
 This option is required, and must never contain spaces (and should
 be in the form explained above).
 
-=item B<TEMPLATE_FILESPOT>
+=item B<FILESPOT>
 
 This is a space-separated list of file spots available in the template.
 Each spot is defined by a pair of values inside brackets ([]). Inside
@@ -200,13 +200,13 @@ either of them.
 
 Example:
 
-    TEMPLATE_FILESPOT=[name=Primary image,as=primaryImage,id=1]
+    FILESPOT=[name=Primary image,as=primaryImage,id=1]
 
 This option is optional, can contain spaces separating [] blocks as well
 as spaces supplied to the name= parameter. The other parameters can
 not contain spaces.
 
-=item B<TEMPLATE_INCLUDES>
+=item B<INCLUDES>
 
 This is a space separated list of the uniqueids of templates that this
 template will include (using $m->comp() or <& &>). Lixuz will resolve
@@ -219,24 +219,24 @@ generated during upload based upon a number of factors).
 
 For example, if you have the template org.example.basicArticle that needs
 to include org.example.basicHeader you set
-TEMPLATE_INCLUDES=org.example.basicHeader and then include the header where
+INCLUDES=org.example.basicHeader and then include the header where
 you want it using <& $templateFileMap->{'org.example.basicHeader'} &>.
 
-If you wish you may have several TEMPLATE_INCLUDES= settings, or you may
+If you wish you may have several INCLUDES= settings, or you may
 have a single one that contains a space-separated list.
 
 All templates listed in this are hard deps, so the template will not
 be allowed to render if the includes do not exist. This option is optional.
 
-=item B<TEMPLATE_NEEDSINFO>
+=item B<NEEDSINFO>
 
 This is the most advanced and also the most powerful entry you
 can have. This is how you tell Lixuz what kind of data your template wants.
 Lixuz will then look up the data and prepare it for use for you. The various
 data sources are explained in detail in the DATA SOURCES section below, here
-we will only explain the syntax. This setting can, like TEMPLATE_INCLUDES,
+we will only explain the syntax. This setting can, like INCLUDES,
 contain a space separated list of settings, or you can have several
-TEMPLATE_NEEDSINFO= entries, Lixuz does not care which one you use (or even if
+NEEDSINFO= entries, Lixuz does not care which one you use (or even if
 you mix the two).
 
 The basic syntax is:

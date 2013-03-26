@@ -18,7 +18,7 @@
 
 This is the Lixuz template manual for media templates.
 
-This file describes version B<1> of the Lixuz template API.
+This file describes version B<3> of the Lixuz template API.
 
 B<Note>: the text in this file assumes you have already read the general
 template introduction found in doc/templates.pod of the Lixuz source tree.
@@ -115,8 +115,8 @@ a container block.
 =head1 INFOBLOCK DATA
 
 The Lixuz infoblock can contain various pieces of information. The entries that
-are required to be present are: TEMPLATE_NAME TEMPLATE_LICENSE TEMPLATE_VERSION
-TEMPLATE_TYPE TEMPLATE_APIVERSION and TEMPLATE_UNIQUEID.
+are required to be present are: NAME LICENSE VERSION
+TYPE APIVERSION and UNIQUEID.
 
 Here follows a list of all possible infoblock entries, and their permitted
 values and syntax. Please note that unlike web templates, you can not
@@ -124,26 +124,26 @@ use INCLUDES or NEEDSINFO in media templates.
 
 =over
 
-=item B<TEMPLATE_VERSION>
+=item B<VERSION>
 
 This option should contain the version number of your template. This is
 mostly present to let you track versions yourself, but might also be used
 by Lixuz in the future. It accepts any string and is required.
 
-=item B<TEMPLATE_NAME>
+=item B<NAME>
 
 This option should contain the human-readable name of the template. This
 is the string that will be displayed within the Lixuz interface. It accepts
 any string and is required.
 
-=item B<TEMPLATE_LICENSE>
+=item B<LICENSE>
 
-This option should contain the license of your template. Like TEMPLATE_VERSION
+This option should contain the license of your template. Like VERSION
 this is mostly present to let you track which license a template has yourself
 and to let you find out if you can redistribute that nice template you have.
 It accepts any string and is required.
 
-=item B<TEMPLATE_APIVERSION>
+=item B<APIVERSION>
 
 This option must contain the Lixuz template API version the template is written
 for, as of this document that version is 1. This will make sure that Lixuz does
@@ -151,12 +151,12 @@ not accept templates for newer versions than the one installed, and might also
 allow it to activate a compatibility mode in the future for templates that
 are using an old api version. It accepts a single integer and is required.
 
-=item B<TEMPLATE_TYPE>
+=item B<TYPE>
 
 This option determines which type of template it is, and thus also what Lixuz
 will use it for. For media templates it should be set to "media".
 
-=item B<TEMPLATE_MEDIASETTINGS>
+=item B<MEDIASETTINGS>
 
 This option lets you change some parameters of how Lixuz will treat the images
 that will be used. It takes a set of parameters surrounded by square-brackets
@@ -191,13 +191,13 @@ The simplest template possible could be written like this:
     <img class="lzImagePlaceholder" />
     <%once>
     # BEGIN LIXUZ_INFOBLOCK
-    # TEMPLATE_VERSION=0.1
-    # TEMPLATE_NAME=Lixuz media renderer
-    # TEMPLATE_LICENSE=Proprietary
-    # TEMPLATE_APIVERSION=1
-    # TEMPLATE_TYPE=media
-    # TEMPLATE_UNIQUEID=org.example.media
-    # TEMPLATE_MEDIASETTINGS=maxWidth=400,maxHeight=400,noFloat=true
+    # VERSION=0.1
+    # NAME=Lixuz media renderer
+    # LICENSE=Proprietary
+    # APIVERSION=1
+    # TYPE=media
+    # UNIQUEID=org.example.media
+    # MEDIASETTINGS=maxWidth=400,maxHeight=400,noFloat=true
     # END LIXUZ_INFOBLOCK
     </%once>
 
@@ -229,12 +229,12 @@ that markup, as long as you have an img tag with the lzImagePlaceholder class.
     </%args>
     <%once>
     # BEGIN LIXUZ_INFOBLOCK
-    # TEMPLATE_VERSION=0.1
-    # TEMPLATE_NAME=Lixuz media renderer
-    # TEMPLATE_LICENSE=Proprietary
-    # TEMPLATE_APIVERSION=1
-    # TEMPLATE_TYPE=media
-    # TEMPLATE_UNIQUEID=org.example.media
+    # VERSION=0.1
+    # NAME=Lixuz media renderer
+    # LICENSE=Proprietary
+    # APIVERSION=1
+    # TYPE=media
+    # UNIQUEID=org.example.media
     # END LIXUZ_INFOBLOCK
 
 =head3 Rendered code

@@ -72,7 +72,12 @@ sub parse_templatefile
         s/\s*$//g;
         my $o = $_;
         my $v = $_;
+        # Retrieve the name
         $o =~ s/^([^=]+)=.*/$1/;
+        # Drop the legacy TEMPLATE_ prefix
+        $o =~ s/^TEMPLATE_//;
+
+        # Retrieve the value
         $v =~ s/^[^=]+=//g;
         if(not defined $o or not length($o) or $o =~ /=/)
         {
@@ -188,11 +193,11 @@ sub resolve_dependencies
         if (not $dbEntry->count)
         {
             my $info = cached_parse_templatefile($c,$template);
-            my @inc = split(/\s+/,$info->{TEMPLATE_INCLUDES});
+            my @inc = split(/\s+/,$info->{INCLUDES});
             push(@processing, @inc);
-            if ($info->{TEMPLATE_NEEDSINFO})
+            if ($info->{NEEDSINFO})
             {
-                foreach my $p (split(/\s+/,$info->{TEMPLATE_NEEDSINFO}))
+                foreach my $p (split(/\s+/,$info->{NEEDSINFO}))
                 {
                     $infoDeps{$p} = 1;
                 }
@@ -254,22 +259,22 @@ sub resolve_dependencies
             return undef;
         }
 
-        if ($info->{TEMPLATE_NEEDSINFO})
+        if ($info->{NEEDSINFO})
         {
-            foreach my $p (split(/\s+/,$info->{TEMPLATE_NEEDSINFO}))
+            foreach my $p (split(/\s+/,$info->{NEEDSINFO}))
             {
                 $infoDeps{$p} = 1;
             }
         }
 
-        if (not defined $info->{TEMPLATE_INCLUDES} or not length $info->{TEMPLATE_INCLUDES})
+        if (not defined $info->{INCLUDES} or not length $info->{INCLUDES})
         {
             $resolved{$curr} = $dbEntry->file;
             next;
         }
         $pending{$curr} = $dbEntry->file;
         $pendingDeps{$curr} = [];
-        my @inc = split(/\s+/,$info->{TEMPLATE_INCLUDES});
+        my @inc = split(/\s+/,$info->{INCLUDES});
         push(@processing,@inc);
         push(@{$pendingDeps{curr}},@inc);
     }
@@ -442,7 +447,7 @@ sub get_parsed_template_info
     $info->{template_deps} = $deps;
     $info->{includes_map} = $idToFile;
     my @spots;
-    my $spotlist = $info->{template_info}->{TEMPLATE_FILESPOT};
+    my $spotlist = $info->{template_info}->{FILESPOT};
     if ($spotlist)
     {
         foreach my $spot (split(/\[/,$spotlist))
@@ -452,14 +457,14 @@ sub get_parsed_template_info
             push(@spots,parse_squareParams($spot));
         }
     }
-    my $size = $info->{template_info}->{TEMPLATE_MEDIASETTINGS};
+    my $size = $info->{template_info}->{MEDIASETTINGS};
     if ($size)
     {
         $info->{mediasettings} = parse_squareParams($size);
     }
     $info->{spots_parsed} = \@spots;
 
-    my $layout = $info->{template_info}->{TEMPLATE_LAYOUT};
+    my $layout = $info->{template_info}->{LAYOUT};
     if ($layout)
     {
         $info->{layout} = [ split(/\|/,$layout) ];

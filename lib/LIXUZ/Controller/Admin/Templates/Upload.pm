@@ -76,18 +76,18 @@ sub submitTemplate : Local
     eval
     {
         $template = $c->model('LIXUZDB::LzTemplate')->create({
-                type => $info->{TEMPLATE_TYPE},
+                type => $info->{TYPE},
                 apiversion => 1, # XXX: Needs to be dynamic once apiversion is bumped (if we keep version 1 support around)
-                uniqueid => $info->{TEMPLATE_UNIQUEID},
+                uniqueid => $info->{UNIQUEID},
             });
         my $name;
-        if ($info->{TEMPLATE_NAME})
+        if ($info->{NAME})
         {
-            $name = $info->{TEMPLATE_NAME};
+            $name = $info->{NAME};
         }
         else
         {
-            $name = $info->{TEMPLATE_UNIQUEID};
+            $name = $info->{UNIQUEID};
         }
         $template->set_column('name',$name);
         $template->update();
@@ -130,15 +130,15 @@ sub validateTemplate : Private
     # UNIQUEID in particular, which should probably only be [A-Za-z0-9.-\+]
     foreach my $required (qw(VERSION NAME APIVERSION UNIQUEID TYPE))
     {
-        if(not defined $data->{'TEMPLATE_'.$required} or not length($data->{'TEMPLATE_'.$required}))
+        if(not defined $data->{$required} or not length($data->{$required}))
         {
-            $self->error($c,'TEMPLATE_'.$required.' missing from infoblock');
+            $self->error($c,$required.' missing from infoblock');
         }
     }
 
-    if ($data->{'TEMPLATE_APIVERSION'} > 2 )
+    if ($data->{'APIVERSION'} > 3 )
     {
-        $self->error($c,'APIVERSION not supported. This version of Lixuz only supports APIVERSION 2 and lower, this template is for APIVERSION '.$data->{'TEMPLATE_APIVERSION'});
+        $self->error($c,'APIVERSION not supported. This version of Lixuz only supports APIVERSION 3 and lower, this template is for APIVERSION '.$data->{'APIVERSION'});
     }
 
     # FIXME: Supply a list of deps to resolve_dependencies rather than the file

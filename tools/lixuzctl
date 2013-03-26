@@ -24,6 +24,7 @@ use File::Path qw(mkpath);
 use File::Find qw(find);
 use File::stat;
 use File::Basename qw(basename dirname);
+use Data::Dumper qw(Dumper);
 use Digest::SHA qw(sha512_hex);
 use Getopt::Long;
 use Cwd qw(realpath);
@@ -421,7 +422,7 @@ sub loadLixuzModules
     # FIXME: Improved errors
     eval('no strict; no warnings;$LIXUZ::PATH = $lixuzDir;1;') or die;
     eval('use LIXUZ::HelperModules::Scripts qw(getDBIC getConfig mockC fakeC);1;') or die;
-    eval('use LIXUZ::HelperModules::Templates qw(parse_templatefile);1') or die;
+    eval('use LIXUZ::HelperModules::Templates qw(parse_templatefile get_parsed_template_info);1') or die;
     eval('use LIXUZ::HelperModules::FileUploader qw(ERR_DIRNOTFOUND ERR_WRITEFAILURE);1') or die;
     printd('Dependencies loaded');
     $loadedModules = 1;
@@ -1096,6 +1097,31 @@ sub templates
                 printf($fmt,$template->uniqueid,$template->type.$default,$template->name);
             }
         }
+        when('info')
+        {
+            print "\n";
+            print "Initializing parser...";
+            loadLixuzModules();
+            my $fakeC = fakeC();
+            print "done\n";
+            foreach my $file (@ARGV)
+            {
+                print "$file:\n";
+                my $info;
+                try
+                {
+                    $info = get_parsed_template_info($fakeC,$file);
+                }
+                catch
+                {
+                    print 'Error: Failed to parse the infoblock in '.$file."\n"
+                };
+                if ($info)
+                {
+                    print Dumper($info);
+                }
+            }
+        }
         default
         {
             die('Unknown subcommand for templates: '.$subcommand."\nSee \"templates --help\" for more information\n");
@@ -1153,22 +1179,22 @@ sub injectTemplateFile
     # UNIQUEID in particular, which should probably only be [A-Za-z0-9.-\+]
     foreach my $required (qw(VERSION NAME APIVERSION UNIQUEID TYPE))
     {
-        if(not defined $info->{'TEMPLATE_'.$required} or not length($info->{'TEMPLATE_'.$required}))
+        if(not defined $info->{$required} or not length($info->{$required}))
         {
-            die($errorPrefix.' TEMPLATE_'.$required.' missing from infoblock');
+            die($errorPrefix.' '.$required.' missing from infoblock');
         }
     }
 
-    if ($info->{'TEMPLATE_APIVERSION'} > 2 && $force < 2)
+    if ($info->{'APIVERSION'} > 3 && $force < 2)
     {
-        die($errorPrefix.' APIVERSION not supported. This version of Lixuz only supports APIVERSION 2 and lower, this template is for APIVERSION '.$info->{'TEMPLATE_APIVERSION'});
+        die($errorPrefix.' APIVERSION not supported. This version of Lixuz only supports APIVERSION 3 and lower, this template is for APIVERSION '.$info->{'APIVERSION'});
     }
 
     # When we have reached this point we can assume that all is o.k. with the
     # template and that its infoblock is well formed, and can thus simply be
     # shoved into the database without further validation.
     my $template = $dbic->resultset('LzTemplate')->find({
-            uniqueid => $info->{TEMPLATE_UNIQUEID}
+            uniqueid => $info->{UNIQUEID}
         });
 
     if(defined $template)
@@ -1179,22 +1205,22 @@ sub injectTemplateFile
     {
         printd('Installing new template');
         $template = $dbic->resultset('LzTemplate')->create({
-                uniqueid => $info->{TEMPLATE_UNIQUEID},
+                uniqueid => $info->{UNIQUEID},
             });
     }
 
     eval
     {
         my $name;
-        $template->set_column('type',$info->{TEMPLATE_TYPE});
+        $template->set_column('type',$info->{TYPE});
         $template->set_column('apiversion',1);
-        if ($info->{TEMPLATE_NAME})
+        if ($info->{NAME})
         {
-            $name = $info->{TEMPLATE_NAME};
+            $name = $info->{NAME};
         }
         else
         {
-            $name = $info->{TEMPLATE_UNIQUEID};
+            $name = $info->{UNIQUEID};
         }
         $template->set_column('name',$name);
         $template->update();
@@ -1233,7 +1259,7 @@ sub injectTemplateFile
         die($errorPrefix.' Failed to copy file into place: '.$error);
     }
     printd('Template injection complete');
-    return $info->{TEMPLATE_UNIQUEID};
+    return $info->{UNIQUEID};
 }
 
 # Purpose: Remove a live template from Lixuz
@@ -1631,11 +1657,11 @@ sub buildPackage
                 try
                 {
                     my $info = parse_templatefile($fakeC,$file);
-                    if ( my $existing = $idMap{ $info->{'TEMPLATE_UNIQUEID'} } )
+                    if ( my $existing = $idMap{ $info->{'UNIQUEID'} } )
                     {
-                        push(@errors,'Multiple templates are using the unique id "'.$info->{'TEMPLATE_UNIQUEID'}.'": '.basename($file).' '.basename($existing)."\n");
+                        push(@errors,'Multiple templates are using the unique id "'.$info->{'UNIQUEID'}.'": '.basename($file).' '.basename($existing)."\n");
                     }
-                    $idMap{ $info->{'TEMPLATE_UNIQUEID'} } = $file;
+                    $idMap{ $info->{'UNIQUEID'} } = $file;
                 }
                 catch
                 {
