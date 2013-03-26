@@ -44,7 +44,7 @@
                             while(my $user = $users->next)
                             {
                                 my $selected;
-                                my $name = $user->user_name;
+                                my $name = $user->verboseName;
                                 if($user->user_id == $c->user->user_id)
                                 {
                                     $selected = 1;
