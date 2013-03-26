@@ -58,13 +58,14 @@ var Dashboard = {
     {
         var newValue = $this.val(),
             type     = $this.data('type'),
+            statuses = $this.data('statuses'),
             $indicator = $('#progInd').clone();
         $indicator.appendTo($this.parent()).css({
             'display':'inline-block',
             'max-height':'15px',
             'visibility':'visible'
         }).show();
-        XHR.GET('/admin/articles?orderby=article_id&ordertype=DESC&_submitted_list_search=1&list_type=pure&filter_assigned_to='+newValue,function(list)
+        XHR.GET('/admin/articles?orderby=article_id&ordertype=DESC&_submitted_list_search=1&list_type=pure&filter_assigned_to='+newValue+'&filter_status_id='+statuses,function(list)
         {
             var styled = 'odd',
                 $table = $this.parents('.dashboardTable').find('table'),

@@ -73,7 +73,14 @@ sub prepareMyAssignments : Private
     {
         $assignments = $assignments->search_related('article',{ -and => \@finalIgnore }, { order_by => 'modified_time DESC' });
     }
+    my $statuses = $c->model('LIXUZDB::LzStatus')->search({ -and => \@finalIgnore });
+    my @includedStatuses;
+    while(my $status = $statuses->next)
+    {
+        push(@includedStatuses,$status->id);
+    }
     $c->stash->{dashboard_MyAssignments} = article_latest_revisions($assignments);
+    $c->stash->{dashboard_MyAssignments_statuses} = \@includedStatuses;
 }
 
 # Summary: Prepare any data required for the "available assignments" widget

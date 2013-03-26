@@ -38,7 +38,7 @@
                         <td class="heading">
 %                       if($mod->{special} && $mod->{special} eq 'assigned') {
                             <b><% $i18n->get('Assignments for:') %></b>
-                            <select data-type="assigned" style="width:200px;" class="enableChosen">
+                            <select data-type="assigned" style="width:200px;" class="enableChosen" data-statuses="<% join(',',@{ $dashboard_MyAssignments_statuses }) %>">
                             <%perl>
                             my $users = $c->model('LIXUZDB::LzUser');
                             while(my $user = $users->next)
@@ -96,6 +96,7 @@
 <%args>
 $i18n
 $message => undef
+$dashboard_MyAssignments_statuses => []
 </%args>
 
 <%init>
