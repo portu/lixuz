@@ -186,6 +186,8 @@ sub index : Path Args(0) Form('/core/search')
                     $r{title} = $art->title;
                     $r{timeLimit} = $art->workflow->deadline;
                     $r{shortTitle} = $art->shorttitle;
+                    $r{canEdit} = $art->can_edit($c);
+                    $r{canRead} = $art->can_read($c);
                     if (!$r{timeLimit})
                     {
                         $r{timeLimit} = $c->stash->{i18n}->get('(none)');

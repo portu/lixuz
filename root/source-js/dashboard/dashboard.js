@@ -76,9 +76,20 @@ var Dashboard = {
                 var $tr = $('<tr />');
                 $('<td />').text(entry.article_id).appendTo($tr);
 
-                var $title = $('<a />');
-                var $titleTD = $('<td />');
+                var $title = $('<a />'),
+                    $titleTD = $('<td />'),
+                    URL;
+                if(entry.canEdit)
+                {
+                    URL = '/admin/articles/edit/'+entry.article_id;
+                }
+                else if(entry.canRead)
+                {
+                    URL = '/admin/articles/read/'+entry.article_id;
+                }
                 $title.attr('title',entry.title);
+                $title.attr('href',URL);
+                $title.addClass('useTipsyW');
                 $title.text(entry.shortTitle);
                 $title.appendTo($titleTD);
                 $titleTD.appendTo($tr);
