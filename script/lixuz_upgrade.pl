@@ -104,10 +104,26 @@ sub main
         dualPrint('(upgrading from packageless Lixuz, skipping package tasks)'."\n");
         $packup = undef;
     }
-    createMergeDirectory($dataLocation,$tempDir);
-    mergeData($tempDir,$dataTarget);
-    backupOldData($dataTarget);
-    installNewData($tempDir,$dataTarget);
+    my $dataSource;
+    # If we don't have packages, then use the old SiteHacks-style upgrade path
+    if (! defined( $packup))
+    {
+        $dataSource = $tempDir;
+        createMergeDirectory($dataLocation,$tempDir);
+        mergeData($tempDir,$dataTarget);
+        backupOldData($dataTarget);
+    }
+    # There are packages present, skip all of the legacy SiteHacks handling and just
+    # do a direct copy.
+    else
+    {
+        print "Preparing to upgrade...";
+        $dataSource = $dataLocation;
+        logAction('Copying old lixuz.yml to new directory');
+        copyFile($dataTarget, $dataTarget.'/lixuz.yml',$dataSource.'/lixuz.yml');
+        print "done\n";
+    }
+    installNewData($dataSource,$dataTarget);
     upgradeConfig($dataTarget);
     print 'Running lixuzctl upgrade..';
     lixuzctl($installTarget,'upgrade');
