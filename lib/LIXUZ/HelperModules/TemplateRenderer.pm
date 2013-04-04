@@ -21,12 +21,19 @@
 package LIXUZ::HelperModules::TemplateRenderer;
 use Carp;
 use Moose;
-use LIXUZ::HelperModules::TemplateRenderer::Resolver::Articles;
-use LIXUZ::HelperModules::TemplateRenderer::Resolver::Files;
-use LIXUZ::HelperModules::TemplateRenderer::Resolver::Comment;
-use LIXUZ::HelperModules::TemplateRenderer::Resolver::RSSImport;
-use LIXUZ::HelperModules::TemplateRenderer::Resolver::Search;
+use Module::Load qw(load);
 use Try::Tiny;
+
+BEGIN
+{
+    # Dynamically load all available resolvers
+    no warnings;
+    foreach my $module (glob($LIXUZ::PATH.'/lib/LIXUZ/HelperModules/TemplateRenderer/Resolver/*.pm'))
+    {
+        $module =~ s{^.*/([^/]+)\.pm$}{$1};
+        load('LIXUZ::HelperModules::TemplateRenderer::Resolver::'.$module);
+    }
+};
 
 has 'c' => (
     isa => 'Object',
@@ -394,6 +401,10 @@ sub _resolve_entry
     {
         return;
     }
+    if (!ref($resolved) eq 'HASH')
+    {
+        die('Resolver for '.$source.' did not return a hashref'."\n");
+    }
     foreach my $k (keys %{$resolved})
     {
         $self->resolve_var($k,$resolved->{$k});
@@ -432,6 +443,7 @@ sub _get_resolver_for
 {
     my $self = shift;
     my $type = shift;
+    $type =~ s/\W//g;
     $type = ucfirst($type);
 
     if ($self->_resolvers->{$type})
