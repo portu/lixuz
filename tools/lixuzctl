@@ -569,6 +569,13 @@ sub runCronHelper
     exec('perl',$lixuzDir.'/cronjobs/lixuz_cron_daily.pl',@params,$action) or die($!);
 }
 
+# Purpose: Check if a file is a temporary file
+sub isTemporary
+{
+    my $file = shift;
+    return $file =~ /(\.sw[po]|~)$/;
+}
+
 # ---
 # Database functions
 # ---
@@ -662,7 +669,7 @@ sub packages
             $lazyInstall = 1;
             my $dir = shift // '.';
             printv('Watching '.$dir.' for changes'."\n");
-            my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp)$ --excludei .*~$ --excludei ./.lixuzctl.buildlock};
+            my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp|swo)$ --excludei .*~$ --excludei ./.lixuzctl.buildlock};
             if ($verbosity < 99)
             {
                 push(@inotifyCommand,qw(-q -q));
@@ -1730,7 +1737,7 @@ sub buildPackage
                     {
                         my $path = substr($_,length($srcdir));
                         # Ignore temporary files
-                        return if /(\.swp|~)$/;
+                        return if isTemporary($_);
                         # Ignore .git and .gitignore
                         if ($_ =~ m{/\.git/} || $_ =~ m{/\.gitignore$})
                         {
@@ -2106,7 +2113,7 @@ sub installPackage
                 wanted => sub
                 {
                     my $path = substr($_,length($dir.'/content'));
-                    if (!-d $_ && !/~$/ && !/\.swp$/)
+                    if (!-d $_ && !/~$/ && !isTemporary($_))
                     {
                         # TODO: Save existing files to a .conflictbak.$$.time() when conflicts are --force ignored
                         if (-e $lixuzDir.'/'.$path && !$upgradeMap{$path})
@@ -2151,7 +2158,7 @@ sub installPackage
             no_chdir => 1,
             wanted => sub
             {
-                if (!-d $_ && !/~$/ && !/\.swp$/)
+                if (!-d $_ && !/~$/ && !isTemporary($_))
                 {
                     push(@templateFiles,realpath($_));
                 }
