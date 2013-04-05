@@ -1644,50 +1644,6 @@ sub buildPackage
         printStatus('done'."\n");
     }
 
-    # Ensure that we don't have multiple templates with the same unique id
-    if (-d 'liveTemplates')
-    {
-        printStatus('Validating template payload...');
-        my @errors;
-        if(glob('liveTemplates/*'))
-        {
-            my %idMap;
-            loadLixuzModules();
-            my $fakeC = fakeC();
-            printnd('.');
-
-            foreach my $file (glob('liveTemplates/*'))
-            {
-                # Ignore temporary files
-                next if $file =~ /(\.swp|~)$/;
-
-                try
-                {
-                    my $info = parse_templatefile($fakeC,$file);
-                    if ( my $existing = $idMap{ $info->{'UNIQUEID'} } )
-                    {
-                        push(@errors,'Multiple templates are using the unique id "'.$info->{'UNIQUEID'}.'": '.basename($file).' '.basename($existing)."\n");
-                    }
-                    $idMap{ $info->{'UNIQUEID'} } = $file;
-                }
-                catch
-                {
-                    push(@errors,'File '.$file.' does not appear to have a LIXUZ section'."\n");
-                };
-            }
-        }
-        if (@errors)
-        {
-            $runCleanup->(1);
-            foreach my $error (@errors)
-            {
-                warn($error);
-            }
-            exit(1);
-        }
-        printStatus('done'."\n");
-    }
-
     printStatus('Constructing package payload...');
     my $date = strftime('%Y%m%d',localtime);
     $meta->{version} =~ s/{DATE}/$date/g;
@@ -1779,6 +1735,51 @@ sub buildPackage
 
         chdir($previousDir);
     }
+
+    # Ensure that we don't have multiple templates with the same unique id
+    if (-d 'liveTemplates')
+    {
+        printStatus('Validating template payload...');
+        my @errors;
+        if(glob($dir.'/liveTemplates/*'))
+        {
+            my %idMap;
+            loadLixuzModules();
+            my $fakeC = fakeC();
+            printnd('.');
+
+            foreach my $file (glob($dir.'/liveTemplates/*'))
+            {
+                # Ignore temporary files
+                next if $file =~ /(\.sw[po]|~)$/;
+
+                try
+                {
+                    my $info = parse_templatefile($fakeC,$file);
+                    if ( my $existing = $idMap{ $info->{'UNIQUEID'} } )
+                    {
+                        push(@errors,'Multiple templates are using the unique id "'.$info->{'UNIQUEID'}.'": '.basename($file).' '.basename($existing)."\n");
+                    }
+                    $idMap{ $info->{'UNIQUEID'} } = $file;
+                }
+                catch
+                {
+                    push(@errors,'File '.$file.' does not appear to have a LIXUZ section'."\n");
+                };
+            }
+        }
+        if (@errors)
+        {
+            $runCleanup->(1);
+            foreach my $error (@errors)
+            {
+                warn($error);
+            }
+            exit(1);
+        }
+        printStatus('done'."\n");
+    }
+
 
     printStatus('Constructing package file...');
 
