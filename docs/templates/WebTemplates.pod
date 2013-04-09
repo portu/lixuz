@@ -520,6 +520,10 @@ Options:
 This determines the primary name of the variable that the search results will
 be stored in. Any legal perl variable name is allowed.
 
+=item B<entriesPerPage>
+
+This sets how many search entries will be returned per page. Defaults to 10.
+
 =item B<extraLiveStatus>
 
 This is a list of extra status_id's that should count the same as the core
@@ -574,10 +578,6 @@ the following values:
 =item sc = score mode
 
 =back
-
-=item B<entriesPerPage>
-
-This sets how many search entries will be returned per page. Defaults to 10.
 
 =head2 Utils
 
