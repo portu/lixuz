@@ -84,8 +84,8 @@ __PACKAGE__->belongs_to('workflow' => 'LIXUZ::Schema::LzWorkflow',{'foreign.arti
 use Moose;
 with 'LIXUZ::Role::Serializable';
 
-# can_read/can_write/fields are shorthand versions of the methods of the same
-# name available on the folder object
+# can_read/can_write/fields/has_parent are shorthand versions of the methods of
+# the same name available on the folder object
 sub can_read
 {
     my $self = shift;
@@ -100,6 +100,11 @@ sub fields
 {
     my $self = shift;
     return $self->folder->fields(@_);
+}
+sub has_parent
+{
+    my $self = shift;
+    return $self->folder->has_parent(@_);
 }
 
 1;

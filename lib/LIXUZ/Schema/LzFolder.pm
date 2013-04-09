@@ -137,6 +137,37 @@ sub has_child
     return;
 }
 
+# Purpose: Check if this folder has a child that matches the supplied ID or LzFolder
+# Usage: bool = $folder->has_parent($lz_folder or $ID)
+sub has_parent
+{
+    my $self = shift;
+    my $check = shift;
+    if (ref($check))
+    {
+        if ($check->can('folder_id'))
+        {
+            $check = $check->folder_id;
+        }
+        else
+        {
+            croak('has_parent got unknown reference: '.ref($check));
+        }
+    }
+
+    my $parent = $self->parent;
+    while($parent)
+    {
+        if ($parent->folder_id == $check)
+        {
+            return 1;
+        }
+        $parent = $parent->parent;
+    }
+
+    return;
+}
+
 # Purpose: Get the full (filesystem-like) path to the folder, with all its parents
 sub get_path
 {
