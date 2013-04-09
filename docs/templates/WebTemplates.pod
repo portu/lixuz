@@ -575,6 +575,10 @@ the following values:
 
 =back
 
+=item B<entriesPerPage>
+
+This sets how many search entries will be returned per page. Defaults to 10.
+
 =head2 Utils
 
 This pprovides various simple utility functions that does not fit into any of

@@ -52,8 +52,9 @@ sub get_results
 
     my $return = {};
 
-    my $saveAs = $searchContent->{as};
-    my $indexerBias = $searchContent->{defaultBias} // 'score';
+    my $saveAs         = $searchContent->{as};
+    my $indexerBias    = $searchContent->{defaultBias} // 'score';
+    my $entriesPerPage = $searchContent->{entriesPerPage} // 10;
     if(not $saveAs)
     {
         $self->log('Resolver search results: No as= parameter for data, ignoring request. Template might crash.');
@@ -93,14 +94,14 @@ sub get_results
     if (defined $query and length $query)
     {
         my $indexer = LIXUZ::HelperModules::Indexer->new(c => $self->c, mode => 'external', resultBias => $indexerBias);
-        $result = $indexer->search({ query => $query });
+        $result = $indexer->search({ query => $query }, { entriesPerPage => $entriesPerPage });
         $result = $result->page($page);
         $pager = $indexer->searchPager;
     }
     else
     {
         $result = get_live_articles_from($self->c->model('LIXUZDB::LzArticle'));
-        $result = $result->search(undef,{ order_by => \'publish_time DESC'});
+        $result = $result->search(undef,{ order_by => \'publish_time DESC', limit => $entriesPerPage });
         $result = $result->page($page);
         $pager = $result->pager;
     }
@@ -120,7 +121,7 @@ sub get_results
         else
         {
             my $searchSQL = $cat->getCategorySearchSQL($self->c);
-            $result = $result->search({ -or => $searchSQL },{join => [qw(folders)], prefetch => 'folders' });
+            $result = $result->search({ -or => $searchSQL },{join => [qw(folders)], prefetch => 'folders', limit => $entriesPerPage });
             if(defined $category and not defined $query)
             {
                 $return->{$saveAs.'_name'} = $cat->category_name;
