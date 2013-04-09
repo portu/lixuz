@@ -111,7 +111,10 @@ sub title
 {
     $currTitle = shift;
     my $verboseTitle = shift;
-    $0 = $title .' - '.$currTitle;
+    if ($mode ne 'lixuzctl')
+    {
+        $0 = $title .' - '.$currTitle;
+    }
     if ($verbosity)
     {
         if($mode eq 'cron')
