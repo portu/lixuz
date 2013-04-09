@@ -315,16 +315,30 @@ sub secondary_folders
 # you must do the checks yourself.
 sub in_folder
 {
-    my($self,$folder_id) = @_;
+    my($self,$c,$folder_id) = @_;
+    my $ckey = $self->_ckey('in_folder',$folder_id);
+    my $result = $c->cache->get($ckey);
+    if(defined $result)
+    {
+        return $result;
+    }
+    $result = 0;
     my $folders = $self->folders;
     while(my $folder = $folders->next)
     {
         if ($folder->folder_id == $folder_id)
         {
-            return 1;
+            $result = 1;
+            last;
+        }
+        elsif($folder->has_parent($folder_id))
+        {
+            $result = 1;
+            last;
         }
     }
-    return 0;
+    $c->cache->set($ckey,$result);
+    return $result;
 }
 
 # Summary: Get all fields from this user in a hash
@@ -1329,6 +1343,16 @@ sub lockTimeoutSoon
         return true;
     }
     return false;
+}
+
+# ---
+# Internal helpers
+# ---
+
+sub _ckey
+{
+    my $self = shift;
+    return(get_ckey('article',join('|',@_),$self->article_id.'|'.$self->revision));
 }
 
 # You can replace this text with custom content, and it will be preserved on regeneration
