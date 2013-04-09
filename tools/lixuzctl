@@ -1143,7 +1143,7 @@ sub usageTemplates
     print "\n";
     print "Available subcommands:\n";
     printHelp('','inject X','Install or upgrade the supplied live template file');
-    printHelp('','remove X','Remove the template identified by the supplied unique ID X');
+    printHelp('','remove X','Remove the template identified by the supplied unique ID X. If X is in the form /X/ then it is treated as a regular expression, and all templates whose uniqueid matches this regular expression gets removed.');
     printHelp('','list','List all installed templates');
     exit(shift);
 }
@@ -1285,6 +1285,19 @@ sub removeTemplate
     printd('Loading config');
     my $config = getConfig();
 
+    if ($id =~ s{^/(.+)/$}{$1})
+    {
+        my $templates = $dbic->resultset('LzTemplate');
+        while(my $template = $templates->next)
+        {
+            if ($template->uniqueid =~ m{$id})
+            {
+                removeTemplate($template->uniqueid);
+            }
+        }
+        return;
+    }
+
     my $template = $dbic->resultset('LzTemplate')->find({
             uniqueid => $id,
         });
@@ -1299,6 +1312,7 @@ sub removeTemplate
     printd('Removed '.$file);
     $template->delete;
     printd('Removed database entry for '.$id);
+    printnd('Removed '.$id."\n");
 }
 
 # ---
