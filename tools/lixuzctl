@@ -18,7 +18,7 @@
 use strict;
 use warnings;
 use 5.010;
-use File::Temp qw(tempdir);
+use File::Temp qw(tempdir tempfile);
 use File::Copy qw(copy move);
 use File::Path qw(mkpath);
 use File::Find qw(find);
@@ -621,6 +621,11 @@ sub database
             runCronHelper(qw(--onlyindex));
         }
 
+        when(/^console$/)
+        {
+            openMysqlConsole();
+        }
+
         default
         {
             die('Unknown subcommand for database: '.$subcommand."\nSee \"database --help\" for more information\n");
@@ -638,7 +643,40 @@ sub usageDatabase
     printHelp('','check','Perform database checks and fix any inconsistencies (also done regulary by the Lixuz cronjob)');
     printHelp('','index','Index anything found in the database that is not in the index yet (also done regulary by the Lixuz cronjob)');
     printHelp('','reindex','Re-index everything in the database (expensive)');
+    printHelp('','console','Start a mysql console on the Lixuz database');
     exit(shift);
+}
+
+# Purpose: Open up a mysql console
+sub openMysqlConsole
+{
+    my $targetDir;
+    foreach my $dir ($lixuzDir, $ENV{HOME}.'/tmp', $ENV{HOME}.'/.tmp', '/tmp')
+    {
+        if (-e $dir && -w $dir)
+        {
+            $targetDir = $dir;
+            last;
+        }
+    }
+    if (!$targetDir)
+    {
+        die('Failed to find a directory to put our temporary file in.'."\n");
+    }
+    loadLixuzModules();
+    my $config = getConfig();
+    my ($fh,$tempfile) = tempfile('.lixuzctlXXXXXXXXX',SUFFIX => '.tmp', DIR => $targetDir );
+    chmod(0600,$tempfile);
+    print {$fh} '# Temporary file written by lixuzctl to invoke mysql'."\n";
+    print {$fh} '[client]'."\n";
+    print {$fh} 'password='.$config->{'Model::LIXUZDB'}->{connect_info}->{password}."\n";
+    print {$fh} 'user='.$config->{'Model::LIXUZDB'}->{connect_info}->{user}."\n";
+    my $db = $config->{'Model::LIXUZDB'}->{connect_info}->{dsn};
+    $db =~ s/.*dbname=//;
+    print {$fh} 'database='.$db."\n";
+    close($fh);
+    system(qw(mysql),'--defaults-extra-file='.$tempfile);
+    unlink($tempfile);
 }
 
 # ---
