@@ -296,7 +296,7 @@ sub writeMetaFile
     }
     $metaFile->{lastWritten} = time;
     $metaFile->{formatRevision} = $dataFormatRevision;
-    $metaFile->{lastAPI} = $currentSupportedApiLevel.'/'.$minSupportedApiLevel.'/'.$dataFormatRevision;
+    $metaFile->{lastAPI} = $currentSupportedApiLevel.'/'.$minSupportedApiLevel.'/'.$dataFormatRevision.'/'.$minSupportedPackageFormat.'/'.$packageFormatRevision;
     writeFile($lixuzDir.'/.lixuzctl.data', encode_json($metaFile));
 }
 
