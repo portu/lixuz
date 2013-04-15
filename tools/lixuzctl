@@ -290,6 +290,10 @@ sub loadMetaFile
 sub writeMetaFile
 {
     my $metaFile = shift;
+    if (!defined $metaFile)
+    {
+        die('writeMetaFile() called without any data'."\n");
+    }
     $metaFile->{lastWritten} = time;
     $metaFile->{formatRevision} = $dataFormatRevision;
     $metaFile->{lastAPI} = $currentSupportedApiLevel.'/'.$minSupportedApiLevel.'/'.$dataFormatRevision;
@@ -435,6 +439,10 @@ sub performVersionUpgrade
     my $metaFile = loadMetaFile(1);
     if ($metaFile->{formatRevision} == 1)
     {
+        if ($metaFile->{packages})
+        {
+            die('Inconsistent lixuz metafile, contains v2 packages structure but claims v1 format, aborting.'."\n");
+        }
         $metaFile->{formatRevision} = 2;
         $metaFile->{packages} = $metaFile->{plugins};
         delete($metaFile->{plugins});
@@ -449,7 +457,7 @@ sub performVersionUpgrade
     {
         die('Unable to downgrade from '.$dataFormatRevision." safely\n");
     }
-    writeMetaFile();
+    writeMetaFile($metaFile);
 }
 
 # Purpose: Check if two files differ
