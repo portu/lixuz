@@ -710,6 +710,19 @@ sub dropBrokenMetaObjects
             }
         }
     }
+    # LzNewsletterSubscriptionGroup
+    my $object = $fakeC->model('LIXUZDB::LzNewsletterSubscriptionGroup');
+    while(my $obj = $object->next)
+    {
+        my $group = $fakeC->model('LIXUZDB::LzNewsletterGroup')->find({
+                group_id => $obj->group_id
+            });
+        if (!$group)
+        {
+            printd('Deleted LzNewsletterSubscriptionGroup-object referring to nonexisting group '.$obj->group_id);
+            $obj->delete;
+        }
+    }
 }
 
 # Purpose: Output something when in debug mode
