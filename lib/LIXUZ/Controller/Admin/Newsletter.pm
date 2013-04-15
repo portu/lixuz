@@ -159,7 +159,10 @@ sub export : Local
         {
             while(my $group = $groups->next)
             {
-                push(@groups,$group->group->group_name);
+                if ($group->group)
+                {
+                    push(@groups,$group->group->group_name);
+                }
             }
         }
         $csv->print($c->res, [ $entry->id, $entry->email, $entry->name, $entry->format, $entry->send_every, join('+',@groups) ]);
