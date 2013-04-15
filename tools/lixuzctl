@@ -2089,7 +2089,7 @@ sub installPackage
     if (-e $dir.'/lpkversion')
     {
         my $lpkVersionContent = slurp($dir.'/lpkversion');
-        $lpkVersionContent =~ s/^#.\n?//g;
+        $lpkVersionContent =~ s/^#.*\n?//g;
         @lpkversion = split('/',$lpkVersionContent);
     }
     my $packageVersion    = $lpkversion[0] // 0;
