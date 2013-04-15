@@ -813,6 +813,11 @@ sub packages
             }
         }
 
+        when('verify')
+        {
+            verifyPackages();
+        }
+
         when('owner')
         {
             checkPackageOwners('output',@ARGV);
@@ -839,6 +844,7 @@ sub usagePackages
     printHelp('','install X','Install a new package, located at X');
     printHelp('','remove X','Remove the package X');
     printHelp('','upgrade X','Upgrade a package using the package located at X');
+    printHelp('','verify','Verify installed packages');
     printHelp('','build X?','Build a package using data at X (where X defaults to ./)');
     printHelp('','buildinstall X','Runs build X, and then installs the package generated');
     printHelp('','owner X Y ..','Output which package (if any) owns the files specified');
@@ -1083,6 +1089,68 @@ my $triggers; $triggers = {
     mkdir($path.'/liveTemplates/');
     print 'Create: '.$path.'/liveTemplates'."\n";
     exit(0);
+}
+
+# Purpose: Verify installed packages
+sub verifyPackages
+{
+    printnd('Verifying packages...');
+    my $meta = loadMetaFile();
+    my @errors;
+    foreach my $package (keys %{ $meta->{packages} })
+    {
+        printd('Checking '.$package);
+        foreach my $checkType (qw(metaFiles files))
+        {
+            printd(' - '.$checkType);
+            foreach my $file (@{ $meta->{packages}->{$package}->{$checkType} })
+            {
+                printnd( '.' );
+                my $pre = $lixuzDir;
+                if ($checkType eq 'metaFiles')
+                {
+                    $pre .= '/.packageMeta/'.$package.'/';
+                }
+                if ( ! -e $pre.'/'.$file)
+                {
+                    push(@errors,$package.': file missing: '.$file);
+                }
+            }
+        }
+        printd(' - templates');
+        if ($meta->{packages}->{$package}->{templateIDs})
+        {
+            loadLixuzModules();
+            my $fakeC = mockC();
+            my $dbic = getDBIC();
+            foreach my $ID (@{$meta->{packages}->{$package}->{templateIDs}})
+            {
+                printnd( '.' );
+                my $template = $dbic->resultset('LzTemplate')->find({
+                        uniqueid => $ID
+                    });
+                if (!$template)
+                {
+                    push(@errors,$package.': template not installed: '.$ID);
+                }
+                elsif(! -e $template->path_to_template_file($fakeC))
+                {
+                    push(@errors,$package.': template installed, but template file missing: '.$ID.' ('.$template->path_to_template_file($fakeC).')');
+                }
+            }
+        }
+    }
+    if(@errors)
+    {
+        printnd("issues found\n");
+        print join("\n",@errors)."\n";
+        print "In order to resolve these issues you will need to reinstall the\n";
+        print "affected packages\n";
+    }
+    else
+    {
+        printnd( "done\n" );
+    }
 }
 
 # ---
