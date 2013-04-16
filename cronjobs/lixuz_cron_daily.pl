@@ -528,7 +528,7 @@ sub updateIndex
 }
 
 # Perform expensive article fixes (ie. missing revision metadata, missing workflows,
-# missing primary folder etc.
+# missing primary folder etc.)
 sub performExpensiveArticleFixes
 {
     title('Article sanitychecks','Performing expensive article sanity checks and fixing any issues found...');
@@ -607,6 +607,13 @@ sub performExpensiveArticleFixes
                     };
                 };
             }
+        }
+        # Articles with an invalid template_id
+        if (defined $art->template_id && !$art->template)
+        {
+            printd('Article '.$art->article_id.'/'.$art->revision.' referred to a template that no longer exists: '.$art->template_id);
+            $art->set_column('template_id',undef);
+            $art->update;
         }
     }
 }
