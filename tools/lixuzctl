@@ -1422,8 +1422,11 @@ sub removeTemplate
         return;
     }
     my $file = $config->{LIXUZ}->{template_path}.'/'.$template->get_column('file');
-    unlink($file) or die($errorPrefix.': Failed to unlink '.$file.': '.$!."\n");
-    printd('Removed '.$file);
+    if (-e $file)
+    {
+        unlink($file) or die($errorPrefix.' Failed to unlink '.$file.': '.$!."\n");
+        printd('Removed '.$file);
+    }
     $template->delete;
     printd('Removed database entry for '.$id);
     printnd('Removed '.$id."\n");
