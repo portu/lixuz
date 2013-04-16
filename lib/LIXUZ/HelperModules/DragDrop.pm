@@ -562,9 +562,19 @@ sub _buildXHTMLTree
     my $database = shift;
     my $noWrap = shift;
     my $nodeNo = 0;
-    my @RootObjs = $database->search({
-        $self->{db_parent} => \'IS NULL',
-    });
+    my @RootObjs;
+    if ($self->{modelName} eq 'LIXUZDB::LzFolder')
+    {
+        @RootObjs = $database->search({
+            $self->{db_parent} => \'IS NULL',
+        }, { order_by => 'folder_order,folder_id' });
+    }
+    else
+    {
+        @RootObjs = $database->search({
+            $self->{db_parent} => \'IS NULL',
+        });
+    }
     my $content = '';
     if(not $noWrap)
     {
@@ -604,9 +614,19 @@ sub _buildXHTMLTreeNode
         return;
     }
     my $database = shift;
-    my @Objs = $database->search({
-        $self->{db_parent} => $nodeObj->get_column($self->{db_uid}),
-    });
+    my @Objs;
+    if ($self->{modelName} eq 'LIXUZDB::LzFolder')
+    {
+        @Objs = $database->search({
+            $self->{db_parent} => $nodeObj->get_column($self->{db_uid}),
+        }, { order_by => 'folder_order,folder_id' });
+    }
+    else
+    {
+        @Objs = $database->search({
+            $self->{db_parent} => $nodeObj->get_column($self->{db_uid}),
+        });
+    }
     $$content .= $self->_getSingleNodeXHTML(
         $nodeObj->get_column($self->{db_uid}),
         $nodeNo,
