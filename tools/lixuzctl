@@ -1218,6 +1218,40 @@ sub templates
                 printf($fmt,$template->uniqueid,$template->type.$default,$template->name);
             }
         }
+
+        when('setdefault')
+        {
+            my $template = shift(@ARGV);
+            if (!$template)
+            {
+                die('setdefault requires a parameter: the template which is to be set as the default'."\n");
+            }
+            print "\n";
+            printnd('Initializing database access ...');
+            loadLixuzModules();
+
+            printd('Fetching DBIC');
+            my $dbic = getDBIC();
+            my $fmt = "%-35s %-18s %s\n";
+
+            my $tplObject = $dbic->resultset('LzTemplate')->find({ uniqueid => $template });
+            printnd("done\n");
+            if (!$tplObject)
+            {
+                die("Failed to locate any template with the unique ID $template\n");
+            }
+            if ($tplObject->is_default)
+            {
+                print "$template: is already the default template for ".$tplObject->type."\n";
+                exit(0);
+            }
+            printnd("Setting $template as the default handler for ".$tplObject->type."...");
+            $dbic->resultset('LzTemplate')->search({ type => $tplObject->type })->update({ is_default => 0 });
+            $tplObject->set_column('is_default',1);
+            $tplObject->update;
+            printnd("done\n");
+        }
+
         when('info')
         {
             print "\n";
@@ -1259,6 +1293,7 @@ sub usageTemplates
     printHelp('','inject X','Install or upgrade the supplied live template file');
     printHelp('','remove X','Remove the template identified by the supplied unique ID X. If X is in the form /X/ then it is treated as a regular expression, and all templates whose uniqueid matches this regular expression gets removed.');
     printHelp('','list','List all installed templates');
+    printHelp('','setdefault X','Set the template X as the default template for its type (where X is a full template unique id)');
     exit(shift);
 }
 
