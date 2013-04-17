@@ -329,6 +329,45 @@ sub refreshTemplate
     $self->_templateInfo($self->_getTemplateInfo);
 }
 
+# Summary: Call the internal data handler for the supplied data
+# Usage: $resolver->autoResolveDataRequest(RESOLVER, WANTED, PARAMS);
+#
+# Example:
+# $resolver->autoResolveDataRequest('article','list', { catid => 17, limit => 5, as => test });
+#  is equivalent to
+# NeedsInfo = article_list_[catid=17,limit=5,as=test]
+#
+# RESOLVER is the resolver to use, this would be the first parameter in
+# "NeedsInfo" lines, ie. "article" in the example.
+#
+# WANTED is the kind of data we're requesting, somewhat equivalent to a method
+# call on a class, ie. "list" in the example.
+#
+# PARAMS is a hashref of parameters, which is what is provided between the brackets
+# in template requests.
+sub autoResolveDataRequest
+{
+    my $self   = shift;
+    my $source = shift;
+    my $fetch  = shift;
+    my $params = shift;
+    my $resolver = $self->_get_resolver_for($source);
+    my $resolved = $resolver->get($fetch,$params);
+    if(not defined $resolved)
+    {
+        return;
+    }
+    if (!ref($resolved) eq 'HASH')
+    {
+        die('Resolver for '.$source.' did not return a hashref'."\n");
+    }
+    foreach my $k (keys %{$resolved})
+    {
+        $self->resolve_var($k,$resolved->{$k});
+    }
+    return;
+}
+
 # -- Private Methods ---
 # These methods should not be considered in any way API stable.
 
@@ -389,29 +428,6 @@ sub _fetchCachedHash
     return {};
 }
 
-sub _resolve_entry
-{
-    my $self   = shift;
-    my $source = shift;
-    my $fetch  = shift;
-    my $params = shift;
-    my $resolver = $self->_get_resolver_for($source);
-    my $resolved = $resolver->get($fetch,$params);
-    if(not defined $resolved)
-    {
-        return;
-    }
-    if (!ref($resolved) eq 'HASH')
-    {
-        die('Resolver for '.$source.' did not return a hashref'."\n");
-    }
-    foreach my $k (keys %{$resolved})
-    {
-        $self->resolve_var($k,$resolved->{$k});
-    }
-    return;
-}
-
 sub _resolve_deps
 {
     my $self = shift;
@@ -423,7 +439,7 @@ sub _resolve_deps
         {
             foreach my $params (@{$entries->{$source}->{$fetch}})
             {
-                $self->_resolve_entry($source,$fetch,$params);
+                $self->autoResolveDataRequest($source,$fetch,$params);
             }
         }
     }
@@ -435,7 +451,7 @@ sub _resolve_files
     my $self = shift;
     my $spots = shift;
 
-    $self->_resolve_entry('Files','fileSpots',$spots);
+    $self->autoResolveDataRequest('Files','fileSpots',$spots);
     return;
 }
 
