@@ -174,7 +174,7 @@ sub resolve_var
 {
     my $self = shift;
     my ($var,$val) = @_;
-    if (defined $self->_resolved->{$var})
+    if ($self->has_var($var))
     {
         $self->c->log->warn('TemplateRenderer: Variable "'.$var.'" is being resolved for the second time.');
         $self->c->log->warn('       old value: '.$self->_resolved->{$var});
@@ -195,6 +195,20 @@ sub has_var
         return 1;
     }
     return;
+}
+
+# Summary: Remove a resolved variable
+# Returns true if the variable existed and was removed, 0 otherwise
+sub unresolve_var
+{
+    my $self = shift;
+    my $var = shift;
+    if ($self->has_var($var))
+    {
+        delete($self->_resolved->{$var});
+        return 1;
+    }
+    return 0;
 }
 
 # Summary: Retrieve a resolved variable
