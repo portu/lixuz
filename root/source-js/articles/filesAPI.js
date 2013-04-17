@@ -388,8 +388,16 @@ var articleFiles = {
             });
         }
 
+        var template_id;
+        try
+        {
+            template_id = $L('template_id').value;
+        } catch(e)
+        {
+            template_id = 'undef';
+        };
         JSON_multiRequest([ '/admin/services/templateInfo', '/admin/articles/JSON/getTakenFileSpots' ], {
-                'template_id':$L('template_id').value,
+                'template_id':template_id,
                 'get':'spotlist',
                 'article_id':$L('artid').value,
                 'type':type
