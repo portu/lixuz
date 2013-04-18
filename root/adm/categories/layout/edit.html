@@ -29,29 +29,31 @@
 <table id="contentFrame">
     <tr>
         <td style="border-right:1px solid #9BB8CF"> 
-            <div class="heightLimitedSection heightLimitedLayout" data-limitgroup=".heightLimitedLayout">
-                <table>
+                <table style="width:100%">
                     <tr>
-                        <td class="left">
-                            <& left.html, %ARGS &>
+                        <td class="left" style="width:40%; min-width:200px;">
+                            <div class="heightLimitedSection heightLimitedLayout" data-limitgroup=".heightLimitedLayout" data-hideblock="#ddcontents" data-subtract="20">
+                                <& left.html, %ARGS &>
+                            </div>
                         </td>
-                        <td style="min-width:320px;">
-                            <form action="/admin/categories/layout/renderCatArticleList/<% $category_id %>" method="get" id="list_search" name="list_search">
-                                <input type="hidden" name="category_id" id="category_id" value="<% $category_id %>" />
-                                <input type="hidden" name="folder_id" id="folder_id" />
-                                <input type="text" name="query" id="query" />
-                                <input id="list_submit_search" name="_submit" type="button" value="<% $i18n->get('Search')  |n %>" />
-                            </form>
-                            <div id="listdiv">
-                                <% $i18n->get('Loading ...') |n %>
+                        <td style="min-width:320px; width:49%">
+                            <div class="heightLimitedSection heightLimitedLayout" data-limitgroup=".heightLimitedLayout" data-hideblock="#ddcontents" data-subtract="20">
+                                <form action="/admin/categories/layout/renderCatArticleList/<% $category_id %>" method="get" id="list_search" name="list_search">
+                                    <input type="hidden" name="category_id" id="category_id" value="<% $category_id %>" />
+                                    <input type="hidden" name="folder_id" id="folder_id" />
+                                    <input type="text" name="query" id="query" />
+                                    <input id="list_submit_search" name="_submit" type="button" value="<% $i18n->get('Search')  |n %>" />
+                                </form>
+                                <div id="listdiv">
+                                    <% $i18n->get('Loading ...') |n %>
+                                </div>
                             </div>
                         </td>
                     </tr>
                 </table>
-            </div>
         </td>
         <td>
-            <div class="heightLimitedSection heightLimitedLayout" data-limitgroup=".heightLimitedLayout">
+            <div class="heightLimitedSection heightLimitedLayout" data-limitgroup=".heightLimitedLayout" data-hideblock="#ddcontents" data-subtract="20">
                 <div id="spotArea" style="color:#999999;">
                     <& layout.html, %ARGS &>
                 </div>    
