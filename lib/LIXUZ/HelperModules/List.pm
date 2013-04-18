@@ -170,13 +170,9 @@ sub handleListRequest
     # Get the form
     my $form;
     my $query = $self->query;
-    if ($self->formbuilder)
+    if ($self->can('formbuilder') && $self->formbuilder)
     {
         $form = $self->formbuilder;
-    }
-    else
-    {
-        $self->c->log->warn('no formbuilder');
     }
     # I18n object
     my $i18n = $self->c->stash->{i18n};
