@@ -400,18 +400,22 @@ sub shortText
     my $self = shift;
     my $column = shift;
     my $length = shift;
+    my $content = shift;
     $length = $length ? $length : 30;
 
-    my $str = $self->get_column($column);
-
-    if(not defined $str or not length($str) > $length)
+    if (!defined $content)
     {
-        return $str;
+        $content = $self->get_column($column);
     }
 
-    $str = substr($str, 0, $length - 3);
-    $str .='...';
-    return $str;
+    if(not defined $content or not length($content) > $length)
+    {
+        return $content;
+    }
+
+    $content = substr($content, 0, $length - 3);
+    $content .='...';
+    return $content;
 }
 
 # Summary: Get a title for this article with XHTML <br />'s separating words that are too long so that
