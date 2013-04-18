@@ -143,20 +143,18 @@ sub renderCatArticleList : Local Args Form('/core/search')
     {
         die('Ended up without any articles RS');
     }
+    $c->req->params->{orderby} = 'modified_time';
+    $c->req->params->{ordertype} = 'DESC';
+    $c->req->params->{status_id} = 2;
     my $query = $c->req->param('query');
-    my $listRequest = {
-            object => $articles,
-            objectName => 'artlist',
-            template => 'adm/categories/layout/list.html',
-            orderParams => [qw(article_id title status_id modified_time assigned_to_user author)],
-            searchColumns => [qw/title article_id body lead/],
-            paginate => 1,
-    };
-    if(defined $query && length $query)
-    {
-        $listRequest->{query} = $query;
-    }
-    $self->handleListRequest($c,$listRequest);
+    my $result = $c->forward(qw( LIXUZ::Controller::Admin::Articles retrieveArticles ),[
+            $c->model('LIXUZDB::LzArticle'),
+            $query,
+            undef,
+            0
+        ]);
+    $c->stash->{artlist} = $result;
+    $c->stash->{template} = 'adm/categories/layout/list.html';
 }
 
 sub save : Local
