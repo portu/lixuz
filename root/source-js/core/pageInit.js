@@ -104,7 +104,8 @@
                 $heightLimited.each(function()
                 {
                     var $this = $(this),
-                        outerHeight, winHeight, present = false;
+                        outerHeight, winHeight, present = false,
+                        $hideBlock = $this;
                     if($this.data('alreadyLimited'))
                     {
                         return;
@@ -113,12 +114,20 @@
                     {
                         $this = $( $this.data('limitgroup') );
                     }
+                    if($this.data('hideblock'))
+                    {
+                        $hideBlock = $( $this.data('hideblock') );
+                    }
 
-                    $this.hide();
+                    $hideBlock.hide();
                     winHeight = $(window).height();
                     outerHeight = $('body').height();
-                    $this.show();
+                    $hideBlock.show();
                     maxHeight = winHeight - outerHeight;
+                    if($this.data('subtract'))
+                    {
+                        maxHeight = maxHeight - parseInt($this.data('subtract'),10);
+                    }
 
                     $this.css({
                         'height':maxHeight,
