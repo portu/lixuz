@@ -18,7 +18,7 @@ if(defined $artlist && $artlist->count > 0)
         }
 
         my $art_lead = $art->lead;
-        my $list_lead = $art->shortText('lead',150);
+        my $list_lead = $art->shortText('lead',150,$art->text_lead);
         if(not defined $art_lead or not length $art_lead)
         {
             $art_lead = '';
@@ -36,9 +36,10 @@ if(defined $artlist && $artlist->count > 0)
             }
         }
         push(@arl,$art->to_hash);
+        my $list_title_escaped = ($list_title =~ s/[<>]//g);
             </%perl>
 
-<div id="makeMeDraggable<% $i++ %>" class="makeMeDraggable" data-artid="<% $art->article_id %>" data-arttitle="<%$list_title %>" data-artimage="<% $imgpath %>" data-artlead="<%$list_lead |n %>">
+<div id="makeMeDraggable<% $i++ %>" class="makeMeDraggable" data-artid="<% $art->article_id %>" data-arttitle="<%$list_title_escaped %>" data-artimage="<% $imgpath %>" data-artlead="<%$list_lead |n %>">
      <% $art->article_id %> - <%$list_title %>
 </div>
 %   }
