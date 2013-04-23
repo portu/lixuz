@@ -878,15 +878,21 @@ sub runPackageTrigger
 
     my $origDir = getcwd;
     my $file;
+    my $switchTo;
     if ($trigger =~ /^build\w*$/)
     {
         $file = shift;
-        chdir(dirname($file));
+        $switchTo = dirname($file);
     }
     else
     {
         $file = $lixuzDir.'/.packageMeta/'.$package.'/triggers.pl';
-        chdir($lixuzDir);
+        $switchTo = $lixuzDir;
+    }
+    if ($switchTo ne $origDir)
+    {
+        chdir($switchTo) or die('Failed to chdir('.$switchTo.'): '.$!);
+        printd('Switched to '.$switchTo.' for the duration of the trigger');
     }
     if (-e $file)
     {
@@ -1889,7 +1895,7 @@ sub buildPackage
         printStatus('Running trigger: buildConstruct...');
         try
         {
-            runPackageTrigger($packageName,'buildConstruct',$srcdir.'/triggers.pl');
+            runPackageTrigger($packageName,'buildConstruct',$dir.'/triggers.pl');
         }
         catch
         {
