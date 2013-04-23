@@ -19,6 +19,7 @@ lib/LIXUZ/Controller/SiteHacks/
 .lixuzctl.data
 .pluginMeta
 .packageMeta
+.lixuzctl*.tmp
 root/source-js/handlebartemplates
 
 # Lixuz packages
