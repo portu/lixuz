@@ -584,6 +584,14 @@ sub isTemporary
     return $file =~ /(\.sw[po]|~)$/;
 }
 
+# Purpose: Load a config file
+sub loadConfig
+{
+    my $path = shift;
+    my $config = Config::Any->load_files({ files => [ $path ], use_ext => 1});
+    return $config->[0]->{$path};
+}
+
 # ---
 # Database functions
 # ---
@@ -1766,8 +1774,7 @@ sub buildPackage
             'Rename plugin/ to content/ and try again.'."\n");
     }
 
-    my $meta = Config::Any->load_files({ files => [ $srcdir.'/package.yml' ], use_ext => 1});
-    $meta = $meta->[0]->{$srcdir.'/package.yml'};
+    my $meta = loadConfig($srcdir.'/package.yml');
 
     foreach my $setting (qw(name version apiversion license))
     {
