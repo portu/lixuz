@@ -679,8 +679,7 @@ sub openMysqlConsole
     {
         die('Failed to find a directory to put our temporary file in.'."\n");
     }
-    loadLixuzModules();
-    my $config = getConfig();
+    my $config = loadConfig($lixuzDir.'/lixuz.yml');
     my ($fh,$tempfile) = tempfile('.lixuzctlXXXXXXXXX',SUFFIX => '.tmp', DIR => $targetDir );
     chmod(0600,$tempfile);
     print {$fh} '# Temporary file written by lixuzctl to invoke mysql'."\n";
