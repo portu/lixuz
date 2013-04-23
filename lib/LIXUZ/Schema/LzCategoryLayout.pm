@@ -66,11 +66,12 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
   },
 );
-__PACKAGE__->set_primary_key("article_id","category_id");
+__PACKAGE__->set_primary_key("category_id", "article_id", "template_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-06-28 09:11:41
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:lFIxnbTkVjRnZrhn1WkOAg
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2013-04-23 14:11:54
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:uu0Y4c9s81/jStuujM2UXQ
+
 __PACKAGE__->belongs_to('article' => 'LIXUZ::Schema::LzArticle',{article_id=>'article_id'});
 __PACKAGE__->belongs_to('template','LIXUZ::Schema::LzTemplate', 'template_id');
 __PACKAGE__->belongs_to('category' => 'LIXUZ::Schema::LzCategory', 'category_id');
