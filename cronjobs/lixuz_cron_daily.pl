@@ -87,12 +87,14 @@ sub main
     {
         fixSelfReferencingArticles();
         fixMissingStatuses();
+        fixLiveExclusive();
         fixFolderFields();
         fixStatuschangeActions();
         addMissingLzAction();
         fixWorkflowReassignACL();
         fixArticleIssues();
         performExpensiveArticleFixes();
+        fixArticleStatusIssues();
         dropBrokenMetaObjects();
         performTreeRecursionChecks();
     }
@@ -234,6 +236,10 @@ sub runCron
     };
     tryRun
     {
+        fixLiveExclusive();
+    };
+    tryRun
+    {
         fixFolderFields();
     };
     tryRun
@@ -267,6 +273,10 @@ sub runCron
         tryRun
         {
             performExpensiveArticleFixes();
+        };
+        tryRun
+        {
+            fixArticleStatusIssues();
         };
         tryRun
         {
@@ -322,6 +332,13 @@ sub fixMissingStatuses
 {
     title('missing statuses','Checking for and fixing articles with no status...');
     $dbh->do('UPDATE lz_article SET status_id=4 WHERE status_id IS NULL;');
+}
+
+# Ensure the live status is exclusive
+sub fixLiveExclusive
+{
+    title('exclusive live','Ensuring live is an exclusive status...');
+    $dbh->do('UPDATE lz_status SET exclusive=1 WHERE status_id=2;');
 }
 
 # Folders without a single field, and folders missing essential fields
@@ -614,6 +631,81 @@ sub performExpensiveArticleFixes
             printd('Article '.$art->article_id.'/'.$art->revision.' referred to a template that no longer exists: '.$art->template_id);
             $art->set_column('template_id',undef);
             $art->update;
+        }
+    }
+}
+
+# Ensure articles only have a single exclusive status set (expensive)
+sub fixArticleStatusIssues
+{
+    title('Article exclusive status checks','Ensuring articles only have a single exclusive status');
+    my $statuses = $fakeC->model('LIXUZDB::LzStatus')->search();
+    my @exclusiveStatuses;
+    while(my $status = $statuses->next)
+    {
+        if ($status->exclusive)
+        {
+            push(@exclusiveStatuses,$status->status_id);
+        }
+    }
+    my %processed;
+    my $articles = $fakeC->model('LIXUZDB::LzArticle')->search({
+            status_id => { -in => \@exclusiveStatuses },
+        }, { order_by => 'revision DESC' });
+
+    while(my $article = $articles->next)
+    {
+        if ($processed{ $article->article_id })
+        {
+            $article->set_column('status_id',4);
+            $article->update;
+        }
+        next if $processed{ $article->article_id };
+
+        if (!$article->revisionMeta->is_latest_exclusive_status)
+        {
+            my $meta = $article->revisionMeta;
+
+            $fakeC->model('LIXUZDB::LzRevision')->search({
+                    type => 'article',
+                    type_id => $article->article_id,
+                })->update({
+                    is_latest_exclusive_status => 0,
+                });
+        }
+        $processed{$article->article_id} = 1;
+    }
+
+    title('Article status checks','Ensuring revision metadata on articles are correct');
+    foreach my $artid (keys %processed)
+    {
+        $statuses->reset;
+        while(my $status = $statuses->next)
+        {
+            my $articlesInStatus = $fakeC->model('LIXUZDB::LzArticle')->search({
+                    article_id => $artid,
+                    status_id => $status->status_id,
+                },
+                {
+                    order_by => 'revision DESC'
+                });
+            my $first = 1;
+            while(my $article = $articlesInStatus->next)
+            {
+                if ($first)
+                {
+                    $article->revisionMeta->update({ is_latest_in_status => 1 });
+                    $first = 0;
+                }
+                else
+                {
+                    $article->revisionMeta->update({ is_latest_in_status => 0 });
+                }
+                if (! $status->exclusive && $article->revisionMeta->is_latest_exclusive_status)
+                {
+                    $article->revisionMeta->update({ is_latest_exclusive_status => 0 });
+                }
+            }
         }
     }
 }
