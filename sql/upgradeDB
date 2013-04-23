@@ -445,6 +445,10 @@ sub upgradeData
         {
             convertFieldValToDatetime($c);
         }
+        if ($flags{dbConsistency})
+        {
+            performDbConsistency();
+        }
         silent
         {
             mysql_exec('DROP TABLE lz_workflow_change');
@@ -708,6 +712,19 @@ sub reIndexDB
     logSystem('./cronjobs/lixuz_cron_daily.pl','--strict','--verbose','--reindex','--onlyindex');
 }
 
+# Perform consistency checks
+sub performDbConsistency
+{
+    print "\nChecking the database for consistency issues and fixng them:\n";
+    lixuzctl('database','check');
+}
+
+# Run lixuzctl
+sub lixuzctl
+{
+    logSystem('./tools/lixuzctl',@_);
+}
+
 # Detect upgrade flags
 sub detectFlags
 {
@@ -817,6 +834,17 @@ sub detectFlags
         if (! $DBI::errstr)
         {
             $flags{fileFolder} = 1;
+        }
+    };
+    print '.';
+    # Trigger database consistency checks if needed
+    silent
+    {
+        my $classes = $rawDBH->selectall_arrayref('SELECT COUNT(*) FROM lz_status WHERE exclusive=1');
+
+        if(not $classes or $classes->[0]->[0] <= 0)
+        {
+            $flags{dbConsistency} = 1;
         }
     };
     print '.';
