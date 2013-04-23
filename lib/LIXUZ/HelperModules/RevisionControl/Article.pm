@@ -135,17 +135,30 @@ sub _addRootID
 after '_commit' => sub
 {
     my $self = shift;
-    if ($self->_root->status_id == 2)
+    my $statuses = $self->_getSchema('LzStatus')->search({ exclusive => 1 });
+    my $wasExclusive = 0;
+    my @exclusiveStatuses;
+    while(my $status = $statuses->next)
+    {
+        push(@exclusiveStatuses,$status->status_id);
+        if ($self->_root->status_id == $status->status_id)
+        {
+            $wasExclusive = 1;
+            $self->_root->revisionMeta->update({ is_latest_exclusive_status => 1 });
+        }
+    }
+    if ($wasExclusive)
     {
         my $rs = $self->_root->result_source->resultset->search({
             article_id => $self->_root->article_id,
-            status_id => 2
+            status_id => { -in => \@exclusiveStatuses }
             });
         while(my $art = $rs->next)
         {
             next if $art->revision == $self->revision;
             $art->set_column('status_id',4);
             $art->update();
+            $art->revisionMeta->update({ is_latest_exclusive_status => 0 });
         }
     }
 };
