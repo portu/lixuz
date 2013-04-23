@@ -41,6 +41,12 @@ __PACKAGE__->table("lz_status");
   extra: {list => [0,1]}
   is_nullable: 1
 
+=head2 exclusive
+
+  data_type: 'tinyint'
+  default_value: 0
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -55,12 +61,14 @@ __PACKAGE__->add_columns(
     extra => { list => [0, 1] },
     is_nullable => 1,
   },
+  "exclusive",
+  { data_type => "tinyint", default_value => 0, is_nullable => 0 },
 );
 __PACKAGE__->set_primary_key("status_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2012-03-12 12:51:49
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Z4981K1tziubatl1ge6iAg
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2013-04-23 14:11:54
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:e4PQyDSgJ5aiKRMD1UFzXg
 
 
 # LIXUZ content management system

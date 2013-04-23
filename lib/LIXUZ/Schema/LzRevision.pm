@@ -67,6 +67,12 @@ __PACKAGE__->table("lz_revision");
   default_value: 0
   is_nullable: 0
 
+=head2 is_latest_exclusive_status
+
+  data_type: 'tinyint'
+  default_value: 0
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -90,12 +96,14 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_nullable => 1 },
   "is_latest_in_status",
   { data_type => "tinyint", default_value => 0, is_nullable => 0 },
+  "is_latest_exclusive_status",
+  { data_type => "tinyint", default_value => 0, is_nullable => 0 },
 );
 __PACKAGE__->set_primary_key("revision_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2011-03-22 10:56:10
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:vLoGyaaQSJ1UXMp1ZEEurw
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2013-04-23 14:11:54
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:zRu3bby7S3VljFIufSiZ2A
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012

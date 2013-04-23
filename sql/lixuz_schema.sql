@@ -584,6 +584,7 @@ CREATE TABLE `lz_revision` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `committer` int(11) DEFAULT NULL,
   `is_latest_in_status` tinyint(1) NOT NULL DEFAULT '0',
+  `is_latest_exclusive_status` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`revision_id`),
   KEY `revision_meta_standard` (`type_id`,`type_revision`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -652,6 +653,7 @@ CREATE TABLE `lz_status` (
   `status_id` int(11) NOT NULL AUTO_INCREMENT,
   `status_name` varchar(56) DEFAULT NULL,
   `system_status` enum('0','1') DEFAULT '0',
+  `exclusive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`status_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
