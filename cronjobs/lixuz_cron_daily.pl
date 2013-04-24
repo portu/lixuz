@@ -782,13 +782,17 @@ sub dropBrokenMetaObjects
         my $object = $fakeC->model('LIXUZDB::'.$type);
         while(my $obj = $object->next)
         {
-            my $art = $fakeC->model('LIXUZDB::LzArticle')->find({
-                    revision => $obj->revision,
+            my $search = {
                     article_id => $obj->article_id
-                });
+            };
+            if ($obj->can('revision'))
+            {
+                $search->{revision} = $obj->revision;
+            }
+            my $art = $fakeC->model('LIXUZDB::LzArticle')->find($search);
             if (!$art)
             {
-                printd('Deleted '.$type.'-object referring to nonexisting article '.$obj->article_id.'/'.$obj->revision);
+                printd('Deleted '.$type.'-object referring to nonexisting article '.$obj->article_id.($obj->can('revision') ? '/'.$obj->revision : ''));
                 $obj->delete;
             }
         }
