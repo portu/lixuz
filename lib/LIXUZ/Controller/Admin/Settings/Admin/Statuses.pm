@@ -93,6 +93,10 @@ sub edit : Local Args Form('/settings/edit_status')
         value => $status->status_name($c->stash->{i18n}),
     );
     $form->field(
+        name => 'exclusive',
+        value => $status->exclusive,
+    );
+    $form->field(
         name => 'uid',
         value => $status->status_id,
     );
@@ -149,6 +153,7 @@ sub savedata : Private
             $status->set_column($field,$fields->{$field});
         }
     }
+    $status->set_column('exclusive',$fields->{exclusive} ? 1 : 0);
     $status->update();
     return 1;
 }

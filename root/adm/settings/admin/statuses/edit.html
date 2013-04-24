@@ -32,13 +32,22 @@
 %     $formfield->{$field}=$field;
 %}
 %}
-
-<span class="label status_name">
-    <b><% $i18n->get('Status Name') %></b>
-</span>
-<span class="input status_name">
-    <input id="status_name" name="status_name" size="40" type="text" value="<% $formfield->{status_name}{value} %>" />
-</span>
+<div>
+    <span class="label status_name">
+        <b><% $i18n->get('Status Name') %></b>
+    </span>
+    <span class="input status_name">
+        <input id="status_name" name="status_name" size="40" type="text" value="<% $formfield->{status_name}{value} %>" />
+    </span>
+</div>
+<div>
+%    my $title = $i18n->get('An article may only have a single revision that is in an exclusive status at any one time. Older revisions of the article get set to "Inactive" instead.');
+%    $title =~ s/"/&quot;/g; #"
+    <span title="<% $title |n %>" class="useTipsyW">
+        <input id="exclusive" name="exclusive" type="checkbox" <% $formfield->{exclusive}{value} ? 'CHECKED="CHECKED"' : '' %> />
+        <label for="exclusive"><% $i18n->get('Exclusive status') |n %></label>
+    </span>
+</div>
       <div class="submit"><% $FormBuilder->submit |n %></div>
       <div class="reset"><% $FormBuilder->reset |n %></div>
 <% $FormBuilder->end |n %>

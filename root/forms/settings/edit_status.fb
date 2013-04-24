@@ -8,3 +8,5 @@ fields:
         type: text
         size: 40
         required: 1
+    exclusive:
+        required: 0
