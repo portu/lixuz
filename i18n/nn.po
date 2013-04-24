@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: LIXUZ (Mon Feb 14 14:51:18 2011)\n"
 "Report-Msgid-Bugs-To: https://github.com/portu/lixuz/issues\n"
 "POT-Creation-Date: 2013-04-24 10:43+0200\n"
-"PO-Revision-Date: 2013-03-25 16:41+0100\n"
+"PO-Revision-Date: 2013-04-24 10:44+0200\n"
 "Last-Translator: Eskild Hustvedt <eskild@portu.no>\n"
 "Language-Team: Norwegian Nynorsk <i18n-no@lister.ping.uio.no>\n"
 "Language: nn\n"
@@ -2181,12 +2181,11 @@ msgstr "Statusnamn"
 msgid ""
 "An article may only have a single revision that is in an exclusive status at "
 "any one time. Older revisions of the article get set to \"Inactive\" instead."
-msgstr ""
+msgstr "Ein artikkel kan berre ha ein enkelt revisjon som er i ein eksklusiv status. Eldre revisjonar av artikkelen vart sett til «Inaktiv»."
 
 #: root/adm/settings/admin/statuses/edit.html:48
-#, fuzzy
 msgid "Exclusive status"
-msgstr "Rediger statuser"
+msgstr "Eksklusiv status"
 
 #: root/adm/settings/admin/adfields/adfieldlist.html:27
 msgid "Field ID"
