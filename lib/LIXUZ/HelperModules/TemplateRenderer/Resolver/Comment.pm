@@ -28,7 +28,6 @@ sub get
 {
     my($self,$type,$params) = @_;
 
-    # TODO: Replace with given/when when we've migrated to 5.10
     if($type eq 'list')
     {
         return $self->get_list($params);
