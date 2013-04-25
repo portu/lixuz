@@ -68,13 +68,15 @@ sub edit : Local Args
             my @catarray               = $category->get_category_tree($c);
             my $catname                = '/'.join('/',reverse(@catarray));
 
-            my $template = $c->model('LIXUZDB::LzTemplate')->find({ type => 'list', is_default => 1});
+            my $template               = $c->model('LIXUZDB::LzTemplate')->find({ type => 'list', is_default => 1});
+
+            my $layoutMeta             = $template->get_layout_meta($c);
 
             $c->stash->{category_id}   = $cat_id;
             $c->stash->{templateObj}   = $template;
             $c->stash->{category_name} = $catname;
             $c->stash->{pageTitle}     = $i18n->get('Category layout');
-            $c->stash->{articles}      = $category->orderedRS($c);
+            $c->stash->{articles}      = $category->orderedRS($c,$layoutMeta->{listmeta});
 
             my $dnd = LIXUZ::HelperModules::DragDrop->new($c,'LIXUZDB::LzFolder','/admin/articles/folderAjax/',
                 {
