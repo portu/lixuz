@@ -461,7 +461,7 @@ sub _toplevelChildrenFetcher
 {
     my($self,$c) = @_;
     my $children = $c->model('LIXUZDB::LzCategory')->search({ '-or' => [ {root_parent => $self->category_id}, {parent => $self->category_id}]}, { columns => [ 'category_id']});
-    my @categories = ( scalar $self->category_id );
+    my @categories = $self->category_id;
     while(my $child = $children->next)
     {
         push(@categories,$child->category_id);
@@ -471,7 +471,8 @@ sub _toplevelChildrenFetcher
 
 sub _getFoldersFromCategories
 {
-    my($self,$c) = @_;
+    my $self = shift;
+    my $c = shift;
     my @folderList;
     my @folderSearch;
     while(my $category = shift(@_))
