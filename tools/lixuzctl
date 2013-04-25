@@ -271,7 +271,7 @@ sub loadMetaFile
     my $metaFile;
     if (-e $lixuzDir.'/.lixuzctl.data')
     {
-        $metaFile = decode_json(slurp($lixuzDir.'/.lixuzctl.data'));
+        $metaFile = readJSON($lixuzDir.'/.lixuzctl.data');
     }
     $metaFile //= {};
     $metaFile->{formatRevision} //= $dataFormatRevision;
@@ -320,6 +320,13 @@ sub writeFile
     print {$out} $content or die("Failed to write content to $file: $!\n");
     close($out) or die("Failed to close $file after writing: $!\n");
     return true;
+}
+
+# Purpose: Reads a JSON file, parses it and returns the datastructure
+sub readJSON
+{
+    my $file = shift;
+    return decode_json(slurp($file));
 }
 
 # Purpose: Reads a YML file, parses it and returns the datastructure
