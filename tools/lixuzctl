@@ -537,6 +537,10 @@ sub copyFile
 {
     my $source = shift;
     my $destination = shift;
+    if (! -e dirname($destination))
+    {
+        mkpath(dirname($destination));
+    }
     if (-l $source)
     {
         my $target = readlink($source);
