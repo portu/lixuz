@@ -275,7 +275,7 @@ sub orderedRS
                 }
 
                 # Retrieve a list of all of the live articles in $layout
-                $ordered = get_live_articles_from($layout->search_related('article'));
+                $ordered = get_live_articles_from($layout->search_related('article'), $info);
                 if (!$ordered)
                 {
                     return;
@@ -299,7 +299,7 @@ sub orderedRS
                 {
                     $newerSearch->{publish_time} = { '>' => $newerThan };
                 }
-                $newer = $self->get_live_articles($c)->search($newerSearch,
+                $newer = $self->get_live_articles($c,$info)->search($newerSearch,
                     {
                         limit => $total,
                         order_by => 'publish_time DESC'
@@ -336,7 +336,7 @@ sub orderedRS
                 if( (my $remaining = ($total - scalar(@entries) )) > 0)
                 {
                     # Retrieve the older articles
-                    $older = $self->get_live_articles($c)->search({
+                    $older = $self->get_live_articles($c,$info)->search({
                                 'me.article_id' => { -not_in => \@present }
                             },
                             {
