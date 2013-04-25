@@ -565,7 +565,7 @@ sub copyFile
     }
     if (!copy($source,$destination))
     {
-        warn('Failed top copy '.$source.' to '.$destination.': '.$!."\n");
+        warn('Failed to copy '.$source.' to '.$destination.': '.$!."\n");
         return;
     }
     if (-d $destination)
