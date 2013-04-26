@@ -345,20 +345,6 @@ sub refreshTemplate
 
 # Summary: Call the internal data handler for the supplied data
 # Usage: $resolver->autoResolveDataRequest(RESOLVER, WANTED, PARAMS);
-#
-# Example:
-# $resolver->autoResolveDataRequest('article','list', { catid => 17, limit => 5, as => test });
-#  is equivalent to
-# NeedsInfo = article_list_[catid=17,limit=5,as=test]
-#
-# RESOLVER is the resolver to use, this would be the first parameter in
-# "NeedsInfo" lines, ie. "article" in the example.
-#
-# WANTED is the kind of data we're requesting, somewhat equivalent to a method
-# call on a class, ie. "list" in the example.
-#
-# PARAMS is a hashref of parameters, which is what is provided between the brackets
-# in template requests.
 sub autoResolveDataRequest
 {
     my $self   = shift;
@@ -671,6 +657,27 @@ Clears the internal state of the object. B<Use with caution>. It will not
 completely empty the object, so it will not be quite reset to the state
 it was during construction time. If you need that, you are better off with
 creating a new object.
+
+=item I<autoResolveDataRequest($resolver,$wanted,$params)>
+
+Calls the internal data handler for the supplied data.
+
+$resolver is the resolver to use, this would be the first parameter in
+"NeedsInfo" lines, ie. "article" in the example.
+
+$wanted is the kind of data we're requesting, somewhat equivalent to a method
+call on a class, ie. "list" in the example.
+
+$params is a hashref of parameters, which is what is provided between the brackets
+in template requests.
+
+These two are equivalent:
+    $resolver->autoResolveDataRequest('article','list', { catid => 17, limit => 5, as => test });
+    NeedsInfo = article_list_[catid=17,limit=5,as=test]
+
+One way to think of the above autoResolveDataRequest call is that you're
+telling it to call the "list" method on the resolver class for an "article"
+and provide the catid, limit and as parameters.
 
 =item I<refreshTemplate($template)>
 
