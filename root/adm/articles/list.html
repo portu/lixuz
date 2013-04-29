@@ -39,6 +39,7 @@
         <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'title', ordertype => $ordertype}) %>"><% $i18n->get('Article title') %></a></td>
 %#        <td class="rowHead"><% $i18n->get('Template') %></td>
 %#        <td class="rowHead"><% $i18n->get('Parent') %></td>
+        <& ../core/pluginIncludes.html, %ARGS, relPath => '../articles/', glob => 'list_*.html', type => 'header' &>
         <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'status_id', ordertype => $ordertype}) %>"><% $i18n->get('Status') %></a></td>
         <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'author', ordertype => $ordertype}) %>"><% $i18n->get('Author') %></a></td>
         <td class="rowHead"><a href="<% $c->request->uri_with({ orderby => 'assigned_to_user', ordertype => $ordertype}) %>"><% $i18n->get('Assigned to') %></a></td>
@@ -97,6 +98,7 @@ if($art_title ne $list_title)
 % $c->log->warn('Article '.$article->article_id.' was in our list, even though it isn\'t mine and I can\'t edit nor preview it');
 &nbsp;
 %}
+        <& ../core/pluginIncludes.html, %ARGS, relPath => '../articles/', glob => 'list_*.html', type => 'entry', article => $article &>
 %# TODO: Template should be a link to the template, as should display_type and link should be a link
 %#        <td><% $article->template_id || '&nbsp;'  |n %></td>
 %#        <td><% $article->parent || '&nbsp;'  |n %></td>
