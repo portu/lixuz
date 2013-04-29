@@ -40,13 +40,15 @@ use constant {
 };
 my $verbosity                 = 0;
 # The revision of the data format that we write
-my $dataFormatRevision        = 2;
+my $dataFormatRevision        = 3;
+# The minimum supported revision of the data format we can use
+my $minSupportedDataFormatRev = $dataFormatRevision;
 # The minimum supported api level of plumbing commands
 my $minSupportedApiLevel      = 2;
 # The real (latest) supported api level of plumbing commands
 my $currentSupportedApiLevel  = 5;
 # The revision of the package format that we write
-my $packageFormatRevision     = 2;
+my $packageFormatRevision     = 3;
 # The mimimum supported package format supported
 my $minSupportedPackageFormat = 0;
 # Force an action to complete
@@ -278,10 +280,18 @@ sub loadMetaFile
     $metaFile->{lastWritten} //= time,
     $metaFile->{packages} //= {};
 
-    if ($metaFile->{formatRevision} != $dataFormatRevision && !$force)
+    if ($metaFile->{formatRevision} > $dataFormatRevision || $metaFile->{formatRevision} < $minSupportedDataFormatRev)
     {
-        die("ERROR: Unknown .lixuzctl.data format revision: ".$metaFile->{formatRevision}."\n".
-        "A version upgrade is required\n");
+        if ($metaFile->{formatRevision} < $minSupportedDataFormatRev)
+        {
+            die("Error: package metadata database format is too old: ".$metaFile->{formatRevision}."\n".
+                "A database upgrade is required (lixuzctl plumbing upgrade)\n") if !$force;
+        }
+        else
+        {
+            die("ERROR: Unknown .lixuzctl.data format revision: ".$metaFile->{formatRevision}."\n".
+            "A Lixuz upgrade is required\n") if !$force;
+        }
     }
     return $metaFile;
 }
@@ -336,6 +346,13 @@ sub readYML
     my $data = Config::Any->load_files({ files => [ $file ], use_ext => 1});
     $data = $data->[0]->{$file};
     return $data;
+}
+
+# Purpose: Return the sha512 sum of a file
+sub sha512_sum
+{
+    my $file = shift;
+    return sha512_hex(slurp($file));
 }
 
 # Purpose: Check if a directory is empty
@@ -455,6 +472,36 @@ sub performVersionUpgrade
         delete($metaFile->{plugins});
         printd('Upgraded meta format revision from 1 to 2');
     }
+    if ($metaFile->{formatRevision} < 3)
+    {
+        foreach my $installedPackage (keys %{$metaFile->{packages}})
+        {
+            if ($metaFile->{packages}->{$installedPackage}->{files})
+            {
+                $metaFile->{packages}->{$installedPackage}->{fileContent} //= [];
+                foreach my $entry ( @{ $metaFile->{packages}->{$installedPackage}->{files} } )
+                {
+                    push(@{ $metaFile->{packages}->{$installedPackage}->{fileContent} }, {
+                            file => $entry,
+                            meta => { checksum => sha512_sum($lixuzDir.'/'.$entry) },
+                        });
+                }
+                delete($metaFile->{packages}->{$installedPackage}->{files});
+            }
+            if ($metaFile->{packages}->{$installedPackage}->{templateIDs})
+            {
+                $metaFile->{packages}->{$installedPackage}->{templateContent} //= [];
+                foreach my $entry ( @{ $metaFile->{packages}->{$installedPackage}->{templateIDs} } )
+                {
+                    push(@{ $metaFile->{packages}->{$installedPackage}->{templateContent} }, {
+                            id => $entry,
+                        });
+                }
+                delete($metaFile->{packages}->{$installedPackage}->{templateIDs});
+            }
+        }
+        printd('Upgraded meta format revision 2 to 3');
+    }
     if (-e $lixuzDir.'/.pluginMeta')
     {
         printd('Migrated .pluginMeta to .packageMeta');
@@ -475,38 +522,50 @@ sub filesDiffer
         return 1;
     }
 
-    my $file1 = shift;
-    my $file2 = shift;
+    my $sourceFile = shift;
+    my $existingFile = shift;
+    my $meta = shift;
     # Special symlink handling
-    if (-l $file1 || -l $file2)
+    if (-l $sourceFile || -l $existingFile)
     {
-        my $file1Link = readlink($file1) // "\0";
-        my $file2Link = readlink($file2) // "\0";
-        if($file1Link ne $file2Link)
+        my $sourceFileLink = readlink($sourceFile) // "\0";
+        my $existingFileLink = readlink($existingFile) // "\0";
+        if($sourceFileLink ne $existingFileLink)
         {
             return 1;
         }
         return 0
     }
     # If one of the files doesn't exist then of course they differ
-    if (! -e $file1 || ! -e $file2)
+    if (! -e $sourceFile || ! -e $existingFile)
     {
         return 1;
     }
     # If their permissions are different, then they differ
-    if(stat($file1)->mode != stat($file2)->mode)
+    if(stat($sourceFile)->mode != stat($existingFile)->mode)
     {
         return 1;
     }
     # If their filesizes are different, then they differ
-    if (-s $file1 != -s $file2)
+    if (-s $sourceFile != -s $existingFile)
     {
         return 1;
     }
+
     # Finally, if their sha512 checksums differ, the files differ
-    if(sha512_hex(slurp($file1)) ne sha512_hex(slurp($file2)))
+    if ($meta && $meta->{checksum})
     {
-        return 1;
+        if($meta->{checksum} ne sha512_sum($existingFile))
+        {
+            return 1;
+        }
+    }
+    else
+    {
+        if(sha512_sum($sourceFile) ne sha512_sum($existingFile))
+        {
+            return 1;
+        }
     }
     # The files are identical
     return 0;
@@ -557,7 +616,7 @@ sub copyFile
             warn('Failed to symlink '.$destination.' to '.$target.': '.$!."\n");
             return;
         }
-        return 1;
+        return { type => 's' };
     }
     if ( -e $destination && !-w $destination)
     {
@@ -573,7 +632,12 @@ sub copyFile
         $destination .= '/'.basename($source);
     }
     chmod(stat($source)->mode,$destination);
-    return 1;
+    my $return = { type => 'f' };
+    if (!$lazyInstall)
+    {
+        $return->{checksum} = sha512_sum($source);
+    }
+    return $return;
 }
 
 # Purpose: Run an action on the cron helper
@@ -882,7 +946,7 @@ sub usagePackages
     print "\n";
     print "Parameters for install and upgrade:\n";
     printHelp('','--force','Force an installation, even if there are conflicts, unsatisfied dependencies etc. This parameter is UNSAFE and could break Lixuz, use only if you know what you\'re doing. Supply twice to bypass additional safety checks.');
-    printHelp('','--lazy','Skip dependency checks');
+    printHelp('','--lazy','Skip dependency checks and don\'t verify checksums');
     print "Parameters for upgrade:\n";
     printHelp('','--force-refresh','Update all files in the tree when upgrading, even if the files in question are identical to those already installed');
     exit(shift);
@@ -959,8 +1023,9 @@ sub checkPackageOwners
         my $owner;
         foreach my $package (keys %{$meta->{packages}})
         {
-            foreach my $pkgFile (@{$meta->{packages}->{$package}->{files}})
+            foreach my $entry (@{$meta->{packages}->{$package}->{fileContent}})
             {
+                my $pkgFile = $entry->{file};
                 if ($file eq realpath($lixuzDir.'/'.$pkgFile))
                 {
                     $owner = $package;
@@ -1002,13 +1067,21 @@ sub listPackageFiles
     {
         foreach my $package (keys %{$meta->{packages}})
         {
-            foreach my $pkgFile (@{$meta->{packages}->{$package}->{files}})
+            if ($meta->{packages}->{$package}->{fileContent})
             {
-                print "$package: $pkgFile\n";
+                foreach my $meta (@{$meta->{packages}->{$package}->{fileContent}})
+                {
+                    my $pkgFile = $meta->{file};
+                    print "$package: $pkgFile\n";
+                }
             }
-            foreach my $templateID (@{$meta->{packages}->{$package}->{templateIDs}})
+            if ($meta->{packages}->{$package}->{templateContent})
             {
-                print "$package: (live template) $templateID\n";
+                foreach my $meta (@{$meta->{packages}->{$package}->{templateContent}})
+                {
+                    my $templateID = $meta->{id};
+                    print "$package: (live template) $templateID\n";
+                }
             }
         }
     }
@@ -1132,7 +1205,29 @@ sub verifyPackages
     foreach my $package (keys %{ $meta->{packages} })
     {
         printd('Checking '.$package);
-        foreach my $checkType (qw(metaFiles files))
+        my @otherChecks = qw(metaFiles);
+        if ($meta->{packages}->{$package}->{fileContent})
+        {
+            foreach my $entry (@{ $meta->{packages}->{$package}->{fileContent} })
+            {
+                my $file = $entry->{file};
+                printnd( '.' );
+                my $pre = $lixuzDir;
+                if ( ! -e $pre.'/'.$file)
+                {
+                    push(@errors,$package.': file missing: '.$file);
+                }
+                elsif (defined($entry->{meta}->{checksum}) && sha512_sum($pre.'/'.$file) ne $entry->{meta}->{checksum})
+                {
+                    push(@errors,$package.': file corruption (did not match its checksum): '.$file);
+                }
+            }
+        }
+        else
+        {
+            push(@otherChecks,'files');
+        }
+        foreach my $checkType (@otherChecks)
         {
             printd(' - '.$checkType);
             foreach my $file (@{ $meta->{packages}->{$package}->{$checkType} })
@@ -1150,13 +1245,14 @@ sub verifyPackages
             }
         }
         printd(' - templates');
-        if ($meta->{packages}->{$package}->{templateIDs})
+        if ($meta->{packages}->{$package}->{templateContent})
         {
             loadLixuzModules();
             my $fakeC = mockC();
             my $dbic = getDBIC();
-            foreach my $ID (@{$meta->{packages}->{$package}->{templateIDs}})
+            foreach my $entry (@{$meta->{packages}->{$package}->{templateContent}})
             {
+                my $ID = $entry->{id};
                 printnd( '.' );
                 my $template = $dbic->resultset('LzTemplate')->find({
                         uniqueid => $ID
@@ -1169,6 +1265,10 @@ sub verifyPackages
                 {
                     push(@errors,$package.': template installed, but template file missing: '.$ID.' ('.$template->path_to_template_file($fakeC).')');
                 }
+                elsif(defined($entry->{meta}->{checksum}) && sha512_sum($template->path_to_template_file($fakeC)) ne $entry->{meta}->{checksum})
+                {
+                    push(@errors,$package.': template file corruption (did not match its checksum): '.$ID);
+                }
             }
         }
     }
@@ -1176,12 +1276,12 @@ sub verifyPackages
     {
         printnd("issues found\n");
         print join("\n",@errors)."\n";
-        print "In order to resolve these issues you will need to reinstall the\n";
-        print "affected packages\n";
+        print "\nIn order to resolve these issues you will need to reinstall\n";
+        print "the affected packages\n";
     }
     else
     {
-        printnd( "done\n" );
+        printnd( "done. All packages appear to be ok.\n" );
     }
 }
 
@@ -1853,6 +1953,7 @@ sub buildPackage
     my $fname = $packageName.'-'.$meta->{version}.'.lpk';
     $fname =~ s/\s+/-/g;
 
+    my @metaFilesMeta;
     my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-buildpkg.XXXXXXX');
     mkpath($dir.'/lzpackage/');
     $dir = $dir.'/lzpackage/';
@@ -1861,7 +1962,7 @@ sub buildPackage
     {
         if (-e $srcdir.'/'.$copy)
         {
-            copyFile($srcdir.'/'.$copy,$dir);
+            push(@metaFilesMeta,{ file => $copy, meta => copyFile($srcdir.'/'.$copy,$dir) });
             printd($copy.' added to package');
         }
     }
@@ -1872,6 +1973,7 @@ sub buildPackage
         die('Neither of content or liveTemplates exist in '.$srcdir.'. Cowardly refusing to create empty package'."\n");
     }
 
+    my @contentMeta;
     foreach my $tree (qw(content liveTemplates))
     {
         if (-e $srcdir.'/'.$tree)
@@ -1894,7 +1996,7 @@ sub buildPackage
                         }
                         else
                         {
-                            copyFile($_,$dir.'/'.$path);
+                            push(@contentMeta,{ file => $path, meta => copyFile($_,$dir.'/'.$path) });
                             printd($path.' added to package');
                         }
                     },
@@ -1993,6 +2095,23 @@ sub buildPackage
     # rather than "essential" variety)
     writeFile($dir.'/lpkversion',$packageFormatRevision.'/0');
 
+    my @finalContentMeta;
+    foreach my $entry (@contentMeta)
+    {
+        if (-e $dir.$entry->{file})
+        {
+            push(@finalContentMeta,$entry);
+        }
+    }
+
+    # Write a metadata file
+    writeFile($dir.'/contentMeta.json',encode_json({
+                fileContent => \@finalContentMeta,
+                metaFiles => \@metaFilesMeta,
+                packageCreatedAt => time,
+                writtenBy => "$currentSupportedApiLevel/$minSupportedApiLevel/$dataFormatRevision",
+            }));
+
     my $targetFile = $target.'/'.$fname;
     $targetFile = realpath($targetFile);
     if(runSystem('tar','-C',$dir.'/..','-cf',$targetFile,'./lzpackage') != 0)
@@ -2078,21 +2197,23 @@ sub reconstructPackage
     {
         copyFile($lixuzDir.'/.packageMeta/'.$packageName.'/'.$meta,$dir);
     }
-    if ($pkgMeta->{files})
+    if ($pkgMeta->{fileContent})
     {
-        foreach my $file (@{$pkgMeta->{files}})
+        foreach my $meta (@{$pkgMeta->{fileContent}})
         {
+            my $file = $meta->{file};
             mkpath($dir.'/content/'.dirname($file));
             copyFile($lixuzDir.'/'.$file,$dir.'/content/'.dirname($file));
         }
     }
-    if ($pkgMeta->{templateIDs})
+    if ($pkgMeta->{templateContent})
     {
         loadLixuzModules();
         my $fakeC = mockC();
         my $dbic = getDBIC();
-        foreach my $ID (@{$pkgMeta->{templateIDs}})
+        foreach my $entry (@{$pkgMeta->{templateContent}})
         {
+            my $ID = $entry->{id};
             my $template = $dbic->resultset('LzTemplate')->find({
                     uniqueid => $ID
                 });
@@ -2168,6 +2289,11 @@ sub installPackage
     }
 
     my $packageMeta = readYML($dir.'/package.yml');
+    my $contentMeta;
+    if ($packageVersion >= 3)
+    {
+        $contentMeta = readJSON($dir.'/contentMeta.json');
+    }
     my $packageName = getPackageSystemName($packageMeta);
     if($mode eq 'install' && defined $meta->{packages}->{$packageName})
     {
@@ -2285,99 +2411,71 @@ sub installPackage
     printnd('.');
 
     # Perform action
-    my @copy;
     my %upgradeMap;
     if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
-        foreach my $file (@{ $meta->{packages}->{$packageName}->{files} })
+        if ($meta->{packages}->{$packageName}->{fileContent} )
         {
-            $upgradeMap{$file} = 1;
-        }
-    }
-
-    if (-e $dir.'/content')
-    {
-        printd('Package has content data');
-        find({
-                no_chdir => 1,
-                wanted => sub
-                {
-                    my $path = substr($_,length($dir.'/content'));
-                    if (!-d $_ && !/~$/ && !isTemporary($_))
-                    {
-                        # TODO: Save existing files to a .conflictbak.$$.time() when conflicts are --force ignored
-                        if (-e $lixuzDir.'/'.$path && !$upgradeMap{$path})
-                        {
-                            $path =~ s{^/}{};
-                            if ($force)
-                            {
-                                warn('WARNING: '.$path.' already exists in Lixuz tree. It will be overwritten due to --force'."\n");
-                                $path = '/'.$path;
-                            }
-                            elsif ($mode eq 'upgrade')
-                            {
-                                if (my $owner = checkPackageOwners('return',$lixuzDir.'/'.$path))
-                                {
-                                    die("failed\n".$path.': already exists in Lixuz tree and belongs to another package ('.$owner.') .'."\n".'Refusing to overwrite.'."\n");
-                                }
-                                else
-                                {
-                                    die("failed\n".$path.': already exists in Lixuz tree and does not belong to this (or any other) package.'."\n".'Refusing to overwrite.'."\n");
-                                }
-                            }
-                            elsif($mode ne 'reinject')
-                            {
-                                die("failed\n".$path.': already exists in Lixuz tree. Refusing to overwrite.'."\n");
-                            }
-                        }
-                        delete($upgradeMap{$path});
-                        push(@copy,$path);
-                    }
-                },
-            }, $dir.'/content');
-    }
-
-    printnd('.');
-
-    my %templateIDs;
-    if (-e $dir.'/liveTemplates/')
-    {
-        printd('Package has template data');
-        my @templateFiles;
-        find({ 
-            no_chdir => 1,
-            wanted => sub
+            foreach my $entry (@{ $meta->{packages}->{$packageName}->{fileContent} })
             {
-                if (!-d $_ && !/~$/ && !isTemporary($_))
-                {
-                    push(@templateFiles,realpath($_));
-                }
-            },
-            }, $dir.'/liveTemplates');
-        if (@templateFiles)
-        {
-            foreach my $templateFile (@templateFiles)
-            {
-                if (-e $templateFile)
-                {
-                    $templateIDs{ injectTemplateFile($templateFile) } = 1;
-                }
+                $upgradeMap{$entry->{file}} = 1;
             }
         }
     }
 
-    printnd('.');
-    foreach my $f (@copy)
+    my %templateIDs;
+    my @fileData;
+    my @templateData;
+    # Packages of revision 3 and later have all of this content already present in the metafile
+    if ($packageVersion >= 3)
     {
-        mkpath($lixuzDir.'/'.dirname($f));
-        if (! -e $lixuzDir.'/'.$f || filesDiffer($dir.'/content/'.$f,$lixuzDir.'/'.$f))
+        my $fno = 0;
+        foreach my $entry (@{ $contentMeta->{fileContent} })
         {
-            copyFile($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
-            printd('Copied '.$f.' into tree');
+            my $file = $entry->{file};
+            my $meta = $entry->{meta};
+            if ($fno++ > 5)
+            {
+                printnd '.';
+                $fno = 0;
+            }
+            if ($file =~ s{^/content}{})
+            {
+                if (! -e $lixuzDir.'/'.$file || filesDiffer($dir.'/content/'.$file,$lixuzDir.'/'.$file,$meta))
+                {
+                    my $newData = copyFile($dir.'/content/'.$file,$lixuzDir.'/'.$file);
+                    if (!$lazyInstall && $newData->{checksum} && $newData->{checksum} ne $meta->{checksum})
+                    {
+                        die('Package corrupt, copied data for '.$file.' differs from its checksum'."\n");
+                    }
+                    printd('Copied '.$file.' into tree');
+                }
+                $entry->{file} = $file;
+                push(@fileData, $entry);
+                delete($upgradeMap{$file});
+            }
+            elsif($file =~ m{/liveTemplates})
+            {
+                my $id = injectTemplateFile($dir.$file);
+                $templateIDs{ $id } = 1;
+                push(@templateData, { id => $id, meta => { checksum => $meta->{checksum} } });
+            }
+            else
+            {
+                warn('UNHANDLED FILE: '.$file);
+            }
         }
-        else
+    }
+    else
+    {
+        printd('Using legacy installation method');
+        my @copy;
+        legacyInstallPackage($dir,$mode,\%upgradeMap,\@copy,\%templateIDs,$meta,$packageName);
+        foreach my $file (@copy)
         {
-            printd('Skipped copying of '.$f.': identical version already in tree');
+            push(@fileData, { file => $file, meta => {
+                        checksum => sha512_sum($lixuzDir.'/'.$file)
+                    }});
         }
     }
     printnd('.');
@@ -2402,10 +2500,11 @@ sub installPackage
             }
             printnd('.');
         }
-        if ($existingMeta->{templateIDs})
+        if ($existingMeta->{templateContent})
         {
-            foreach my $currentTemplate (@{ $existingMeta->{templateIDs} })
+            foreach my $entry (@{ $existingMeta->{templateContent} })
             {
+                my $currentTemplate = $entry->{id};
                 if (!$templateIDs{$currentTemplate})
                 {
                     removeTemplate($currentTemplate);
@@ -2447,8 +2546,9 @@ sub installPackage
         my $excludes = slurp($lixuzDir.'/.git/info/exclude');
         my %files = map { $_ => 1 } split(/\n/,$excludes);
         my @append;
-        foreach my $file (@copy)
+        foreach my $entry (@fileData)
         {
+            my $file = $entry->{file};
             if (!$files{$file})
             {
                 push(@append,$file);
@@ -2467,9 +2567,9 @@ sub installPackage
         }
     }
     $meta->{packages}->{$packageName}->{meta} = $packageMeta;
-    $meta->{packages}->{$packageName}->{files} = \@copy;
+    $meta->{packages}->{$packageName}->{fileContent} = \@fileData;
+    $meta->{packages}->{$packageName}->{templateContent} = \@templateData;
     $meta->{packages}->{$packageName}->{metaFiles} = \@metaFiles;
-    $meta->{packages}->{$packageName}->{templateIDs} = [ keys %templateIDs ];
     $meta->{packages}->{$packageName}->{lastModified} = time;
     if ($mode eq 'install')
     {
@@ -2492,6 +2592,101 @@ sub installPackage
     printStatus("done\n");
 }
 
+sub legacyInstallPackage
+{
+    my $dir         = shift;
+    my $mode        = shift;
+    my $upgradeMap  = shift;
+    my $copy        = shift;
+    my $templateIDs = shift;
+    my $meta        = shift;
+    my $packageName = shift;
+    if (-e $dir.'/content')
+    {
+        printd('Package has content data');
+        find({
+                no_chdir => 1,
+                wanted => sub
+                {
+                    my $path = substr($_,length($dir.'/content'));
+                    if (!-d $_ && !/~$/ && !isTemporary($_))
+                    {
+                        # TODO: Save existing files to a .conflictbak.$$.time() when conflicts are --force ignored
+                        if (-e $lixuzDir.'/'.$path && !$upgradeMap->{$path})
+                        {
+                            $path =~ s{^/}{};
+                            if ($force)
+                            {
+                                warn('WARNING: '.$path.' already exists in Lixuz tree. It will be overwritten due to --force'."\n");
+                                $path = '/'.$path;
+                            }
+                            elsif ($mode eq 'upgrade')
+                            {
+                                if (my $owner = checkPackageOwners('return',$lixuzDir.'/'.$path))
+                                {
+                                    die("failed\n".$path.': already exists in Lixuz tree and belongs to another package ('.$owner.') .'."\n".'Refusing to overwrite.'."\n");
+                                }
+                                else
+                                {
+                                    die("failed\n".$path.': already exists in Lixuz tree and does not belong to this (or any other) package.'."\n".'Refusing to overwrite.'."\n");
+                                }
+                            }
+                            elsif($mode ne 'reinject')
+                            {
+                                die("failed\n".$path.': already exists in Lixuz tree. Refusing to overwrite.'."\n");
+                            }
+                        }
+                        delete($upgradeMap->{$path});
+                        push(@{$copy},$path);
+                    }
+                },
+            }, $dir.'/content');
+    }
+
+    printnd('.');
+
+    if (-e $dir.'/liveTemplates/')
+    {
+        printd('Package has template data');
+        my @templateFiles;
+        find({ 
+                no_chdir => 1,
+                wanted => sub
+                {
+                    if (!-d $_ && !/~$/ && !isTemporary($_))
+                    {
+                        push(@templateFiles,realpath($_));
+                    }
+                },
+            }, $dir.'/liveTemplates');
+        if (@templateFiles)
+        {
+            foreach my $templateFile (@templateFiles)
+            {
+                if (-e $templateFile)
+                {
+                    $templateIDs->{ injectTemplateFile($templateFile) } = 1;
+                }
+            }
+        }
+    }
+
+    printnd('.');
+    foreach my $f (@{$copy})
+    {
+        mkpath($lixuzDir.'/'.dirname($f));
+        if (! -e $lixuzDir.'/'.$f || filesDiffer($dir.'/content/'.$f,$lixuzDir.'/'.$f) || !$meta->{packages}->{$packageName}->{fileContent})
+        {
+            my $data = copyFile($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
+            printd('Copied '.$f.' into tree');
+        }
+        else
+        {
+            printd('Skipped copying of '.$f.': identical version already in tree');
+        }
+    }
+}
+
 # Purpose: Removes a Lixuz package
 sub removePackage 
 {
@@ -2505,7 +2700,11 @@ sub removePackage
 
     printStatus('Preparing to remove...');
 
-    my %files = map { $_ => 1 } @{ $meta->{packages}->{$packageName}->{files} };
+    my %files;
+    foreach my $entry (@{ $meta->{packages}->{$packageName}->{fileContent} })
+    {
+        $files{ $entry->{file} } = 1;
+    }
 
     # Verify that no dependencies will go unresolved by this action
     foreach my $installedPackage (keys %{$meta->{packages}})
@@ -2563,14 +2762,20 @@ sub removePackage
         printd('Removed meta file: '.$meta);
     }
     rmdir($lixuzDir.'/.packageMeta/'.$packageName);
-    foreach my $file (@{$meta->{packages}->{$packageName}->{files}})
+    foreach my $entry (@{$meta->{packages}->{$packageName}->{fileContent}})
     {
+        my $file = $entry->{file};
         unlink($lixuzDir.'/'.$file);
         printd('Removed file: '.$file);
     }
-    if ($meta->{packages}->{$packageName}->{templateIDs})
+    if ($meta->{packages}->{$packageName}->{templateFiles})
     {
-        selfRun('templates','remove',@{$meta->{packages}->{$packageName}->{templateIDs}});
+        my @templates;
+        foreach my $entry (@{ $meta->{packages}->{$packageName}->{templateFiles} })
+        {
+            push(@templates, $entry->{id});
+        }
+        selfRun('templates','remove',@templates);
     }
     delete($meta->{packages}->{$packageName});
     writeMetaFile($meta);
