@@ -846,6 +846,23 @@ sub is_live
     return $return;
 }
 
+sub is_in_exclusive_status
+{
+    my $self = shift;
+    my $c = shift;
+
+    my $ckey = 'a_status_'.$self->status_id.'_is_exclusive';
+    my $data = $c->cache->get($ckey);
+    if(defined($data))
+    {
+        return $data;
+    }
+
+    $data = $self->status->exclusive ? 1 : 0;
+    $c->cache->set($ckey,$data);
+    return $data;
+}
+
 # Summary: Retrieve the value of an additional field associated with this article
 # Usage: article->getField($c,field_id);
 # Returns an empty string if the field is empty or not associated with this article
