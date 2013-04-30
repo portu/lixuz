@@ -2469,7 +2469,11 @@ sub installPackage
                 if (! -e $lixuzDir.'/'.$file || filesDiffer($dir.'/content/'.$file,$lixuzDir.'/'.$file,$meta))
                 {
                     my $newData = copyFile($dir.'/content/'.$file,$lixuzDir.'/'.$file);
-                    if (!$lazyInstall && $newData->{checksum} && $newData->{checksum} ne $meta->{checksum})
+                    if (!$lazyInstall && !defined($meta->{checksum}))
+                    {
+                        die('Package corrupt, '.$file.' does not have a checksum'."\n");
+                    }
+                    elsif (!$lazyInstall && $newData->{checksum} && $newData->{checksum} ne $meta->{checksum})
                     {
                         die('Package corrupt, copied data for '.$file.' differs from its checksum'."\n");
                     }
