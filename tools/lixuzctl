@@ -794,7 +794,6 @@ sub packages
     {
         when('watch')
         {
-            $lazyInstall = 1;
             my $dir = shift // '.';
             printv('Watching '.$dir.' for changes'."\n");
             my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp|swo)$ --excludei .*~$ --excludei ./.lixuzctl.buildlock};
@@ -1821,6 +1820,9 @@ sub buildPackage
     my $target = shift;
     $target //= '.';
     my $disableTriggers = shift;
+
+    # Refuse to be lazy during builds
+    $lazyInstall = 0;
 
     {
         my $prepDone = 0;
