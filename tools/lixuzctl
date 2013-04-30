@@ -674,9 +674,11 @@ sub refreshConfigFromTemplate
     my $template = shift;
     my $output = '';
     my $confData = {};
+    my $confChecksum = '';
     if (-e $config)
     {
         $confData = readYML($config);
+        $confChecksum = sha512_sum($config);
         printd('Read existing config data from '.$config);
     }
     my @data = split(/\n/,slurp($template));
@@ -726,9 +728,12 @@ sub refreshConfigFromTemplate
         }
         $output .= $line."\n";
     }
-    open(my $out,'>',$config);
-    print {$out} $output;
-    close($out);
+    if (sha512_hex($output) ne $confChecksum)
+    {
+        open(my $out,'>',$config);
+        print {$out} $output;
+        close($out);
+    }
     printd('Wrote updated config data to '.$config);
 }
 
