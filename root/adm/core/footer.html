@@ -35,6 +35,7 @@ Lixuz is free software, available under the <a href="/lixuz/license">GNU General
 %if($loadRTE) {
 <script language="JavaScript" type="text/javascript" src="/js/tiny_mce/tiny_mce.js?<%$GITREVISION%>"></script>
 %}
+<& pluginIncludes.html, %ARGS, relPath => '.', glob => 'footer_*.html' &>
 <script type="text/javascript">
     $LAB.executeQueue();
 </script>
