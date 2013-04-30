@@ -667,6 +667,108 @@ sub loadConfig
     return $config->[0]->{$path};
 }
 
+# Purpose: Refresh a config file from a template
+sub refreshConfigFromTemplate
+{
+    my $config = shift;
+    my $template = shift;
+    my $output = '';
+    my $confData = {};
+    if (-e $config)
+    {
+        $confData = readYML($config);
+        printd('Read existing config data from '.$config);
+    }
+    my @data = split(/\n/,slurp($template));
+    foreach my $line (@data)
+    {
+        if ($line =~ /{#/)
+        {
+            my $entry = $line;
+            $entry =~ s/.*{#\s*([^}]+)}.*/$1/;
+            my ($location, $type, $number) = split(/\s+/,$entry);
+            $type //= 'normal';
+            $number //= 0;
+            my $value = resolveConfigPath($confData,$location);
+            if ($type eq 'boolean')
+            {
+                $type = 'normal';
+                $value = $value ? '1' : 'false';
+            }
+            if ($type eq 'normal')
+            {
+                printd('Read value "'.$value.'" from config for path '.$location);
+                $line =~ s/{#[^}]+}/$value/;
+            }
+            elsif($type eq 'list')
+            {
+                printd('Read array value from config for path '.$location);
+                my $padding = '';
+                while($number)
+                {
+                    $number--;
+                    $padding .= ' ';
+                }
+                $line =~ s/{#[^}]+}//;
+                foreach my $entry (@{$value})
+                {
+                    if(ref($entry))
+                    {
+                        die("Unhandled entry of type ".ref($entry)." for path $location\n");
+                    }
+                    $line .= "\n".$padding.'- '.$entry;
+                }
+            }
+            else
+            {
+                die("Got unknown type \"$type\" for path $location\n");
+            }
+        }
+        $output .= $line."\n";
+    }
+    open(my $out,'>',$config);
+    print {$out} $output;
+    close($out);
+    printd('Wrote updated config data to '.$config);
+}
+
+# Purpose: Resolve a data structure path, used to update configs
+sub resolveConfigPath
+{
+    my $config = shift;
+    my $path = shift;
+    my @paths = split(/\./,$path);
+    
+    while(defined(my $entry = shift(@paths)))
+    {
+        if (!defined($config))
+        {
+            last;
+        }
+        if(ref($config) eq 'HASH')
+        {
+            $config = $config->{$entry};
+        }
+        elsif(ref($config) eq 'ARRAY')
+        {
+            if ($entry =~ /\D/)
+            {
+                die("Invalid path part (requested $path, on step for $entry): type is array, but \"$entry\" is a hash key\n");
+            }
+            $config = $config->[$entry];
+        }
+        else
+        {
+            die("Unknown path part (requested $path, on step for $entry): type=".ref($config)."\n");
+        }
+    }
+    if (!defined($config))
+    {
+        $config = '';
+    }
+    return $config;
+}
+
 # ---
 # Database functions
 # ---
@@ -2900,6 +3002,17 @@ sub plumbing
                     installPackage('reinject',$pkg);
                 }
             }
+        }
+
+        when('confupgrade')
+        {
+            my $confFile = shift(@ARGV);
+            my $template = shift(@ARGV);
+            if (! -e $template)
+            {
+                die("confupgrade: $template does not exist\n");
+            }
+            refreshConfigFromTemplate($confFile,$template);
         }
 
         when('checkowner')
