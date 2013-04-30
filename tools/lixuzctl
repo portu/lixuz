@@ -48,7 +48,7 @@ my $minSupportedApiLevel      = 2;
 # The real (latest) supported api level of plumbing commands
 my $currentSupportedApiLevel  = 5;
 # The revision of the package format that we write
-my $packageFormatRevision     = 3;
+my $packageFormatRevision     = 4;
 # The mimimum supported package format supported
 my $minSupportedPackageFormat = 0;
 # Force an action to complete
@@ -1923,6 +1923,8 @@ sub buildPackage
     $target //= '.';
     my $disableTriggers = shift;
 
+    my @copyMetaFiles = @packageMetaFiles;
+
     # Refuse to be lazy during builds
     $lazyInstall = 0;
 
@@ -2062,7 +2064,12 @@ sub buildPackage
     mkpath($dir.'/lzpackage/');
     $dir = $dir.'/lzpackage/';
 
-    foreach my $copy (@packageMetaFiles)
+    if ($meta->{configFiles})
+    {
+        push(@copyMetaFiles,@{ $meta->{configFiles} });
+    }
+
+    foreach my $copy (@copyMetaFiles)
     {
         if (-e $srcdir.'/'.$copy)
         {
@@ -2197,7 +2204,13 @@ sub buildPackage
     # changes were made to dependency handling, but this package doesn't use
     # the new feature, or if use of the new feature is of the "nice to have"
     # rather than "essential" variety)
-    writeFile($dir.'/lpkversion',$packageFormatRevision.'/0');
+    my $minVersion = 0;
+    # Use of configFiles requires format revision 4
+    if ($meta->{configFiles})
+    {
+        $minVersion = 4;
+    }
+    writeFile($dir.'/lpkversion',$packageFormatRevision.'/'.$minVersion);
 
     my @finalContentMeta;
     foreach my $entry (@contentMeta)
@@ -2397,6 +2410,13 @@ sub installPackage
     if ($packageVersion >= 3)
     {
         $contentMeta = readJSON($dir.'/contentMeta.json');
+    }
+    else
+    {
+        $contentMeta //= {
+            fileContent => [],
+            metaFiles => [],
+        };
     }
     my $packageName = getPackageSystemName($packageMeta);
     if($mode eq 'install' && defined $meta->{packages}->{$packageName})
@@ -2608,6 +2628,19 @@ sub installPackage
                         checksum => sha512_sum($lixuzDir.'/'.$file)
                     }});
         }
+        foreach my $metaFile (@packageMetaFiles)
+        {
+            if (-e $dir.'/'.$metaFile)
+            {
+                push(@{ $contentMeta->{metaFiles} }, {
+                        file => $metaFile,
+                        meta => {
+                            type => 'f',
+                            checksum => sha512_sum($lixuzDir.'/'.$metaFile),
+                        },
+                    });
+            }
+        }
     }
     printnd('.');
     my @metaFiles;
@@ -2644,13 +2677,19 @@ sub installPackage
             printnd('.');
         }
     }
-    foreach my $copy (@packageMetaFiles)
+    foreach my $entry (@{ $contentMeta->{metaFiles} })
     {
-        if (-e $dir.'/'.$copy)
+        my $copy = $entry->{file};
+        push(@metaFiles,$copy);
+        copyFile($dir.'/'.$copy,$lixuzDir.'/.packageMeta/'.$packageName);
+        printd('Copied '.$copy.' into package meta storage');
+    }
+    if ($packageMeta->{configFiles})
+    {
+        foreach my $file( @{ $packageMeta->{configFiles} } )
         {
-            push(@metaFiles,$copy);
-            copyFile($dir.'/'.$copy,$lixuzDir.'/.packageMeta/'.$packageName);
-            printd('Copied '.$copy.' into package meta storage');
+            printnd('.');
+            selfRun('plumbing','confupgrade',$lixuzDir.'/'.$file,$lixuzDir.'/.packageMeta/'.$packageName.'/'.$file);
         }
     }
     if ($mode eq 'upgrade' || $mode eq 'reinject')
@@ -2684,6 +2723,10 @@ sub installPackage
             {
                 push(@append,$file);
             }
+        }
+        if ($packageMeta->{configFiles})
+        {
+            push(@append,@{ $packageMeta->{configFiles} });
         }
         if (@append)
         {
