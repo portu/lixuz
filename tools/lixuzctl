@@ -2441,6 +2441,29 @@ sub installPackage
             }
             if ($file =~ s{^/content}{})
             {
+                if (-e $lixuzDir.'/'.$file)
+                {
+                    if ($force)
+                    {
+                        warn('WARNING: '.$file.' already exists in Lixuz tree. It will be overwritten due to --force'."\n");
+                    }
+                    elsif ($mode eq 'upgrade' || $mode eq 'install')
+                    {
+                        my $owner = checkPackageOwners('return',$lixuzDir.'/'.$file);
+                        if (defined($owner) && $owner ne $packageName)
+                        {
+                            die("failed\n".$file.': already exists in Lixuz tree and belongs to another package ('.$owner.') .'."\n".'Refusing to overwrite.'."\n");
+                        }
+                        elsif (!defined($owner))
+                        {
+                            die("failed\n".$file.': already exists in Lixuz tree and does not belong to this (or any other) package.'."\n".'Refusing to overwrite.'."\n");
+                        }
+                    }
+                    elsif($mode ne 'reinject')
+                    {
+                        die("failed\n".$file.': already exists in Lixuz tree. Refusing to overwrite.'."\n");
+                    }
+                }
                 if (! -e $lixuzDir.'/'.$file || filesDiffer($dir.'/content/'.$file,$lixuzDir.'/'.$file,$meta))
                 {
                     my $newData = copyFile($dir.'/content/'.$file,$lixuzDir.'/'.$file);
