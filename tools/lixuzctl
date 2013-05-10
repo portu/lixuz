@@ -2687,6 +2687,7 @@ sub installPackage
             printnd('.');
         }
     }
+    printd('Copying meta files');
     foreach my $entry (@{ $contentMeta->{metaFiles} })
     {
         my $copy = $entry->{file};
@@ -2696,6 +2697,7 @@ sub installPackage
     }
     if ($packageMeta->{configFiles})
     {
+        printd('Copying config files');
         foreach my $file( @{ $packageMeta->{configFiles} } )
         {
             printnd('.');
@@ -2704,6 +2706,7 @@ sub installPackage
     }
     if ($mode eq 'upgrade' || $mode eq 'reinject')
     {
+        printd('Performing upgrade/reinject housekeeping');
         printnd('.');
         foreach my $oldFile (keys %upgradeMap)
         {
@@ -2723,6 +2726,7 @@ sub installPackage
     }
     if (-d $lixuzDir.'/.git')
     {
+        printd('Appending entries to .git/info/exclude');
         my $excludes = slurp($lixuzDir.'/.git/info/exclude');
         my %files = map { $_ => 1 } split(/\n/,$excludes);
         my @append;
@@ -2859,6 +2863,12 @@ sub legacyInstallPackage
     foreach my $f (@{$copy})
     {
         mkpath($lixuzDir.'/'.dirname($f));
+        if (! -e $dir.'/content/'.$f)
+        {
+            warn('WARNING: Internal inconsistency: Wanted to copy a file that is not present in the package: '.$f."\n");
+            warn('…continuing anyway, package will be installed in an inconsistent state!'."\n");
+            next;
+        }
         if (! -e $lixuzDir.'/'.$f || filesDiffer($dir.'/content/'.$f,$lixuzDir.'/'.$f) || !$meta->{packages}->{$packageName}->{fileContent})
         {
             my $data = copyFile($dir.'/content/'.$f,$lixuzDir.'/'.$f) or die('Failed to copy '.$f.' from package: '.$!."\n");
