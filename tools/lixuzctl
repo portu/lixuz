@@ -2646,7 +2646,7 @@ sub installPackage
                         file => $metaFile,
                         meta => {
                             type => 'f',
-                            checksum => sha512_sum($lixuzDir.'/'.$metaFile),
+                            checksum => sha512_sum($dir.'/'.$metaFile),
                         },
                     });
             }
