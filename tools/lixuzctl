@@ -34,6 +34,7 @@ use Try::Tiny;
 use Cwd qw(getcwd);
 use POSIX qw(strftime);
 use IPC::Open3;
+use Carp qw( confess );
 use constant {
     true => 1,
     false => 0,
@@ -302,7 +303,7 @@ sub writeMetaFile
     my $metaFile = shift;
     if (!defined $metaFile)
     {
-        die('writeMetaFile() called without any data'."\n");
+        confess('writeMetaFile() called without any data'."\n");
     }
     $metaFile->{lastWritten} = time;
     $metaFile->{formatRevision} = $dataFormatRevision;
@@ -352,6 +353,10 @@ sub readYML
 sub sha512_sum
 {
     my $file = shift;
+    if (! -e $file)
+    {
+        confess('Unable to retrieve sha512 sum for nonexisting file: '.$file."\n");
+    }
     return sha512_hex(slurp($file));
 }
 
