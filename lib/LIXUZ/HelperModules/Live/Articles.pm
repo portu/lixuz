@@ -22,7 +22,8 @@ use strict;
 use warnings;
 use Carp;
 use Exporter qw(import);
-our @EXPORT_OK = qw(get_live_articles_from);
+use 5.010;
+our @EXPORT_OK = qw(get_live_articles_from get_live_sql);
 
 # This is a function that can be called with an article resultset,
 # it will then return a resultset where only live articles will be included.
@@ -39,7 +40,18 @@ our @EXPORT_OK = qw(get_live_articles_from);
 sub get_live_articles_from($;$$)
 {
     my($object,$o) = @_;
-    $o = defined $o ? $o : {};
+    my ($search,$searchParams) = get_live_sql($o);
+    if (!ref($object) || !$object->can('search'))
+    {
+        carp('get_live_articles_from(): Got non-searchable object: '.ref($object));
+    }
+    return $object->search( $search, $searchParams );
+}
+
+sub get_live_sql
+{
+    my $o = shift;
+    $o //= {};
     my $searchParams = {};
 
     $searchParams->{rows} = $o->{rows}
@@ -66,11 +78,7 @@ sub get_live_articles_from($;$$)
         $searchParams->{join} = 'revisionMeta';
         $search->{'revisionMeta.is_latest_in_status'} = 1;
     }
-    if (!ref($object) || !$object->can('search'))
-    {
-        carp('get_live_articles_from(): Got non-searchable object: '.ref($object));
-    }
-    return $object->search( $search, $searchParams );
+    return ($search,$searchParams);
 }
 
 # The function that actually does the work
