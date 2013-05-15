@@ -426,7 +426,7 @@ sub _getCategorySearchSQL
 sub _fetchCategoryChildren_preSQL
 {
     my($self,$c,$orSearch,$limit,$onlyLive) = @_;
-    my $options = { order_by => 'publish_time DESC', join => [qw(folders revisionMeta)], prefetch => 'folders' };
+    my $options = { order_by => 'publish_time DESC', join => [qw(folders revisionMeta)] };
     if(ref($limit))
     {
         $options->{rows} = $limit->{rows};
