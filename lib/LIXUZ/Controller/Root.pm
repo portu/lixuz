@@ -75,6 +75,7 @@ sub alive : Path('/admin/alive')
         if(!$db)
         {
             $status = 500;
+            $c->log->warn('/admin/alive test failed: database connection lost');
             $c->res->body('EDATABASE');
         }
         else
