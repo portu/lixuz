@@ -132,8 +132,9 @@ __PACKAGE__->has_many(children => 'LIXUZ::Schema::LzCategory', {
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use LIXUZ::HelperModules::Cache qw(get_ckey CT_1H);
-use LIXUZ::HelperModules::Live::Articles qw(get_live_articles_from);
+use LIXUZ::HelperModules::Live::Articles qw(get_live_articles_from get_live_sql);
 use Moose;
+use Hash::Merge qw(merge);
 with 'LIXUZ::Role::URLGenerator';
 # Objects from orderedRS gets reblessed as ProxiedResultSets
 use LIXUZ::HelperModules::ProxiedResultSet;
@@ -412,20 +413,13 @@ sub _getCategorySearchSQL
         }
         $c->cache->set($ckey,$folders,CT_1H);
     }
-    my $orSearch = [];
-    my $found;
-    foreach my $folder (sort @{$folders})
-    {
-        push(@{$orSearch},{ 'folders.'.folder_id => $folder});
-        $found = 1;
-    }
     if(wantarray())
     {
-        return($orSearch,$found);
+        return($folders,scalar(@{$folders}));
     }
     else
     {
-        return($orSearch);
+        return($folders);
     }
 }
 
@@ -445,11 +439,14 @@ sub _fetchCategoryChildren_preSQL
     {
         $c->log->error('fetchCategoryChildren_preSQL: orSearch is empty! About to fail spectaculary');
     }
-    my $articles = $c->model('LIXUZDB::LzArticle')->search({ '-or' => $orSearch, 'revisionMeta.is_latest_in_status' => 1, },$options);
+    my ($liveSearch,$liveParams) = ({},{});
     if ($onlyLive)
     {
-        $articles = get_live_articles_from($articles,$onlyLive);
+        ($liveSearch,$liveParams) = get_live_sql($onlyLive);
     }
+    $options = merge($options,$liveParams);
+    $liveSearch->{'folder_id'} =  { -in => $orSearch };
+    my $articles = $c->model('LIXUZDB::LzArticle')->search($liveSearch,$options);
     if (ref($limit))
     {
         $articles = $articles->page($limit->{page});
