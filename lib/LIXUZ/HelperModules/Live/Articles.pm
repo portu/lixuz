@@ -72,7 +72,7 @@ sub get_live_sql
             @extraLiveStatus = $o->{extraLiveStatus};
         }
     }
-    my $search = { _getLiveSearch($o->{prefix},$o->{overrideLiveStatus},@extraLiveStatus) };
+    my $search = _getLiveSearch($o->{prefix},$o->{overrideLiveStatus},@extraLiveStatus);
     if(defined $o->{extraLiveStatus} or defined $o->{overrideLiveStatus})
     {
         $searchParams->{join} = 'revisionMeta';
@@ -94,19 +94,19 @@ sub _getLiveSearch
     my @liveStatus = ($primaryLiveStatus);
     push(@liveStatus,@extraStatuses);
 
-    return -and => [
+    return {
         # Can't be in the trash
-        { trashed => \'!= 1' },
+        trashed => \'!= 1',
         # Must be published
-        { $prefix.'publish_time' => \'<= now()' },
+        $prefix.'publish_time' => \'<= now()',
         # Can't be expired
-        { -or => [
-            { $prefix.'expiry_time' => \'IS NULL' },
-            { $prefix.'expiry_time' => \'> now()' }
-        ]},
+        $prefix.'expiry_time' => [
+                \'IS NULL',
+                \'> now()',
+        ],
         # Must be live
-        { $prefix.'status_id' => { -in => \@liveStatus } }
-    ];
+        $prefix.'status_id' => { -in => \@liveStatus },
+    };
 }
 
 1;
