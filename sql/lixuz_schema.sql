@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.63, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.1.66, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: lixuz
 -- ------------------------------------------------------
--- Server version	5.1.63-0+squeeze1
+-- Server version	5.1.66-0+squeeze1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -53,7 +53,11 @@ CREATE TABLE `lz_article` (
   `trashed` tinyint(1) DEFAULT '0',
   `live_comments` tinyint(1) DEFAULT '0',
   `revision` int(6) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`article_id`,`revision`)
+  PRIMARY KEY (`article_id`,`revision`),
+  KEY `article_status` (`status_id`),
+  KEY `article_trashed` (`trashed`),
+  KEY `article_expiry_time` (`expiry_time`),
+  KEY `article_publish_time` (`publish_time`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -101,7 +105,9 @@ CREATE TABLE `lz_article_folder` (
   `folder_id` int(11) NOT NULL,
   `primary_folder` tinyint(1) NOT NULL,
   `revision` int(6) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`article_id`,`folder_id`,`primary_folder`,`revision`)
+  PRIMARY KEY (`article_id`,`folder_id`,`primary_folder`,`revision`),
+  KEY `article_folder_artid` (`article_id`),
+  KEY `article_folder_revision` (`revision`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -586,7 +592,13 @@ CREATE TABLE `lz_revision` (
   `is_latest_in_status` tinyint(1) NOT NULL DEFAULT '0',
   `is_latest_exclusive_status` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`revision_id`),
-  KEY `revision_meta_standard` (`type_id`,`type_revision`)
+  KEY `revision_meta_standard` (`type_id`,`type_revision`),
+  KEY `revision_meta_type_id` (`type_id`),
+  KEY `revision_meta_type_revision` (`type_revision`),
+  KEY `revision_meta_is_latest` (`is_latest`),
+  KEY `revision_meta_is_latest_in_status` (`is_latest_in_status`),
+  KEY `revision_meta_is_latest_exclusive_status` (`is_latest_exclusive_status`),
+  KEY `revision_meta_type` (`type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -831,4 +843,4 @@ CREATE TABLE `lz_workflow_comments` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-09-17 11:34:28
+-- Dump completed on 2013-05-15 12:12:46
