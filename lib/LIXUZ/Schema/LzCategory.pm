@@ -446,6 +446,7 @@ sub _fetchCategoryChildren_preSQL
     }
     $options = merge($options,$liveParams);
     $liveSearch->{'folder_id'} =  { -in => $orSearch };
+    $options->{group_by} = [ 'article_id','revision' ];
     my $articles = $c->model('LIXUZDB::LzArticle')->search($liveSearch,$options);
     if (ref($limit))
     {
