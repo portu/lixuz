@@ -5,7 +5,7 @@ use File::Copy;
 use Fatal qw(open opendir);
 use File::Path qw(mkpath rmtree);
 use File::Temp qw(tempdir);
-use File::Basename qw(dirname);
+use File::Basename qw(dirname basename);
 use File::stat;
 use Cwd qw(realpath);
 use Getopt::Long;
