@@ -877,7 +877,7 @@ sub openMysqlConsole
     $db =~ s/.*dbname=//;
     print {$fh} 'database='.$db."\n";
     close($fh);
-    system(qw(mysql),'--defaults-extra-file='.$tempfile);
+    system(qw(mysql),'--defaults-extra-file='.$tempfile,'--default-character-set=utf8');
     unlink($tempfile);
 }
 
