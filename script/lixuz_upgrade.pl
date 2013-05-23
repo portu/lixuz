@@ -119,8 +119,11 @@ sub main
     {
         print "Preparing to upgrade...";
         $dataSource = $dataLocation;
-        logAction('Copying old lixuz.yml to new directory');
-        copyFile($dataTarget, $dataTarget.'/lixuz.yml',$dataSource.'/lixuz.yml');
+        logAction('Copying old configs to new directory');
+        foreach my $confFile (glob($dataTarget.'/*.yml'))
+        {
+            copyFile($dataTarget, $confFile,$dataSource.'/'.basename($confFile));
+        }
         print "done\n";
     }
     installNewData($dataSource,$dataTarget);
