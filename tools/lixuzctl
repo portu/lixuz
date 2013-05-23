@@ -1941,6 +1941,7 @@ sub buildPackage
     {
         my $prepDone = 0;
         printStatus('Preparing...');
+
         if (! -w $target && -w $srcdir)
         {
             warn($target.'/ is not writeable, saving package to '.$srcdir."\n");
@@ -1979,9 +1980,14 @@ sub buildPackage
                 printStatus('done'."\n");
                 $prepDone = 1;
                 print "Autodetected package root directory: $srcdir\n";
-                chdir($srcdir);
             }
         }
+        # Resolve directory paths
+        $srcdir = realpath($srcdir);
+        $target = realpath($target);
+        # Switch to the source directory
+        chdir($srcdir);
+
         if (!$prepDone)
         {
             printStatus('done'."\n");
