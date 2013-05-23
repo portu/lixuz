@@ -513,8 +513,9 @@ sub filteredBody
     my $imgOpts = shift;
     $imgOpts //= {};
     my $renderOpts = shift;
+    my $templateID = $renderOpts->{template} // '';
 
-    my $ckey = get_ckey('article','filteredBody',$self->article_id);
+    my $ckey = get_ckey('article','filteredBody',$self->article_id.'-'.$self->revision.'-'.$templateID);
 
     my $result;
 
