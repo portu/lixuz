@@ -327,7 +327,7 @@ sub writeFile
 {
     my $file = shift;
     my $content = shift;
-    open(my $out,'>',$file) or die("Failed to open $file for writing: $!\n");
+    open(my $out,'>',$file) or die('Failed to open '.realpath($file)." for writing: $!\n");
     print {$out} $content or die("Failed to write content to $file: $!\n");
     close($out) or die("Failed to close $file after writing: $!\n");
     return true;
