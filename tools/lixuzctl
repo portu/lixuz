@@ -1084,7 +1084,7 @@ sub runPackageTrigger
     }
     if ($switchTo ne $origDir)
     {
-        chdir($switchTo) or die('Failed to chdir('.$switchTo.'): '.$!);
+        chdir($switchTo) or die($trigger.' trigger for '.$package.' failed: could not chdir('.$switchTo.'): '.$!);
         printd('Switched to '.$switchTo.' for the duration of the trigger');
     }
     if (-e $file)
