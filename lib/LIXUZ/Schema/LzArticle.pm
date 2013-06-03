@@ -606,11 +606,8 @@ sub filteredBody
 sub renderBody
 {
     my ($self,$c,$options) = @_;
-    my $ckey = get_ckey('article','renderedBody',$self->id.'_'.$self->revision);
-    if ($options->{template})
-    {
-        $ckey .= '-'.$options->{template};
-    }
+    my $templateID = $options->{template} // '';
+    my $ckey = get_ckey('article','renderedBody',$self->id.'_'.$self->revision.'_'.$templateID);
 
     if (my $cached = $c->cache->get($ckey))
     {
