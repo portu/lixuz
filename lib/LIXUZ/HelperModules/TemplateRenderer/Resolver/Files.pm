@@ -17,7 +17,6 @@
 package LIXUZ::HelperModules::TemplateRenderer::Resolver::Files;
 use Moose;
 with 'LIXUZ::Role::TemplateRenderer::Resolver';
-use LIXUZ::HelperModules::Cache qw(get_ckey);
 
 sub get
 {
@@ -36,7 +35,7 @@ sub get_fileSpots
     my($self,$info) = @_;
     my $article = $info->{article};
     my $artid = $article->article_id;
-    my $ckey = get_ckey('template','fileSpotsForArt',$artid.'-'.$article->revision);
+    my $ckey = $self->ckey('template','fileSpotsForArt',$artid,$article->revision);
 
     if(my $data = $self->c->cache->get($ckey))
     {

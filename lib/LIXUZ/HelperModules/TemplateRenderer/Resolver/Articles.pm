@@ -21,8 +21,6 @@ with 'LIXUZ::Role::TemplateRenderer::Resolver';
 use LIXUZ::HelperModules::Live::Comments qw(comment_handler comment_prepare);
 use LIXUZ::HelperModules::Live::Articles qw(get_live_articles_from);
 use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL_to_unix);
-use LIXUZ::HelperModules::Cache qw(get_ckey);
-#use LIXUZ::HelperModules::Templates qw(cached_parse_templatefile);
 use HTML::Entities qw(decode_entities);
 use Carp;
 use constant { true => 1, false => 0 };

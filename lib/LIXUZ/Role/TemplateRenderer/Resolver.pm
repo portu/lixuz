@@ -37,4 +37,19 @@ sub log
     $self->c->log->warn($msg);
 }
 
+sub ckey
+{
+    my $self = shift;
+    my $template = $self->renderer->_templateInfo;
+    if ($template)
+    {
+        $template = $template->{template_info}->{UNIQUEID};
+    }
+    else
+    {
+        $template = 'default';
+    }
+    return join('-',@_,$template);
+}
+
 1;
