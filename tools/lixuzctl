@@ -2217,6 +2217,20 @@ sub buildPackage
 
     printStatus('Constructing package file...');
 
+    # Update checksums
+    my @finalContent;
+    foreach my $file (@contentMeta)
+    {
+        # Files can be removed before reaching this step, so if the file is missing
+        # then we assume a trigger has removed it and just ignore it.
+        if (-e $dir.'/'.$file->{file})
+        {
+            $file->{meta}->{checksum} = sha512_sum($dir.'/'.$file->{file});
+            push(@finalContent,$file);
+        }
+    }
+    @contentMeta = @finalContent;
+
     # Replace placeholders in package.yml
     my $packageYML = slurp($dir.'/package.yml');
     $packageYML =~ s/(version:.+)\{DATE\}/$1$date/g;
