@@ -2833,6 +2833,9 @@ sub legacyInstallPackage
     my $templateIDs = shift;
     my $meta        = shift;
     my $packageName = shift;
+    # Make sure $dir is an absolute path
+    $dir            = realpath($dir);
+
     if (-e $dir.'/content')
     {
         printd('Package has content data');
@@ -2907,7 +2910,7 @@ sub legacyInstallPackage
     foreach my $f (@{$copy})
     {
         mkpath($lixuzDir.'/'.dirname($f));
-        if (! -e $dir.'/content/'.$f)
+        if (! -e $dir.'/content/'.$f && ! -l $dir.'/content/'.$f)
         {
             warn('WARNING: Internal inconsistency: Wanted to copy a file that is not present in the package: '.$f."\n");
             warn('…continuing anyway, package will be installed in an inconsistent state!'."\n");
