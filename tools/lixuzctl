@@ -637,11 +637,16 @@ sub copyFile
     if ( -e $destination && !-w $destination)
     {
         unlink($destination) or warn('Failed to preemptively unlink '.$destination."\n");
+        printd('Preemptively unlinked '.$destination);
     }
     if (!copy($source,$destination))
     {
         warn('Failed to copy '.$source.' to '.$destination.': '.$!."\n");
         return;
+    }
+    else
+    {
+        printd('Copied '.$source.' to '.$destination);
     }
     if (-d $destination)
     {
@@ -2629,6 +2634,9 @@ sub installPackage
                     }
                     elsif (!$lazyInstall && $newData->{checksum} && $newData->{checksum} ne $meta->{checksum})
                     {
+                        printd($file.' checksums: ');
+                        printd($newData->{checksum});
+                        printd($meta->{checksum});
                         die('Package corrupt, copied data for '.$file.' differs from its checksum'."\n");
                     }
                     printd('Copied '.$file.' into tree');
@@ -2889,6 +2897,7 @@ sub legacyInstallPackage
         {
             warn('WARNING: Internal inconsistency: Wanted to copy a file that is not present in the package: '.$f."\n");
             warn('…continuing anyway, package will be installed in an inconsistent state!'."\n");
+            printd('Wanted to copy: '.$dir.'/content/'.$f);
             next;
         }
         if (! -e $lixuzDir.'/'.$f || filesDiffer($dir.'/content/'.$f,$lixuzDir.'/'.$f) || !$meta->{packages}->{$packageName}->{fileContent})
