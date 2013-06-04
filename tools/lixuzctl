@@ -93,6 +93,17 @@ sub main
             shift;
             $lixuzDir = shift;
         },
+        'version' => sub
+        {
+            print 'lixuzctl - Lixuz control utility'."\n";
+            print 'Package format used      : '.$packageFormatRevision."\n";
+            print 'Package format supported : from '.$minSupportedPackageFormat.' to '.$packageFormatRevision."\n";
+            print 'Metadata format          : '.$dataFormatRevision."\n";
+            print 'Plumbing API level       : '.$currentSupportedApiLevel.'/'.$minSupportedApiLevel."\n";
+            # Revision ID works as an automatic version number
+            print 'Revision ID              : '. ($minSupportedApiLevel + $currentSupportedApiLevel + $packageFormatRevision + $minSupportedApiLevel + $dataFormatRevision + $minSupportedDataFormatRev)."\n";
+            exit(0);
+        },
         'lazy' => \$lazyInstall,
         'force+' => \$force,
         'force-refresh' => \$forceRefresh,
