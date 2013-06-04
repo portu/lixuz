@@ -656,7 +656,7 @@ sub copyFile
     my $return = { type => 'f' };
     if (!$lazyInstall)
     {
-        $return->{checksum} = sha512_sum($source);
+        $return->{checksum} = sha512_sum($destination);
     }
     return $return;
 }
