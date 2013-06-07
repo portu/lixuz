@@ -187,7 +187,7 @@ sub get_live_articles
     return $arts;
 }
 
-sub getCategorySearchSQL
+sub getCategoryFolderList
 {
     my $self = shift;
     return $self->_getCategorySearchSQL(@_);

@@ -120,8 +120,8 @@ sub get_results
         }
         else
         {
-            my $searchSQL = $cat->getCategorySearchSQL($self->c);
-            $result = $result->search({ -or => $searchSQL },{join => [qw(folders)], prefetch => 'folders', limit => $entriesPerPage });
+            my $folders = $cat->getCategoryFolderList($self->c);
+            $result = $result->search({ 'folders.folder_id' => { IN => $folders } },{join => [qw(folders)], prefetch => 'folders', limit => $entriesPerPage });
             if(defined $category and not defined $query)
             {
                 $return->{$saveAs.'_name'} = $cat->category_name;

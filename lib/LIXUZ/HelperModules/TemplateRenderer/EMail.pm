@@ -176,7 +176,7 @@ sub autoGenerateArticleList
     {
         $cat = $cat->category;
         $helperCat = $cat;
-        my $ssql = $cat->getCategorySearchSQL($self->c);
+        my $ssql = $cat->getCategoryFolderList($self->c);
         push(@search, $ssql);
     }
 
@@ -192,7 +192,7 @@ sub autoGenerateArticleList
         next if not defined $s;
         push(@{$searchRef},@{$s});
     }
-    my $articles = $self->c->model('LIXUZDB::LzArticle')->search($searchRef, { join => 'folders' });
+    my $articles = $self->c->model('LIXUZDB::LzArticle')->search({ 'folders.folder_id' => { IN => $searchRef } }, { join => 'folders' });
     if ($self->subscription->last_sent)
     {
         $articles = $articles->search({ publish_time => { '>',$self->subscription->last_sent}});
