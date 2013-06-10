@@ -38,9 +38,21 @@ has 'emailType' => (
 );
 
 
+sub autoPrepareNewsletter
+{
+    my $self = shift;
+    return $self->_autoNewsletter('prepare');
+}
+
 sub autoSendNewsletter
 {
-    my ($self) = @_;
+    my $self = shift;
+    return $self->_autoNewsletter('send');
+}
+
+sub _autoNewsletter
+{
+    my ($self,$mode) = @_;
 
     if(not $self->autoGenerateArticleList())
     {
@@ -58,7 +70,26 @@ sub autoSendNewsletter
     $self->subscription->set_column('last_sent',datetime_to_SQL(datetime_from_unix(time)));
     $self->subscription->update();
 
-    return $self->sendEmail($message);
+    if ($mode eq 'send')
+    {
+        return $self->sendEmail($message);
+    }
+    elsif($mode eq 'prepare')
+    {
+        return
+        {
+            recipients => $self->subscription->email,
+            from => $self->sender,
+            message_text => $self->emailType eq 'TEXT' ? $message : undef,
+            message_html => $self->emailType eq 'HTML' ? $message : undef,
+            subject => $self->get_var('subject'),
+            systemMail => 0,
+        };
+    }
+    else
+    {
+        die('Unknown mode: '.$mode);
+    }
 }
 
 sub autoSendMessage
