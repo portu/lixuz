@@ -9,11 +9,15 @@ use Try::Tiny;
 use Time::HiRes qw(time sleep);
 use POSIX qw(setsid);
 use Encode qw(encode);
+use IO::Socket::UNIX;
+use IO::Select;
+use utf8;
 
 my $lixuzVersion = 'GIT';
 my $logfile = '/dev/shm/lixuz-sendmail-'.$$.'.log';
 my $fork = 1;
 my $debug = 0;
+my $socket;
 my @queue;
 my %state;
 
@@ -71,10 +75,22 @@ my %state;
         {
             $debug = 1;
         }
+        if ($J->{socket})
+        {
+            if (-e $J->{socket})
+            {
+                die($J->{socket}.': already exists - refusing to listen'."\n");
+            }
+            $socket = IO::Socket::UNIX->new(
+                Type => SOCK_STREAM,
+                Local => $J->{socket},
+                Listen => 1,
+            ) or die("Failed to listen to ".$J->{socket}.': '.$!."\n");
+        }
     }
     catch
     {
-        die("Failed to populate e-mail queue: $_");
+        die("lixuz_sendmail.pl: Failed to populate e-mail queue: $_");
     };
 }
 # Daemonize
@@ -87,6 +103,71 @@ if ($fork)
     die("Failed to fork: $!\n") if not defined($newPID);
 
     setsid();
+}
+
+if ($socket)
+{
+    setState('Listening on socket: '.$socket->hostpath);
+    my $selector = IO::Select->new( $socket );
+    my $finished = 0;
+    while(my (@available) = $selector->can_read(10))
+    {
+        setState('Processing socket input');
+        foreach my $client (@available)
+        {
+            if ($client eq $socket)
+            {
+                $selector->add($client->accept);
+            }
+            else
+            {
+                my $buffer = <$client>;
+                if(defined $buffer)
+                {
+                    my $content = decode_json($buffer);
+                    if ($content->{END})
+                    {
+                        printd('Received END request, closing sockets');
+                        my $path = $socket->hostpath;
+                        close($client);
+                        close($socket);
+                        unlink($path);
+                        $finished = 1;
+                        last;
+                    }
+                    elsif(!defined $content)
+                    {
+                        warn('WARNING: Failed to decode JSON'."\n");
+                        next;
+                    }
+                    foreach my $recipient (@{ $content->{distinct_to} })
+                    {
+                        printd('Added recipient: '.$recipient);
+                        populateWith( $recipient,$content->{subject}, $content->{message_html}, $content->{message_text}, $content->{from}, 'FIXME');
+                    }
+                }
+                else
+                {
+                    $selector->remove($client);
+                    close($client);
+                }
+            }
+        }
+        if ($finished)
+        {
+            last;
+        }
+        setState('Listening on socket: '.$socket->hostpath);
+    }
+    if (!$finished)
+    {
+        printd('Finished without receiving END. Going ahead with processing of received content.');
+    }
+    setState('Finished processing socket data');
+    if (!@queue)
+    {
+        printd('No queue data after socket processing');
+    }
 }
 
 # Start processing
@@ -189,7 +270,7 @@ sub populateWith
     }
     if(not defined $HTML and not defined $text)
     {
-        die("content missing (no message_html or message_text\n");
+        die("content missing (no message_html or message_text)\n");
     }
     if(not defined $to)
     {
@@ -242,7 +323,15 @@ sub printd
 {
     if ($debug)
     {
-        warn(shift(@_)."\n");
+        my ($lsec,$lmin,$lhour,$lmday,$lmon,$lyear,$lwday,$lyday,$lisdst) = localtime(time());
+        $lmon++;
+        $lhour = "0$lhour" if not $lhour >= 10;
+        $lmin = "0$lmin" if not $lmin >= 10;
+        $lsec = "0$lsec" if not $lsec >= 10;
+        $lmon = "0$lmon" if not $lmon >= 10;
+        $lmday = "0$lmday" if not $lmday >= 10;
+        $lyear += 1900;
+        warn("[$lyear-$lmon-$lmday $lhour:$lmin:$lsec ($$)] ".shift(@_)."\n");
     }
 }
 

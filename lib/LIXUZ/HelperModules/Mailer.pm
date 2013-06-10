@@ -3,6 +3,7 @@ use Moose;
 use JSON qw(encode_json);
 use Carp;
 use IPC::Open2;
+use IO::Socket::UNIX;
 
 has '_mails' => (
     is => 'ro',
@@ -15,9 +16,24 @@ has '_defaultFrom' => (
     lazy => 1,
 );
 
+has '_socket' => (
+    is => 'rw',
+);
+
+has '_socketConnection' => (
+    is => 'rw'
+);
+
+has 'streaming' => (
+    is => 'ro',
+    required => 0,
+    default => 0,
+);
+
 has 'c' => (
     is => 'rw',
     required => 1,
+    weak_ref => 1,
 );
 
 sub add_mail
@@ -77,35 +93,91 @@ sub add_mail
             $contentHtml .= "<br />\n<br />\n--\n".$footer."<br />\n".'<a href="'.$self->c->uri_for('/admin').'">'.$self->c->uri_for('/admin').'</a>';
         }
     }
-    push(@{ $self->_mails }, {
-            distinct_to => $recipients,
-            from => $from,
-            subject => $subject,
+    my $result = {
+            distinct_to  => $recipients,
+            from         => $from,
+            subject      => $subject,
             message_text => $contentText,
             message_html => $contentHtml,
-    });
+    };
+    if ($self->streaming)
+    {
+        return $self->_stream_out($result);
+    }
+    else
+    {
+        push(@{ $self->_mails },$result);
+    }
 }
 
 sub send
 {
     my $self = shift;
+    if ($self->streaming)
+    {
+        $self->_stream_out({
+                END => 1
+            });
+        return;
+    }
     my $from = $self->_defaultFrom;
 
     my $result = {
-        api => 1,
-        version => $self->c->stash->{VERSION},
         default_from => $from,
-
-        noFork => 0,
-        debug => 0,
-
         emails => $self->_mails,
     };
-    open2(my $out, my $in, $LIXUZ::PATH.'/tools/lixuz-sendmail.pl') or die("Failed to open2 to lixuz-sendmail-pl\n");
-    my $pid = print {$in} encode_json($result);
+    $self->_execute_mailer($result);
+}
+
+sub _stream_out
+{
+    my $self   = shift;
+    my $data   = shift;
+    my $socket = $self->_socket;
+    if ( ! defined $socket)
+    {
+        $socket = '/tmp/.lixuz-streaming-mailer-socket-'.$$.'-'.int(rand(999999999)).'-'.time.'-'.$<.'-'.$>.'-'.int(rand(999));
+        # Incredibly unlikely, but could still happen
+        if (-e $socket)
+        {
+            return $self->_stream_out($data);
+        }
+        $self->_execute_mailer({
+                socket => $socket
+            });
+        while(! -e $socket)
+        {
+            sleep(1);
+        }
+        my $connection = IO::Socket::UNIX->new(
+            Peer    => $socket,
+            Type    => SOCK_STREAM,
+            Timeout => 3
+        );
+        $self->_socketConnection($connection);
+        $self->_socket($socket);
+    }
+    my $output = $self->_socketConnection;
+    print {$output} encode_json($data)."\r\n";
+    return;
+}
+
+sub _execute_mailer
+{
+    my $self = shift;
+    my $data = shift;
+    $data->{api}            = 1;
+    $data->{version}        = $self->c->stash->{VERSION};
+    $data->{noFork}       //= 0;
+    $data->{debug}        //= 0;
+    $data->{default_from} //= $self->_defaultFrom;
+    no warnings;
+    my $pid = open2(my $out, my $in, $LIXUZ::PATH.'/tools/lixuz-sendmail.pl') or die("Failed to open2 to lixuz-sendmail-pl\n");
+    use warnings;
+    print {$in} encode_json($data);
     close($in);
-    waitpid($pid,0);
     close($out) if $out;
+    waitpid($pid,0);
 }
 
 sub _buildFrom
