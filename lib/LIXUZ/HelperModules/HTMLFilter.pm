@@ -22,116 +22,63 @@
 # It exports nothing by default, you need to explicitly import the
 # functions you want.
 package LIXUZ::HelperModules::HTMLFilter;
-use HTML::Scrubber;
 use HTML::Normalize;
+use HTML::Restrict;
 use Exporter qw(import);
 our @EXPORT_OK = qw(filter_string);
 
 # Summary: Remove HTML cruft from a string
 # Usage: new_string = filter_string(old_string);
+# Note: If you try to filter undef then this will return '' (not undef)
 sub filter_string
 {
 	my $string = shift;
-    # Scrub
-	my $scrubber = HTML::Scrubber->new(
-		allow => [ 'b', 'i', 'u', 'a', 'p','hr','br', 'h1', 'h2', 'h3', 'h4', 'h5', 'div', 'img', 'object', 'embed', 'span', 'param', 'video', 'audio', 'iframe', 'li', 'ul', 'ol', 'section', 'nav', 'footer', 'table','tbody','tr','td','th','strong', 'em' ],
-		comment => 0,
-		process => 0,
-		script => 0,
-		style => 0,
-	);
-    $scrubber->rules(
-        p => {
-            style => 1,
-        },
-        table => {
-            border => 1,
-            style => 1,
-            class => 1,
-            cellspacing => 1,
-            cellpadding => 1,
-        },
-        td => {
-            width => 1,
-            valign => 1,
-            colspan => 1,
-        },
-        th => {
-            width => 1,
-            valign => 1,
-            colspan => 1,
-        },
-        img => {
-            src => 1,
-            alt => 1,
-            style => 1,
-            class => 1,
-            width => 1,
-            height => 1,
-            align => 1,
-        },
-        div => {
-            name => 1,
-            uid => 1,
-            id => 1,
-            style => 1,
-            class => 1,
-        },
-        span => {
-            style => 1,
-        },
-        object => {
-            width => 1,
-            height => 1,
-            data => 1,
-            type => 1,
-            class => 1,
-            classid => 1,
-            align => 1,
-            codebase => 1,
-        },
-        embed => {
-            src => 1,
-            quality => 1,
-            width => 1,
-            height => 1,
-            type => 1,
-            pluginspage => 1,
-            align => 1,
-            allowScriptAccess => 1,
-            class => 1,
-            name => 1,
-        },
-        iframe => {
-            src => 1,
-            width => 1,
-            height => 1,
-            frameborder => 1,
-            class => 1,
-            type => 1,
-            title => 1,
-        },
-        param => {
-            name => 1,
-            value => 1,
-        },
-        video => {
-            src => 1,
-            class => 1,
-            style => 1,
-        },
-        audio => {
-            src => 1,
-            class => 1,
-            style => 1,
-        },
-        a => {
-            href => 1,
-            title => 1,
-            target => 1,
-        },
+    if (!defined $string)
+    {
+        return '';
+    }
+    # Filter away unwanted HTML elements and attributes
+	my $hr = HTML::Restrict->new(
+        # These are the elements that are allowed, along with any attributes allowed.
+        # Everything else gets removed.
+        rules => {
+            b => [],
+            i => [],
+            u => [],
+            a => [qw(href title target)],
+            p => [qw(style)],
+            hr => [],
+            br => [],
+            h1 => [],
+            h2 => [],
+            h3 => [],
+            h4 => [],
+            h5 => [],
+            div => [qw(name uid id style class)],
+            img => [qw(src alt style class width height align)],
+            object => [qw(width height data type class classid align codebase)],
+            embed => [qw(src quality width height type pluginspage align allowscriptaccess class name)],
+            span => [qw(style)],
+            param => [qw(name value)],
+            video => [qw(src class style)],
+            audio => [qw(src class style)],
+            iframe => [qw(src width height frameborder class type title)],
+            li => [],
+            ul => [],
+            ol => [],
+            section => [],
+            nav => [],
+            footer => [],
+            table => [qw(border style class cellspacing cellpadding)],
+            tbody => [],
+            tr => [],
+            td => [qw(width valign colspan)],
+            th => [qw(width valign colspan)],
+            strong => [],
+            em => [],
+        }
     );
-	$string = $scrubber->scrub($string);
+    $string = $hr->process( $string );
     # Repair tag soup
     my $normalizer = HTML::Normalize->new(
         -compact => 0,
