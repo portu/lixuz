@@ -20,6 +20,7 @@ use Moose;
 use Try::Tiny;
 use LIXUZ::HelperModules::Calendar qw(datetime_from_SQL datetime_from_unix datetime_to_SQL);
 use LIXUZ::HelperModules::TemplateRenderer::EMail;
+use LIXUZ::HelperModules::Mailer;
 use POSIX qw(strftime);
 BEGIN { extends 'Catalyst::Controller' };
 
@@ -132,11 +133,25 @@ sub _newsletterDaily : Private
 
     my $sendThese = $newsletters->search({ -or => \@search },{ order_by => 'send_every,format'});
 
+    my $mailer = LIXUZ::HelperModules::Mailer->new( c => $c, streaming => 1 );
     while((defined $sendThese) && (my $n = $sendThese->next))
     {
         my $renderer = LIXUZ::HelperModules::TemplateRenderer::EMail->new( c => $c, subscription => $n);
-        $renderer->autoSendNewsletter();
+        my $content = $renderer->autoPrepareNewsletter;
+        next if !defined($content);
+        try
+        {
+            $mailer->add_mail(
+                $content
+            );
+        }
+        catch
+        {
+            $c->log->warn('Failed to add e-mail for subscription '.$n->subscription_id.' - skipping');
+        };
+        $renderer->clearstate;
     }
+    $mailer->send;
 }
 
 1;
