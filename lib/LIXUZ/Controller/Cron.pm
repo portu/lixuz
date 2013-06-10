@@ -103,6 +103,8 @@ sub _newsletterDaily : Private
 {
     my($self,$c) = @_;
 
+    my $forceAllMatch = $c->req->param('force_all_newsletter_match') ? 1 : 0;
+
     my $newsletters = $c->model('LIXUZDB::LzNewsletterSubscription')->search({validated => 1});
     if(not defined $newsletters)
     {
@@ -118,12 +120,12 @@ sub _newsletterDaily : Private
     push(@search,$daily);
     push(@search,$catchAllNew);
 
-    if (strftime('%d',localtime) == 1)
+    if (strftime('%d',localtime) == 1 || $forceAllMatch)
     {
         push(@search,$monthly);
     }
 
-    if (strftime('%u',localtime) == 1)
+    if (strftime('%u',localtime) == 1 || $forceAllMatch)
     {
         push(@search,$weekly);
     }
