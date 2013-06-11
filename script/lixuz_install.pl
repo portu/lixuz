@@ -254,6 +254,7 @@ print "WARNING: If there is any Lixuz data already in the database\n";
 print "         you supply here, that data will be DELETED.\n";
 print "         Please use caution (and backups).\n";
 my($dbnam,$dbuser,$dbpwd) = (basename($settings{installPath}), undef,getRndPwd());
+$dbnam =~ s/\W//g;
 print "\nUse the following in a mysql console if you just want to create a new\nuser and database:\n";
 print "CREATE DATABASE $dbnam; CREATE USER '$dbnam'\@'localhost' IDENTIFIED BY '$dbpwd';\n";
 print "GRANT ALL ON $dbnam.* TO '$dbnam'\@'localhost;\n";
