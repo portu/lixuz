@@ -310,7 +310,7 @@ sub _copyObject
     my $self = shift;
     my $obj = shift;
 
-    my $entries = $obj->to_hash(true);
+    my $entries = $obj->to_hash(true,undef,true);
     $entries->{revision} = $self->newRevision;
     my $new = $obj->result_source->resultset->new_result($entries);
     return $new;

@@ -77,11 +77,16 @@ sub serialize
 
 sub to_hash
 {
-    my $self = shift;
+    my $self       = shift;
     my $ignoreRels = shift;
-    my $c = shift;
-    my $rels = $self->_serializeExtra;
-    my $ignore = $self->_serializeIgnore;
+    my $c          = shift;
+    my $forceFull  = shift;
+    my $rels       = $self->_serializeExtra;
+    my $ignore     = $self->_serializeIgnore;
+    if ($forceFull)
+    {
+        $ignore = [];
+    }
 
     my %hash = $self->get_columns();
     foreach my $ign (@{$ignore})
