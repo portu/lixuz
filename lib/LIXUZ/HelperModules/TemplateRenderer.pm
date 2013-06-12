@@ -233,8 +233,20 @@ sub set_statevar
 sub get_statevar
 {
     my $self = shift;
-    my $var = shift;
-    return $self->_stateVars->{$var};
+    if (scalar(@_) > 1 && wantarray)
+    {
+        my @return;
+        foreach my $var (@_)
+        {
+            push(@return,$self->_stateVars->{$var});
+        }
+        return @return;
+    }
+    else
+    {
+        my $var = shift;
+        return $self->_stateVars->{$var};
+    }
 }
 
 # Summary: Check if a state variable exists
