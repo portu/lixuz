@@ -107,6 +107,11 @@ __PACKAGE__->set_primary_key("field_id", "module_id", "revision");
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 __PACKAGE__->belongs_to('field' => 'LIXUZ::Schema::LzField','field_id');
+__PACKAGE__->might_have('article' => 'LIXUZ::Schema::LzArticle',
+    {
+        'foreign.article_id' => 'self.module_id',
+        'foreign.revision' => 'self.revision',
+    });
 
 use Moose;
 with 'LIXUZ::Role::Serializable';

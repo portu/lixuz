@@ -228,6 +228,14 @@ __PACKAGE__->belongs_to('revisionMeta' => 'LIXUZ::Schema::LzRevision', {
     'foreign.type_revision' => 'self.revision',
     });
 
+__PACKAGE__->has_many('fields' => 'LIXUZ::Schema::LzFieldValue', {
+		'foreign.module_id' => 'self.article_id',
+		'foreign.revision' => 'self.revision',
+	},
+	{ 
+		where => { 'module_name' => 'articles', }
+	});
+
 __PACKAGE__->has_many(
     category_layout => 'LIXUZ::Schema::LzCategoryLayout',
     {'foreign.article_id' => 'self.article_id'},
