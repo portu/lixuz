@@ -96,7 +96,7 @@ sub _getLiveSearch
 
     return {
         # Can't be in the trash
-        trashed => \'!= 1',
+        $prefix.'trashed' => \'!= 1',
         # Must be published
         $prefix.'publish_time' => \'<= now()',
         # Can't be expired
