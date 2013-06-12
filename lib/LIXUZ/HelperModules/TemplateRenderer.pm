@@ -488,9 +488,19 @@ sub _get_resolver_for
     else
     {
         $resolver = eval('return LIXUZ::HelperModules::TemplateRenderer::Resolver::'.$type.'->new($params)');
+        my $e = $@;
         if(not $resolver)
         {
-            die('Failed to dynamically locate resolver for type '.$type."\ntried: LIXUZ::HelperModules::TemplateRenderer::Resolver::$type\->new( resolver => $self, c => $self->c);\n");
+            my $helpful = '';
+            if ($e =~ /perhaps you forgot to load/)
+            {
+                $helpful = "Looks like the package might not exist. Verify that it is installed and has the correct package namespace.\n";
+            }
+            else
+            {
+                $helpful = "Exception thrown: $e";
+            }
+            die('Failed to dynamically locate resolver for type '.$type."\ntried: LIXUZ::HelperModules::TemplateRenderer::Resolver::$type\->new( resolver => $self, c => $self->c);\n".$helpful);
         }
     }
     $self->_resolvers->{$type} = $resolver;
