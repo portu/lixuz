@@ -54,7 +54,7 @@ GetOptions(
     },
 ) or die($usage);
 
-if ($templateID !~ /^(\d+,?)+/)
+if (defined($templateID) && $templateID !~ /^(\d+,?)+/)
 {
     die("Invalid --template\n");
 }
@@ -116,7 +116,7 @@ for(my $i = 0; $i < $noART; $i++)
             $body .= '<p>'.$lipsum->sentences(randBetween(5,15)).'</p>';
         }
         my $template = $templateID;
-        if ($template =~ /\S/)
+        if (defined($template) && $template =~ /\S/)
         {
             my @templates = split(/,/, $template);
             $template = $templates[ int(rand(scalar(@templates))) ];
