@@ -98,6 +98,10 @@ has '_cachedData' => (
 sub resolve
 {
     my $self = shift;
+    if (@_)
+    {
+        die('Too many parameters to resolve() - maybe you meant resolve_var() ?'."\n");
+    }
     if(not defined $self->template)
     {
         my $err = 'Log: resolve() called without a template attribute';
