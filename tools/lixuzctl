@@ -114,6 +114,12 @@ sub main
         # instance of lixuzctl (ie. it's a chain of lixuzctl's). lixuzctl can
         # then alter behaviour to suit this (ie. omitting duplicate messages).
         'chained' => \$chained,
+        # This indicates that this instance of lixuzctl is a exec()ed child of
+        # another instance of lixuzctl (ie. it's a chain of lixuzctl's).
+        # lixuzctl can then alter behaviour to suit this (ie. omitting
+        # duplicate messages). Right now this is treated the same as --chained,
+        # but this could potentionally change at some later point.
+        'exec-chained' => \$chained,
     );
     
     $lixuzDir //= realpath(dirname(realpath($0)).'/../');
@@ -920,6 +926,12 @@ sub packages
 
     given($subcommand)
     {
+        when('buildwatch')
+        {
+            my $dir = shift // '.';
+            selfRun(qw(packages buildinstall),$dir);
+            selfExec(qw(packages watch),$dir);
+        }
         when('watch')
         {
             my $dir = shift // '.';
@@ -1067,7 +1079,8 @@ sub usagePackages
     printHelp('','owner X Y ..','Output which package (if any) owns the files specified');
     printHelp('','listfiles','List all files installed by packages, along with which package installed the file');
     printHelp('','watch X','Runs buildinstall X whenever a file in the supplied directory changes');
-    printHelp('','  --beep','Emit a beep (terminal bell) whenever buildinstall gets run by "watch"');
+    printHelp('','buildwatch X','First runs "buildinstall X" and then acts like "watch X"');
+    printHelp('','  --beep','Emit a beep (terminal bell) whenever buildinstall gets run by "watch" or "buildwatch"');
     printHelp('','reconstruct X Y','Reconstruct a package (X) from its installed data, saving the package to Y');
     printHelp('','create X','Create a new package named "X" in ./X');
     print "\n";
@@ -3174,7 +3187,22 @@ sub usagePlumbing
 # Usage: selfRun(options);
 sub selfRun
 {
-    my @command = ($0,'--lixuzdir',$lixuzDir,'--chained');
+    _selfRun('system',@_);
+}
+
+# Purpose: Exec self with the correct parameters
+# Usage: selfExec(options);
+sub selfExec
+{
+    _selfRun('exec',@_);
+}
+
+# Purpose: Run self via system() or exec() with the correct parameters
+# Usage: _selfRun(mode,params),
+sub _selfRun
+{
+    my $mode = shift;
+    my @command = ($0,'--lixuzdir',$lixuzDir, $mode eq 'exec' ? '--exec-chained' : '--chained' );
     if ($verbosity == -1)
     {
         push(@command,'--quiet');
@@ -3199,6 +3227,14 @@ sub selfRun
     {
         push(@command,'--lazy');
     }
-    printd('Running self: '.join(' ',@command,@_));
-    return system(@command,@_);
+    if ($mode eq 'exec')
+    {
+        printd('exec()ing self: '.join(' ',@command,@_));
+        exec(@command,@_);
+    }
+    else
+    {
+        printd('Running self: '.join(' ',@command,@_));
+        return system(@command,@_);
+    }
 }
