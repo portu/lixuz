@@ -107,7 +107,7 @@ sub resolve
         my $err = 'Log: resolve() called without a template attribute';
         if ($self->isa('LIXUZ::HelperModules::TemplateRenderer::URLHandler'))
         {
-            $err .= ' (in ::URLHandler) for '.$self->c->req->uri->as_string;
+            $err .= ' (in ::URLHandler) for '.$self->c->req->uri->as_string. ' (url type '.$self->_urlType.')';
         }
         # Don't bother cluttering the error log with requests for /favicon.ico
         if ($self->c->req->uri->path eq '/favicon.ico')

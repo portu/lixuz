@@ -26,6 +26,11 @@ has 'forceOverrideTemplate' => (
     required => 0
     );
 
+has '_urlType' => (
+    is => 'rw',
+    default => '(unknown)',
+);
+
 sub handleRequest
 {
     my($self) = @_;
@@ -64,11 +69,15 @@ sub _iHandleRequest
 
     if (defined($path[1]) && $path[1] =~ /^search(\?.*)?$/)
     {
+        $self->_urlType('search');
+
         my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ is_default => 1, type => 'search' });
         $self->template($template);
     }
     elsif ($path[-1] =~ /^\d+(\?.+)?$/ || $path[-1] =~ /-\d+(\?.+)?$/)
     {
+        $self->_urlType('article');
+
         my ($article,$template) = $self->getArticleFromURL(\@path);
         if(not $article)
         {
@@ -90,6 +99,8 @@ sub _iHandleRequest
     }
     elsif ($path[-1] eq '/' || $path[-1] =~ /\D/)
     {
+        $self->_urlType('list');
+
         my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ type => 'list', is_default => 1 });
         $self->template($template);
 
