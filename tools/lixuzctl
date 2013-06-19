@@ -1610,6 +1610,11 @@ sub injectTemplateFile
         die($errorPrefix.' APIVERSION not supported. This version of Lixuz only supports APIVERSION 3 and lower, this template is for APIVERSION '.$info->{'APIVERSION'});
     }
 
+    if ($info->{'TYPE'} !~ /^(list|article|message|include|search|email_(html|text)|media|rssimport)/)
+    {
+        die($errorPrefix.' illegal template type: '.$info->{TYPE}."\n");
+    }
+
     # When we have reached this point we can assume that all is o.k. with the
     # template and that its infoblock is well formed, and can thus simply be
     # shoved into the database without further validation.
