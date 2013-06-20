@@ -136,6 +136,7 @@ use LIXUZ::HelperModules::Live::Articles qw(get_live_articles_from get_live_sql)
 use Moose;
 use Hash::Merge qw(merge);
 with 'LIXUZ::Role::URLGenerator';
+with 'LIXUZ::Role::Serializable';
 # Objects from orderedRS gets reblessed as ProxiedResultSets
 use LIXUZ::HelperModules::ProxiedResultSet;
 
