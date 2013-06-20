@@ -876,19 +876,40 @@ sub is_in_exclusive_status
 # This method *will* resolve the field into its actual value, so you will get the
 # text string associated with pulldowns, rather than the pulldown ID.
 # If you need the ID/raw data, use getFieldRaw() (or getFieldObject)
+#
+# $c is optional, but if it is supplied the value may be cached for
+# performance, so it is a good idea to supply $c on live sites.
 sub getField
 {
     my ($self,$field_id) = @_;
+    my ($c,$ckey,$value);
     if(ref($field_id))
     {
+        $c = $field_id;
         $field_id = $_[2];
     }
-    my $field = $self->getFieldObject($field_id);
-    if (!defined $field)
+    if ($c)
     {
-        return '';
+        $ckey = get_ckey('article',$self->article_id.'-'.$self->revision,'field-'.$field_id.'-human_value');
+        if($value = $c->cache->get($ckey))
+        {
+            return $value;
+        }
     }
-    return $field->human_value;
+    my $field = $self->getFieldObject($field_id);
+    if (defined $field)
+    {
+        $value = $field->human_value;
+    }
+    else
+    {
+        $value = '';
+    }
+    if ($c)
+    {
+        $c->cache->set($ckey,$value);
+    }
+    return $value;
 }
 
 # Summary: Retrieve the raw/internal value of a field associated with this article
