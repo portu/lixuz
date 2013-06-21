@@ -12,14 +12,15 @@ use Text::Lorem;
 
 my $folderID;
 my $templateID;
-my $statusID = 2;
-my $noART    = 1;
-my $autoImg  = 0;
-my $minImg   = 0;
-my $populateFields = 0;
-my $maxTitleLength = 50;
+my $statusID          = 2;
+my $noART             = 1;
+my $autoImg           = 0;
+my $minImg            = 0;
+my $populateFields    = 0;
+my $maxTitleLength    = 50;
 my $minBodyParagraphs = 5;
 my $maxBodyParagraphs = 15;
+my $addRelationships  = 0;
 
 my $usage = "Usage: ./createDummyArticle.pl OPTIONS
 
@@ -53,6 +54,7 @@ GetOptions(
     'max-body-paragraphs' => \$maxBodyParagraphs,
     'autoimg' => \$autoImg,
     'populate-fields' => \$populateFields,
+    'add-relations' => \$addRelationships,
     'requireimg:i' => sub
     {
         shift;
@@ -232,6 +234,32 @@ for(my $i = 0; $i < $noART; $i++)
                         module_name => 'articles',
                         revision => $art->revision
                     });
+            }
+        }
+        if ($addRelationships)
+        {
+            my $articles = $dbic->resultset('LzArticle')->search({
+                    status_id => $statusID,
+                    article_id => {
+                        '!=' => $art->article_id,
+                    },
+                }, {
+                    rows => 10,
+                    order_by => \'RAND()',
+                });
+            if ($articles->count)
+            {
+                my $number = randBetween(1,$articles->count);
+                foreach (1..$number)
+                {
+                    my $type = randBetween(0,1) == 0 ? 'previous' : 'related';
+                    $dbic->resultset('LzArticleRelations')->create({
+                            article_id => $art->article_id,
+                            related_article_id => $articles->next->article_id,
+                            revision => $art->revision,
+                            relation_type => $type,
+                        });
+                }
             }
         }
     };
