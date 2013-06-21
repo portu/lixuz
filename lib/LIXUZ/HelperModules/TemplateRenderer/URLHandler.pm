@@ -101,16 +101,17 @@ sub _iHandleRequest
     {
         $self->_urlType('list');
 
-        my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ type => 'list', is_default => 1 });
-        $self->template($template);
-
         if ($path[-1] ne '/')
         {
             my $cat = $self->getCategoryFromURL(\@path);
             $self->set_statevar('category',$cat);
+            $self->template( $cat->template );
         }
         else
         {
+            my $template = $self->c->model('LIXUZDB::LzTemplate')->find({ type => 'list', is_default => 1 });
+            $self->template($template);
+
             $self->set_statevar('categoryFront',1);
         }
     }
@@ -180,7 +181,7 @@ sub _tryFetchCategory
 {
     my ($self,$name) = @_;
 
-    my $list = $self->c->model('LIXUZDB::LzCategory')->search({ 'me.category_name' => $name }, {prefetch => 'children',columns => [ 'category_id','parent','root_parent']});
+    my $list = $self->c->model('LIXUZDB::LzCategory')->search({ 'me.category_name' => $name }, {prefetch => 'children'});
 
     if (not $list->count)
     {

@@ -165,6 +165,29 @@ sub buildform: Private
     my $form = $self->formbuilder;
     my $i18n = $c->stash->{i18n};
     $c->stash->{template} = 'adm/categories/editform.html';
+    my $templates = $c->model('LIXUZDB::LzTemplate')->search();
+    my @options = (
+        {
+            value => 'undef',
+            name => $i18n->get('(default)')
+        });
+    while(my $t = $templates->next)
+    {
+        my $selected = 0;
+        if ($category && $category->template_id && $t->template_id == $category->template_id)
+        {
+            $selected = 1;
+        }
+        if ($t->type ne 'list' && !$selected)
+        {
+            next;
+        }
+        push(@options,{
+                value => $t->template_id,
+                name => $t->uniqueid,
+                selected => $selected,
+            });
+    }
     # Name mapping of field name => title
     my %NameMap = (
         category_name => $i18n->get('Category name'),
@@ -177,7 +200,10 @@ sub buildform: Private
         },
         external_link => $i18n->get('URL'),
         folders => $i18n->get('Folders'),
-        template => $i18n->get('Template'),
+        template => {
+            label => $i18n->get('Template'),
+            options => \@options,
+        }
     );
     # Set some context dependant settings
     if ($type eq 'add')
@@ -348,6 +374,17 @@ sub savedata: Private
         else
         {
             $category->set_column('category_status','Active');
+        }
+    }
+    if(defined $fields->{template})
+    {
+        if ($fields->{template} eq 'undef')
+        {
+            $category->set_column('template_id',undef);
+        }
+        elsif($fields->{template} !~ /\D/ && $fields->{template} > 0)
+        {
+            $category->set_column('template_id',$fields->{template});
         }
     }
     # Update the DB

@@ -55,7 +55,7 @@
 </div>
 <div>
 <select name="template">
-<% select_options($formfield->{template}, $i18n )|n %>
+<% select_options_manually($formfield->{template}{options}, $i18n )|n %>
 </select>
 </div>
 
@@ -99,6 +99,6 @@ $i18n
 </%args>
 
 <%init>
-use LIXUZ::HelperModules::Forms('select_options');
+use LIXUZ::HelperModules::Forms qw(select_options select_options_manually);
 my $formfield=();
 </%init>

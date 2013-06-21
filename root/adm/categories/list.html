@@ -45,7 +45,13 @@
         <td><% $category->category_id %></td>
         <td><a href="/admin/categories/edit/<% $category->category_id%>"><% $category->category_name %></a></td>
 % # TODO: Template should be a link to the template, as should display_type and link should be a link
-            <td><% $category->template_id || '&nbsp;'  |n %></td>
+            <td>
+%           if ( defined $category->template_id ) {
+                <% $category->template->uniqueid %>
+%           } else {
+                &nbsp;
+%           }
+            </td>
             <td>
 %if(defined $category->parent)
 % {

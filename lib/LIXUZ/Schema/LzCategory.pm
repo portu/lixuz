@@ -114,6 +114,9 @@ __PACKAGE__->set_primary_key("category_id");
 __PACKAGE__->has_many(children => 'LIXUZ::Schema::LzCategory', {
     'foreign.parent' => 'self.category_id',
     });
+__PACKAGE__->belongs_to('template_self' => 'LIXUZ::Schema::LzTemplate',{
+    'foreign.template_id' => 'self.template_id',
+    });
 
 # LIXUZ content management system
 # Copyright (C) Utrop A/S Portu media & Communications 2008-2012
@@ -137,6 +140,7 @@ use Moose;
 use Hash::Merge qw(merge);
 with 'LIXUZ::Role::URLGenerator';
 with 'LIXUZ::Role::Serializable';
+with 'LIXUZ::Role::SchemaHelpers';
 # Objects from orderedRS gets reblessed as ProxiedResultSets
 use LIXUZ::HelperModules::ProxiedResultSet;
 
@@ -366,6 +370,22 @@ sub orderedRS
                 return $result;
             },
         );
+}
+
+# Summary: Retrieve the template for this category
+# Usage: $template = $obj->template;
+sub template
+{
+    my $self = shift;
+    if(my $template = $self->template_self)
+    {
+        return $template;
+    }
+    else
+    {
+        return $self->model_resultset('LzTemplate')->find({ type => 'list', is_default => 1 });
+    }
+
 }
 
 # ======================
