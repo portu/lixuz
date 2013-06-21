@@ -123,7 +123,9 @@ sub getConfig
 sub getDBIC
 {
     my $config = getConfig();
-    return LIXUZ::Schema->connect( $config->{'Model::LIXUZDB'}->{connect_info} );
+	my $cinfo = $config->{'Model::LIXUZDB'}->{'connect_info'};
+	$cinfo->{mysql_enable_utf8} = 1;
+    return LIXUZ::Schema->connect( $cinfo );
 }
 
 1;
