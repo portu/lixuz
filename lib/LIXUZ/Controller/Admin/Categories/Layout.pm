@@ -68,7 +68,7 @@ sub edit : Local Args
             my @catarray               = $category->get_category_tree($c);
             my $catname                = '/'.join('/',reverse(@catarray));
 
-            my $template               = $c->model('LIXUZDB::LzTemplate')->find({ type => 'list', is_default => 1});
+            my $template               = $category->template;
 
             my $layoutMeta             = $template->get_layout_meta($c);
 
