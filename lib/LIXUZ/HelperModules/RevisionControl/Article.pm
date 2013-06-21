@@ -57,7 +57,7 @@ sub set_root
 
     croak('set_root() got no object') if not $article;
 
-    if(not $article->isa('LIXUZ::Model::LIXUZDB::LzArticle'))
+    if(!$article->isa('LIXUZ::Model::LIXUZDB::LzArticle') && !$article->isa('LIXUZ::Schema::LzArticle'))
     {
         die('set_root() got non-article object: '.ref($article));
     }
