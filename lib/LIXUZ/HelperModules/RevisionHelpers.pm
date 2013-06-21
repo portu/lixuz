@@ -40,8 +40,21 @@ sub get_latest_article
     my $c = shift;
     my $artid = shift;
     croak('$c missing') if not defined $c or not ref($c);
-    my $art = $c->model('LIXUZDB::LzArticle')->find({ article_id => $artid, 'revisionMeta.is_latest' => 1 }, { join => 'revisionMeta' });
-    return $art;
+	my $art;
+	if ($c->can('model'))
+	{
+		$art = $c->model('LIXUZDB::LzArticle');
+	}
+	elsif($c->can('resultset'))
+	{
+		# $c is really a DBIC object
+		$art = $c->resultset('LzArticle');
+	}
+	else
+	{
+		croak('unknown $c provided');
+	}
+    return $art->find({ article_id => $artid, 'revisionMeta.is_latest' => 1 }, { join => 'revisionMeta' });
 }
 
 sub get_live_or_latest_article
