@@ -222,6 +222,10 @@ for(my $i = 0; $i < $noART; $i++)
                     my $entry = int(rand(scalar(@options)));
                     $value = $options[$entry];
                 }
+                elsif($type =~ /^meta-/)
+                {
+                    next;
+                }
                 else
                 {
                     push(@warnings,'Field '.$field->field_id.' skipped: unhandled type: '.$type);
@@ -269,7 +273,7 @@ print "done\n";
 if (@warnings)
 {
     print 'The following warnings were emitted:'."\n";
-    print join("\n",@warnings);
+    print join("\n",@warnings)."\n";
 }
 
 sub randomImg
