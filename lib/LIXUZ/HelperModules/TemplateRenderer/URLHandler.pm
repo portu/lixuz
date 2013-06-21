@@ -105,7 +105,14 @@ sub _iHandleRequest
         {
             my $cat = $self->getCategoryFromURL(\@path);
             $self->set_statevar('category',$cat);
-            $self->template( $cat->template );
+            if ($cat)
+            {
+                $self->template( $cat->template );
+            }
+            else
+            {
+                $self->template( $self->c->model('LIXUZDB::LzTemplate')->find({ type => 'list', is_default => 1}) );
+            }
         }
         else
         {
