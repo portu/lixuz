@@ -2167,6 +2167,10 @@ sub buildPackage
         {
             find({
                     no_chdir => 1,
+                    preprocess => sub
+                    {
+                        return sort(@_);
+                    },
                     wanted => sub
                     {
                         my $path = substr($_,length($srcdir));
