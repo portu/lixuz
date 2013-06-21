@@ -17,6 +17,7 @@
 package LIXUZ::HelperModules::TemplateRenderer::URLHandler;
 use Moose;
 use Try::Tiny;
+use URI::Encode qw(uri_decode);
 extends 'LIXUZ::HelperModules::TemplateRenderer';
 
 has 'forceOverrideTemplate' => (
@@ -152,6 +153,23 @@ sub getCategoryFromURL
 {
     my ($self,$path) = @_;
     my $origCat = $path->[-1];
+    my $ckey = 'category_fromurl_'.$origCat;
+    if (my $catid = $self->c->cache->get($ckey))
+    {
+        return $self->c->model('LIXUZDB::LzCategory')->find({ category_id => $catid });
+    }
+    my $category = $self->_resolveCategoryFromURL($path);
+    if ($category)
+    {
+        $self->c->cache->set($ckey,$category->category_id,3600);
+    }
+    return $category;
+}
+
+sub _resolveCategoryFromURL
+{
+    my ($self,$path) = @_;
+    my $origCat = $path->[-1];
     my $cat     = $origCat;
     my $m       = $self->c->model('LIXUZDB::LzCategory');
     # TODO: Caching
@@ -180,6 +198,15 @@ sub getCategoryFromURL
     $cat = ucfirst($cat);
     $catObj = $self->_tryFetchCategory($cat);
     return $catObj if defined $catObj;
+
+    if ($origCat =~ /\%/)
+    {
+        my $decoded = uri_decode($origCat);
+        if ($decoded !~ /\%/)
+        {
+            return $self->_resolveCategoryFromURL( [ $decoded ] );
+        }
+    }
 
     return;
 }
