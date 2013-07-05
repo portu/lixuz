@@ -1,0 +1,338 @@
+# vim: set tw=79 :
+=head1 WHAT IS THIS DOCUMENT AND WHO IS IT FOR?
+
+This document describes the internal architecture of the Lixuz CMS, from
+back-end, to front-end, live and client-side. The primary audience for this
+document are developers wishing to hack on Lixuz or write complex plugins. This
+is not end-user documentation, nor is it for people merely implementing basic
+templates. See templates.pod for template documentation.
+
+=head1 OVERVIEW OF THE ARCHITECTURE
+
+At its core Lixuz is a L<Catalyst> application. Catalyst acts as the router,
+provides server functions, and acts as a MVC container. Lixuz uses
+L<DBIx::Class> as its database model, and L<HTML::Mason> (v1) as its view and
+template format. In addition to the usual Catalyst controllers, Lixuz also
+provides its own URL handling and rendering architecture for use on the live
+website, which provides data resolving and dependency handling for live
+templates.
+
+As a result of this Lixuz treats its administration interface and Live handlers
+as pretty much separate entities that just share the same infrastructure and
+data sources, and as such it makes sense to go over the different components
+separately.
+
+=head1 CORE CONCEPTS
+
+=head2 Directory tree
+
+=over
+
+=item B</cronjobs>
+
+Lixuz cronjobs
+
+=item B</data>
+
+Data files used by Lixuz which does not need to be served to clients
+
+=item B</docs>
+
+Documentation
+
+=item B</i18n>
+
+Internationalization (translation) files
+
+=item B</lib>
+
+All perl modules
+
+=item B</lib/LIXUZ/Controller>
+
+Controllers
+
+=item B</lib/LIXUZ/Controller/Admin>
+
+Controllers for the admin part of LIXUZ
+
+=item B</lib/LIXUZ/HelperModules>
+
+Modules that are not models or controllers, but are still Lixuz-specific enough
+to not be released separately.
+
+=item B</lib/LIXUZ/Model>
+
+Model definitions.
+
+=item B</lib/LIXUZ/Role>
+
+Moose roles for LIXUZ.
+
+=item B</lib/LIXUZ/Schema>
+
+Database classes for the LIXUZDB/DBIx::Class model.
+
+=item B</lib/LIXUZ/View>
+
+View definitions.
+
+=item B</root>
+
+Static files and view storage.
+
+=item B</root/adm>
+
+Templates for the Mason view used by the admin parts of Lixuz.
+
+=item B</root/core>
+
+Shared templates used both by the admin part and the live part of Lixuz.
+
+=item B</root/css>
+
+Lixuz CSS, both uncompiled (several files) and compiled (concatenated and
+minified).
+
+=item B</root/forms>
+
+Legacy form definitions. Use of these within Lixuz is deprecated, but not
+completely eliminated.
+
+=item B</root/js>
+
+Compiled (concatenated and minifed) javascript.
+
+=item B</root/source-js>
+
+Uncompiled (source) JavaScript.
+
+=item B</root/static>
+
+Static files (ie. images/icons etc.)
+
+=item B</root/swf>
+
+Flash components for the video player.
+
+=item B</script>
+
+Development and Catalyst scripts and makefiles
+
+=item B</sql>
+
+SQL schemas and upgrade scripts
+
+=item B</tools>
+
+Tools that are used on live/production Lixuz sites
+
+=back
+
+=head2 Database
+
+=over
+
+=item B<Folders>
+
+Folders are used to organize articles and files. Each of those can belong to
+one or more folders. A folder can belong to zero or more categories.
+
+=item B<Articles>
+
+This is the primary data store which Lixuz revolves around. An article is
+usually equal to one news post, blog post or page on a website. It can contain
+an arbitrary number of fields, builtin and custom. Articles are also revision
+controlled within Lixuz, each write causing a new revision to be written and
+the revision number to be updated. It is possible to have an older revision of
+an article live on the website while working on a later revision, but in
+practice this is rarely done.
+
+=item B<Workflow>
+
+The workflow is a helper data structure for articles. It provides meta
+information about an article, such as the assigned user and the assigner, a
+deadline and priority.
+
+=item B<Categories>
+
+Categories in Lixuz is essentially the menu and URL layout provided on the live
+end. Each category has a set of assigned folders from the normal folder tree
+which it uses as a data source.
+
+An example to illustrate this. Given the following folder tree:
+
+    /News
+        /Local
+        /National
+        /International
+
+You could have a "News" category which includes all of the above. This would
+result in requests to /News displaying articles from all of the above folders
+(of course it also depends upon the template, this is a simplified example).
+
+=item B<Naming scheme>
+
+All tables are prefixed with I<lz_> (merely due to historical reasons, this may
+change at some point in the future). Table names should be singular
+(lz_article) not plural (lz_articles). They all use underscores as word
+separators rather than CamelCase.
+
+=back
+
+=head1 THE ADMIN INTERFACE
+
+=head2 Outline
+
+The admin interface of Lixuz is for the most part a traditional Catalyst
+application. Controllers (for CRUD) are located in I<lib/LIXUZ/Controller/Admin>.
+Before any request can be routed to the target controller, it passes through an
+access control method that ensures that we have a user logged in, that the user
+is active and has permission to access the resource requested. Additional
+permission checks can also be performed in the individual controllers.
+
+Many of the older Lixuz controllers are rather thick, while newer ones get
+progressively thinner as they switch to use modern libraries. For the most part
+Lixuz attempts to not reinvent any wheels, though there are exceptions on that
+account as well, but most internal libraries that have more generic ones on
+CPAN are being deprecated and will be replaced.
+
+With the exception of a few pieces of legacy code Lixuz does not generate any
+HTML within controllers or helper modules, that is left to the views. Views do
+in some cases have some rather intricate logic, but most are fairly simple.
+
+=head2 Access control
+
+Lixuz performs strict path-based access control. Each user belongs to one role,
+and each role has a set of paths (and actions, more on those later) that they
+may access. If the current path does not have an entry in the ACL for the Role
+then the request will be denied.
+
+In addition to paths there are also actions. Actions do not map directly to a
+path, but refer to more fine grained permissions. An
+I<WORKFLOW_REASSIGN_TO_ROLE> permission will for instance allow a user to
+reassign any article assigned to themselves to a role. There's no path that
+maps directly to it, so instead of a path it is represented by an all-uppercase
+name. There's one special action, I<SUPER_USER>, which if granted to a role
+provides all users in that role access to EVERYTHING, including paths that
+aren't even present in the ACL. All methods in the ACL system which checks for
+access will return true (ie. access permitted), regardless of anything else, if
+the user is a I<SUPER_USER>.
+
+The core of the access control is the L<LIXUZ::HelperModules::AccessControl>
+module. Usually it is not used directly, but through proxy methods on the
+L<LzUser>-object (can_access() and check_access() being the most common ones).
+The current user is always in $c->user, so usually it's as simple as doing
+$c->user->can_access('...');
+
+=head2 JavaScript-components
+
+As with any large web-application Lixuz consists of a large chunk of
+JavaScript. The source is in I<root/source-js> and you may compile it
+(concatenate) by running I<make build>. The directory tree corresponds to
+sections within the admin interface, ie. all JS used by the Articles UI is
+located in I<root/source-js/articles>. Within these subdirectories the
+individual components are separated into individual files. For instance you
+will find code that handles the core glue for articles in
+I<root/source-js/articles/articles.js>, handler of folders in
+I<root/source-js/articles/secondaryFolders.js>, workflow in
+I<root/source-js/articles/workflow.js> and so on.
+
+Additionally there are several shared components that are used across Lixuz
+located in I<root/source-js/core>, and less common helpers in
+I<root/source-js/utils>.
+
+=head3 B<Libraries and APIs>
+
+Lixuz uses I<jQuery> for basic DOM handling, animation etc., I<jQuery UI> for
+the base UI components and I<lodash> for JS helpers.  Lixuz also contains
+several jQuery plugins and for the most part has a policy of adding whatever
+seems sensible.
+
+There are several wrappers around the libraries themselves that should be used
+instead of using the libraries directly. Most notable is
+I<root/source-js/core/XHR.js> which wraps the XMLHttpRequest/AJAX bits of
+jQuery into a Lixuz-specific API that performs additional error checks
+etc. In addition to that you will find progress helpers (showPI() and
+destroyPI() in I<dialogHelpers.js>), initialization (I<pageInit.js>) etc.
+
+Loading of JavaScript in the admin interface is handled by LAB.js, which lets
+us perform asynchronous loading of all of the JS, greatly improving performance
+over the usual loading via script tags.
+
+=head1 THE LIVE RENDERER
+
+The live renderer is pretty much what handles anything outside of /admin.
+The main bulk of this is handled by L<LIXUZ::HelperModules::TemplateRenderer>.
+
+=head2 Concept
+
+A core part of the design philosophy for Lixuz is that live websites should
+require as little code as possible to perform basic functions. This is solved
+by having sites request data through a simple expression parsed and resolved by
+Lixuz before control is handed off to templates, instead of having custom
+controllers.  This expression and the data block itself is defined in the
+end-user template documentation.
+
+=head2 Overview
+
+Whenever a URL hits any part outside of /admin (that does not match any custom
+controller the user has added) L::HM::TemplateRenderer will be triggered in its
+::URLHandler form. First it will parse the URL to figure out what kind of URL
+it is.
+
+If it ends in ".cat" or any non-numerical character it will treat it as a
+category. It will then try to locate said category, and if successful it will
+use the template defined for it (or the default template) and then proceed with
+rendering of it.
+
+If it ends in a number then that number will be treated as an article ID. It
+will locate the category, and if it is live it will use the template defined
+for it (or the default template) and then proceed with rendering of it.
+
+Finally if the path is /search then it will treat it as a request to the search
+engine and perform the search and hand control over to the search template.
+
+Once the rendering step starts it processes the includes for the templates, and
+then retrieves any data requested by it. Finally it hands control over to Mason
+which renders the template and sends it off to the client.
+
+=head2 Data sources
+
+Data sources are loaded dynamically (similarly to Catalyst controllers), which
+means that plugins can add data sources without having to patch Lixuz (and thus
+provide additional information to the templates without having to override the
+automatic parser (or instantiate and run it themselves)). See the source files
+in I<lib/LIXUZ/HelperModules/TemplateRenderer/Resolver> for the syntax.
+
+=head1 SHARED COMPONENTS
+
+=head2 Caching
+
+Lixuz uses I<memcached> for caching. It is implemented as a Catalyst plugin and
+is thus easily available as I<$c-E<gt>cacheE<gt>get()> and
+I<$c-E<gt>cacheE<gt>set()>. Cache keys are namespaced, so multiple instances of
+Lixuz can use the same memcached server. There are utility functions in
+LIXUZ::HelperModules::Cache that can assist with generating cache keys.
+
+=head2 lixuzctl
+
+I<lixuzctl> is a companion utility that handles a lot of maintenance and
+development tasks. It handles package construction, installation and upgrades
+for template and plugin packages, provides basic utility functions for
+injecting and listing templates and files from the command-line, access to
+database console and upgrades as well as being used by the Lixuz installation
+and upgrade scripts to perform various tasks.
+
+=head3 Plugins
+
+Lixuz plugins consist of template files for the live website, as well as data
+injected into the core of Lixuz. What distinguishes a plugin from any data
+files dropped into a Lixuz installation is the packaging. Packages are managed
+by lixuzctl, and are persistent accross upgrades. Additionally this management
+makes them easy to remove and upgrade.
+
+In order to ease integration Lixuz contains hooks that plugins can use in
+several of its components. In particular there are hooks available for admin
+templates. The hooks are processed by pluginIncludes.html - so to get a list of
+available hooks merely grep root/adm for pluginIncludes.html.
