@@ -1,0 +1,52 @@
+Hacking on and contributing to the Lixuz CMS
+============================================
+
+Hacking and coding style
+------------------------
+Lixuz follows some simple rules on coding style, which is used throughout in
+both JavaScript and Perl:
+- Spaces, not tabs
+- Four spaces per indentation-level
+- Braces on their own line
+    sub method
+    {
+    }
+        not:
+    sub method {
+    }
+
+
+Code documentation
+------------------
+Comments (and in some cases embedded POD) document the individual modules and
+classes. To get an overview of the architecture of Lixuz, see
+docs/technical/architecture.pod. Additional documentation, such as on the
+template format, installation instructions etc. can also be found in the docs
+subdirectory.
+
+Submitting contributions
+------------------------
+Contributions can easily be submitted by opening a pull request on GitHub.
+The official GitHub repository is located at https://github.com/portu/lixuz
+
+Development environment setup
+-----------------------------
+
+    Perl-modules
+    ------------
+First you'll need to install the perl modules that Lixuz depends upon.
+The easiest way to do that is to run:
+    perl DEPSLIST list | cpanm
+from the toplevel directory. Adjust cpanm parameters for local::lib etc. as needed.
+
+    Bootstrapping
+    -------------
+You will need a dump from a live Lixuz database to bootstrap the database from,
+as there's currently no easy way to get one up from scratch (that's not to say
+it's impossible, it just requires a lot of fiddling by manually adding users).
+The Lixuz installer handles all of this, so you may just use
+./script/lixuz_install.pl to install to a temporary directory. Then you can
+copy lixuz.yml from the temporary directory and then delete it. Once that is
+done you can use ./script/lixuz_server.pl to start a development server.
+
+vim: set tw=79 :
