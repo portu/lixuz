@@ -2138,7 +2138,7 @@ sub buildPackage
     $fname =~ s/\s+/-/g;
 
     my @metaFilesMeta;
-    my $dir = realpath(tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-buildpkg.XXXXXXX'));
+    my $dir = realpath(tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-buildpkg.XXXXXXX', TMPDIR => 1));
     mkpath($dir.'/lzpackage/');
     $dir = $dir.'/lzpackage/';
 
@@ -2401,7 +2401,7 @@ sub reconstructPackage
 
     printStatus('Reconstructing '.$packageName.'... ');
 
-    my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-reconstructpkg.XXXXXXX');
+    my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-reconstructpkg.XXXXXXX', TMPDIR => 1);
     mkpath($dir.'/content/');
 
     my $pkgMeta = $meta->{packages}->{$packageName};
@@ -2474,7 +2474,7 @@ sub installPackage
     }
     my $meta = loadMetaFile();
 
-    my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-installpkg.XXXXXXX');
+    my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'lixuzctl-installpkg.XXXXXXX', TMPDIR => 1);
     printd('Reading package '.$package);
     system('tar','-C',$dir,'-xf',$package);
 
