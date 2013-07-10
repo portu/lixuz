@@ -1,5 +1,5 @@
 # LIXUZ content management system
-# Copyright (C) Utrop A/S Portu media & Communications 2008-2011
+# Copyright (C) Utrop A/S Portu media & Communications 2008-2013
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -34,14 +34,13 @@ BEGIN
 # Static::Simple: will serve static files from the application's root 
 #                 directory
 
-use Catalyst 	qw/
+use Catalyst 5.90000 qw/
 	Authentication
 	ConfigLoader
 	Static::Simple
 	Session
 	Session::State::Cookie
 	Session::Store::FastMmap
-    Unicode::Encoding
     Cache
 				/; # Newline separated so it's easy to read
 use LIXUZ::HelperModules::I18N;
@@ -93,7 +92,10 @@ else
 # with a external configuration file acting as an override for
 # local deployment.
 
-__PACKAGE__->config( name => 'LIXUZ', encoding => 'UTF-8' );
+__PACKAGE__->config( 
+    name => 'LIXUZ',
+    encoding => 'UTF-8'
+);
 
 my $confFile = '.';
 if(not -e $PATH.'/lib/LIXUZ.pm')
