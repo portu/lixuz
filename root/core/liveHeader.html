@@ -44,4 +44,5 @@ $LAB.queue('/js/live.js',true);
 %} else {
 <script src="/js/live.js"></script>
 %}
+%$m->comp('../adm/core/pluginIncludes.html', glob => 'liveHeader-*.html', relPath => '../../core');
 %$m->print($c->stash->{lz_preview_mode}) if $c->stash->{lz_preview_mode};
