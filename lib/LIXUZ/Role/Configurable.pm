@@ -17,14 +17,14 @@
 package LIXUZ::Role::Configurable;
 use Moose::Role;
 use Config::Any;
+use Method::Signatures;
 requires '_configFile';
 
-sub config
+method conf($c = undef)
 {
-    my $self = shift;
     my $file = $self->_configFile;
-    my $c    = $self->c or die('Failed to get self->c');
     my $ckey = '_l_role_conf_'.$file;
+    $c  //= $self->c or die('Failed to get self->c');
     if(my $data = $c->cache->get($ckey))
     {
         return $data;
