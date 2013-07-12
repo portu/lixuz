@@ -638,6 +638,7 @@ sub copyFile
             warn('Failed to symlink '.$destination.' to '.$target.': '.$!."\n");
             return;
         }
+        printd('Symlinked '.$destination.' to '.$target);
         return { type => 's' };
     }
     if ( -e $destination && !-w $destination)
@@ -2152,7 +2153,7 @@ sub buildPackage
         if (-e $srcdir.'/'.$copy)
         {
             push(@metaFilesMeta,{ file => $copy, meta => copyFile($srcdir.'/'.$copy,$dir) });
-            printd($copy.' added to package');
+            printd($copy.' (meta file) added to package');
         }
     }
 
@@ -2273,10 +2274,18 @@ sub buildPackage
     {
         # Files can be removed before reaching this step, so if the file is missing
         # then we assume a trigger has removed it and just ignore it.
-        if (-e $dir.'/'.$file->{file})
+        if (-e $dir.'/'.$file->{file} || -l $dir.'/'.$file->{file})
         {
-            $file->{meta}->{checksum} = sha512_sum($dir.'/'.$file->{file});
+            # Symlinks don't have checksums
+            if (! -l $dir.'/'.$file->{file})
+            {
+                $file->{meta}->{checksum} = sha512_sum($dir.'/'.$file->{file});
+            }
             push(@finalContent,$file);
+        }
+        else
+        {
+            printd('File '.$file->{file}.' ignored: appears to have been removed during buildConstruct');
         }
     }
     @contentMeta = @finalContent;
@@ -2308,18 +2317,9 @@ sub buildPackage
     }
     writeFile($dir.'/lpkversion',$packageFormatRevision.'/'.$minVersion);
 
-    my @finalContentMeta;
-    foreach my $entry (@contentMeta)
-    {
-        if (-e $dir.$entry->{file})
-        {
-            push(@finalContentMeta,$entry);
-        }
-    }
-
     # Write a metadata file
     writeFile($dir.'/contentMeta.json',encode_json({
-                fileContent => \@finalContentMeta,
+                fileContent => \@contentMeta,
                 metaFiles => \@metaFilesMeta,
                 packageCreatedAt => time,
                 writtenBy => "$currentSupportedApiLevel/$minSupportedApiLevel/$dataFormatRevision",
@@ -2692,18 +2692,21 @@ sub installPackage
                 if (! -e $lixuzDir.'/'.$file || filesDiffer($dir.'/content/'.$file,$lixuzDir.'/'.$file,$meta))
                 {
                     my $newData = copyFile($dir.'/content/'.$file,$lixuzDir.'/'.$file);
-                    if (!$lazyInstall && !defined($meta->{checksum}))
+                    # Symlinks don't have checksums (obviously), so don't check for it
+                    if ($meta->{type} ne 's')
                     {
-                        die('Package corrupt, '.$file.' does not have a checksum'."\n");
+                        if (!$lazyInstall && !defined($meta->{checksum}))
+                        {
+                            die('Package corrupt, '.$file.' does not have a checksum'."\n");
+                        }
+                        elsif (!$lazyInstall && $newData->{checksum} && $newData->{checksum} ne $meta->{checksum})
+                        {
+                            printd($file.' checksums: ');
+                            printd($newData->{checksum});
+                            printd($meta->{checksum});
+                            die('Package corrupt, copied data for '.$file.' differs from its checksum'."\n");
+                        }
                     }
-                    elsif (!$lazyInstall && $newData->{checksum} && $newData->{checksum} ne $meta->{checksum})
-                    {
-                        printd($file.' checksums: ');
-                        printd($newData->{checksum});
-                        printd($meta->{checksum});
-                        die('Package corrupt, copied data for '.$file.' differs from its checksum'."\n");
-                    }
-                    printd('Copied '.$file.' into tree');
                 }
                 $entry->{file} = $file;
                 push(@fileData, $entry);
