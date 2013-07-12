@@ -47,7 +47,7 @@ my $minSupportedDataFormatRev = $dataFormatRevision;
 # The minimum supported api level of plumbing commands
 my $minSupportedApiLevel      = 2;
 # The real (latest) supported api level of plumbing commands
-my $currentSupportedApiLevel  = 5;
+my $currentSupportedApiLevel  = 6;
 # The revision of the package format that we write
 my $packageFormatRevision     = 4;
 # The mimimum supported package format supported
