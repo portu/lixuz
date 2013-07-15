@@ -2245,6 +2245,10 @@ sub buildPackage
                     {
                         push(@errors,'Multiple templates are using the unique id "'.$info->{'UNIQUEID'}.'": '.basename($file).' '.basename($existing)."\n");
                     }
+                    if ($info->{'TYPE'} !~ /^(list|article|message|include|search|email_(html|text)|media|rssimport)/)
+                    {
+                        push(@errors,'Illegal template type: "'.$info->{TYPE}.'" for the template '.$info->{UNIQUEID}."\n");
+                    }
                     $idMap{ $info->{'UNIQUEID'} } = $file;
                 }
                 catch
