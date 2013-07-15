@@ -258,12 +258,17 @@ sub orderedRS
                 }
                 # This returns all articles that are not already present in the
                 # ordered resultset
-                return $self->get_live_articles($c,$info)->search(
+                my $live = $self->get_live_articles($c,$info);
+                if (defined $live)
+                {
+                    return $live->search(
                     {
                         'me.article_id' => {
                             -not_in => [ $proxy->getOrderedArticleIDs ]
                         }
                     });
+                }
+                return;
             },
             orderedBuilder => sub
             {

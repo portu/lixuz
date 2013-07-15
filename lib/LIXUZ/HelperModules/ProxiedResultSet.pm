@@ -121,7 +121,10 @@ sub count
 sub next
 {
     my $self = shift;
-    return $self->current->next;
+    if ($self->current)
+    {
+        return $self->current->next;
+    }
 }
 
 # Purpose: This method is primarily as an internal interface so that objects
