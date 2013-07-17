@@ -121,6 +121,7 @@ sub main
         # but this could potentionally change at some later point.
         'exec-chained' => \$chained,
     );
+    Getopt::Long::Configure('no_pass_through');
     
     $lixuzDir //= realpath(dirname(realpath($0)).'/../');
     if (!-d $lixuzDir)
@@ -942,7 +943,7 @@ sub packages
     my $beep = 0;
     GetOptions(
         'beep' => \$beep,
-    );
+    ) or die("See lixuzctl --help for more information\n");
 
     my $subcommand = shift(@ARGV);
 
