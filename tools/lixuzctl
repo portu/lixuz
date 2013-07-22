@@ -3034,12 +3034,18 @@ sub removePackage
         unlink($lixuzDir.'/'.$file);
         printd('Removed file: '.$file);
     }
-    if ($meta->{packages}->{$packageName}->{templateFiles})
+    if ($meta->{packages}->{$packageName}->{templateContent})
     {
         my @templates;
-        foreach my $entry (@{ $meta->{packages}->{$packageName}->{templateFiles} })
+        foreach my $entry (@{ $meta->{packages}->{$packageName}->{templateContent} })
         {
             push(@templates, $entry->{id});
+        }
+        # If verbosity is 0 then we silence the template subcommand. @templates
+        # merely represents additional command-line parameters at this point.
+        if ($verbosity == 0)
+        {
+            push(@templates,'--quiet');
         }
         selfRun('templates','remove',@templates);
     }
