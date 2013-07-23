@@ -220,7 +220,7 @@ for(my $i = 0; $i < $noART; $i++)
                             field_id => $field->field_id
                         });
                     my $entry = int(rand(scalar(@options)));
-                    $value = $options[$entry];
+                    $value = $options[$entry]->option_id;
                 }
                 elsif($type =~ /^meta-/)
                 {
