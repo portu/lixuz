@@ -803,6 +803,18 @@ sub resolveConfigPath
     return $config;
 }
 
+# Purpose: Switch to a directory, debug logging which directory it is
+sub changeDir
+{
+    my $dir = shift;
+    my $ret = chdir($dir);
+    if ($ret)
+    {
+        printd('Switched to '.$dir);
+    }
+    return $ret;
+}
+
 # ---
 # Database functions
 # ---
@@ -820,7 +832,7 @@ sub database
 
         when('upgrade')
         {
-            chdir($lixuzDir.'/sql');
+            changeDir($lixuzDir.'/sql');
             my @command = qw(perl ./upgradeDB ../lixuz.yml);
             if ($force)
             {
@@ -1143,8 +1155,8 @@ sub runPackageTrigger
     }
     if ($switchTo ne $origDir)
     {
-        chdir($switchTo) or die($trigger.' trigger for '.$package.' failed: could not chdir('.$switchTo.'): '.$!);
-        printd('Switched to '.$switchTo.' for the duration of the trigger');
+        printd('Switching to '.$switchTo.' for the duration of the trigger');
+        changeDir($switchTo) or die($trigger.' trigger for '.$package.' failed: could not chdir('.$switchTo.'): '.$!);
     }
     if (-e $file)
     {
@@ -1174,7 +1186,7 @@ sub runPackageTrigger
     }
     if ($origDir)
     {
-        chdir($origDir);
+        changeDir($origDir);
     }
 }
 
@@ -2050,7 +2062,7 @@ sub buildPackage
         $srcdir = realpath($srcdir);
         $target = realpath($target);
         # Switch to the source directory
-        chdir($srcdir);
+        changeDir($srcdir);
 
         if (!$prepDone)
         {
@@ -2204,7 +2216,7 @@ sub buildPackage
     if (!$disableTriggers)
     {
         my $previousDir = getcwd();
-        chdir($dir) or die('Failed to chdir to '.$dir.': '.$!);
+        changeDir($dir) or die('Failed to chdir to '.$dir.': '.$!);
 
         printStatus('Running trigger: buildConstruct...');
         try
@@ -2214,12 +2226,12 @@ sub buildPackage
         catch
         {
             $runCleanup->(1);
-            chdir($previousDir);
+            changeDir($previousDir);
             die($_);
         };
         printStatus('done'."\n");
 
-        chdir($previousDir);
+        changeDir($previousDir);
     }
 
     # Ensure that we don't have multiple templates with the same unique id
@@ -2445,11 +2457,11 @@ sub reconstructPackage
     }
 
     my $previousWD = getcwd;
-    chdir($dir);
+    changeDir($dir);
 
     buildPackage('reconstruct',$dir,$targetDir,1);
 
-    chdir($previousWD);
+    changeDir($previousWD);
 }
 
 # ---
