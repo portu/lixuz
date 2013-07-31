@@ -25,7 +25,8 @@ use Test::MockClass;
 use LIXUZ::Schema;
 our @EXPORT_OK = qw(fakeC getConfig getLixuzRoot mockC getDBIC);
 
-my ($root,$conf);
+our $root;
+my $conf;
 
 sub fakeC
 {
