@@ -953,8 +953,10 @@ sub packages
     $| = 1;
     checkForHelpParam(sub { usagePackages(0) });
     my $beep = 0;
+    my $noinstall = 0;
     GetOptions(
         'beep' => \$beep,
+        'noinstall|no-install' => \$noinstall,
     ) or die("See lixuzctl --help for more information\n");
 
     my $subcommand = shift(@ARGV);
@@ -975,6 +977,7 @@ sub packages
         when('watch')
         {
             my $dir = shift // '.';
+            my $command = $noinstall ? 'build' : 'buildinstall';
             printv('Watching '.$dir.' for changes'."\n");
             my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp|swo)$ --excludei .*~$ --excludei ./.lixuzctl.buildlock};
             if ($verbosity < 99)
@@ -993,9 +996,9 @@ sub packages
                     sleep(2);
                     next;
                 }
-                printv('['.strftime('%H:%M:%S',localtime).'] Change detected, running buildinstall'."\n");
-                selfRun('packages','buildinstall');
-                printv('['.strftime('%H:%M:%S',localtime).'] buildinstall complete'."\n");
+                printv('['.strftime('%H:%M:%S',localtime).'] Change detected, running '.$command."\n");
+                selfRun('packages',$command);
+                printv('['.strftime('%H:%M:%S',localtime).'] '.$command.' complete'."\n");
                 if ($beep)
                 {
                     print "\a";
@@ -1121,6 +1124,7 @@ sub usagePackages
     printHelp('','owner X Y ..','Output which package (if any) owns the files specified');
     printHelp('','listfiles','List all files installed by packages, along with which package installed the file');
     printHelp('','watch X','Runs buildinstall X whenever a file in the supplied directory changes');
+    printHelp('','  --noinstall','Changes the behaviour of "watch" to run "build" instead of "buildinstall');
     printHelp('','buildwatch X','First runs "buildinstall X" and then acts like "watch X"');
     printHelp('','  --beep','Emit a beep (terminal bell) whenever buildinstall gets run by "watch" or "buildwatch"');
     printHelp('','reconstruct X Y','Reconstruct a package (X) from its installed data, saving the package to Y');
