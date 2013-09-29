@@ -137,7 +137,7 @@ sub has_child
     return;
 }
 
-# Purpose: Check if this folder has a child that matches the supplied ID or LzFolder
+# Purpose: Check if this folder has a parent that matches the supplied ID or LzFolder
 # Usage: bool = $folder->has_parent($lz_folder or $ID)
 sub has_parent
 {
