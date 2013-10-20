@@ -257,6 +257,16 @@ function insertImage_resizeObj(editorName,obj,width,height)
             return RTE;
         },
 
+        list: function()
+        {
+            var list = [];
+            $('.yui-RTE').each(function()
+            {
+                list.push($(this).attr('name'));
+            });
+            return list;
+        },
+
         getContent: function(RTE)
         {
             return this._get(RTE).getContent();
