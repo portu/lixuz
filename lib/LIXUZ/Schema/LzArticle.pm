@@ -858,14 +858,23 @@ sub is_in_exclusive_status
     my $c = shift;
 
     my $ckey = 'a_status_'.$self->status_id.'_is_exclusive';
+    my $ctime;
     my $data = $c->cache->get($ckey);
     if(defined($data))
     {
         return $data;
     }
 
-    $data = $self->status->exclusive ? 1 : 0;
-    $c->cache->set($ckey,$data);
+    if ($self->status)
+    {
+        $data = $self->status->exclusive ? 1 : 0;
+    }
+    else
+    {
+        $data = 0;
+        $ctime = 600;
+    }
+    $c->cache->set($ckey,$data,$ctime);
     return $data;
 }
 
