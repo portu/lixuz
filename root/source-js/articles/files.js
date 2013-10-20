@@ -77,6 +77,14 @@ function LZ_ArtFilePrompt (fileId, fileType)
     {
         html = html + htmlCheckbox('fileActionAddToLead',i18n.get('Add to the lead'),'addToLead','radio',leadSel,'fileAction')+'<br />';
         html = html + htmlCheckbox('fileActionAddToBody',i18n.get('Add to the body'),'addToBody','radio',false,'fileAction')+'<br />';
+        _.each(lixuzRTE.list(), function(field)
+        {
+            if(lixuzRTE.get('lead').editorId == field || lixuzRTE.get('body').editorId == field)
+            {
+                return;
+            }
+            html = html + htmlCheckbox('fileActionAddTo'+field,i18n.get_advanced('Add to the "%(FIELD)" field', { FIELD: LZ_ADF_fieldName(field) }),'addToField_'+field,'radio',false,'fileAction')+'<br />';
+        });
     }
     else
     {
@@ -113,6 +121,13 @@ function LZ_FileSpotOK ()
             {
                 destroy();
                 LZ_addToRTE(currFileType, currFileUID, 'body');
+                return;
+            }
+            else if (/^addToField_.*/.test(e.value))
+            {
+                var target = e.value.replace(/^addToField_/,'');
+                destroy();
+                LZ_addToRTE(currFileType, currFileUID, target);
                 return;
             }
             else if (e.value == 'setCaption')
