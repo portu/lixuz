@@ -102,18 +102,34 @@ function LZ_ADF_fieldName (field)
 {
     try
     {
-        var id = field.id,
+        var id,
             name,
-            element = $('#'+id+'_label');
+            element;
+        if(_.isObject(field))
+        {
+            id = field.id;
+        }
+        else
+        {
+            id = field;
+        }
+        element = $('#'+id+'_label');
         if (element.length)
         {
-            name = element.val();
-            name.replace(/<[^>]+>/g,'');
+            if(element.val().length)
+            {
+                name = element.val();
+            }
+            else if(element.text().length)
+            {
+                name = element.text();
+            }
         }
-        if (!name)
+        if(name === undefined)
         {
-            name = id;
+            name = field;
         }
+        name.replace(/<[^>]+>/g,'');
         return name;
     }
     catch(e)
