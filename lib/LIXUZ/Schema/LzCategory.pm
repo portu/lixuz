@@ -231,10 +231,7 @@ sub orderedRS
     my $template = $info->{template};
     if (!defined $template)
     {
-        $template = $c->model('LIXUZDB::LzTemplate')->find({
-                type => 'list',
-                is_default => 1,
-            });
+        $template = $self->template;
     }
     my $templateMeta = $template->get_info($c);
 
