@@ -109,7 +109,7 @@ sub get_list
             }
             else
             {
-                $cat = $self->c->model('LIXUZDB::LzCategory')->find({category_id => $catid},{prefetch => 'children', columns => [ 'category_id','parent','root_parent' ]});
+                $cat = $self->c->model('LIXUZDB::LzCategory')->find({category_id => $catid},{prefetch => 'children' });
             }
             if ($cat)
             {
@@ -304,18 +304,18 @@ sub _getCategoryObjectFromURL
     if (not defined $catname or not length $catname)
     {   
         $isFrontPage = 1;
-        $cat = $self->c->model('LIXUZDB::LzCategory')->find({category_id => $settings->{root_catid}}, {columns => [ 'category_id','parent','root_parent']});
+        $cat = $self->c->model('LIXUZDB::LzCategory')->find({category_id => $settings->{root_catid}});
     }
     else
     {   
         my $origCat = $catname;
         $catname =~ s/-/ /g;
-        $cat = $self->c->model('LIXUZDB::LzCategory')->find({category_name => $catname},{prefetch => 'children',columns => [ 'category_id','parent','root_parent']});
+        $cat = $self->c->model('LIXUZDB::LzCategory')->find({category_name => $catname},{prefetch => 'children'});
         # FIXME
         $self->c->stash->{rssCategory} = $origCat;
         if (not $cat)
         {   
-            $cat = $self->c->model('LIXUZDB::LzCategory')->find({category_name => $origCat},{prefetch => 'children',columns => [ 'category_id','parent','root_parent']});
+            $cat = $self->c->model('LIXUZDB::LzCategory')->find({category_name => $origCat},{prefetch => 'children'});
         }
     }
     if(wantarray())
