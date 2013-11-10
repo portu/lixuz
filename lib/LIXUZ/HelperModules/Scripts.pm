@@ -79,10 +79,17 @@ sub mockC
 
     my $logger = $mockLog->create;
 
+    my $mockCache = Test::MockClass->new('LIXUZ::MockCache');
+    $mockCache->defaultConstructor();
+    $mockCache->addMethod('set',sub { });
+    $mockCache->addMethod('get',sub { });
+    my $mockCacheInstance = $mockCache->create;
+
     my $mockClass = Test::MockClass->new('LIXUZ');
     $mockClass->defaultConstructor();
     $mockClass->addMethod('config',sub { getConfig() });
     $mockClass->addMethod('log', sub { return $logger });
+    $mockClass->addMethod('cache',sub { return $mockCacheInstance });
     return $mockClass->create;
 }
 
