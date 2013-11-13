@@ -426,13 +426,11 @@ sub _getCategorySearchSQL
     my $ckey = get_ckey('category','children',$self->category_id);
     if (not $folders = $c->cache->get($ckey))
     {
-        if(not defined $self->root_parent)
+        my $flist = $self->folders;
+        $folders = [];
+        while(my $f = $flist->next)
         {
-            $folders = $self->_toplevelChildrenFetcher($c);
-        }
-        else
-        {
-            $folders = $self->_recursiveChildrenFetcher($c);
+            push(@{$folders},$f->folder_id);
         }
         $c->cache->set($ckey,$folders,CT_1H);
     }
@@ -488,46 +486,6 @@ sub _toplevelChildrenFetcher
         push(@categories,$child->category_id);
     }
     return $self->_getFoldersFromCategories($c,@categories);
-}
-
-sub _getFoldersFromCategories
-{
-    my $self = shift;
-    my $c = shift;
-    my @folderList;
-    my @folderSearch;
-    while(my $category = shift(@_))
-    {
-        push(@folderSearch,{ category_id => $category});
-    }
-    my $search = $c->model('LIXUZDB::LzCategoryFolder')->search({'-or' => \@folderSearch},{ columns => ['folder_id']});
-    while(my $f = $search->next)
-    {
-        push(@folderList,$f->folder_id);
-    }
-    return \@folderList;
-}
-
-sub _recursiveChildrenFetcher
-{
-    my($self,$c) = @_;
-    my $loopL = 0;
-    my @categoryList;
-    my @childrenLists;
-    push(@categoryList,$self->category_id);
-    push(@childrenLists,scalar $self->children->search(undef,{prefetch => 'children',columns => ['category_id']}));
-    while((my $children = shift(@childrenLists)) && ($loopL++ < 1000))
-    {
-        while(my $child = $children->next)
-        {
-            if ($child->children)
-            {
-                push(@childrenLists, scalar $child->children->search(undef,{prefetch => 'children',columns => ['category_id']}));
-            }
-            push(@categoryList,$child->category_id);
-        }
-    }
-    return $self->_getFoldersFromCategories($c,@categoryList);
 }
 
 __PACKAGE__->has_many(children => 'LIXUZ::Schema::LzCategory', { 'foreign.parent' => 'self.category_id' });
