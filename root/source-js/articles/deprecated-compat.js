@@ -1,9 +1,3 @@
-function LZ_AddFileToRTE(fileId, RTE)
-{
-    deprecated('Use articleFiles.addToRTE');
-    articleFiles.addToRTE(fileId,RTE);
-}
-
 function LZ_AddVideoToRTE(videoId, RTE)
 {
     deprecated('Use articleFiles.addToRTE');
@@ -20,12 +14,6 @@ function LZ_AddVideoToArticle (videoId)
 {
     deprecated();
     LZ_AddVideoToRTE(videoId,'inline_body');
-}
-
-function LZ_AddFileToArticle (fileId)
-{
-    deprecated();
-    LZ_AddFileToRTE(fileId,'inline_body');
 }
 
 function LZ_assignFileToSpot (destroy, spot, file,force)

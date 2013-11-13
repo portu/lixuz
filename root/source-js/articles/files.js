@@ -61,7 +61,14 @@ function LZ_ArtFilePrompt (fileId, fileType)
     var title = i18n.get('File');
     var html =  '';
     var leadSel = true;
-    if(currFileType != 'flash')
+    if(fileType == undefined)
+    {
+        fileType = 'unknown';
+    }
+    // FIXME: Ugly use of globals
+    currFileType = fileType;
+    currFileUID = fileId;
+    if(fileType != 'flash' && fileType != 'unknown')
     {
         var currentCaption = articleFiles.getFileCaption(fileId);
         if(currentCaption == null)

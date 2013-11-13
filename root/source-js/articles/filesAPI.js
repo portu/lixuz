@@ -129,7 +129,7 @@ var articleFiles = {
         else
         {
             hadA = true;
-            html = html+'<a href="#" onclick="LZ_AddFileToArticle('+file.file_id+'); return false"><img src="'+file.icon+'" alt="" />';
+            html = html+'<a href="#" onclick="LZ_ArtFilePrompt('+file.file_id+'); return false"><img src="'+file.icon+'" alt="" />';
         }
         html = html+'<br />';
         html = html +'<b>'+articleFiles.shortSTR(file.file_name)+'</b><br />';
