@@ -249,8 +249,7 @@ sub createCheckbox
         $onchange = 'try { '.$onchange.' } catch(oe) { lzException(oe); }';
     }
 
-    my $js = 'try { var c = $(\''.$id.'\'); if(c.checked) { c.checked = false; } else { c.checked = true }; var oc = function() { '.$onchange.' }; oc.call(c); '.$onchange.'; } catch(e) { lzException(e); }; return false';
-    my $s = '<a href="#" onclick="'.$js.'" style="text-decoration: none;"><input type="checkbox" id="'.$id.'"';
+    my $s = '<input type="checkbox" id="'.$id.'"';
     if ($onchange)
     {
         $s .= ' onchange="'.$onchange.'"';
@@ -264,6 +263,7 @@ sub createCheckbox
         $s .= ' '.$options->{addHtml};
     }
     $s .= ' /> ';
+    $label = '<label for="'.$id.'">'.$label.'</label>';
     if ($options->{addHtmlLabel})
     {
         $s .= '<span '.$options->{addHtmlLabel}.'>'.$label.'</span>';
