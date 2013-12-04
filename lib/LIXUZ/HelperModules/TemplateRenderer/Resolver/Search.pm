@@ -70,7 +70,6 @@ sub get_results
     my $page     = $self->c->req->param('p') // $self->c->req->param('page');
     my $category = $self->c->req->param('c') // $self->c->req->param('category');
     my $bias     = $self->c->req->param('b') // $self->c->req->param('bias') // '';
-
     if (not $page or $page =~ /\D/ or $page < 1)
     {
         $page = 1;
@@ -87,6 +86,10 @@ sub get_results
     else
     {
         $bias = $indexerBias eq 'timestamp' ? 'dt' : 'sc';
+    }
+    if (not $category)
+    {
+        $category = $searchContent->{category};
     }
 
     my $result;
@@ -105,6 +108,7 @@ sub get_results
         $result = $result->page($page);
         $pager = $result->pager;
     }
+        
     # FIXME: Doesn't handle category with queries
     if(defined $category and not defined($query))
     {
