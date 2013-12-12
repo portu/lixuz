@@ -1277,6 +1277,9 @@ sub get_resized
             return;
         }
     }
+    # Set image quality
+    $gm->Set(quality => 95);
+
     my $format = $self->get_format;
     # If it's a tiff-file, write a png file, if we don't then browsers
     # can't read it
