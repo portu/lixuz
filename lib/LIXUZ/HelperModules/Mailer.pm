@@ -30,6 +30,24 @@ has 'streaming' => (
     default => 0,
 );
 
+# Dupe protection enables additional guards against sending duplicates. This is
+# only useful for short lived instances that will send a single mail to a lot
+# of recipients, and will guard against sending that one e-mail to a single
+# recipient more than once. If you will be sending several different e-mails
+# through the Mailer instance then this could potentionally result in lost
+# mail and should not be used.
+#
+# The guarding happens within the lixuz-sendmail.pl process itself. If dupes
+# are detected then usually the first e-mail added to that recipient will be
+# the one that gets sent. That is not guaranteed, however, and if sending
+# an e-mail fails (ie. temporary problems with the mail server) then a later
+# mail could be sent instead. The only guarantee is one mail per recipient.
+has 'dupeProtection' => (
+    is => 'ro',
+    required => 0,
+    default => 0,
+);
+
 has 'c' => (
     is => 'rw',
     required => 1,
@@ -173,6 +191,7 @@ sub _execute_mailer
     $data->{noFork}       //= 0;
     $data->{debug}        //= 0;
     $data->{default_from} //= $self->_defaultFrom;
+    $data->{dupeProtection} = $self->dupeProtection;
     no warnings;
     my $pid = open2(my $out, my $in, $LIXUZ::PATH.'/tools/lixuz-sendmail.pl') or die("Failed to open2 to lixuz-sendmail-pl\n");
     use warnings;

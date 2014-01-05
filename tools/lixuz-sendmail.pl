@@ -11,12 +11,15 @@ use POSIX qw(setsid);
 use Encode qw(encode);
 use IO::Socket::UNIX;
 use IO::Select;
+use Method::Signatures;
 use utf8;
 
 my $lixuzVersion = 'GIT';
 my $logfile = '/dev/shm/lixuz-sendmail-'.$$.'.log';
 my $fork = 1;
 my $debug = 0;
+my $dupeProtection = 0;
+my $lixuzSendmailID = time.'-'.int(rand(9999));
 my $socket;
 my @queue;
 my %state;
@@ -74,6 +77,10 @@ my %state;
         if ($J->{debug})
         {
             $debug = 1;
+        }
+        if ($J->{dupeProtection})
+        {
+            $dupeProtection = 1;
         }
         if ($J->{socket})
         {
@@ -186,9 +193,13 @@ if (-s $logfile == 0)
     unlink($logfile);
 }
 
-sub trySend
+func trySend($mail)
 {
-    my $mail = shift;
+    if (!defined($state{ $mail->{ID} }))
+    {
+        printd('Attempted to process an e-mail that has been removed from state: '.$mail->{ID}.' - ignoring request');
+        return 1;
+    }
 
     my $content = $mail->{type} eq 'HTML' ? $mail->{HTML} : $mail->{text};
 
@@ -211,6 +222,7 @@ sub trySend
         Data => encode('utf8',$$content),
     );
     $email->add('X-Lixuz-Mailer' => 'lixuz-sendmail.pl');
+    $email->add('X-Lixuz-Mailer-State' => $lixuzSendmailID.'-'.$mail->{ID}.'-'.$state{ $mail->{ID} } );
     $email->replace('X-Mailer' => 'Lixuz version '.$lixuzVersion);
     $state{ $mail->{ID} }++;
     printd('Sending mail with subject "'.$subject.'" to '.$mail->{to});
@@ -255,9 +267,8 @@ sub trySend
     }
 }
 
-sub populateWith
+func populateWith($to,$subject,$HTML,$text,$from,$defaultFrom)
 {
-    my ($to,$subject,$HTML,$text,$from,$defaultFrom) = @_;
     $from //= $defaultFrom;
 
     if(not defined $subject)
@@ -297,18 +308,36 @@ sub populateWith
             HTML => \$HTML,
             type => $type,
             subject => $subject,
-            ID => genStateID(),
+            ID => genStateID($to),
         });
 }
 
-sub genStateID
+func genStateID($email)
 {
     my $ID;
     while( (!defined $ID) || (defined $state{$ID}))
     {
-        $ID = time.'-'.int(rand(9999999999));
+        if ($dupeProtection)
+        {
+            $email =~ s/.*<([^>]+)>.*/$1/;
+            $ID = $email;
+        }
+        else
+        {
+            while(!defined($ID) || defined($state{$ID}))
+            {
+                $ID = time.'-'.int(rand(9999999999));
+            }
+        }
     }
-    $state{$ID} = 0;
+    if ($state{$ID} && $dupeProtection)
+    {
+        printd('Duplicate detected: '.$email);
+    }
+    else
+    {
+        $state{$ID} = 0;
+    }
     return $ID;
 }
 
@@ -354,6 +383,13 @@ is successful, daemonize itself and begin processing e-mails.
         version: '',
         // The API version (required)
         api: 1,
+        // Forces lixuz-sendmail.pl not to fork if true (optional)
+        noFork: 0,
+        // Enables dupe-protection if true (optional)
+        dupeProtection: 0,
+        // Enables streaming mode (allows messages to be added later) if set to a
+        // path (path to the socket to listen to)
+        socket: null,
 
         emails: [
                 {
