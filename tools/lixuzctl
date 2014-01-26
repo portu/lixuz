@@ -120,6 +120,11 @@ sub main
         # duplicate messages). Right now this is treated the same as --chained,
         # but this could potentionally change at some later point.
         'exec-chained' => \$chained,
+        # This indicates that this instance of lixuzctl is a child of Lixuz itself,
+        # meaning that it has been executed by code running within the Lixuz web
+        # application. Right now this is treated the same as --chained,
+        # but this could potentionally change at some later point.
+        'web-chained' => \$chained,
     );
     Getopt::Long::Configure('no_pass_through');
     
