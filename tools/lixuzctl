@@ -61,6 +61,7 @@ my $chained;
 my $logfile;
 my $lixuzDir;
 my $forceRefresh;
+my $debugger;
 my @packageMetaFiles = qw(package.yml triggers.pl COPYING README);
 # Boolean flag, set to true once LIXUZ:: modules have been loaded
 # to avoid loading them multiple times.
@@ -81,6 +82,7 @@ sub main
         'debug' => sub {
             $verbosity = 99;
         },
+        'debugger' => \$debugger,
         'logfile=s' => sub {
             shift;
             $logfile = shift;
@@ -1971,6 +1973,11 @@ sub runPluginSubcommand
         $ENV{PERL5LIB} = $lixuzDir.'/lib:'.$origLib;
         printd('Added '.$lixuzDir.'/lib'.' to PERL5LIB');
         my @command = ('perl',$lixuzDir.'/tools/plugins.d/'.$plugin,@_);
+        if ($debugger)
+        {
+            shift(@command);
+            unshift(@command,qw(perl -d));
+        }
         printd('Running: '.join(' ',@command));
         my @ret = system(@command);
         $ENV{PERL5LIB} = $origLib;
