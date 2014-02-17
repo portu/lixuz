@@ -52,3 +52,25 @@ sub _getPermFromConsumer
 }
 
 1;
+
+=head1 SUMMARY
+
+LIXUZ::Role::AccessControl::ObjPerms - frontend access control functions
+
+=head1 DESCRIPTION
+
+This role provides front-end functions for an object that provides get_object_perm.
+
+=head1 PUBLIC METHODS
+
+=over
+
+=item can_read($object)
+
+Returns true if the current user is permitted to read from the object.
+
+=item can_writer($object)
+
+Returns true if the current user is permitted to writer to the object.
+
+=back

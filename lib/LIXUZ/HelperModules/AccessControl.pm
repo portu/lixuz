@@ -238,3 +238,43 @@ sub _singleCheck
 
 __PACKAGE__->meta->make_immutable;
 1;
+__END__
+
+=head1 SUMMARY
+
+LIXUZ::HelperModules::AccessControl - access control checks for Lixuz
+
+=head1 DESCRIPTION
+
+This module provides access to the access control checks contained in Lixuz.
+It is rarely called directly, most accesses are done indirectly through the LzUser
+object (usually through $c->user).
+
+=head1 METHODS
+
+=over
+
+=item can_access_path(resource?)
+
+This will check if a user (the current, or the proxied) can access the resource
+(Lixuz path) supplied. Returns true if the user is permitted, false otherwise.
+
+You may omit resource, in which case it will check the currently requested path as
+provided by Catalyst.
+
+=item check_access(resource?)
+
+This performs the same check as I<can_access_path()>, but instead of returning
+false if access is denied, it will abort Catalyst processing and display
+an access denied page.
+
+=item access_denied()
+
+Display an access denied page. This is what I<check_access()> calls if access
+is not permitted.
+
+=item last_denied
+
+Returns the URL that was last denied access to (or undef).
+
+=back

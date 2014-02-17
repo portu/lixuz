@@ -139,3 +139,38 @@ sub check_read
 }
 
 1;
+__END__
+
+=head1 SUMMARY
+
+LIXUZ::Role::AccessControl::Model - access control checks on a model object
+
+=head1 DESCRIPTION
+
+This role provides access control checks for model objects (ie. LzFolder). It
+implements the ACL, ObjCache and PermChecker interfaces, and is consumable by
+models for easy ACL checks directly on the object.
+
+=head1 PUBLIC METHODS
+
+=over
+
+=item can_read($c)
+
+Returns true if the current user is permitted to read from the object.
+
+=item can_writer($c)
+
+Returns true if the current user is permitted to writer to the object.
+
+=item check_read($c)
+
+Returns true if the current user is permitted to read from the object,
+otherwise it aborts processing and displays an access denied page.
+
+=item check_write($c)
+
+Returns true if the current user is permitted to write to the object,
+otherwise it aborts processing and displays an access denied page.
+
+=back

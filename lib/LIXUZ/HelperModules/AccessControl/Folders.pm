@@ -94,3 +94,41 @@ sub _build_recursive_list
 }
 
 __PACKAGE__->meta->make_immutable;
+__END__
+
+=head1 SUMMARY
+
+LIXUZ::HelperModules::AccessControl::Folders - access control checks for Lixuz folders
+
+=head1 DESCRIPTION
+
+This is a low-level module that provides access to access control checks for
+Lixuz folders.  This module is generally not called directly, it just
+implements an interface that implements the back-end functions required for
+with I<LIXUZ::Role::AccessControl::ObjPerms>. The methods provided in that role
+is considered the public interface. Furthermore the module is rarely called by
+a user at all, rather mostly being called on an LzFolder object directly, which
+will instantiate and call methods on this object as needed.
+
+=head1 METHODS
+
+=over
+
+=item get_object_perm(folder)
+
+Returns the octal representation of the permissions for userId (see ObjPerms) on
+this folder.
+
+=item get_object_id()
+
+Returns the folder_id of the currently processing folder
+
+=item get_object_type()
+
+Returns the string 'folder'
+
+=item get_perm_for_singleFolder(folder)
+
+Returns the permissions related to a single folder (not tree).
+
+=back
