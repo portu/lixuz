@@ -32,7 +32,7 @@ use Config::Any;
 use JSON qw(encode_json decode_json);
 use Try::Tiny;
 use Cwd qw(getcwd);
-use POSIX qw(strftime);
+use POSIX qw(strftime setsid);
 use IPC::Open3;
 use Carp qw( confess );
 use constant {
@@ -47,7 +47,7 @@ my $minSupportedDataFormatRev = $dataFormatRevision;
 # The minimum supported api level of plumbing commands
 my $minSupportedApiLevel      = 2;
 # The real (latest) supported api level of plumbing commands
-my $currentSupportedApiLevel  = 6;
+my $currentSupportedApiLevel  = 7;
 # The revision of the package format that we write
 my $packageFormatRevision     = 4;
 # The mimimum supported package format supported
@@ -61,6 +61,7 @@ my $chained;
 my $logfile;
 my $lixuzDir;
 my $forceRefresh;
+my $debugger;
 my @packageMetaFiles = qw(package.yml triggers.pl COPYING README);
 # Boolean flag, set to true once LIXUZ:: modules have been loaded
 # to avoid loading them multiple times.
@@ -74,6 +75,7 @@ sub main
 {
     Getopt::Long::Configure('pass_through','permute');
 
+    my $fork = 0;
     GetOptions(
         'v|verbose' => sub {
             $verbosity++
@@ -81,6 +83,7 @@ sub main
         'debug' => sub {
             $verbosity = 99;
         },
+        'debugger' => \$debugger,
         'logfile=s' => sub {
             shift;
             $logfile = shift;
@@ -92,6 +95,10 @@ sub main
         'lixuzdir=s' => sub {
             shift;
             $lixuzDir = shift;
+        },
+        'fork' => sub {
+            shift;
+            $fork = 1
         },
         'version' => sub
         {
@@ -120,8 +127,29 @@ sub main
         # duplicate messages). Right now this is treated the same as --chained,
         # but this could potentionally change at some later point.
         'exec-chained' => \$chained,
+        # This indicates that this instance of lixuzctl is a child of Lixuz itself,
+        # meaning that it has been executed by code running within the Lixuz web
+        # application. Right now this is treated the same as --chained,
+        # but this could potentionally change at some later point.
+        'web-chained' => \$chained,
     );
     Getopt::Long::Configure('no_pass_through');
+
+    if ($fork)
+    {
+        my $PID = fork;
+        exit if $PID;
+        die "Unable to fork: $!\n" if not defined($PID);
+        # Create a new session
+        setsid();
+        open(STDIN, '<', '/dev/null');
+        if ($logfile)
+        {
+            open(STDOUT, '>>', $logfile);
+            open(STDERR, '>>', $logfile);
+        }
+
+    }
     
     $lixuzDir //= realpath(dirname(realpath($0)).'/../');
     if (!-d $lixuzDir)
@@ -1966,6 +1994,11 @@ sub runPluginSubcommand
         $ENV{PERL5LIB} = $lixuzDir.'/lib:'.$origLib;
         printd('Added '.$lixuzDir.'/lib'.' to PERL5LIB');
         my @command = ('perl',$lixuzDir.'/tools/plugins.d/'.$plugin,@_);
+        if ($debugger)
+        {
+            shift(@command);
+            unshift(@command,qw(perl -d));
+        }
         printd('Running: '.join(' ',@command));
         my @ret = system(@command);
         $ENV{PERL5LIB} = $origLib;

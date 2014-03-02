@@ -79,6 +79,8 @@ sub mockC
 
     my $logger = $mockLog->create;
 
+    my $dbic = getDBIC();
+
     my $mockCache = Test::MockClass->new('LIXUZ::MockCache');
     $mockCache->defaultConstructor();
     $mockCache->addMethod('set',sub { });
@@ -90,6 +92,12 @@ sub mockC
     $mockClass->addMethod('config',sub { getConfig() });
     $mockClass->addMethod('log', sub { return $logger });
     $mockClass->addMethod('cache',sub { return $mockCacheInstance });
+    $mockClass->addMethod('model', sub {
+            shift;
+            my $fetch = shift;
+            $fetch =~ s/^LIXUZDB:://;
+            return $dbic->resultset($fetch);
+        });
     return $mockClass->create;
 }
 
