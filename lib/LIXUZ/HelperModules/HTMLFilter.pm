@@ -22,6 +22,8 @@
 # It exports nothing by default, you need to explicitly import the
 # functions you want.
 package LIXUZ::HelperModules::HTMLFilter;
+use strict;
+use warnings;
 use HTML::Normalize;
 use HTML::Restrict;
 use Exporter qw(import);
@@ -76,7 +78,8 @@ sub filter_string
             th => [qw(width valign colspan)],
             strong => [],
             em => [],
-        }
+        },
+        uri_schemes => [ undef, 'http','https','tel','mailto' ]
     );
     $string = $hr->process( $string );
     # Repair tag soup
