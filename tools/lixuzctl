@@ -25,6 +25,7 @@ use File::Find qw(find);
 use File::stat;
 use File::Basename qw(basename dirname);
 use Data::Dumper qw(Dumper);
+use Term::ReadLine;
 use Digest::SHA qw(sha512_hex);
 use Getopt::Long;
 use Cwd qw(realpath);
@@ -492,17 +493,23 @@ sub printnd
 # Purpose: Load LIXUZ:: namespaced modules
 sub loadLixuzModules
 {
-    if ($loadedModules)
+    my $isREPL = shift;
+    if (!$isREPL && $loadedModules)
     {
         return;
+    }
+    my $preamble = '';
+    if ($isREPL)
+    {
+        $preamble = $isREPL;
     }
     printd('Loading LIXUZ:: namespace dependencies');
     unshift(@INC,$lixuzDir.'/lib');
     # FIXME: Improved errors
-    eval('no strict; no warnings;$LIXUZ::PATH = $lixuzDir;1;') or die;
-    eval('use LIXUZ::HelperModules::Scripts qw(getDBIC getConfig mockC fakeC);1;') or die;
-    eval('use LIXUZ::HelperModules::Templates qw(parse_templatefile get_parsed_template_info);1') or die;
-    eval('use LIXUZ::HelperModules::FileUploader qw(ERR_DIRNOTFOUND ERR_WRITEFAILURE);1') or die;
+    eval($preamble.'no strict; no warnings;$LIXUZ::PATH = $lixuzDir;1;') or die;
+    eval($preamble.'use LIXUZ::HelperModules::Scripts qw(getDBIC getConfig mockC fakeC);1;') or die;
+    eval($preamble.'use LIXUZ::HelperModules::Templates qw(parse_templatefile get_parsed_template_info);1') or die;
+    eval($preamble.'use LIXUZ::HelperModules::FileUploader qw(ERR_DIRNOTFOUND ERR_WRITEFAILURE);1') or die;
     printd('Dependencies loaded');
     $loadedModules = 1;
 }
@@ -1861,6 +1868,11 @@ sub utils
             }
         }
 
+        when('repl')
+        {
+            repl();
+        }
+
         default
         {
             die('Unknown subcommand for utils: '.$subcommand."\nSee \"utils --help\" for more information\n");
@@ -1877,7 +1889,44 @@ sub usageUtils
     printHelp('','categorytree','Print a simple visualization of the category tree');
     printHelp('','foldertree','Print a simple visualization of the folder tree');
     printHelp('','fileInject X Y ..','Inject a file or set of files into Lixuz (as if they were uploaded via the web-interface)');
+    printHelp('','repl','Open up a REPL with Lixuz paths in @INC and some basic utilities loaded');
     exit(shift);
+}
+
+# Purpose: Run a REPL
+sub repl
+{
+    $| = 1;
+    print 'Lixuz REPL initializing...';
+    loadLixuzModules('package lixuzctlREPL;');
+    print "done\n\n";
+    print 'Type help for help'."\n";
+    my $r = Term::ReadLine->new(1);
+    while(defined($_ = $r->readline("\$ ")))
+    {
+        if ($_ eq 'help')
+        {
+            print 'This is a basic perl REPL. It runs in a clean namespace with only the'."\n";
+            print 'following functions defined:'."\n";
+            print 'getDBIC, getConfig, mockC, fakeC from LIXUZ::HelperModules::Scripts'."\n";
+            print 'parse_templatefile, get_parsed_template_info from L::HM::Templates'."\n";
+            print 'ERR_DIRNOTFOUND, ERR_WRITEFAILURE from L::HM::FileUploader'."\n";
+            print "\nLixuz is in \@INC, so you may use() any Lixuz module\n";
+        }
+        else
+        {
+            my $ret=Dumper(eval('package lixuzctlREPL;'.$_));
+            my $err=$@;
+            if($err ne "")
+            {
+                print $err;
+            }
+            else
+            {
+                print $ret;
+            }
+        }
+    }
 }
 
 # Purpose: Prints a visualization of a Lixuz tree structure (ie. categories or folders)
