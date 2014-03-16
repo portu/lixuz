@@ -20,7 +20,7 @@ var categoryLayout =
         $('#list_submit_search').click(function(e)
         {
             e.preventDefault();
-            this.updateArtList('root',$('#query').val());
+            self.updateArtList('root',$('#query').val());
         });
 
         $('#list_search').submit(function(e)
@@ -234,7 +234,7 @@ var categoryLayout =
     },
     updateArtList: function renderArticleList(fid,search,init,page)
     {
-        var self  = this,
+        var self  = categoryLayout,
             catid = $('#category_id').val();
         $('#folder_id').val(fid);
         if (!_.isNumber(page))
