@@ -243,6 +243,7 @@ sub retrieveArticles : Private
     my $query = shift;
     my $formbuilder = shift;
     my $trashed = shift;
+    my $forceEnableSearch = shift;
     $trashed //= 0;
 
     $c->stash->{template} = 'adm/articles/index.html';
@@ -254,6 +255,7 @@ sub retrieveArticles : Private
             formbuilder => $formbuilder,
             advancedSearch => [ qw(workflow.assigned_to_user workflow.assigned_by workflow.assigned_to_role status_id) ],
             searchColumns => [qw/title article_id body lead author/],
+            forceEnableSearch => $forceEnableSearch ? 1 : 0,
         });
     $helper->listAddJoin('workflow');
 
