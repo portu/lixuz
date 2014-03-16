@@ -1059,15 +1059,41 @@ sub packages
         {
             my @remove;
             printStatus('Processing dependencies ... ');
-            foreach my $pkg (@ARGV)
+            my @packages = @ARGV;
+            my $prev;
+            my $meta = loadMetaFile();
+            my $loop = 0;
+            my $loopMax = (scalar(@packages)*2)+1000;
+            while(defined(my $pkg = shift(@packages)))
             {
-                if(canRemovePackage($pkg))
+                if(! $meta->{packages}->{$pkg})
                 {
-                    unshift(@remove,$pkg);
+                    warn($pkg.': is not installed, skipping package'."\n");
+                    next;
+                }
+                if(canRemovePackage($pkg,$meta,\@remove))
+                {
+                    push(@remove,$pkg);
                 }
                 else
                 {
-                    push(@remove,$pkg);
+                    if (defined($prev) && $prev eq $pkg)
+                    {
+                        printd('Failed to find any safe way to remove "'.$pkg.'"');
+                        push(@remove,$pkg);
+                        last;
+                    }
+                    else
+                    {
+                        push(@packages,$pkg);
+                        $prev = $pkg;
+                    }
+                    if ($loop++ > $loopMax)
+                    {
+                        my $remaining = join(', ',@packages);
+                        my ($r,$error) = canRemovePackage($pkg,$meta,\@remove);
+                        die('Eternal loop in dependency resolver detected, aborting.'."\n\nDiagnostics:\n".'Remaining packages: '.$remaining."\n".'Last error seen: '.$error);
+                    }
                 }
             }
             printStatus('done'."\n");
@@ -3157,8 +3183,18 @@ sub canRemovePackage
 {
     my $packageName = shift;
     my $meta        = shift;
+    my $removedA    = shift;
     my $error       = undef;
     my $return      = 1;
+    my $removed     = {};
+
+    if($removedA)
+    {
+        foreach my $n (@{$removedA})
+        {
+            $removed->{$n} = 1;
+        }
+    }
 
     $meta         //= loadMetaFile();
 
@@ -3178,12 +3214,13 @@ sub canRemovePackage
     foreach my $installedPackage (keys %{$meta->{packages}})
     {
         next if $installedPackage eq $packageName;
+        next if $removed->{$installedPackage};
         my $package = $meta->{packages}->{$installedPackage};
         if ($package->{meta}->{lixuzDependencies})
         {
             foreach my $pkg (@{ $package->{meta}->{lixuzDependencies} })
             {
-                if ($pkg eq $packageName)
+                if ($pkg eq $packageName && !$removed->{$pkg})
                 {
                     $error = $packageName.' is required by "'.$installedPackage;
                     $return = 0;
