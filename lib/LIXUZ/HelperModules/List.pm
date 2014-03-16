@@ -69,6 +69,10 @@ has 'objectName' => (
 has 'query' => (
     is => 'ro',
 );
+has 'forceEnableSearch' => (
+    is => 'ro',
+    default => sub { 0 },
+);
 has 'folderType' => (
     is => 'ro',
     default => 'external'
@@ -177,7 +181,9 @@ sub handleListRequest
     # I18n object
     my $i18n = $self->c->stash->{i18n};
     # Get query from the URL (or the form if there's nothing there)
-    if ($form && $form->submitted)
+    if (
+        ($self->forceEnableSearch) ||
+        ($form && $form->submitted))
     {
         $query ||= $form->field('query');
         $self->c->stash->{query} = $query;
