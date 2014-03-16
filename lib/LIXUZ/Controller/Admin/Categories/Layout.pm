@@ -149,12 +149,13 @@ sub renderCatArticleList : Local Args Form('/core/search')
     $c->req->params->{ordertype} = 'DESC';
     $c->req->params->{status_id} = 2;
     my $query = $c->req->param('query');
+    my $forceSearch = ( defined($query) && length($query) ) ? 1 : 0;
     my $result = $c->forward(qw( LIXUZ::Controller::Admin::Articles retrieveArticles ),[
             $c->model('LIXUZDB::LzArticle'),
             $query,
             $self->formbuilder,
             0,
-            1
+            $forceSearch
         ]);
     $c->stash->{artlist} = $result;
     $c->stash->{template} = 'adm/categories/layout/list.html';
