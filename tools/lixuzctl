@@ -1230,7 +1230,7 @@ sub runPackageTrigger
         $ns = 'CtlTriggers::'.$package.'::r'.time.'::'.int(rand(9999999));
         try
         {
-            eval('package '.$ns.'; my $lixuzctlManaged = 1;'.slurp($file).'; if ($triggers->{"'.$trigger.'"}) { $triggers->{"'.$trigger.'"}->(); };1;') or die($@);
+            eval('package '.$ns.'; my $lixuzctlManaged = 1; sub lixuzctl { main::selfRun(@_) };'.slurp($file).'; if ($triggers->{"'.$trigger.'"}) { $triggers->{"'.$trigger.'"}->(); };1;') or die($@);
         }
         catch
         {
