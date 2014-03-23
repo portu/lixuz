@@ -85,6 +85,7 @@ sub main
     }
     elsif($perform eq 'database-sanity')
     {
+        fixMultipleDefaultTemplates();
         fixSelfReferencingArticles();
         fixMissingStatuses();
         fixLiveExclusive();
@@ -228,6 +229,10 @@ sub runCron
     };
     tryRun
     {
+        fixMultipleDefaultTemplates();
+    };
+    tryRun
+    {
         fixSelfReferencingArticles();
     };
     tryRun
@@ -319,6 +324,22 @@ sub cleanImgcache
 # ---
 # Clean up errors in the DB
 # ---
+
+# Template types with multiple defaults
+sub fixMultipleDefaultTemplates
+{
+    title('template types with multiple defaults','Checking for and fixing template types with multiple defaults...');
+    my $defaultTemplates = $fakeC->model('LIXUZDB::LzTemplate')->search({ is_default => 1 });
+    my %seenMap;
+    while(my $t = $defaultTemplates->next)
+    {
+        if ($seenMap{$t->type})
+        {
+            $t->update({ is_default => 0 });
+        }
+        $seenMap{$t->type} = 1;
+    }
+}
 
 # Self-referencing relationships
 sub fixSelfReferencingArticles
