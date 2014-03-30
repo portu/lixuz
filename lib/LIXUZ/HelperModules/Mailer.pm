@@ -4,6 +4,7 @@ use JSON qw(encode_json);
 use Carp;
 use IPC::Open2;
 use IO::Socket::UNIX;
+use Method::Signatures;
 
 has '_mails' => (
     is => 'ro',
@@ -54,11 +55,8 @@ has 'c' => (
     weak_ref => 1,
 );
 
-sub add_mail
+method add_mail($settings)
 {
-    my $self = shift;
-    my $settings = shift;
-
     my $recipients  = $settings->{recipients};
     my $subject     = $settings->{subject};
     my $contentText = $settings->{message_text};
@@ -130,9 +128,8 @@ sub add_mail
     }
 }
 
-sub send
+method send ()
 {
-    my $self = shift;
     if ($self->streaming)
     {
         $self->_stream_out({
@@ -149,10 +146,8 @@ sub send
     $self->_execute_mailer($result);
 }
 
-sub _stream_out
+method _stream_out($data)
 {
-    my $self   = shift;
-    my $data   = shift;
     my $socket = $self->_socket;
     if ( ! defined $socket)
     {
@@ -182,10 +177,8 @@ sub _stream_out
     return;
 }
 
-sub _execute_mailer
+method _execute_mailer($data)
 {
-    my $self = shift;
-    my $data = shift;
     $data->{api}            = 1;
     $data->{version}        = $self->c->stash->{VERSION};
     $data->{noFork}       //= 0;
@@ -201,9 +194,8 @@ sub _execute_mailer
     waitpid($pid,0);
 }
 
-sub _buildFrom
+method _buildFrom(...)
 {
-    my $self = shift;
     my $from_address = $self->c->config->{LIXUZ}->{from_email};
     if(not $from_address)
     {
