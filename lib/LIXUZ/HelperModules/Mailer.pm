@@ -207,7 +207,7 @@ method _buildFrom(...)
 
 method _i18n ()
 {
-    if ($self->c && $self->c->stash && $self->c->stash->{i18n})
+    if ($self->c && $self->c->can('stash') && $self->c->stash && $self->c->stash->{i18n})
     {
         return $self->c->stash->{i18n};
     }
@@ -216,7 +216,7 @@ method _i18n ()
 
 method _version
 {
-    if ($self->c && $self->c->stash && $self->c->stash->{VERSION})
+    if ($self->c && $self->c->can('stash') && $self->c->stash && $self->c->stash->{VERSION})
     {
         return $self->c->stash->{VERSION};
     }
@@ -232,7 +232,7 @@ method _version
 
 method _config()
 {
-    if ($self->c && $self->c->config && $self->c->config->{LIXUZ})
+    if ($self->c && $self->c->can('config') && $self->c->config && $self->c->config->{LIXUZ})
     {
         return $self->c->config->{LIXUZ};
     }
