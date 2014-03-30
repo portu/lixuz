@@ -11,7 +11,7 @@ my $version;
 func lixuzVersion ($c = undef)
 {
     no warnings;
-    if(defined $LIXUZ::VERSION)
+    if(defined $LIXUZ::VERSION && $LIXUZ::VERSION ne '-1')
     {
         return $LIXUZ::VERSION;
     }
