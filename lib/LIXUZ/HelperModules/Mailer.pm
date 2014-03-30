@@ -6,6 +6,7 @@ use IPC::Open2;
 use IO::Socket::UNIX;
 use Method::Signatures;
 use LIXUZ::HelperModules::Paths qw(lixuzFSPathTo);
+use LIXUZ::HelperModules::Version qw(lixuzVersion);
 
 has '_mails' => (
     is => 'ro',
@@ -215,18 +216,7 @@ method _i18n ()
 
 method _version
 {
-    if ($self->c && $self->c->can('stash') && $self->c->stash && $self->c->stash->{VERSION})
-    {
-        return $self->c->stash->{VERSION};
-    }
-    no warnings;
-    my $version = $LIXUZ::VERSION;
-    use warnings;
-    if(defined $version)
-    {
-        return $version;
-    }
-    return '(unknown)';
+    return lixuzVersion($self->c);
 }
 
 method _config()

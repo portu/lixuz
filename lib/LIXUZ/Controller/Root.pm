@@ -24,6 +24,7 @@ use base 'Catalyst::Controller';
 use LIXUZ::HelperModules::JSON qw(json_response json_error);
 use LIXUZ::HelperModules::AccessControl;
 use LIXUZ::HelperModules::TemplateRenderer::URLHandler;
+use LIXUZ::HelperModules::Version qw(lixuzVersion);
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -97,8 +98,10 @@ sub auto : Private
 {
     my ( $self, $c ) = @_;
     # Let the view know our version number
-    $c->stash->{VERSION} = $LIXUZ::VERSION;
+    $c->stash->{VERSION} = lixuzVersion();
+    no warnings;
     $c->stash->{GITREVISION} = $LIXUZ::GITREV;
+    use warnings;
     return 1;
 }
 
