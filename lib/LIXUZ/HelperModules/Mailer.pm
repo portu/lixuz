@@ -83,9 +83,9 @@ method add_mail($settings)
         carp('add_mail(): no subject');
     }
     if(
-        defined $self->c->config->{LIXUZ}->{email_to_override} && 
-        (not $self->c->config->{LIXUZ}->{email_to_override} eq 'false') &&
-        length $self->c->config->{LIXUZ}->{email_to_override})
+        defined $self->_config->{email_to_override} &&
+        (not $self->_config->{email_to_override} eq 'false') &&
+        length $self->_config->{email_to_override})
     {
         if ($contentHtml)
         {
@@ -95,7 +95,7 @@ method add_mail($settings)
         {
             $contentText = 'ORIGINAL TO: '.join(',',@{ $recipients })."\n\n".$contentText;
         }
-        $recipients = [ $self->c->config->{LIXUZ}->{email_to_override} ];
+        $recipients = [ $self->_config->{email_to_override} ];
     }
     if($systemMail)
     {
@@ -196,13 +196,22 @@ method _execute_mailer($data)
 
 method _buildFrom(...)
 {
-    my $from_address = $self->c->config->{LIXUZ}->{from_email};
+    my $from_address = $self->_config->{from_email};
     if(not $from_address)
     {
         $self->c->log->error('from_email is not set in the config, using dummy e-mail');
         $from_address = 'EMAIL_NOT_SET_IN_CONFIG@localhost';
     }
     return $from_address;
+}
+
+method _config()
+{
+    if ($self->c && $self->c->config && $self->c->config->{LIXUZ})
+    {
+        return $self->c->config->{LIXUZ};
+    }
+    return {};
 }
 
 __PACKAGE__->meta->make_immutable;
