@@ -120,7 +120,6 @@ sub datetime_from_SQL_to_unix
     return $unixTime;
 }
 
-
 sub datetime_from_unix
 {
     my $unixtime = shift;
@@ -195,3 +194,61 @@ sub is_dst
     return $l[8];
 }
 1;
+__END__
+
+=head1 SUMMARY
+
+LIXUZ::HelperModules::Calendar - Various calendar helpers
+
+=head1 DESCRIPTION
+
+This module provides helper functions for converting to  and from various date
+formats (notable the one provided by MySQL) as well as a function that
+generates HTML that is used to provide a GUI calendar on the client-side.
+
+=head2 DEFINITIONS
+
+A "date string" as referred to within this module is a date in the format: "DD.MM.YYYY HH:MM"
+
+A "SQL date string" as referred to within this module is a date in the format used by MySQL.
+
+=head1 FUNCTIONS
+
+=over
+
+=item $sqlString = datetime_to_SQL($string)
+
+Converts a date string to an SQL date string.
+
+=item $string = datetime_from_SQL($sqlString)
+
+Converts a SQL date string to a normal date string.
+
+=item $unixTime = datetime_from_SQL($sqlString)
+
+Converts a SQL date string to unix time.
+
+=item $string = datetime_from_unix($sqlString)
+
+Converts unix time to a normal date string.
+
+=item is_dst
+
+Returns a boolean: true if daylight savings time is in effect, false otherwise.
+
+=item create_calendar($c, widget_id, { params })
+
+Return a HTML string that can be included in any template in order to
+get a GUI calendar field.
+
+{ params } is a hashref containing zero or more of the following values:
+
+    {
+        value => default value,
+        form => $form object,
+        formentry => the entry this calendar has in the $form object - used to
+                generate validate => code. If it is not present but form is then
+                the widget_id will be used,
+    }
+
+=back
