@@ -5,6 +5,7 @@ use Carp;
 use IPC::Open2;
 use IO::Socket::UNIX;
 use Method::Signatures;
+use LIXUZ::HelperModules::Paths qw(lixuzFSPathTo);
 
 has '_mails' => (
     is => 'ro',
@@ -185,9 +186,7 @@ method _execute_mailer($data)
     $data->{debug}        //= 0;
     $data->{default_from} //= $self->_defaultFrom;
     $data->{dupeProtection} = $self->dupeProtection;
-    no warnings;
-    my $pid = open2(my $out, my $in, $LIXUZ::PATH.'/tools/lixuz-sendmail.pl') or die("Failed to open2 to lixuz-sendmail-pl\n");
-    use warnings;
+    my $pid = open2(my $out, my $in, lixuzFSPathTo('/tools/lixuz-sendmail.pl')) or die("Failed to open2 to lixuz-sendmail-pl\n");
     print {$in} encode_json($data);
     close($in);
     close($out) if $out;
