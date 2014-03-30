@@ -85,6 +85,7 @@ sub mockC
     $mockCache->defaultConstructor();
     $mockCache->addMethod('set',sub { });
     $mockCache->addMethod('get',sub { });
+    $mockCache->addMethod('stash',sub { {} });
     my $mockCacheInstance = $mockCache->create;
 
     my $mockClass = Test::MockClass->new('LIXUZ');
