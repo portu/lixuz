@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Method::Signatures;
 use Exporter qw(import);
+use File::Basename qw(dirname);
 our @EXPORT = qw(lixuzFSPathTo lixuzFSRoot);
 
 func lixuzFSPathTo($file)
@@ -18,6 +19,24 @@ func lixuzFSRoot ()
     no warnings;
     $path = $LIXUZ::PATH;
     use warnings;
+    if (!defined $path || !length($path))
+    {
+        # Use alternate detection
+        my $selfPath = $INC{'LIXUZ/HelperModules/Paths.pm'};
+        if (!defined $selfPath)
+        {
+            die('Error: Failed to locate Lixuz root (primary and fallback both failed)'."\n");
+        }
+        while(!-e $selfPath.'/lib/LIXUZ.pm' || !-e $selfPath.'/lixuz.yml')
+        {
+            $selfPath = dirname($selfPath);
+            if ($selfPath eq '/')
+            {
+                die('Error: Fallback detection of Lixuz root failed'."\n");
+            }
+        }
+        return $selfPath;
+    }
     return $path;
 }
 
