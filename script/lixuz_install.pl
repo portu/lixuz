@@ -614,27 +614,22 @@ sub promptCommand
     $command =~ s{\s+$}{};
     chomp($command);
 
-    given($command)
+    if ($command eq 'exit' || $command eq 'quit' || $command eq 'abort' || $command eq 'cancel')
     {
-        when(['exit', 'quit', 'abort', 'cancel'])
-        {
-            print "Quitting as requested...\n";
-            exit(0);
-        }
-
-        when('help')
-        {
-            print "Available commands:\n";
-            print "  //help     - view this help\n";
-            print "  //exit     - cancel the install and exit\n";
-            print "\nIf you are looking for installation help, see the docs/installation.pod\nfile in the Lixuz tarball.\n";
-            print "\n-\n";
-        }
-
-        default
-        {
-            print "Unknown installer command: //$command\n";
-        }
+        print "Quitting as requested...\n";
+        exit(0);
+    }
+    elsif($command eq 'help')
+    {
+        print "Available commands:\n";
+        print "  //help     - view this help\n";
+        print "  //exit     - cancel the install and exit\n";
+        print "\nIf you are looking for installation help, see the docs/installation.pod\nfile in the Lixuz tarball.\n";
+        print "\n-\n";
+    }
+    else
+    {
+        print "Unknown installer command: //$command\n";
     }
 }
 
