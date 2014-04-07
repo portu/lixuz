@@ -10,6 +10,7 @@ use File::Basename qw(dirname basename);
 use Cwd;
 use DBI;
 use Try::Tiny;
+use Getopt::Long;
 use 5.010;
 
 use constant {
@@ -17,306 +18,331 @@ use constant {
     false => undef,
 };
 
-my $term = Term::ReadLine->new('lixuzinstall');
-my $prevLen = 0;
-my $prevIprintText = '';
-my $stepNo = 0;
-my $totalSteps = 0;
-my $prevStatus = undef;
+my %settings;
 my @createUsers;
-
-newStep('Welcome');
-print "Welcome to the Lixuz installer. This script will help you create\n";
-print "the initial Lixuz database along with the initial admin user, as well\n";
-print "as creating a usable initial config file.\n\n";
-print "Note that this is not an upgrade script, and you should use the separate\n";
-print "lixuz_upgrade.pl script if you are upgrading an existing install.\n\n";
-print "On some prompts you will see a value in [], that value is the default\n";
-print "value for that prompt. Simply pressing enter is the same as entering that\n";
-print "value\n\n";
-print "Type //quit on any prompt to abort the installation\n\n";
-print "Press enter to continue...";
-while(1)
+my($dbnam,$dbuser,$dbpwd);
+my $path;
+my $term;
+my $totalSteps = 0;
+my $stepNo = 0;
+my $bootstrap;
+if (@ARGV && $ARGV[0] eq '--bootstrap')
 {
-    my $in = <STDIN>;
-    if ($in && $in =~ m{^\s*//})
+    GetOptions(
+        'bootstrap'      => \$bootstrap,
+        'dbname=s'       => \$dbnam,
+        'dbuser=s'       => \$dbuser,
+        'dbpwd=s'        => \$dbpwd,
+        'installPath=s'  => \$settings{installPath},
+        'filepath=s'     => \$settings{file_path},
+        'templatepath=s' => \$settings{template_path},
+        'temppath=s'     => \$settings{temp_path},
+        'indexFiles=s'   => \$settings{indexFiles},
+        'memcached=s'    => \$settings{memcached},
+        'memcachednamespace=s' => \$settings{memcached_namespace},
+        'fromemail' => \$settings{from_email},
+    );
+    if (!defined($dbnam) || !defined($dbuser) || !defined($dbpwd) || !defined($settings{installPath}) || !defined($settings{file_path}) || !defined($settings{template_path}) || !defined($settings{temp_path}) || !defined($settings{indexFiles}) || !defined($settings{memcached}) || !defined($settings{memcached_namespace}) || !defined($settings{from_email}))
     {
-        promptCommand($in);
+        die('parameter mismatch');
+    }
+}
+else
+{
+    $term = Term::ReadLine->new('lixuzinstall');
+    my $prevStatus = undef;
+
+    newStep('Welcome');
+    print "Welcome to the Lixuz installer. This script will help you create\n";
+    print "the initial Lixuz database along with the initial admin user, as well\n";
+    print "as creating a usable initial config file.\n\n";
+    print "Note that this is not an upgrade script, and you should use the separate\n";
+    print "lixuz_upgrade.pl script if you are upgrading an existing install.\n\n";
+    print "On some prompts you will see a value in [], that value is the default\n";
+    print "value for that prompt. Simply pressing enter is the same as entering that\n";
+    print "value\n\n";
+    print "Type //quit on any prompt to abort the installation\n\n";
+    print "Press enter to continue...";
+    while(1)
+    {
+        my $in = <STDIN>;
+        if ($in && $in =~ m{^\s*//})
+        {
+            promptCommand($in);
+        }
+        else
+        {
+            last;
+        }
+    }
+    newStep('Advanced directory prompt');
+    print "First, the script needs to know if you want to use normal or advanced mode.\n";
+    print "Advanced configuration lets you manually change the paths of all\n";
+    print "Lixuz data directories. Normal configuration simply lets you set a\n";
+    print "primary path for the container of the data directory, then Lixuz will\n";
+    print "create the additional directories itself.\n";
+    print "\nIn general, the normal configuration is more than sufficient\n";
+    print "(and faster, as there are fewer questions)\n";
+    my $useAdv = getBool('Do you want to use advanced configuration?','No');
+    if ($useAdv)
+    {
+        $totalSteps = 9+4;
     }
     else
     {
-        last;
-    }
-}
-newStep('Advanced directory prompt');
-print "First, the script needs to know if you want to use normal or advanced mode.\n";
-print "Advanced configuration lets you manually change the paths of all\n";
-print "Lixuz data directories. Normal configuration simply lets you set a\n";
-print "primary path for the container of the data directory, then Lixuz will\n";
-print "create the additional directories itself.\n";
-print "\nIn general, the normal configuration is more than sufficient\n";
-print "(and faster, as there are fewer questions)\n";
-my $useAdv = getBool('Do you want to use advanced configuration?','No');
-if ($useAdv)
-{
-    $totalSteps = 9+4;
-}
-else
-{
-    $totalSteps = 9;
-}
-my $path;
-
-my %settings;
-if (@ARGV)
-{
-    $settings{installPath} = shift(@ARGV);
-    $stepNo++;
-}
-else
-{
-    newStep('Install directory');
-
-    $settings{installPath} = getPath('Where do you want to install Lixuz?','Are you sure you want to install Lixuz there anyway?');
-}
-
-if ( -e $settings{installPath}.'/lixuz.yml')
-{
-    die($settings{installPath}.'/lixuz.yml: exists. Use lixuz_upgrade.pl if you want to upgrade an existing install.'."\n");
-}
-
-print "\n";
-if($useAdv)
-{
-    my $instPath = $settings{installPath}.'/';
-    $instPath =~ s{/+}{/}g;
-
-    newStep('Advanced: File directory');
-    while(1)
-    {
-        print "The Lixuz file directory must be outside of Lixuz' install path\n";
-        $settings{file_path} = getPath('Where should Lixuz save its files?');
-        $settings{file_path} =~ s{/+}{/}g;
-        if ($settings{file_path} =~ /^$instPath/)
-        {
-            print "Invalid selection. ";
-        }
-        elsif(-e $settings{file_path})
-        {
-            print "$settings{file_path}: Already exists\n";
-        }
-        else
-        {
-            last;
-        }
+        $totalSteps = 9;
     }
 
-    newStep('Advanced: Template directory');
-    while(1)
+    if (@ARGV)
     {
-        print "The Lixuz template directory must be outside of Lixuz' install path\n";
-        $settings{template_path} = getPath('Where should Lixuz save its templates?');
-        $settings{template_path} =~ s{/+}{/}g;
-        if ($settings{template_path} =~ /^$instPath/)
-        {
-            print "Invalid selection. ";
-        }
-        elsif($settings{template_path} =~ /^$settings{file_path}/)
-        {
-            print "Can not be shared with the files directory.\n";
-        }
-        elsif(-e $settings{template_path})
-        {
-            print "$settings{template_path}: Already exists\n";
-        }
-        else
-        {
-            last;
-        }
+        $settings{installPath} = shift(@ARGV);
+        $stepNo++;
+    }
+    else
+    {
+        newStep('Install directory');
+
+        $settings{installPath} = getPath('Where do you want to install Lixuz?','Are you sure you want to install Lixuz there anyway?');
     }
 
-    newStep('Advanced: Temporary directory');
-    while(1)
+    if ( -e $settings{installPath}.'/lixuz.yml')
     {
-        print "The Lixuz temporary directory must be outside of Lixuz' install path\n";
-        $settings{temp_path} = getPath('Where should Lixuz save its temporary files?');
-        $settings{temp_path} =~ s{/+}{/}g;
-        if ($settings{temp_path} =~ /^$instPath/)
-        {
-            print "Invalid selection. ";
-        }
-        elsif($settings{temp_path} =~ /^$settings{file_path}/)
-        {
-            print "Can not be shared with the files directory.\n";
-        }
-        elsif($settings{temp_path} =~ /^$settings{template_path}/)
-        {
-            print "Can not be shared with the templates directory.\n";
-        }
-        elsif(-e $settings{temp_path})
-        {
-            print "$settings{temp_path}: Already exists\n";
-        }
-        else
-        {
-            last;
-        }
+        die($settings{installPath}.'/lixuz.yml: exists. Use lixuz_upgrade.pl if you want to upgrade an existing install.'."\n");
     }
 
-    newStep('Advanced: Indexer directory');
-    while(1)
+    print "\n";
+    if($useAdv)
     {
-        print "The Lixuz indexer directory must be outside of Lixuz' install path\n";
-        $settings{indexFiles} = getPath('Where should Lixuz save its indexer files?');
-        $settings{indexFiles} =~ s{/+}{/}g;
-        if ($settings{indexFiles} =~ /^$instPath/)
-        {
-            print "Invalid selection. ";
-        }
-        elsif($settings{indexFiles} =~ /^$settings{file_path}/)
-        {
-            print "Can not be shared with the files directory.\n";
-        }
-        elsif($settings{indexFiles} =~ /^$settings{template_path}/)
-        {
-            print "Can not be shared with the templates directory.\n";
-        }
-		elsif($settings{indexFiles} =~ /^$settings{temp_path}/)
-		{
-			print "Can not be shared with the temporary files directory.\n";
-		}
-        elsif(-e $settings{indexFiles})
-        {
-            print "$settings{indexFiles}: Already exists\n";
-        }
-        else
-        {
-            last;
-        }
-    }
-}
-else
-{
-    newStep('Data directory');
-    print "The Lixuz data directory must be outside of Lixuz' install path\n";
-    my $coreData;
-    my $default = '/var/lixuz.data/'.basename($settings{installPath});
-    while(1)
-    {
-        $coreData = getPath('Where should Lixuz save its data?',undef,$default);
-        $coreData .= '/';
-        $coreData =~ s{/+}{/}g;
         my $instPath = $settings{installPath}.'/';
         $instPath =~ s{/+}{/}g;
-        if ($coreData =~ /^$instPath/)
+
+        newStep('Advanced: File directory');
+        while(1)
         {
-            print "Must not be within the target install path.\n";
-            next;
+            print "The Lixuz file directory must be outside of Lixuz' install path\n";
+            $settings{file_path} = getPath('Where should Lixuz save its files?');
+            $settings{file_path} =~ s{/+}{/}g;
+            if ($settings{file_path} =~ /^$instPath/)
+            {
+                print "Invalid selection. ";
+            }
+            elsif(-e $settings{file_path})
+            {
+                print "$settings{file_path}: Already exists\n";
+            }
+            else
+            {
+                last;
+            }
         }
-        if (-e $coreData.'/files' || -e $coreData.'/templates' || -e $coreData.'/tmp')
+
+        newStep('Advanced: Template directory');
+        while(1)
         {
-            print "$coreData: Is not empty.\n";
+            print "The Lixuz template directory must be outside of Lixuz' install path\n";
+            $settings{template_path} = getPath('Where should Lixuz save its templates?');
+            $settings{template_path} =~ s{/+}{/}g;
+            if ($settings{template_path} =~ /^$instPath/)
+            {
+                print "Invalid selection. ";
+            }
+            elsif($settings{template_path} =~ /^$settings{file_path}/)
+            {
+                print "Can not be shared with the files directory.\n";
+            }
+            elsif(-e $settings{template_path})
+            {
+                print "$settings{template_path}: Already exists\n";
+            }
+            else
+            {
+                last;
+            }
         }
-        last;
+
+        newStep('Advanced: Temporary directory');
+        while(1)
+        {
+            print "The Lixuz temporary directory must be outside of Lixuz' install path\n";
+            $settings{temp_path} = getPath('Where should Lixuz save its temporary files?');
+            $settings{temp_path} =~ s{/+}{/}g;
+            if ($settings{temp_path} =~ /^$instPath/)
+            {
+                print "Invalid selection. ";
+            }
+            elsif($settings{temp_path} =~ /^$settings{file_path}/)
+            {
+                print "Can not be shared with the files directory.\n";
+            }
+            elsif($settings{temp_path} =~ /^$settings{template_path}/)
+            {
+                print "Can not be shared with the templates directory.\n";
+            }
+            elsif(-e $settings{temp_path})
+            {
+                print "$settings{temp_path}: Already exists\n";
+            }
+            else
+            {
+                last;
+            }
+        }
+
+        newStep('Advanced: Indexer directory');
+        while(1)
+        {
+            print "The Lixuz indexer directory must be outside of Lixuz' install path\n";
+            $settings{indexFiles} = getPath('Where should Lixuz save its indexer files?');
+            $settings{indexFiles} =~ s{/+}{/}g;
+            if ($settings{indexFiles} =~ /^$instPath/)
+            {
+                print "Invalid selection. ";
+            }
+            elsif($settings{indexFiles} =~ /^$settings{file_path}/)
+            {
+                print "Can not be shared with the files directory.\n";
+            }
+            elsif($settings{indexFiles} =~ /^$settings{template_path}/)
+            {
+                print "Can not be shared with the templates directory.\n";
+            }
+            elsif($settings{indexFiles} =~ /^$settings{temp_path}/)
+            {
+                print "Can not be shared with the temporary files directory.\n";
+            }
+            elsif(-e $settings{indexFiles})
+            {
+                print "$settings{indexFiles}: Already exists\n";
+            }
+            else
+            {
+                last;
+            }
+        }
     }
-    $coreData =~ s{/+$}{}g;
-    $settings{file_path} = $coreData.'/files';
-    $settings{template_path} = $coreData.'/templates';
-    $settings{temp_path} = $coreData.'/tmp';
-	$settings{indexFiles} = $coreData.'/searchIndex';
+    else
+    {
+        newStep('Data directory');
+        print "The Lixuz data directory must be outside of Lixuz' install path\n";
+        my $coreData;
+        my $default = '/var/lixuz.data/'.basename($settings{installPath});
+        while(1)
+        {
+            $coreData = getPath('Where should Lixuz save its data?',undef,$default);
+            $coreData .= '/';
+            $coreData =~ s{/+}{/}g;
+            my $instPath = $settings{installPath}.'/';
+            $instPath =~ s{/+}{/}g;
+            if ($coreData =~ /^$instPath/)
+            {
+                print "Must not be within the target install path.\n";
+                next;
+            }
+            if (-e $coreData.'/files' || -e $coreData.'/templates' || -e $coreData.'/tmp')
+            {
+                print "$coreData: Is not empty.\n";
+            }
+            last;
+        }
+        $coreData =~ s{/+$}{}g;
+        $settings{file_path} = $coreData.'/files';
+        $settings{template_path} = $coreData.'/templates';
+        $settings{temp_path} = $coreData.'/tmp';
+        $settings{indexFiles} = $coreData.'/searchIndex';
+    }
+
+    newStep('Initial user');
+    print "Lixuz will create at least one initial administrative user that you can use\n";
+    print "to log in to Lixuz\n";
+    addUser();
+
+    # If we have a valid hostname, use that as a default for e-mail
+    my $defaultEmail;
+    my $hostname = $ENV{HOSTNAME};
+    if (not defined $hostname and eval('use Sys::Hostname;1;'))
+    {
+        $hostname = hostname();
+    }
+    if(defined $hostname && $hostname =~ /\.\w+$/)
+    {
+        $defaultEmail = 'lixuz@'.$hostname;
+    }
+
+    newStep('From e-mail');
+    print "Lixuz regulary sends e-mails to users for various reasons.\n";
+    my $email = getInput('What do you want to be the From: e-mail in emails sent by Lixuz?',$defaultEmail);
+    $settings{from_email} = $email;
+
+    my $dbsuccess = 0;
+    newStep('Database configuration');
+    print "WARNING: If there is any Lixuz data already in the database\n";
+    print "         you supply here, that data will be DELETED.\n";
+    print "         Please use caution (and backups).\n";
+    ($dbnam,$dbuser,$dbpwd) = (basename($settings{installPath}), undef,getRndPwd());
+    $dbnam =~ s/\W//g;
+    print "\nUse the following in a mysql console if you just want to create a new\nuser and database:\n";
+    print "CREATE DATABASE $dbnam; CREATE USER '$dbnam'\@'localhost' IDENTIFIED BY '$dbpwd';\n";
+    print "GRANT ALL ON $dbnam.* TO '$dbnam'\@'localhost;\n";
+    while(1)
+    {
+        $dbnam = getInput('What is the name of the database Lixuz should use?',$dbnam);
+        $dbuser //= $dbnam;
+        $dbuser = getInput('What is the username for it?',$dbuser);
+        $dbpwd = getInput('What is the password for it?',$dbpwd);
+
+        print "Testing database connection...";
+        my $fail = 0;
+        eval
+        {
+            local *STDERR;
+            local *STDOUT;
+            open(STDERR,'>','/dev/null');
+            open(STDOUT,'>','/dev/null');
+            my $dbi = DBI->connect('dbi:mysql:dbname='.$dbnam,$dbuser,$dbpwd);
+            if(not $dbi)
+            {
+                no warnings;
+                $fail = $DBI::errstr;
+            }
+        };
+        if ($@)
+        {
+            $fail = $@;
+        }
+        last if not $fail;
+        print 'failed: '.$fail."\n\n";
+    }
+
+    newStep('Memcached configuration');
+    $settings{memcached} = getInput('What is the hostname:port that memcached listens to?','127.0.0.1:11211');
+    print "\n";
+    print "The memcached namespace is used so that keys are unique, and to ensure that\n";
+    print "there are no conflicts between Lixuz instances. A namespace MUST therefore\n";
+    print "be unique. A good name can for instance be the domain without the dot.\n";
+    print "Ie. example.org => exampleorg\n";
+    $settings{memcached_namespace} = getInput('What should the namespace be?');
+    newStep('Summary');
+    print "Lixuz is now ready to be installed. Please check that the following settings\n";
+    print "are correct.\n";
+    my $fmt = '%-32s : %s'."\n";
+    printf($fmt,'Install path',$settings{installPath});
+    printf($fmt,'Uploaded file storage',$settings{file_path});
+    printf($fmt,'Template storage',$settings{template_path});
+    printf($fmt,'Various semi-temporary storage',$settings{temp_path});
+    printf($fmt,'Database string','dbi:mysql:dbname='.$dbnam);
+    printf($fmt,'Database user',$dbuser);
+    if(not getBool('Are these correct?'))
+    {
+        print "Aborting.\n";
+        exit(0);
+    }
+
+    newStep('Installing and configuring');
+
+    copyRecursive(cwd(), cwd(),$settings{installPath});
+    iprint('');
+    print "Copying...done\n";
 }
-
-newStep('Initial user');
-print "Lixuz will create at least one initial administrative user that you can use\n";
-print "to log in to Lixuz\n";
-addUser();
-
-# If we have a valid hostname, use that as a default for e-mail
-my $defaultEmail;
-my $hostname = $ENV{HOSTNAME};
-if (not defined $hostname and eval('use Sys::Hostname;1;'))
-{
-    $hostname = hostname();
-}
-if(defined $hostname && $hostname =~ /\.\w+$/)
-{
-    $defaultEmail = 'lixuz@'.$hostname;
-}
-
-newStep('From e-mail');
-print "Lixuz regulary sends e-mails to users for various reasons.\n";
-my $email = getInput('What do you want to be the From: e-mail in emails sent by Lixuz?',$defaultEmail);
-$settings{from_email} = $email;
-
-my $dbsuccess = 0;
-newStep('Database configuration');
-print "WARNING: If there is any Lixuz data already in the database\n";
-print "         you supply here, that data will be DELETED.\n";
-print "         Please use caution (and backups).\n";
-my($dbnam,$dbuser,$dbpwd) = (basename($settings{installPath}), undef,getRndPwd());
-$dbnam =~ s/\W//g;
-print "\nUse the following in a mysql console if you just want to create a new\nuser and database:\n";
-print "CREATE DATABASE $dbnam; CREATE USER '$dbnam'\@'localhost' IDENTIFIED BY '$dbpwd';\n";
-print "GRANT ALL ON $dbnam.* TO '$dbnam'\@'localhost;\n";
-while(1)
-{
-    $dbnam = getInput('What is the name of the database Lixuz should use?',$dbnam);
-    $dbuser //= $dbnam;
-    $dbuser = getInput('What is the username for it?',$dbuser);
-    $dbpwd = getInput('What is the password for it?',$dbpwd);
-
-    print "Testing database connection...";
-	my $fail = 0;
-	eval
-	{
-        local *STDERR;
-        local *STDOUT;
-        open(STDERR,'>','/dev/null');
-        open(STDOUT,'>','/dev/null');
-        my $dbi = DBI->connect('dbi:mysql:dbname='.$dbnam,$dbuser,$dbpwd);
-		if(not $dbi)
-		{
-			no warnings;
-			$fail = $DBI::errstr;
-		}
-    };
-	if ($@)
-	{
-		$fail = $@;
-	}
-	last if not $fail;
-	print 'failed: '.$fail."\n\n";
-}
-
-newStep('Memcached configuration');
-$settings{memcached} = getInput('What is the hostname:port that memcached listens to?','127.0.0.1:11211');
-print "\n";
-print "The memcached namespace is used so that keys are unique, and to ensure that\n";
-print "there are no conflicts between Lixuz instances. A namespace MUST therefore\n";
-print "be unique. A good name can for instance be the domain without the dot.\n";
-print "Ie. example.org => exampleorg\n";
-$settings{memcached_namespace} = getInput('What should the namespace be?');
-newStep('Summary');
-print "Lixuz is now ready to be installed. Please check that the following settings\n";
-print "are correct.\n";
-my $fmt = '%-32s : %s'."\n";
-printf($fmt,'Install path',$settings{installPath});
-printf($fmt,'Uploaded file storage',$settings{file_path});
-printf($fmt,'Template storage',$settings{template_path});
-printf($fmt,'Various semi-temporary storage',$settings{temp_path});
-printf($fmt,'Database string','dbi:mysql:dbname='.$dbnam);
-printf($fmt,'Database user',$dbuser);
-if(not getBool('Are these correct?'))
-{
-    print "Aborting.\n";
-    exit(0);
-}
-
-newStep('Installing and configuring');
-
-copyRecursive(cwd(), cwd(),$settings{installPath});
-iprint('');
-print "Copying...done\n";
 print "Configuring...";
 createConfigFile();
 print "done - wrote $settings{installPath}/lixuz.yml\n";
@@ -480,7 +506,10 @@ sub createConfigFile
     }
     close($template);
     close($target);
-    unlink($settings{installPath}.'/lixuz.yml.tpl');
+    if (!$bootstrap)
+    {
+        unlink($settings{installPath}.'/lixuz.yml.tpl');
+    }
 }
 
 sub copyRecursive
@@ -747,6 +776,8 @@ sub addUser
 # Summary: A print that removes previous text before printing. Used for status Information messages.
 sub iprint
 {
+    state $prevLen = 0;
+    state $prevIprintText = '';
     my $data = shift;
     if ($data eq $prevIprintText)
     {
