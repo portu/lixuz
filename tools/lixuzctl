@@ -1894,6 +1894,11 @@ sub utils
             }
         }
 
+        when('adduser')
+        {
+            adduser();
+        }
+
         when('repl')
         {
             repl();
@@ -1915,6 +1920,7 @@ sub usageUtils
     printHelp('','categorytree','Print a simple visualization of the category tree');
     printHelp('','foldertree','Print a simple visualization of the folder tree');
     printHelp('','fileInject X Y ..','Inject a file or set of files into Lixuz (as if they were uploaded via the web-interface)');
+    printHelp('','adduser','Add a new Lixuz admin user. lixuzctl will prompt for the username and password');
     printHelp('','repl','Open up a REPL with Lixuz paths in @INC and some basic utilities loaded');
     exit(shift);
 }
@@ -2032,6 +2038,58 @@ sub injectFile
     }
 }
 
+# Purpose: Add a user
+sub adduser
+{
+    printStatus('Initializing ...');
+    loadLixuzModules();
+    printStatus('.');
+    my $dbic = getDBIC();
+    printStatus("done\n");
+
+    my $r = Term::ReadLine->new(1);
+    my $username = $r->readline('Username> ');
+    if (!defined($username) || !length($username))
+    {
+        die("A username is required\n");
+    }
+    if ($username =~ /\s/)
+    {
+        die("Usernames can't include spaces\n");
+    }
+    if ($dbic->resultset('LzUser')->find({user_name => $username}))
+    {
+        die("User already exists\n");
+    }
+    my $password = $r->readline('Password> ');
+    if (!defined($password) || !length($password))
+    {
+        die("A password is required\n");
+    }
+
+    printStatus('Creating user ...');
+    my $role = $dbic->resultset('LzRole')->find({
+            role_name => 'Admin',
+        });
+    if (!defined $role)
+    {
+        die('failed - no Admin role found. Suggested action: lixuzctl database check'."\n");
+    }
+    printStatus('.');
+    my $user = $dbic->resultset('LzUser')->create({
+            created => \'now()',
+            firstname => 'changeme',
+            lastname => 'changeme',
+            user_name => $username,
+            role_id => $role->role_id,
+        });
+    printStatus('.');
+    $user->set_password($password);
+    printStatus('.');
+    $user->update();
+    printStatus("done - user created\n");
+}
+
 # ---
 # Plugin subcommand functions
 # ---
@@ -2064,6 +2122,7 @@ sub runPluginSubcommand
     my $plugin = shift;
     if (-e $lixuzDir.'/tools/plugins.d/'.$plugin)
     {
+        $ENV{LIXUZCTL_VERBOSITY} = $verbosity;
         $ENV{LIXUZ_ROOT} = $lixuzDir;
         my $origLib = $ENV{PERL5LIB} // '';
         $ENV{PERL5LIB} = $lixuzDir.'/lib:'.$origLib;
