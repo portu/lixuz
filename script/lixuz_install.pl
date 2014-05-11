@@ -501,6 +501,8 @@ sub createConfigFile
 			$l =~ s/\[INDEXER_STORAGE_PATH\]/$settings{indexFiles}/;
 			$l =~ s/\[INDEXER_LANGUAGE\]/no/;
             $l =~ s/\[FILES_COMPAT\]/false/;
+            $l =~ s/\[LOG_TO_FILE\]//;
+            $l =~ s/\[CLIENT_ERROR_LOG\]/false/;
         }
         print {$target} $l;
     }
