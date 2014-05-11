@@ -31,3 +31,4 @@ root/css/lixuz.css
 # Built MO files
 i18n/locale
 i18n/messages.mo
+.vagrant
