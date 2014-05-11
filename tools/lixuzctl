@@ -48,7 +48,7 @@ my $minSupportedDataFormatRev = $dataFormatRevision;
 # The minimum supported api level of plumbing commands
 my $minSupportedApiLevel      = 2;
 # The real (latest) supported api level of plumbing commands
-my $currentSupportedApiLevel  = 7;
+my $currentSupportedApiLevel  = 8;
 # The revision of the package format that we write
 my $packageFormatRevision     = 4;
 # The mimimum supported package format supported
@@ -3428,6 +3428,26 @@ sub plumbing
             exit(selfRun('templates',$_,@ARGV));
         }
 
+        when('adduser')
+        {
+            my $username = shift(@ARGV) or die;
+            my $password = shift(@ARGV) or die;
+            loadLixuzModules();
+            my $dbic = getDBIC();
+            my $role = $dbic->resultset('LzRole')->find({
+                    role_name => 'Admin',
+                });
+            my $user = $dbic->resultset('LzUser')->create({
+                    created => \'now()',
+                    firstname => 'changeme',
+                    lastname => 'changeme',
+                    user_name => $username,
+                    role_id => $role->role_id,
+                });
+            $user->set_password($password);
+            $user->update();
+        }
+
         default
         {
             die('Unknown subcommand for plumbing: '.$subcommand."\n");
@@ -3452,6 +3472,7 @@ sub usagePlumbing
     printHelp('','checkowner X Y ..','Check if files X, Y, .. are owned by a package. Exits with exit status 0 if all the files are owned by packages, 1 if not');
     printHelp('','getlevel','Output the plumbing API level supported by this version of lixuzctl');
     printHelp('','upgrade','Upgrade lixuzctl metadata');
+    printHelp('','adduser X Y','Add a user X with the password Y. You should likely use "lixuzctl utils adduser" instead.');
     exit(shift);
 }
 
