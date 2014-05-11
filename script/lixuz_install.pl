@@ -452,10 +452,13 @@ LIXUZ->model('LIXUZDB::LzFileClass')->create({
     });
 print "done\n";
 
-print "\n";
-print "Lixuz has now been successfully installed.\n";
-print "Now you will have to manually install the cronjobs and set up\n";
-print "apache. Read docs/installation.pod for more information.\n";
+if (!$bootstrap)
+{
+    print "\n";
+    print "Lixuz has now been successfully installed.\n";
+    print "Now you will have to manually install the cronjobs and set up\n";
+    print "apache. Read docs/installation.pod for more information.\n";
+}
 
 sub createField
 {
