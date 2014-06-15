@@ -532,6 +532,9 @@ sub filteredBody
         return $result;
     }
 
+    # Set the template to use as a media renderer
+    $renderOpts->{template} = $renderOpts->{mediaTemplate};
+
 	# TODO: Once strings are properly cleaned on save, and older strings are cleaned
 	#       cleaned on upgrade, remove the call to filter_string()
 	my $body = filter_string($self->renderBody($c,$renderOpts));
