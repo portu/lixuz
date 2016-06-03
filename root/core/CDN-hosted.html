@@ -47,30 +47,27 @@ if($lodash)
     push(@URLs, 'http://cdnjs.cloudflare.com/ajax/libs/lodash.js/'.$lodash_VERSION.'/lodash.min.js');
 }
 
-given($mode)
+if($mode && $mode eq 'rawLAB')
 {
-    when ('rawLAB')
+    foreach my $URL (@URLs)
     {
-        foreach my $URL (@URLs)
-        {
-            $m->out('$LAB.queue("'.$URL.'",true);');
-        }
-    }
-
-    when('LABchain')
-    {
-        foreach my $URL (@URLs)
-        {
-            $m->out('.script("'.$URL.'").wait()');
-        }
-    }
-
-    default
-    {
-        foreach my $URL (@URLs)
-        {
-            $m->out('<script type="text/javascript" src="'.$URL.'"></script>');
-        }
+        $m->out('$LAB.queue("'.$URL.'",true);');
     }
 }
+elsif ($mode && $mode eq 'LABchain')
+{
+    foreach my $URL (@URLs)
+    {
+        $m->out('.script("'.$URL.'").wait()');
+    }
+}
+else
+{
+    foreach my $URL (@URLs)
+    {
+        $m->out('<script type="text/javascript" src="'.$URL.'"></script>');
+    }
+}
+
+
 </%perl>

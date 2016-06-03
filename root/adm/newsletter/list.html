@@ -42,28 +42,22 @@
         <td><% $subscription->email %></td>
         <td><% $subscription->name %></td>
 <%perl>
-my $send_every = $subscription->send_every;
-given($send_every)
+my $send_every = $subscription->send_every // '';
+if($send_every eq 'month')
 {
-    when('month')
-    {
         $send_every = $i18n->get('Monthly');
-    }
-
-    when('week')
-    {
+}
+elsif($send_every eq 'week')
+{
         $send_every = $i18n->get('Weekly');
-    }
-
-    when('day')
-    {
+}
+elsif($send_every eq 'day')
+{
         $send_every = $i18n->get('Daily');
-    }
-    
-    when('none')
-    {
+}
+elsif($send_every eq 'none')
+{
         $send_every = $i18n->get('None');
-    }        
 }
 </%perl>
         <td><% $send_every  |n %></td>
