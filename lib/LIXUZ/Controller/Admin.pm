@@ -35,23 +35,20 @@ sub detectLang : Private
 
     my $acceptLang = $c->req->headers->header('Accept-Language');
     $acceptLang //= '';
-    given($acceptLang)
+    # If nn is the primary language, use that
+    if ($acceptLang =~ /^nn/)
     {
-		# If nn is the primary language, use that
-		when(/^(nn)/)
-		{
-			$lang = 'nn_NO';
-		}
-		# Otherwise for all other Norwegian users use nb
-        when(/(nb|no)/)
-        {
-            $lang = 'nb_NO';
-        }
-		# Finally if a user does not list nb/no but lists nn, use nn
-		when(/(nn)/)
-		{
-			$lang = 'nn_NO';
-		}
+        $lang = 'nn_NO';
+    }
+    # Otherwise for all other Norwegian users use nb
+    elsif ($acceptLang =~ /(nb|no)/)
+    {
+        $lang = 'nb_NO';
+    }
+    # Finally if a user does not list nb/no but lists nn, use nn
+    elsif ($acceptLang =~ /nn/)
+    {
+        $lang = 'nn_NO';
     }
     return $lang;
 }

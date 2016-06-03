@@ -57,26 +57,22 @@ sub _select_resolve_method
     }
 
 
-    given($resolveWith)
+    if ($resolveWith eq 'database')
     {
-        when('database')
-        {
-            return $self->$orig(@_);
-        }
+        return $self->$orig(@_);
+    }
+    elsif($resolveWith eq 'dual')
+    {
 
-        when('dual')
-        {
-            return $self->_dual_resolver($orig,@_);
-        }
-        when('indexer')
-        {
-            return $self->_list_search_indexer(@_);
-        }
-
-        default
-        {
-            die('_indexerResultObject ended up with unknown resolveWith: '.$resolveWith);
-        }
+        return $self->_dual_resolver($orig,@_);
+    }
+    elsif($resolveWith eq 'indexer')
+    {
+        return $self->_list_search_indexer(@_);
+    }
+    else
+    {
+        die('_indexerResultObject ended up with unknown resolveWith: '.$resolveWith);
     }
 }
 

@@ -32,17 +32,13 @@ sub get
 {
     my($self,$type,$params) = @_;
 
-    given($type)
+    if ($type eq 'results')
     {
-        when('results')
-        {
-            return $self->get_results($params);
-        }
-
-        default
-        {
-            die('Unknown data request: '.$type);
-        }
+        return $self->get_results($params);
+    }
+    else
+    {
+        die('Unknown data request: '.$type);
     }
 }
 

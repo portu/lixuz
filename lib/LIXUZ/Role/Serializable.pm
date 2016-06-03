@@ -49,28 +49,25 @@ sub serialize
     }
     catch
     {
-        given($_)
+        # Got a scalar reference in our hash, but the JSON lib doesn't
+        # know how to handle that. Remove the reference and try again.
+        if (/cannot encode reference to scalar/)
         {
-            # Got a scalar reference in our hash, but the JSON lib doesn't
-            # know how to handle that. Remove the reference and try again.
-            when(/cannot encode reference to scalar/)
+            my $href = $self->to_hash;
+            foreach my $k (keys %{$href})
             {
-                my $href = $self->to_hash;
-                foreach my $k (keys %{$href})
+                if(ref($href->{$k}) eq 'SCALAR')
                 {
-                    if(ref($href->{$k}) eq 'SCALAR')
-                    {
-                        $href->{$k} = undef;
-                    }
+                    $href->{$k} = undef;
                 }
-                $encoded = $j->encode($href);
             }
-
-            default
-            {
-                die($_);
-            }
+            $encoded = $j->encode($href);
         }
+        else
+        {
+            die($_);
+        }
+
     };
     return $encoded;
 }

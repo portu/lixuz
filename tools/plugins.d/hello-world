@@ -36,20 +36,17 @@ sub main
     {
         exec($0,'--help');
     }
-    given($command)
+    if ($command eq 'hello')
     {
-        when('hello')
-        {
-            print "Hello world!\n";
-        }
-        when('toolslist')
-        {
-            printf "%-19s %s\n", 'hello-world','A simple hello world example plugin tool';
-        }
-        default
-        {
-            die('Unknown command: '.$command."\n");
-        }
+        print "Hello world!\n";
+    }
+    elsif($command eq 'toolslist')
+    {
+        printf "%-19s %s\n", 'hello-world','A simple hello world example plugin tool';
+    }
+    else
+    {
+        die('Unknown command: '.$command."\n");
     }
 }
 

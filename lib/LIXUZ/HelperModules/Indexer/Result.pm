@@ -154,40 +154,35 @@ sub _constructCache
         }
         my ($type,$id,$revision) = $self->_parseIndexID($part->{id});
 
-        given($type)
+        if ($type eq 'file')
         {
-            when('file')
+            my $search = {
+                file_id => $id,
+            };
+            push(@searches_files, $search);
+        }
+        elsif($type eq 'article')
+        {
+            my $search = {
+                article_id => $id,
+            };
+            if(defined $revision)
             {
-                my $search = {
-                    file_id => $id,
-                };
-                push(@searches_files, $search);
+                $search->{revision} = $revision;
             }
-
-            when('article')
+            else
             {
-                my $search = {
-                    article_id => $id,
-                };
-                if(defined $revision)
-                {
-                    $search->{revision} = $revision;
-                }
-                else
-                {
-                    $search->{status_id} = 2;
-                }
-                push(@searches_articles,$search);
+                $search->{status_id} = 2;
             }
-
-            default
+            push(@searches_articles,$search);
+        }
+        else
+        {
+            if(not defined $type)
             {
-                if(not defined $type)
-                {
-                    $type = '[undef]';
-                }
-                $self->c->log->warn('Unknown item type in search result: '.$type);
+                $type = '[undef]';
             }
+            $self->c->log->warn('Unknown item type in search result: '.$type);
         }
     }
 

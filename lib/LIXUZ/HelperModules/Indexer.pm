@@ -794,27 +794,22 @@ sub _getFields
 
     my($stringFields, $specificFields) = (undef,[]);
 
-    given($for)
+    if ($for eq 'articles')
     {
-        when('articles')
+        $stringFields = [ qw/title body lead author/ ];
+        $specificFields = [ qw/status_id assigned_to/ ];
+    }
+    elsif($for eq 'files')
+    {
+        $stringFields = [ qw/file_name title caption body/ ];
+        if ($self->mode eq 'internal')
         {
-           $stringFields = [ qw/title body lead author/ ];
-           $specificFields = [ qw/status_id assigned_to/ ];
+            push(@{$stringFields},'file_id');
         }
-
-        when('files')
-        {
-            $stringFields = [ qw/file_name title caption body/ ];
-            if ($self->mode eq 'internal')
-            {
-                push(@{$stringFields},'file_id');
-            }
-        }
-
-        default
-        {
-            die("_getFields: Fatal: Unknown searchType \"$for\"");
-        }
+    }
+    else
+    {
+        die("_getFields: Fatal: Unknown searchType \"$for\"");
     }
     if(wantarray)
     {

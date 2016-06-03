@@ -169,42 +169,34 @@ sub main
         usage(0);
     }
 
-    given($action)
+    $_ = $action;
+    if(/^(package|pkg)s?$/)
     {
-        when(/^(package|pkg)s?$/)
-        {
-            packages();
-        }
-
-        when(/^(templates?|tpl)$/)
-        {
-            templates();
-        }
-
-        when(/^(database|db)$/)
-        {
-            database();
-        }
-
-        when('utils')
-        {
-            utils();
-        }
-
-        when(/^plugins?$/)
-        {
-            plugins();
-        }
-
-        when('plumbing')
-        {
-            plumbing();
-        }
-
-        default
-        {
-            die('Unknown command: '.$action."\nSee --help for more information\n");
-        }
+        packages();
+    }
+    elsif(/^(templates?|tpl)$/)
+    {
+        templates();
+    }
+    elsif(/^(database|db)$/)
+    {
+        database();
+    }
+    elsif('utils')
+    {
+        utils();
+    }
+    elsif(/^plugins?$/)
+    {
+        plugins();
+    }
+    elsif('plumbing')
+    {
+        plumbing();
+    }
+    else
+    {
+        die('Unknown command: '.$action."\nSee --help for more information\n");
     }
 }
 
@@ -862,57 +854,47 @@ sub database
     my $subcommand = shift(@ARGV);
 
 
-    given($subcommand)
+    if($subcommand eq 'upgrade')
     {
-
-        when('upgrade')
+        changeDir($lixuzDir.'/sql');
+        my @command = qw(perl ./upgradeDB ../lixuz.yml);
+        if ($force)
         {
-            changeDir($lixuzDir.'/sql');
-            my @command = qw(perl ./upgradeDB ../lixuz.yml);
-            if ($force)
-            {
-                push(@command,'--force');
-            }
-            if ($verbosity >= 99)
-            {
-                push(@command,'--debug');
-            }
-            exec(@command) or die('Failed to exec: '.join(' ',@command).': '.$!."\n");
+            push(@command,'--force');
         }
-
-        when(/^(check|fsck)$/)
+        if ($verbosity >= 99)
         {
-            runCronHelper(qw(--database-sanity));
+            push(@command,'--debug');
         }
-        
-        when(/^reindex$/)
+        exec(@command) or die('Failed to exec: '.join(' ',@command).': '.$!."\n");
+    }
+    elsif($subcommand =~ /^(check|fsck)$/)
+    {
+        runCronHelper(qw(--database-sanity));
+    }
+    elsif($subcommand =~ /^reindex$/)
+    {
+        runCronHelper(qw(--reindex --onlyindex));
+    }
+    elsif($subcommand =~ /^index$/)
+    {
+        runCronHelper(qw(--onlyindex));
+    }
+    elsif($subcommand =~ /^console$/)
+    {
+        runMysqlConsole();
+    }
+    elsif($subcommand =~ /^exec$/)
+    {
+        if (!@ARGV)
         {
-            runCronHelper(qw(--reindex --onlyindex));
+            die('Usage: lixuzctl database exec SQL'."\n".'Use "lixuzctl database console" if you want to open a console'."\n");
         }
-        
-        when(/^index$/)
-        {
-            runCronHelper(qw(--onlyindex));
-        }
-
-        when(/^console$/)
-        {
-            runMysqlConsole();
-        }
-
-        when(/^exec$/)
-        {
-            if (!@ARGV)
-            {
-                die('Usage: lixuzctl database exec SQL'."\n".'Use "lixuzctl database console" if you want to open a console'."\n");
-            }
-            runMysqlConsole(@ARGV);
-        }
-
-        default
-        {
-            die('Unknown subcommand for database: '.$subcommand."\nSee \"database --help\" for more information\n");
-        }
+        runMysqlConsole(@ARGV);
+    }
+    else
+    {
+        die('Unknown subcommand for database: '.$subcommand."\nSee \"database --help\" for more information\n");
     }
 }
 
@@ -1001,172 +983,168 @@ sub packages
         printv('Operating on Lixuz at '.$lixuzDir."\n");
     }
 
-    given($subcommand)
+    if($subcommand eq 'buildwatch')
     {
-        when('buildwatch')
+        my $dir = shift // '.';
+        selfRun(qw(packages buildinstall),$dir);
+        selfExec(qw(packages watch),$dir);
+    }
+    elsif($subcommand eq 'watch')
+    {
+        my $dir = shift // '.';
+        my $command = $noinstall ? 'build' : 'buildinstall';
+        printv('Watching '.$dir.' for changes'."\n");
+        my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp|swo)$ --excludei .*~$ --excludei ./.lixuzctl.buildlock};
+        if ($verbosity < 99)
         {
-            my $dir = shift // '.';
-            selfRun(qw(packages buildinstall),$dir);
-            selfExec(qw(packages watch),$dir);
+            push(@inotifyCommand,qw(-q -q));
         }
-        when('watch')
+        while(1)
         {
-            my $dir = shift // '.';
-            my $command = $noinstall ? 'build' : 'buildinstall';
-            printv('Watching '.$dir.' for changes'."\n");
-            my @inotifyCommand = qw{inotifywait -e modify -e create -e delete -e moved_to -r --excludei .*\.(ipk|swp|swo)$ --excludei .*~$ --excludei ./.lixuzctl.buildlock};
-            if ($verbosity < 99)
+            if(system(@inotifyCommand,$dir.'/') != 0)
             {
-                push(@inotifyCommand,qw(-q -q));
+                return;
             }
-            while(1)
+            if(lockfile('check'))
             {
-                if(system(@inotifyCommand,$dir.'/') != 0)
-                {
-                    return;
-                }
-                if(lockfile('check'))
-                {
-                    printv('Change detected, but build directory locked. Sleeping for two seconds.'."\n");
-                    sleep(2);
-                    next;
-                }
-                printv('['.strftime('%H:%M:%S',localtime).'] Change detected, running '.$command."\n");
-                selfRun('packages',$command);
-                printv('['.strftime('%H:%M:%S',localtime).'] '.$command.' complete'."\n");
-                if ($beep)
-                {
-                    print "\a";
-                }
+                printv('Change detected, but build directory locked. Sleeping for two seconds.'."\n");
+                sleep(2);
+                next;
+            }
+            printv('['.strftime('%H:%M:%S',localtime).'] Change detected, running '.$command."\n");
+            selfRun('packages',$command);
+            printv('['.strftime('%H:%M:%S',localtime).'] '.$command.' complete'."\n");
+            if ($beep)
+            {
+                print "\a";
             }
         }
+    }
 
-        when('buildinstall')
+    elsif($subcommand eq 'buildinstall')
+    {
+        my $package = buildPackage('build',shift(@ARGV));
+        installPackage('upgrade',$package);
+    }
+
+    elsif($subcommand eq 'install')
+    {
+        foreach (@ARGV)
         {
-            my $package = buildPackage('build',shift(@ARGV));
-            installPackage('upgrade',$package);
+            installPackage('install',$_);
         }
+    }
 
-        when('install')
+    elsif($subcommand eq 'remove')
+    {
+        my @remove;
+        printStatus('Processing dependencies ... ');
+        my @packages = @ARGV;
+        my $prev;
+        my $meta = loadMetaFile();
+        my $loop = 0;
+        my $loopMax = (scalar(@packages)*2)+1000;
+        while(defined(my $pkg = shift(@packages)))
         {
-            foreach (@ARGV)
+            if(! $meta->{packages}->{$pkg})
             {
-                installPackage('install',$_);
+                warn($pkg.': is not installed, skipping package'."\n");
+                next;
             }
-        }
-
-        when('remove')
-        {
-            my @remove;
-            printStatus('Processing dependencies ... ');
-            my @packages = @ARGV;
-            my $prev;
-            my $meta = loadMetaFile();
-            my $loop = 0;
-            my $loopMax = (scalar(@packages)*2)+1000;
-            while(defined(my $pkg = shift(@packages)))
+            if(canRemovePackage($pkg,$meta,\@remove))
             {
-                if(! $meta->{packages}->{$pkg})
+                push(@remove,$pkg);
+            }
+            else
+            {
+                if (defined($prev) && $prev eq $pkg)
                 {
-                    warn($pkg.': is not installed, skipping package'."\n");
-                    next;
-                }
-                if(canRemovePackage($pkg,$meta,\@remove))
-                {
+                    printd('Failed to find any safe way to remove "'.$pkg.'"');
                     push(@remove,$pkg);
+                    last;
                 }
                 else
                 {
-                    if (defined($prev) && $prev eq $pkg)
-                    {
-                        printd('Failed to find any safe way to remove "'.$pkg.'"');
-                        push(@remove,$pkg);
-                        last;
-                    }
-                    else
-                    {
-                        push(@packages,$pkg);
-                        $prev = $pkg;
-                    }
-                    if ($loop++ > $loopMax)
-                    {
-                        my $remaining = join(', ',@packages);
-                        my ($r,$error) = canRemovePackage($pkg,$meta,\@remove);
-                        die('Eternal loop in dependency resolver detected, aborting.'."\n\nDiagnostics:\n".'Remaining packages: '.$remaining."\n".'Last error seen: '.$error);
-                    }
+                    push(@packages,$pkg);
+                    $prev = $pkg;
+                }
+                if ($loop++ > $loopMax)
+                {
+                    my $remaining = join(', ',@packages);
+                    my ($r,$error) = canRemovePackage($pkg,$meta,\@remove);
+                    die('Eternal loop in dependency resolver detected, aborting.'."\n\nDiagnostics:\n".'Remaining packages: '.$remaining."\n".'Last error seen: '.$error);
                 }
             }
-            printStatus('done'."\n");
-            my @die;
-            foreach my $pkg (@remove)
+        }
+        printStatus('done'."\n");
+        my @die;
+        foreach my $pkg (@remove)
+        {
+            try
             {
-                try
-                {
-                    removePackage($pkg);
-                }
-                catch
-                {
-                    push(@die,$_[0]);
-                };
+                removePackage($pkg);
             }
-            if (@die)
+            catch
             {
-                die(join('',@die));
-            }
+                push(@die,$_[0]);
+            };
         }
-
-        when('upgrade')
+        if (@die)
         {
-            foreach (@ARGV)
-            {
-                installPackage('upgrade',$_);
-            }
+            die(join('',@die));
         }
+    }
 
-        when('list')
+    elsif($subcommand eq 'upgrade')
+    {
+        foreach (@ARGV)
         {
-            listPackages();
+            installPackage('upgrade',$_);
         }
+    }
 
-        when('listfiles')
-        {
-            listPackageFiles();
-        }
+    elsif($subcommand eq 'list')
+    {
+        listPackages();
+    }
 
-        when('build')
-        {
-            buildPackage($subcommand,@ARGV);
-        }
+    elsif($subcommand eq 'listfiles')
+    {
+        listPackageFiles();
+    }
 
-        when('reconstruct')
-        {
-            while(@ARGV)
-            {
-                my $package = shift(@ARGV);
-                my $targetDir = shift(@ARGV);
-                reconstructPackage($package,$targetDir);
-            }
-        }
+    elsif($subcommand eq 'build')
+    {
+        buildPackage($subcommand,@ARGV);
+    }
 
-        when('verify')
+    elsif($subcommand eq 'reconstruct')
+    {
+        while(@ARGV)
         {
-            verifyPackages();
+            my $package = shift(@ARGV);
+            my $targetDir = shift(@ARGV);
+            reconstructPackage($package,$targetDir);
         }
+    }
 
-        when('owner')
-        {
-            checkPackageOwners('output',@ARGV);
-        }
+    elsif($subcommand eq 'verify')
+    {
+        verifyPackages();
+    }
 
-        when('create')
-        {
-            createPackageTree(@ARGV);
-        }
+    elsif($subcommand eq 'owner')
+    {
+        checkPackageOwners('output',@ARGV);
+    }
 
-        default
-        {
-            die('Unknown subcommand for packages: '.$subcommand."\nSee \"packages --help\" for more information\n");
-        }
+    elsif($subcommand eq 'create')
+    {
+        createPackageTree(@ARGV);
+    }
+    else
+    {
+        die('Unknown subcommand for packages: '.$subcommand."\nSee \"packages --help\" for more information\n");
     }
 }
 
@@ -1549,109 +1527,106 @@ sub templates
         printv('Operating on Lixuz at '.$lixuzDir."\n");
     }
 
-    given($subcommand)
+    if($subcommand eq 'inject')
     {
-        when('inject')
+        foreach my $templateFile (@ARGV)
         {
-            foreach my $templateFile (@ARGV)
+            if (-e $templateFile)
             {
-                if (-e $templateFile)
-                {
-                    injectTemplateFile($templateFile);
-                }
+                injectTemplateFile($templateFile);
             }
         }
+    }
 
-        when('remove')
+    elsif($subcommand eq 'remove')
+    {
+        foreach my $templateID (@ARGV)
         {
-            foreach my $templateID (@ARGV)
+            removeTemplate($templateID);
+        }
+    }
+
+    elsif($subcommand eq 'list')
+    {
+        print "\n";
+        printnd('Fetching template list...');
+        loadLixuzModules();
+
+        printd('Fetching DBIC');
+        my $dbic = getDBIC();
+        my $fmt = "%-35s %-18s %s\n";
+
+        my $templates = $dbic->resultset('LzTemplate');
+        printnd("\r");
+        printf($fmt,'Unique ID','Type','Name');
+        while(my $template = $templates->next)
+        {
+            my $default = $template->is_default ? ' (default)' : '';
+            printf($fmt,$template->uniqueid,$template->type.$default,$template->name);
+        }
+    }
+
+    elsif($subcommand eq 'setdefault')
+    {
+        my $template = shift(@ARGV);
+        if (!$template)
+        {
+            die('setdefault requires a parameter: the template which is to be set as the default'."\n");
+        }
+        print "\n";
+        printnd('Initializing database access ...');
+        loadLixuzModules();
+
+        printd('Fetching DBIC');
+        my $dbic = getDBIC();
+        my $fmt = "%-35s %-18s %s\n";
+
+        my $tplObject = $dbic->resultset('LzTemplate')->find({ uniqueid => $template });
+        printnd("done\n");
+        if (!$tplObject)
+        {
+            die("Failed to locate any template with the unique ID $template\n");
+        }
+        if ($tplObject->is_default)
+        {
+            print "$template: is already the default template for ".$tplObject->type."\n";
+            exit(0);
+        }
+        printnd("Setting $template as the default handler for ".$tplObject->type."...");
+        $dbic->resultset('LzTemplate')->search({ type => $tplObject->type })->update({ is_default => 0 });
+        $tplObject->set_column('is_default',1);
+        $tplObject->update;
+        printnd("done\n");
+    }
+
+    elsif($subcommand eq 'info')
+    {
+        print "\n";
+        print "Initializing parser...";
+        loadLixuzModules();
+        my $fakeC = fakeC();
+        print "done\n";
+        foreach my $file (@ARGV)
+        {
+            print "$file:\n";
+            my $info;
+            try
             {
-                removeTemplate($templateID);
+                $info = get_parsed_template_info($fakeC,$file);
+            }
+            catch
+            {
+                print 'Error: Failed to parse the infoblock in '.$file."\n"
+            };
+            if ($info)
+            {
+                print Dumper($info);
             }
         }
-
-        when('list')
-        {
-            print "\n";
-            printnd('Fetching template list...');
-            loadLixuzModules();
-
-            printd('Fetching DBIC');
-            my $dbic = getDBIC();
-            my $fmt = "%-35s %-18s %s\n";
-
-            my $templates = $dbic->resultset('LzTemplate');
-            printnd("\r");
-            printf($fmt,'Unique ID','Type','Name');
-            while(my $template = $templates->next)
-            {
-                my $default = $template->is_default ? ' (default)' : '';
-                printf($fmt,$template->uniqueid,$template->type.$default,$template->name);
-            }
-        }
-
-        when('setdefault')
-        {
-            my $template = shift(@ARGV);
-            if (!$template)
-            {
-                die('setdefault requires a parameter: the template which is to be set as the default'."\n");
-            }
-            print "\n";
-            printnd('Initializing database access ...');
-            loadLixuzModules();
-
-            printd('Fetching DBIC');
-            my $dbic = getDBIC();
-            my $fmt = "%-35s %-18s %s\n";
-
-            my $tplObject = $dbic->resultset('LzTemplate')->find({ uniqueid => $template });
-            printnd("done\n");
-            if (!$tplObject)
-            {
-                die("Failed to locate any template with the unique ID $template\n");
-            }
-            if ($tplObject->is_default)
-            {
-                print "$template: is already the default template for ".$tplObject->type."\n";
-                exit(0);
-            }
-            printnd("Setting $template as the default handler for ".$tplObject->type."...");
-            $dbic->resultset('LzTemplate')->search({ type => $tplObject->type })->update({ is_default => 0 });
-            $tplObject->set_column('is_default',1);
-            $tplObject->update;
-            printnd("done\n");
-        }
-
-        when('info')
-        {
-            print "\n";
-            print "Initializing parser...";
-            loadLixuzModules();
-            my $fakeC = fakeC();
-            print "done\n";
-            foreach my $file (@ARGV)
-            {
-                print "$file:\n";
-                my $info;
-                try
-                {
-                    $info = get_parsed_template_info($fakeC,$file);
-                }
-                catch
-                {
-                    print 'Error: Failed to parse the infoblock in '.$file."\n"
-                };
-                if ($info)
-                {
-                    print Dumper($info);
-                }
-            }
-        }
-        default
-        {
-            die('Unknown subcommand for templates: '.$subcommand."\nSee \"templates --help\" for more information\n");
-        }
+    }
+    else
+    {
+        die('Unknown subcommand for templates: '.$subcommand."\nSee \"templates --help\" for more information\n");
     }
 }
 
@@ -1860,54 +1835,51 @@ sub utils
         printv('Operating on Lixuz at '.$lixuzDir."\n");
     }
 
-    given($subcommand)
+    if($subcommand =~ /^(cat(egory)|folders?)?_?tree$/)
     {
-        when(/^(cat(egory)|folders?)?_?tree$/)
+        loadLixuzModules();
+        my $fakeC = mockC();
+        my $dbic = getDBIC();
+        my $objects;
+        if (/^folder/)
         {
-            loadLixuzModules();
-            my $fakeC = mockC();
-            my $dbic = getDBIC();
-            my $objects;
-            if (/^folder/)
+            $objects = $dbic->resultset('LzFolder')->search({ parent => \'IS NULL' });
+        }
+        else
+        {
+            $objects = $dbic->resultset('LzCategory')->search({ parent => \'IS NULL' });
+        }
+        printTreeVisualization($objects,0);
+    }
+
+    elsif($subcommand eq 'fileinject')
+    {
+        foreach(@ARGV)
+        {
+            if (-e $_)
             {
-                $objects = $dbic->resultset('LzFolder')->search({ parent => \'IS NULL' });
+                injectFile($_);
             }
             else
             {
-                $objects = $dbic->resultset('LzCategory')->search({ parent => \'IS NULL' });
-            }
-            printTreeVisualization($objects,0);
-        }
-
-        when('fileinject')
-        {
-            foreach(@ARGV)
-            {
-                if (-e $_)
-                {
-                    injectFile($_);
-                }
-                else
-                {
-                    warn($_.': does not exist - skipped'."\n");
-                }
+                warn($_.': does not exist - skipped'."\n");
             }
         }
+    }
 
-        when('adduser')
-        {
-            adduser();
-        }
+    elsif($subcommand eq 'adduser')
+    {
+        adduser();
+    }
 
-        when('repl')
-        {
-            repl();
-        }
+    elsif($subcommand eq 'repl')
+    {
+        repl();
+    }
+    else
 
-        default
-        {
-            die('Unknown subcommand for utils: '.$subcommand."\nSee \"utils --help\" for more information\n");
-        }
+    {
+        die('Unknown subcommand for utils: '.$subcommand."\nSee \"utils --help\" for more information\n");
     }
 }
 
@@ -2107,13 +2079,7 @@ sub plugins
         printv('Operating on Lixuz at '.$lixuzDir."\n");
     }
 
-    given($subcommand)
-    {
-        default
-        {
-            runPluginSubcommand($subcommand,@ARGV);
-        }
-    }
+    runPluginSubcommand($subcommand,@ARGV);
 }
 
 # Purpose: Run a plugin utility
@@ -3367,91 +3333,86 @@ sub plumbing
     checkForHelpParam(sub { usagePlumbing(0) });
     shift(@ARGV);
 
-    given($subcommand)
+    if($subcommand eq 'packup')
     {
-
-        when('packup')
+        my $dir = shift(@ARGV);
+        my $meta = loadMetaFile();
+        if ($meta->{packages} && scalar(%{$meta->{packages}}))
         {
-            my $dir = shift(@ARGV);
-            my $meta = loadMetaFile();
-            if ($meta->{packages} && scalar(%{$meta->{packages}}))
+            foreach my $p (keys %{$meta->{packages}})
             {
-                foreach my $p (keys %{$meta->{packages}})
-                {
-                    selfRun('packages','reconstruct',$p,$dir);
-                }
-            }
-            else
-            {
-                exit(1);
+                selfRun('packages','reconstruct',$p,$dir);
             }
         }
-        when('reinject')
+        else
         {
-            # reinject implies --lazy and --force
-            $lazyInstall = 1;
-            $force       = 1;
-            foreach my $pkg (@ARGV)
+            exit(1);
+        }
+    }
+    elsif($subcommand eq 'reinject')
+    {
+        # reinject implies --lazy and --force
+        $lazyInstall = 1;
+        $force       = 1;
+        foreach my $pkg (@ARGV)
+        {
+            if (-e $pkg)
             {
-                if (-e $pkg)
-                {
-                    installPackage('reinject',$pkg);
-                }
+                installPackage('reinject',$pkg);
             }
         }
+    }
 
-        when('confupgrade')
+    elsif($subcommand eq 'confupgrade')
+    {
+        my $confFile = shift(@ARGV);
+        my $template = shift(@ARGV);
+        if (! -e $template)
         {
-            my $confFile = shift(@ARGV);
-            my $template = shift(@ARGV);
-            if (! -e $template)
-            {
-                die("confupgrade: $template does not exist\n");
-            }
-            refreshConfigFromTemplate($confFile,$template);
+            die("confupgrade: $template does not exist\n");
         }
+        refreshConfigFromTemplate($confFile,$template);
+    }
 
-        when('checkowner')
-        {
-            checkPackageOwners('plumbing',@ARGV);
-        }
+    elsif($subcommand eq 'checkowner')
+    {
+        checkPackageOwners('plumbing',@ARGV);
+    }
 
-        when('upgrade')
-        {
-            performVersionUpgrade();
-        }
+    elsif($subcommand eq 'upgrade')
+    {
+        performVersionUpgrade();
+    }
 
-        # Remove this once minSupportedApiLevel > 4
-        when(/^template(list|remove|inject)$/)
-        {
-            s/^template//;
-            exit(selfRun('templates',$_,@ARGV));
-        }
+    # Remove this once minSupportedApiLevel > 4
+    elsif($subcommand =~ /^template(list|remove|inject)$/)
+    {
+        s/^template//;
+        exit(selfRun('templates',$_,@ARGV));
+    }
 
-        when('adduser')
-        {
-            my $username = shift(@ARGV) or die;
-            my $password = shift(@ARGV) or die;
-            loadLixuzModules();
-            my $dbic = getDBIC();
-            my $role = $dbic->resultset('LzRole')->find({
-                    role_name => 'Admin',
-                });
-            my $user = $dbic->resultset('LzUser')->create({
-                    created => \'now()',
-                    firstname => 'changeme',
-                    lastname => 'changeme',
-                    user_name => $username,
-                    role_id => $role->role_id,
-                });
-            $user->set_password($password);
-            $user->update();
-        }
-
-        default
-        {
-            die('Unknown subcommand for plumbing: '.$subcommand."\n");
-        }
+    elsif($subcommand eq 'adduser')
+    {
+        my $username = shift(@ARGV) or die;
+        my $password = shift(@ARGV) or die;
+        loadLixuzModules();
+        my $dbic = getDBIC();
+        my $role = $dbic->resultset('LzRole')->find({
+                role_name => 'Admin',
+            });
+        my $user = $dbic->resultset('LzUser')->create({
+                created => \'now()',
+                firstname => 'changeme',
+                lastname => 'changeme',
+                user_name => $username,
+                role_id => $role->role_id,
+            });
+        $user->set_password($password);
+        $user->update();
+    }
+    else
+    {
+        die('Unknown subcommand for plumbing: '.$subcommand."\n");
     }
 }
 

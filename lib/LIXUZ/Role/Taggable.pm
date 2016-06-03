@@ -56,30 +56,25 @@ sub add_tag
 
     if ($tag)
     {
-        my $rs = '';
-        given(ref($self))
+        my $selfType = ref($self);
+        if ($selfType =~ /Article/)
         {
-            when(/Article/)
-            {
-                $self->result_source->schema->resultset('LzArticleTag')->create({
-                        tag_id => $tag->tag_id,
-                        article_id => $self->article_id,
-                        revision => $self->revision
-                    });
-            }
-
-            when(/File/)
-            {
-                $self->result_source->schema->resultset('LzFileTag')->create({
-                        tag_id => $tag->tag_id,
-                        file_id => $self->file_id
-                    });
-            }
-
-            default
-            {
-                die;
-            }
+            $self->result_source->schema->resultset('LzArticleTag')->create({
+                    tag_id => $tag->tag_id,
+                    article_id => $self->article_id,
+                    revision => $self->revision
+                });
+        }
+        elsif($selfType =~ /File/)
+        {
+            $self->result_source->schema->resultset('LzFileTag')->create({
+                    tag_id => $tag->tag_id,
+                    file_id => $self->file_id
+                });
+        }
+        else
+        {
+            die;
         }
     }
 

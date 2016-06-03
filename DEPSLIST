@@ -80,54 +80,50 @@ my %deps = (
 my $pkgNo = 0;
 $ARGV[0] //= '';
 
-given($ARGV[0])
+if ($ARGV[0] eq 'list')
 {
-    when('list')
-    {
-        print "$_ " foreach(sort keys %deps);
-        print "\b\n"
-    }
+    print "$_ " foreach(sort keys %deps);
+    print "\b\n"
+}
 
-    when(/check/)
+elsif($ARGV[0] =~ /check/)
+{
+    $| = 1;
+    my @missing;
+    print 'Performing dependencies check...';
+    foreach (sort keys %deps)
     {
-        $| = 1;
-        my @missing;
-        print 'Performing dependencies check...';
-        foreach (sort keys %deps)
+        print '.';
+        eval
         {
-            print '.';
-            eval
+            $pkgNo++;
+            my $pkg = $_;
+            $pkg =~ s/::/_/g;
+            $pkg = 'lzDepsList_testPkg_'.$pkgNo.'_'.int(rand(9999)).'_'.$pkg;
+            if(not eval('package '.$pkg.'; use '.$_.';1;'))
             {
-                $pkgNo++;
-                my $pkg = $_;
-                $pkg =~ s/::/_/g;
-                $pkg = 'lzDepsList_testPkg_'.$pkgNo.'_'.int(rand(9999)).'_'.$pkg;
-                if(not eval('package '.$pkg.'; use '.$_.';1;'))
-                {
-                    push(@missing,$_);
-                }
-            };
-        }
-        if (@missing)
-        {
-            say 'done';
-            print 'Found missing libs:';
-            print " $_" foreach(@missing);
-            print "\n";
-            exit(1);
-        }
-        else
-        {
-            say 'done - all dependencies are present';
-            exit(0);
-        }
+                push(@missing,$_);
+            }
+        };
     }
-
-    default
+    if (@missing)
     {
-        say "Usage: perl $0 ACTION";
-        say "  where ACTION is one of:";
-        say "  list         - quickly list all deps";
-        say "  check        - check for missing deps";
+        say 'done';
+        print 'Found missing libs:';
+        print " $_" foreach(@missing);
+        print "\n";
+        exit(1);
     }
+    else
+    {
+        say 'done - all dependencies are present';
+        exit(0);
+    }
+}
+else
+{
+    say "Usage: perl $0 ACTION";
+    say "  where ACTION is one of:";
+    say "  list         - quickly list all deps";
+    say "  check        - check for missing deps";
 }

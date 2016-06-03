@@ -53,27 +53,21 @@ sub getListHelper
         $options->{formbuilder} = $self->formbuilder;
     }
 
-    given($self->listType)
+    if ($self->listType eq 'database')
     {
-        when('database')
-        {
-            return LIXUZ::HelperModules::List::Database->new(%{$options});
-        }
-
-        when('indexer')
-        {
-            return LIXUZ::HelperModules::List::Indexer->new(%{$options});
-        }
-
-        when('dual')
-        {
-            return LIXUZ::HelperModules::List::Dual->new(%{$options});
-        }
-
-        default
-        {
-            croak('LIXUZ::Role::List should not be consumed directly');
-        }
+        return LIXUZ::HelperModules::List::Database->new(%{$options});
+    }
+    elsif($self->listType eq 'indexer')
+    {
+        return LIXUZ::HelperModules::List::Indexer->new(%{$options});
+    }
+    elsif($self->listType eq 'dual')
+    {
+        return LIXUZ::HelperModules::List::Dual->new(%{$options});
+    }
+    else
+    {
+        croak('LIXUZ::Role::List should not be consumed directly');
     }
 }
 
