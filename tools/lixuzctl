@@ -169,28 +169,27 @@ sub main
         usage(0);
     }
 
-    $_ = $action;
-    if(/^(package|pkg)s?$/)
+    if($action =~ /^(package|pkg)s?$/)
     {
         packages();
     }
-    elsif(/^(templates?|tpl)$/)
+    elsif($action =~ /^(templates?|tpl)$/)
     {
         templates();
     }
-    elsif(/^(database|db)$/)
+    elsif($action =~ /^(database|db)$/)
     {
         database();
     }
-    elsif('utils')
+    elsif($action eq 'utils')
     {
         utils();
     }
-    elsif(/^plugins?$/)
+    elsif($action =~ /^plugins?$/)
     {
         plugins();
     }
-    elsif('plumbing')
+    elsif($action eq 'plumbing')
     {
         plumbing();
     }
