@@ -117,7 +117,7 @@ sub buildform: Private
     my ( $self, $c, $type, $populate, $user_id ) = @_;
     my $form = $self->formbuilder;
     my $i18n = $c->stash->{i18n};
-    $c->stash->{template} = 'adm/users/edit.html';
+    $c->stash->{template} = 'adm/users/edit/index.html';
     my $fieldObj = LIXUZ::HelperModules::Fields->new($c,'users',$user_id);
     $fieldObj->editorInit();
     # Name mapping of field name => title
