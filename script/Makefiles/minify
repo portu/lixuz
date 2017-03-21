@@ -6,7 +6,7 @@ YUI_JAR_PATH=$(shell echo ~)/.local/yuiminify/yuicompressor.jar
 YUI_MINIFY=java -jar $(YUI_JAR_PATH)
 YUI_MINIFY_JS_OPTS=
 YUI_MINIFY_CSS_OPTS=
-YUI_MINIFY_VERSION=2.4.2
+YUI_MINIFY_VERSION=2.4.8
 WGET=wget -c --random-wait --retry-connrefused -t 20
 SHELL:=/bin/bash
 
@@ -48,10 +48,7 @@ compressor_download:
 	@echo ""
 	@if ! type unzip; then echo "Needs unzip";exit1;fi
 	mkdir -p ~/.local/yuiminify/
-	cd ~/.local/yuiminify; $(WGET) "http://www.julienlecomte.net/yuicompressor/yuicompressor-$(YUI_MINIFY_VERSION).zip" 
-	cd ~/.local/yuiminify; unzip -q "yuicompressor-$(YUI_MINIFY_VERSION).zip"
-	cd ~/.local/yuiminify; mv -f "yuicompressor-$(YUI_MINIFY_VERSION)/build/yuicompressor-$(YUI_MINIFY_VERSION).jar" yuicompressor.jar
-	cd ~/.local/yuiminify; rm -rf ./yuicompressor-$(YUI_MINIFY_VERSION)*
+	cd ~/.local/yuiminify; $(WGET) -O yuicompressor.jar "https://github.com/yui/yuicompressor/releases/download/v2.4.8/yuicompressor-2.4.8.jar"
 compressor_vercheck:
 	echo "Latest version available: `wget -O- http://www.julienlecomte.net/yuicompressor/ -q | egrep -i "yuicompressor-.*zip" |perl -pi -e 's/.*yuicompressor-(.*).zip.*/$$1/'`"
 	@echo "Currently defined in Makefile: $(YUI_MINIFY_VERSION)"
