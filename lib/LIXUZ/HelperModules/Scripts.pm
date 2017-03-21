@@ -21,8 +21,8 @@ use Exporter qw(import);
 use Config::Any;
 use FindBin;
 use Cwd qw(realpath);
-use Test::MockClass;
 use LIXUZ::Schema;
+use 5.014;
 our @EXPORT_OK = qw(fakeC getConfig getLixuzRoot mockC getDBIC);
 
 our $root;
@@ -30,16 +30,6 @@ my $conf;
 
 sub fakeC
 {
-    eval
-    {
-        package LIXUZ::HelperModules::Log;
-        sub _out { shift; warn(join(' ',@_)."\n") };
-        sub error { my $s = shift or return; return $s->_out(@_) };
-        sub debug { my $s = shift or return; return $s->_out(@_) };
-        sub info { my $s = shift or return; return $s->_out(@_) };
-        sub warn { my $s = shift or return; return $s->_out(@_) };
-        sub _log { my $s = shift or return; return $s->_out(@_) };
-    };
     my $c = bless({
             stack => [
                 bless(
@@ -63,43 +53,7 @@ sub fakeC
 
 sub mockC
 {
-    local *STDERR;
-    local *STDOUT;
-    open(STDERR,'>','/dev/null');
-    open(STDOUT,'>','/dev/null');
-
-    my $mockLog = Test::MockClass->new('LIXUZ::HelperModules::Log');
-    foreach my $type (qw(debug info warn _log))
-    {
-        $mockLog->addMethod($type, sub
-            {
-                warn($type.': '.join(' ',@_)."\n");
-            });
-    }
-
-    my $logger = $mockLog->create;
-
-    my $dbic = getDBIC();
-
-    my $mockCache = Test::MockClass->new('LIXUZ::MockCache');
-    $mockCache->defaultConstructor();
-    $mockCache->addMethod('set',sub { });
-    $mockCache->addMethod('get',sub { });
-    $mockCache->addMethod('stash',sub { {} });
-    my $mockCacheInstance = $mockCache->create;
-
-    my $mockClass = Test::MockClass->new('LIXUZ');
-    $mockClass->defaultConstructor();
-    $mockClass->addMethod('config',sub { getConfig() });
-    $mockClass->addMethod('log', sub { return $logger });
-    $mockClass->addMethod('cache',sub { return $mockCacheInstance });
-    $mockClass->addMethod('model', sub {
-            shift;
-            my $fetch = shift;
-            $fetch =~ s/^LIXUZDB:://;
-            return $dbic->resultset($fetch);
-        });
-    return $mockClass->create;
+    return LIXUZ::Mocked->new;
 }
 
 sub getLixuzRoot
@@ -117,7 +71,7 @@ sub getLixuzRoot
             return $root;
         }
     }
-    return undef;
+    return;
 }
 
 sub getConfig
@@ -143,6 +97,65 @@ sub getDBIC
 	my $cinfo = $config->{'Model::LIXUZDB'}->{'connect_info'};
 	$cinfo->{mysql_enable_utf8} = 1;
     return LIXUZ::Schema->connect( $cinfo );
+}
+
+# Mocking up classes:
+package LIXUZ::HelperModules::Log
+{
+    use Moo;
+
+    sub _log
+    {
+        my $type = shift;
+        if (!@_)
+        {
+            warn($type."\n");
+        }
+        else
+        {
+            warn($type.': '.join(' ',@_)."\n");
+        }
+    }
+
+    sub debug { shift->_log(@_) }
+    sub warn { shift->_log(@_) }
+    sub info { shift->_log(@_) }
+}
+
+package LIXUZ::MockCache
+{
+    use Moo;
+    sub get {}
+    sub set {}
+    sub stash { {} }
+}
+
+package LIXUZ::Mocked
+{
+    use Moo;
+    has 'cache' => (
+        is => 'ro',
+        default => sub { LIXUZ::MockCache->new }
+    );
+    has 'log' => (
+        is => 'ro',
+        default => sub { LIXUZ::HelperModules::Log->new }
+    );
+    has 'dbic' => (
+        is => 'ro',
+        default => sub { LIXUZ::HelperModules::Scripts::getDBIC() }
+    );
+    sub config
+    {
+        LIXUZ::HelperModules::Scripts::getConfig();
+    }
+    sub model
+    {
+        my $self = shift;
+        my $fetch = shift;
+        $fetch =~ s/^LIXUZDB:://;
+        return $self->dbic->resultset($fetch);
+    }
 }
 
 1;
