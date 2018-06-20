@@ -1,6 +1,6 @@
 /*
  * LIXUZ content management system
- * Copyright (C) Utrop A/S Portu media & Communications 2008-2013
+ * Copyright (C) Utrop A/S Portu media & Communications 2008-2018
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -65,7 +65,12 @@ var Dashboard = {
             'max-height':'15px',
             'visibility':'visible'
         }).show();
-        XHR.GET('/admin/articles?orderby=article_id&ordertype=DESC&_submitted_list_search=1&list_type=pure&filter_assigned_to='+newValue+'&filter_status_id='+statuses,function(list)
+        var URL = '/admin/articles?orderby=article_id&ordertype=DESC&_submitted_list_search=1&list_type=pure&filter_assigned_to='+newValue;
+        if(statuses !== undefined)
+        {
+            URL = URL + '&filter_status_id='+statuses;
+        }
+        XHR.GET(URL,function(list)
         {
             var styled = 'odd',
                 $table = $this.parents('.dashboardTable').find('table'),
