@@ -130,7 +130,7 @@ sub upload
     if ($settings->{asyncUpload} && !$self->standalone)
     {
         $self->c->stash->{uploadedMeta} //= [];
-        push(@{$self->c->stash->{uploadedMeta}}, $fileObj->serialize);
+        push(@{$self->c->stash->{uploadedMeta}}, $fileObj);
     }
 	if (!$self->standalone)
 	{

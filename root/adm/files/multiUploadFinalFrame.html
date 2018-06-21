@@ -28,7 +28,7 @@
 foreach my $h (@{$uploadedMeta})
 {
 </%perl>
-            files.push(<% $h |n %>);
+            files.push(<% $h->serialize |n %>);
 %}
             parent.articleFiles.performFileAddition(null,files);
         })();
