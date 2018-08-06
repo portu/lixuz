@@ -239,7 +239,7 @@ sub cleanUrl
     my ($self,$url) = @_;
 
     $url =~ s{\?.+$}{};
-    $url =~ s{^http://[^/]+}{};
+    $url =~ s{^https?://[^/]+}{};
     $url =~ s{/+}{/}g;
     $url =~ s{/+$}{};
 
