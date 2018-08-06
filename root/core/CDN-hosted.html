@@ -30,12 +30,12 @@ my @URLs;
 if($JQcore)
 {
     my $jQuery_VERSION = '1.8.0';
-    push(@URLs,'http://code.jquery.com/jquery-'.$jQuery_VERSION.'.min.js');
+    push(@URLs,'//code.jquery.com/jquery-'.$jQuery_VERSION.'.min.js');
 }
 if($UI)
 {
     my $jQueryUI_VERSION = '1.8.23';
-    push(@URLs, 'http://ajax.googleapis.com/ajax/libs/jqueryui/'.$jQueryUI_VERSION.'/jquery-ui.min.js');
+    push(@URLs, '//ajax.googleapis.com/ajax/libs/jqueryui/'.$jQueryUI_VERSION.'/jquery-ui.min.js');
 }
 if($YUI)
 {
@@ -44,7 +44,7 @@ if($YUI)
 if($lodash)
 {
     my $lodash_VERSION = '1.0.0-rc.3';
-    push(@URLs, 'http://cdnjs.cloudflare.com/ajax/libs/lodash.js/'.$lodash_VERSION.'/lodash.min.js');
+    push(@URLs, '//cdnjs.cloudflare.com/ajax/libs/lodash.js/'.$lodash_VERSION.'/lodash.min.js');
 }
 
 if($mode && $mode eq 'rawLAB')
