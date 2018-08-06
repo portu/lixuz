@@ -39,7 +39,9 @@ if($UI)
 }
 if($YUI)
 {
-    push(@URLs, 'http://yui.yahooapis.com/combo?2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js&2.8.0r4/build/dragdrop/dragdrop-min.js&2.8.0r4/build/element/element-min.js&2.8.0r4/build/resize/resize-min.js&2.8.0r4/build/imagecropper/imagecropper-min.js');
+    # Used to be hosted by CDN, but since YUI's old CDN doesn't serve over https
+    # it is now cached locally until it can be replaced.
+    push(@URLs,'/js/yui-dragdrop.lib.js');
 }
 if($lodash)
 {
